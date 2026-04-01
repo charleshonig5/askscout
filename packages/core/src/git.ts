@@ -4,8 +4,11 @@ import type { GitCommit, GitDiff } from "./types.js";
 
 const execFileAsync = promisify(execFile);
 
-const COMMIT_SEPARATOR = "COMMIT_START\0";
+// Use a record separator that cannot appear in git output:
+// %x00 (NUL) is used as field delimiter, %x1e (RS) as record delimiter
+const RECORD_SEP = "\x1e";
 const MAX_DIFF_CHARS = 16_000; // ~4,000 tokens
+const TRUNCATION_MARKER = "\n... (truncated)";
 
 // Empty tree hash — used for diffing the initial commit
 const EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
@@ -37,7 +40,7 @@ export async function getCommits(projectRoot: string, since: Date): Promise<GitC
     stdout = await execGit(projectRoot, [
       "log",
       `--since=${since.toISOString()}`,
-      `--format=${COMMIT_SEPARATOR}%H%x00%s%x00%an%x00%aI`,
+      `--format=%x1e%H%x00%s%x00%an%x00%aI`,
       "--numstat",
     ]);
   } catch (err) {
@@ -48,7 +51,7 @@ export async function getCommits(projectRoot: string, since: Date): Promise<GitC
 
   if (!stdout.trim()) return [];
 
-  const blocks = stdout.split(COMMIT_SEPARATOR).filter((b) => b.trim());
+  const blocks = stdout.split(RECORD_SEP).filter((b) => b.trim());
   const commits: GitCommit[] = [];
 
   for (const block of blocks) {
@@ -142,22 +145,25 @@ export async function getDiffs(projectRoot: string, commits: GitCommit[]): Promi
   }
 
   // Truncate patches to fit within token budget
-  const totalChars = diffs.reduce((sum, d) => sum + d.patch.length, 0);
+  let totalChars = diffs.reduce((sum, d) => sum + d.patch.length, 0);
   if (totalChars > MAX_DIFF_CHARS) {
-    // Sort by patch size descending, truncate largest first
-    const sorted = [...diffs].sort((a, b) => b.patch.length - a.patch.length);
-    let remaining = totalChars;
+    // Sort indices by patch size descending, truncate largest first
+    const indices = diffs
+      .map((_, i) => i)
+      .sort((a, b) => diffs[b]!.patch.length - diffs[a]!.patch.length);
 
-    for (const diff of sorted) {
-      if (remaining <= MAX_DIFF_CHARS) break;
-      const excess = remaining - MAX_DIFF_CHARS;
-      const truncateBy = Math.min(excess, diff.patch.length - 200); // keep at least 200 chars
-      if (truncateBy > 0) {
-        const original = diffs.find((d) => d.file === diff.file)!;
-        original.patch =
-          original.patch.slice(0, original.patch.length - truncateBy) + "\n... (truncated)";
-        remaining -= truncateBy;
-      }
+    for (const idx of indices) {
+      if (totalChars <= MAX_DIFF_CHARS) break;
+      const diff = diffs[idx]!;
+      const minKeep = 200 + TRUNCATION_MARKER.length;
+      if (diff.patch.length <= minKeep) continue;
+
+      const excess = totalChars - MAX_DIFF_CHARS;
+      const canRemove = diff.patch.length - minKeep;
+      const truncateBy = Math.min(excess, canRemove);
+      const newPatch = diff.patch.slice(0, diff.patch.length - truncateBy) + TRUNCATION_MARKER;
+      totalChars -= diff.patch.length - newPatch.length;
+      diff.patch = newPatch;
     }
   }
 

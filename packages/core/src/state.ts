@@ -10,8 +10,10 @@ function isValidState(value: unknown): value is ProjectState {
   const obj = value as Record<string, unknown>;
   return (
     typeof obj.version === "number" &&
+    Number.isFinite(obj.version) &&
     typeof obj.lastRunAt === "string" &&
     typeof obj.runCount === "number" &&
+    Number.isFinite(obj.runCount) &&
     typeof obj.summary === "string"
   );
 }

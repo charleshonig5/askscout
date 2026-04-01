@@ -87,15 +87,6 @@ Respond with this exact JSON schema:
 }`;
 }
 
-interface LlmDigestResponse {
-  shipped: { summary: string }[];
-  changed: { summary: string }[];
-  unstable: { summary: string; changeCount: number }[];
-  leftOff: { summary: string }[];
-  updatedSummary: string;
-  health: HealthIndicator[] | null;
-}
-
 async function callAnthropic(
   systemPrompt: string,
   userPrompt: string,
@@ -118,12 +109,17 @@ async function callAnthropic(
   });
 
   if (!response.ok) {
-    const body = await response.text();
-    throw new Error(`Anthropic API error (${response.status}): ${body}`);
+    const status = response.status;
+    const body = await response.text().catch(() => "(could not read response body)");
+    throw new Error(`Anthropic API error (${status}): ${body.slice(0, 200)}`);
   }
 
-  const json = (await response.json()) as { content: { text: string }[] };
-  return json.content[0]!.text;
+  const json = (await response.json()) as { content?: { text?: string }[] };
+  const text = json.content?.[0]?.text;
+  if (typeof text !== "string") {
+    throw new Error("Anthropic API returned an unexpected response structure.");
+  }
+  return text;
 }
 
 async function callOpenAI(systemPrompt: string, userPrompt: string, ai: AiConfig): Promise<string> {
@@ -146,27 +142,38 @@ async function callOpenAI(systemPrompt: string, userPrompt: string, ai: AiConfig
   });
 
   if (!response.ok) {
-    const body = await response.text();
-    throw new Error(`OpenAI API error (${response.status}): ${body}`);
+    const status = response.status;
+    const body = await response.text().catch(() => "(could not read response body)");
+    throw new Error(`OpenAI API error (${status}): ${body.slice(0, 200)}`);
   }
 
   const json = (await response.json()) as {
-    choices: { message: { content: string } }[];
+    choices?: { message?: { content?: string } }[];
   };
-  return json.choices[0]!.message.content;
+  const text = json.choices?.[0]?.message?.content;
+  if (typeof text !== "string") {
+    throw new Error("OpenAI API returned an unexpected response structure.");
+  }
+  return text;
 }
 
 function computeStats(commits: GitCommit[], diffs: GitDiff[]): DigestStats {
-  const timestamps = commits.map((c) => c.timestamp.getTime());
+  const now = new Date();
+  let from = now;
+  let to = now;
+
+  if (commits.length > 0) {
+    const timestamps = commits.map((c) => c.timestamp.getTime());
+    from = new Date(Math.min(...timestamps));
+    to = new Date(Math.max(...timestamps));
+  }
+
   return {
     commits: commits.length,
     filesChanged: new Set(diffs.map((d) => d.file)).size,
     linesAdded: diffs.reduce((sum, d) => sum + d.additions, 0),
     linesRemoved: diffs.reduce((sum, d) => sum + d.deletions, 0),
-    timeSpan: {
-      from: new Date(Math.min(...timestamps)),
-      to: new Date(Math.max(...timestamps)),
-    },
+    timeSpan: { from, to },
   };
 }
 
@@ -185,26 +192,31 @@ export async function summarize(
       ? await callAnthropic(systemPrompt, userPrompt, ai)
       : await callOpenAI(systemPrompt, userPrompt, ai);
 
-  let parsed: LlmDigestResponse;
+  let raw: unknown;
   try {
-    parsed = JSON.parse(rawText) as LlmDigestResponse;
+    raw = JSON.parse(rawText) as unknown;
   } catch {
     throw new Error(
       `Failed to parse LLM response as JSON. Raw response:\n${rawText.slice(0, 500)}`,
     );
   }
 
+  const parsed = raw as Record<string, unknown>;
+  const shipped = Array.isArray(parsed.shipped) ? parsed.shipped : [];
+  const changed = Array.isArray(parsed.changed) ? parsed.changed : [];
+  const unstable = Array.isArray(parsed.unstable) ? parsed.unstable : [];
+  const leftOff = Array.isArray(parsed.leftOff) ? parsed.leftOff : [];
+  const health = Array.isArray(parsed.health) ? (parsed.health as HealthIndicator[]) : null;
+  const updatedSummary = typeof parsed.updatedSummary === "string" ? parsed.updatedSummary : "";
+
   const digest: Digest = {
-    shipped: parsed.shipped ?? [],
-    changed: parsed.changed ?? [],
-    unstable: parsed.unstable ?? [],
-    leftOff: parsed.leftOff ?? [],
+    shipped: shipped as Digest["shipped"],
+    changed: changed as Digest["changed"],
+    unstable: unstable as Digest["unstable"],
+    leftOff: leftOff as Digest["leftOff"],
     stats: computeStats(commits, diffs),
-    health: parsed.health ?? null,
+    health,
   };
 
-  return {
-    digest,
-    updatedSummary: parsed.updatedSummary ?? "",
-  };
+  return { digest, updatedSummary };
 }
