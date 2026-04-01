@@ -1,5 +1,6 @@
 "use client";
 
+import { Settings } from "lucide-react";
 import type { HistoryEntry } from "@/lib/mock-data";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -56,7 +57,9 @@ export function Sidebar({ entries, activeId, onSelect, isOpen, onClose }: Sideba
 
         {/* Bottom section */}
         <div className="sidebar-footer">
-          <button className="sidebar-footer-btn">{"\u2699\ufe0f"} Settings</button>
+          <button className="sidebar-footer-btn">
+            <Settings size={14} /> Settings
+          </button>
           <ThemeToggle />
         </div>
       </aside>

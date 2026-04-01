@@ -1,5 +1,6 @@
 "use client";
 
+import { Menu } from "lucide-react";
 import { RepoSelector } from "./RepoSelector";
 
 interface HeaderProps {
@@ -14,7 +15,7 @@ export function Header({ repos, selectedRepo, onRepoChange, onMenuToggle }: Head
     <header className="header">
       <div className="header-left">
         <button className="btn btn-ghost sidebar-toggle" onClick={onMenuToggle} aria-label="Menu">
-          {"\u2630"}
+          <Menu size={16} />
         </button>
         <span className="logo">askscout</span>
         <RepoSelector repos={repos} selected={selectedRepo} onChange={onRepoChange} />

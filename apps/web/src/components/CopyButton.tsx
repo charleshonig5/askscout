@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { Copy, Check } from "lucide-react";
 
 interface CopyButtonProps {
   text: string;
@@ -18,7 +19,15 @@ export function CopyButton({ text }: CopyButtonProps) {
 
   return (
     <button className={`btn btn-ghost ${copied ? "copied" : ""}`} onClick={handleCopy}>
-      {copied ? "\u2713 Copied" : "Copy"}
+      {copied ? (
+        <>
+          <Check size={14} /> Copied
+        </>
+      ) : (
+        <>
+          <Copy size={14} /> Copy
+        </>
+      )}
     </button>
   );
 }

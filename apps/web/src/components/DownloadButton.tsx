@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
+import { Download } from "lucide-react";
 
 interface DownloadButtonProps {
   text: string;
@@ -20,7 +21,7 @@ export function DownloadButton({ text, filename }: DownloadButtonProps) {
 
   return (
     <button className="btn btn-ghost" onClick={handleDownload}>
-      {"\u2913"} Download
+      <Download size={14} /> Download
     </button>
   );
 }

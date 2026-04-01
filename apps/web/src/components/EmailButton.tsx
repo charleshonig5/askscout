@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { Mail, Check } from "lucide-react";
 
 export function EmailButton() {
   const [sent, setSent] = useState(false);
@@ -13,7 +14,15 @@ export function EmailButton() {
 
   return (
     <button className={`btn btn-ghost ${sent ? "copied" : ""}`} onClick={handleEmail}>
-      {sent ? "\u2713 Sent" : "\u2709 Email"}
+      {sent ? (
+        <>
+          <Check size={14} /> Sent
+        </>
+      ) : (
+        <>
+          <Mail size={14} /> Email
+        </>
+      )}
     </button>
   );
 }
