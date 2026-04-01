@@ -61,44 +61,16 @@ function getSinceDate(timeRange: ScanOptions["timeRange"], state: ProjectState |
 function formatTimeLabel(since: Date): string {
   const now = new Date();
   const diffMs = now.getTime() - since.getTime();
-  const diffHours = diffMs / (1000 * 60 * 60);
-  const diffDays = diffMs / (1000 * 60 * 60 * 24);
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
 
-  // Same day
-  if (since.toDateString() === now.toDateString()) {
-    return `since ${formatTime(since)} today`;
-  }
+  if (since.toDateString() === now.toDateString()) return "today";
 
-  // Yesterday
   const yesterday = new Date(now);
   yesterday.setDate(yesterday.getDate() - 1);
-  if (since.toDateString() === yesterday.toDateString()) {
-    return `since yesterday at ${formatTime(since)}`;
-  }
+  if (since.toDateString() === yesterday.toDateString()) return "since yesterday";
 
-  // Within a week
-  if (diffDays < 7) {
-    return `since ${formatWeekday(since)} at ${formatTime(since)}`;
-  }
-
-  // Wider range — show dates
-  if (diffHours > 0) {
-    return `${formatShortDate(since)} \u2013 ${formatShortDate(now)}`;
-  }
-
-  return `since ${formatShortDate(since)}`;
-}
-
-function formatTime(date: Date): string {
-  return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-}
-
-function formatWeekday(date: Date): string {
-  return date.toLocaleDateString("en-US", { weekday: "long" });
-}
-
-function formatShortDate(date: Date): string {
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  if (diffDays <= 1) return "since yesterday";
+  return `past ${diffDays} days`;
 }
 
 /** Main scan command — reads git history and generates a digest */
@@ -221,9 +193,6 @@ export async function scan(options: ScanOptions): Promise<void> {
         for (const item of standup.blockers) console.log(`  \u2022 ${item}`);
       }
     } else {
-      if (isFirstRun) {
-        console.log(`\ud83d\udc15 First time sniffing ${repoName}! Here's what Scout found:\n`);
-      }
       console.log(formatDigest(result.digest, formatOpts));
     }
 
