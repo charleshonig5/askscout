@@ -1,7 +1,7 @@
 "use client";
 
 import type { Digest } from "@askscout/core";
-import { CopyButton } from "./CopyButton";
+import { ExportActions } from "./ExportActions";
 import { MOCK_STREAMING_TEXT } from "@/lib/mock-data";
 
 function fmt(n: number): string {
@@ -157,7 +157,7 @@ function ResumeView({ text }: ResumeViewProps) {
     <div>
       <div className="digest-header">
         <div className="digest-section-title">Resume Prompt</div>
-        <CopyButton text={text} />
+        <ExportActions text={text} filename="resume-prompt.md" />
       </div>
       {sections.map((section, i) => {
         const lines = section.split("\n");
@@ -196,7 +196,7 @@ function StandupView({ standup }: StandupViewProps) {
     <div>
       <div className="digest-header">
         <div className="digest-section-title">Standup</div>
-        <CopyButton text={copyText} />
+        <ExportActions text={copyText} filename="standup.md" />
       </div>
       <div className="standup-section">
         <div className="standup-label">Yesterday</div>
@@ -260,7 +260,7 @@ export function DigestView({
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "var(--space-md)" }}>
-        <CopyButton text={MOCK_STREAMING_TEXT} />
+        <ExportActions text={MOCK_STREAMING_TEXT} filename="digest.md" />
       </div>
       <StructuredDigest digest={digest} repoName={repoName} timeLabel={timeLabel} />
     </div>

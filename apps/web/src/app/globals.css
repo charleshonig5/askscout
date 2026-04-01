@@ -630,6 +630,12 @@ a:hover {
   color: var(--color-success);
 }
 
+.export-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
 /* ============================================
    Resume / Standup Views
    ============================================ */
