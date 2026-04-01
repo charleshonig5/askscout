@@ -91,8 +91,24 @@ export const MOCK_DIGEST: Digest = {
   ],
 };
 
-export const MOCK_RESUME =
-  "This is a Next.js e-commerce app using Stripe for payments and Google OAuth for auth, with a React frontend and API routes for the backend. Recently shipped the full Google OAuth flow in src/auth/ and a settings page with dark mode toggle in src/components/Settings.tsx. Current focus: finishing the checkout flow \u2014 cart logic is complete in src/cart/ but payment submission needs to be wired to Stripe's PaymentIntent API in src/api/checkout.ts. Key files: src/api/checkout.ts, src/api/webhooks/stripe.ts, src/cart/CartProvider.tsx, src/components/Settings.tsx. Heads up: don't touch the auth flow \u2014 it's working and tested. The Stripe webhook handler at src/api/webhooks/stripe.ts is fragile \u2014 has been rewritten 4 times, may need a simpler approach to signature verification.";
+export const MOCK_RESUME = `Tech Stack
+Next.js e-commerce app using Stripe for payments and Google OAuth for auth, with a React frontend and API routes for the backend.
+
+Recent Work
+Shipped the full Google OAuth flow in src/auth/ and a settings page with dark mode toggle in src/components/Settings.tsx.
+
+Current Focus
+Finishing the checkout flow \u2014 cart logic is complete in src/cart/ but payment submission needs to be wired to Stripe's PaymentIntent API in src/api/checkout.ts.
+
+Key Files
+src/api/checkout.ts
+src/api/webhooks/stripe.ts
+src/cart/CartProvider.tsx
+src/components/Settings.tsx
+
+\u26a0\ufe0f Heads Up
+Don't touch the auth flow \u2014 it's working and tested.
+Stripe webhook handler at src/api/webhooks/stripe.ts is fragile \u2014 rewritten 4 times, may need a simpler approach.`;
 
 export const MOCK_STANDUP = {
   yesterday: [

@@ -150,13 +150,26 @@ interface ResumeViewProps {
 }
 
 function ResumeView({ text }: ResumeViewProps) {
+  // Split the formatted prompt into sections by double newline
+  const sections = text.split("\n\n").filter((s) => s.trim());
+
   return (
     <div>
       <div className="digest-header">
         <div className="digest-section-title">Resume Prompt</div>
         <CopyButton text={text} />
       </div>
-      <div className="resume-text">{text}</div>
+      {sections.map((section, i) => {
+        const lines = section.split("\n");
+        const title = lines[0] ?? "";
+        const body = lines.slice(1).join("\n");
+        return (
+          <div key={i} className="resume-section">
+            <div className="resume-section-title">{title}</div>
+            <div className="resume-section-body">{body}</div>
+          </div>
+        );
+      })}
       <p className="text-secondary" style={{ marginTop: "var(--space-md)", fontSize: 13 }}>
         Paste this into your AI coding tool to pick up where you left off.
       </p>

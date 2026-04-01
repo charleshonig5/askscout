@@ -91,15 +91,15 @@ export function formatDigest(digest: Digest, options: FormatOptions): string {
 /** Format a resume prompt from digest data — rich context for AI coding tools */
 export function formatResume(digest: Digest): ResumePrompt {
   const r = digest.resumeContext;
-  const parts: string[] = [];
+  const sections: string[] = [];
 
-  if (r.techStack) parts.push(r.techStack);
-  if (r.recentWork) parts.push(r.recentWork);
-  if (r.currentFocus) parts.push(`Current focus: ${r.currentFocus}`);
-  if (r.keyFiles.length > 0) parts.push(`Key files: ${r.keyFiles.join(", ")}.`);
-  if (r.warnings.length > 0) parts.push(`Heads up: ${r.warnings.join(". ")}.`);
+  if (r.techStack) sections.push(`Tech Stack\n${r.techStack}`);
+  if (r.recentWork) sections.push(`Recent Work\n${r.recentWork}`);
+  if (r.currentFocus) sections.push(`Current Focus\n${r.currentFocus}`);
+  if (r.keyFiles.length > 0) sections.push(`Key Files\n${r.keyFiles.join("\n")}`);
+  if (r.warnings.length > 0) sections.push(`\u26a0\ufe0f Heads Up\n${r.warnings.join("\n")}`);
 
-  return { prompt: parts.join(" ") };
+  return { prompt: sections.join("\n\n") };
 }
 
 /** Format a standup summary from digest data — conversational, human-sounding */
