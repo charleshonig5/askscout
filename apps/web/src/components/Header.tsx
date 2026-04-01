@@ -1,23 +1,25 @@
 "use client";
 
-import { ThemeToggle } from "./ThemeToggle";
 import { RepoSelector } from "./RepoSelector";
 
 interface HeaderProps {
   repos: string[];
   selectedRepo: string;
   onRepoChange: (repo: string) => void;
+  onMenuToggle: () => void;
 }
 
-export function Header({ repos, selectedRepo, onRepoChange }: HeaderProps) {
+export function Header({ repos, selectedRepo, onRepoChange, onMenuToggle }: HeaderProps) {
   return (
     <header className="header">
       <div className="header-left">
+        <button className="btn btn-ghost sidebar-toggle" onClick={onMenuToggle} aria-label="Menu">
+          {"\u2630"}
+        </button>
         <span className="logo">askscout</span>
         <RepoSelector repos={repos} selected={selectedRepo} onChange={onRepoChange} />
       </div>
       <div className="header-right">
-        <ThemeToggle />
         <div
           style={{
             width: 28,
