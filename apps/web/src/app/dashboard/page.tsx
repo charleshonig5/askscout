@@ -28,10 +28,18 @@ export default function DashboardPage() {
   const activeDate = activeEntry?.date ?? "Today";
   const isToday = activeDate === "Today";
 
+  // Extract just the repo name (drop owner prefix)
+  const repoName = selectedRepo.split("/").pop() ?? selectedRepo;
+
   const modeLabels: Record<Mode, string> = {
     digest: "Digest",
     standup: "Standup",
     resume: "AI Context",
+  };
+  const modeSubtitles: Record<Mode, string> = {
+    digest: repoName,
+    standup: `Copy-paste standup for ${repoName}`,
+    resume: `Paste into your AI coding tools to pick up where you left off on ${repoName}`,
   };
   const pageTitle = isToday ? `Today\u2019s ${modeLabels[mode]}` : `${modeLabels[mode]}`;
 
@@ -56,8 +64,11 @@ export default function DashboardPage() {
         <div className="app-main">
           <div className="digest-container">
             <div className="digest-page-title">
-              <h1 className="digest-page-name">{pageTitle}</h1>
-              {!isToday && <span className="digest-page-date">{activeDate}</span>}
+              <div className="digest-page-title-row">
+                <h1 className="digest-page-name">{pageTitle}</h1>
+                {!isToday && <span className="digest-page-date">{activeDate}</span>}
+              </div>
+              <p className="digest-page-subtitle">{modeSubtitles[mode]}</p>
             </div>
             <div className="digest-header">
               <ModeToggle mode={mode} onChange={setMode} />

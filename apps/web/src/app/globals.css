@@ -316,10 +316,13 @@ a:hover {
 }
 
 .digest-page-title {
+  margin-bottom: var(--space-lg);
+}
+
+.digest-page-title-row {
   display: flex;
   align-items: baseline;
   gap: var(--space-sm);
-  margin-bottom: var(--space-lg);
 }
 
 .digest-page-name {
@@ -332,6 +335,12 @@ a:hover {
 .digest-page-date {
   font-size: 14px;
   color: var(--color-text-tertiary);
+}
+
+.digest-page-subtitle {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-top: var(--space-xs);
 }
 
 .digest-header {
