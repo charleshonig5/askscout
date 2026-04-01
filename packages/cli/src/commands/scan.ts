@@ -93,14 +93,10 @@ export async function scan(options: ScanOptions): Promise<void> {
 
     // 5. FRE: if first run with auto range and no commits today, widen the search
     if (isFirstRun && options.timeRange === "auto" && commits.length === 0) {
-      // Try past 7 days
-      since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-      commits = await getCommits(projectRoot, since);
-
-      if (commits.length === 0) {
-        // Try past 30 days
-        since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      for (const days of [7, 30, 90]) {
+        since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
         commits = await getCommits(projectRoot, since);
+        if (commits.length > 0) break;
       }
     }
 
