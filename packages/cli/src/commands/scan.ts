@@ -49,9 +49,12 @@ function getSinceDate(timeRange: ScanOptions["timeRange"], state: ProjectState |
   if (timeRange === "week") {
     return new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
   }
-  // auto: use lastRunAt if available, otherwise today
+  // auto: use lastRunAt if recent enough, otherwise today
   if (state?.lastRunAt) {
-    return new Date(state.lastRunAt);
+    const lastRun = new Date(state.lastRunAt);
+    const daysSince = (Date.now() - lastRun.getTime()) / (1000 * 60 * 60 * 24);
+    // Cap at 30 days — anything older gets the FRE fallback chain
+    if (daysSince <= 30) return lastRun;
   }
   const now = new Date();
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -91,8 +94,9 @@ export async function scan(options: ScanOptions): Promise<void> {
     let since = getSinceDate(options.timeRange, state);
     let commits = await getCommits(projectRoot, since);
 
-    // 5. FRE: if first run with auto range and no commits today, widen the search
-    if (isFirstRun && options.timeRange === "auto" && commits.length === 0) {
+    // 5. If auto range found no commits, widen the search
+    //    Triggers on first run OR when lastRunAt was capped (>30 days stale)
+    if (options.timeRange === "auto" && commits.length === 0) {
       for (const days of [7, 30, 90]) {
         since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
         commits = await getCommits(projectRoot, since);
