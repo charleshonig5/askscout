@@ -88,31 +88,26 @@ export function formatDigest(digest: Digest, options: FormatOptions): string {
   return sections.join("\n\n") + "\n";
 }
 
-/** Format a resume prompt from digest data */
+/** Format a resume prompt from digest data — rich context for AI coding tools */
 export function formatResume(digest: Digest): ResumePrompt {
+  const r = digest.resumeContext;
   const parts: string[] = [];
 
-  if (digest.shipped.length > 0) {
-    parts.push(`Recently shipped: ${digest.shipped.map((i) => i.summary).join("; ")}.`);
-  }
-  if (digest.changed.length > 0) {
-    parts.push(`Recent changes: ${digest.changed.map((i) => i.summary).join("; ")}.`);
-  }
-  if (digest.unstable.length > 0) {
-    parts.push(`Potentially unstable areas: ${digest.unstable.map((i) => i.summary).join("; ")}.`);
-  }
-  if (digest.leftOff.length > 0) {
-    parts.push(`Continue working on: ${digest.leftOff.map((i) => i.summary).join("; ")}.`);
-  }
+  if (r.techStack) parts.push(r.techStack);
+  if (r.recentWork) parts.push(r.recentWork);
+  if (r.currentFocus) parts.push(`Current focus: ${r.currentFocus}`);
+  if (r.keyFiles.length > 0) parts.push(`Key files: ${r.keyFiles.join(", ")}.`);
+  if (r.warnings.length > 0) parts.push(`Heads up: ${r.warnings.join(". ")}.`);
 
   return { prompt: parts.join(" ") };
 }
 
-/** Format a standup summary from digest data */
+/** Format a standup summary from digest data — conversational, human-sounding */
 export function formatStandup(digest: Digest): Standup {
+  const s = digest.standupNotes;
   return {
-    done: digest.shipped.map((i) => i.summary),
-    inProgress: digest.leftOff.map((i) => i.summary),
-    blockers: digest.unstable.map((i) => i.summary),
+    yesterday: s.yesterday.length > 0 ? s.yesterday : digest.shipped.map((i) => i.summary),
+    today: s.today.length > 0 ? s.today : digest.leftOff.map((i) => i.summary),
+    blockers: s.blockers.length > 0 ? s.blockers : digest.unstable.map((i) => i.summary),
   };
 }

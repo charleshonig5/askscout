@@ -165,15 +165,15 @@ function ResumeView({ text }: ResumeViewProps) {
 }
 
 interface StandupViewProps {
-  standup: { done: string[]; inProgress: string[]; blockers: string[] };
+  standup: { yesterday: string[]; today: string[]; blockers: string[] };
 }
 
 function StandupView({ standup }: StandupViewProps) {
   const copyText = [
-    "Done:",
-    ...standup.done.map((d) => `  \u2022 ${d}`),
-    "\nIn progress:",
-    ...standup.inProgress.map((d) => `  \u2022 ${d}`),
+    "Yesterday:",
+    ...standup.yesterday.map((d) => `  \u2022 ${d}`),
+    "\nToday:",
+    ...standup.today.map((d) => `  \u2022 ${d}`),
     ...(standup.blockers.length > 0
       ? ["\nBlockers:", ...standup.blockers.map((d) => `  \u2022 ${d}`)]
       : []),
@@ -186,16 +186,16 @@ function StandupView({ standup }: StandupViewProps) {
         <CopyButton text={copyText} />
       </div>
       <div className="standup-section">
-        <div className="standup-label">Done</div>
-        {standup.done.map((item, i) => (
+        <div className="standup-label">Yesterday</div>
+        {standup.yesterday.map((item, i) => (
           <div key={i} className="digest-item">
             {item}
           </div>
         ))}
       </div>
       <div className="standup-section">
-        <div className="standup-label">In Progress</div>
-        {standup.inProgress.map((item, i) => (
+        <div className="standup-label">Today</div>
+        {standup.today.map((item, i) => (
           <div key={i} className="digest-item">
             {item}
           </div>
@@ -219,7 +219,7 @@ interface DigestViewProps {
   mode: "digest" | "resume" | "standup";
   digest: Digest;
   resume: string;
-  standup: { done: string[]; inProgress: string[]; blockers: string[] };
+  standup: { yesterday: string[]; today: string[]; blockers: string[] };
   repoName: string;
   timeLabel: string;
   isStreaming: boolean;

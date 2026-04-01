@@ -186,10 +186,10 @@ export async function scan(options: ScanOptions): Promise<void> {
       console.log(resume.prompt);
     } else if (options.mode === "standup") {
       const standup = formatStandup(result.digest);
-      console.log("Done:");
-      for (const item of standup.done) console.log(`  \u2022 ${item}`);
-      console.log("\nIn progress:");
-      for (const item of standup.inProgress) console.log(`  \u2022 ${item}`);
+      console.log("Yesterday:");
+      for (const item of standup.yesterday) console.log(`  \u2022 ${item}`);
+      console.log("\nToday:");
+      for (const item of standup.today) console.log(`  \u2022 ${item}`);
       if (standup.blockers.length > 0) {
         console.log("\nBlockers:");
         for (const item of standup.blockers) console.log(`  \u2022 ${item}`);

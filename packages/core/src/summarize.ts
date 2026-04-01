@@ -6,6 +6,8 @@ import type {
   GitDiff,
   HealthIndicator,
   ProjectState,
+  ResumeContext,
+  StandupNotes,
   SummarizeResult,
 } from "./types.js";
 
@@ -74,6 +76,16 @@ Summarize at the **feature level**, not the file level. Use plain English.
 
 Also produce:
 - **vibeCheck**: 1-2 casual sentences capturing the overall vibe. Be warm, honest, slightly funny. Read the room — are things going well? Is it a grind? Is something exciting coming together? Write like a friend, not a report.
+- **resumeContext**: Rich context for AI coding tools. Include:
+  - **techStack**: What the project is built with (languages, frameworks, key libraries). Be specific.
+  - **recentWork**: 2-3 sentences describing what was recently built and how it works. Reference specific directories or files from the diffs.
+  - **currentFocus**: What to work on next. Be specific about what's done and what's left.
+  - **keyFiles**: Array of 3-6 file paths most relevant to the current work. Pull these from the diffs.
+  - **warnings**: Array of things to avoid or be careful about ("don't touch auth — it's working", "webhook handler is fragile").
+- **standupNotes**: What a human would actually say in a standup meeting. Conversational, specific, with context:
+  - **yesterday**: What was accomplished. Include approach and outcome, not just "did X". e.g. "Got Google OAuth fully working — users can sign in and sessions persist across refreshes"
+  - **today**: What's planned next. Be specific about the approach. e.g. "Finishing checkout flow — need to wire the cart total to Stripe's PaymentIntent API"
+  - **blockers**: Only real blockers. Include what's wrong AND why it might be stuck. e.g. "Stripe webhook handler keeps breaking — changed it 4 times, might need a different approach to signature verification"
 - **updatedSummary**: 1-paragraph (~200 word) project summary covering tech stack, architecture, current state, and what was last worked on. This replaces the previous summary entirely.
 
 ${healthInstructions}
@@ -85,6 +97,18 @@ Respond with this exact JSON schema:
   "changed": [{ "summary": "..." }],
   "unstable": [{ "summary": "...", "changeCount": 0 }],
   "leftOff": [{ "summary": "..." }],
+  "resumeContext": {
+    "techStack": "...",
+    "recentWork": "...",
+    "currentFocus": "...",
+    "keyFiles": ["src/..."],
+    "warnings": ["..."]
+  },
+  "standupNotes": {
+    "yesterday": ["..."],
+    "today": ["..."],
+    "blockers": ["..."]
+  },
   "updatedSummary": "...",
   "health": null
 }`;
@@ -213,6 +237,40 @@ export async function summarize(
   const health = Array.isArray(parsed.health) ? (parsed.health as HealthIndicator[]) : null;
   const updatedSummary = typeof parsed.updatedSummary === "string" ? parsed.updatedSummary : "";
 
+  // Parse resume context
+  const rawResume =
+    typeof parsed.resumeContext === "object" && parsed.resumeContext !== null
+      ? (parsed.resumeContext as Record<string, unknown>)
+      : {};
+  const resumeContext: ResumeContext = {
+    techStack: typeof rawResume.techStack === "string" ? rawResume.techStack : "",
+    recentWork: typeof rawResume.recentWork === "string" ? rawResume.recentWork : "",
+    currentFocus: typeof rawResume.currentFocus === "string" ? rawResume.currentFocus : "",
+    keyFiles: Array.isArray(rawResume.keyFiles)
+      ? (rawResume.keyFiles as string[]).filter((f) => typeof f === "string")
+      : [],
+    warnings: Array.isArray(rawResume.warnings)
+      ? (rawResume.warnings as string[]).filter((w) => typeof w === "string")
+      : [],
+  };
+
+  // Parse standup notes
+  const rawStandup =
+    typeof parsed.standupNotes === "object" && parsed.standupNotes !== null
+      ? (parsed.standupNotes as Record<string, unknown>)
+      : {};
+  const standupNotes: StandupNotes = {
+    yesterday: Array.isArray(rawStandup.yesterday)
+      ? (rawStandup.yesterday as string[]).filter((s) => typeof s === "string")
+      : [],
+    today: Array.isArray(rawStandup.today)
+      ? (rawStandup.today as string[]).filter((s) => typeof s === "string")
+      : [],
+    blockers: Array.isArray(rawStandup.blockers)
+      ? (rawStandup.blockers as string[]).filter((s) => typeof s === "string")
+      : [],
+  };
+
   const digest: Digest = {
     vibeCheck,
     shipped: shipped as Digest["shipped"],
@@ -221,6 +279,8 @@ export async function summarize(
     leftOff: leftOff as Digest["leftOff"],
     stats: computeStats(commits, diffs),
     health,
+    resumeContext,
+    standupNotes,
   };
 
   return { digest, updatedSummary };

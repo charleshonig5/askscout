@@ -35,6 +35,8 @@ export interface Digest {
   leftOff: DigestItem[];
   stats: DigestStats;
   health: HealthIndicator[] | null; // null if < 3 runs
+  resumeContext: ResumeContext;
+  standupNotes: StandupNotes;
 }
 
 /** Stats section of the digest */
@@ -53,8 +55,24 @@ export interface ResumePrompt {
 
 /** Standup output */
 export interface Standup {
-  done: string[];
-  inProgress: string[];
+  yesterday: string[];
+  today: string[];
+  blockers: string[];
+}
+
+/** LLM-generated resume context — rich detail for AI coding tools */
+export interface ResumeContext {
+  techStack: string;
+  recentWork: string;
+  currentFocus: string;
+  keyFiles: string[];
+  warnings: string[];
+}
+
+/** LLM-generated standup notes — conversational, human-sounding */
+export interface StandupNotes {
+  yesterday: string[];
+  today: string[];
   blockers: string[];
 }
 

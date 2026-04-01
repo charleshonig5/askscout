@@ -37,6 +37,38 @@ export const MOCK_DIGEST: Digest = {
       to: new Date(),
     },
   },
+  resumeContext: {
+    techStack:
+      "Next.js e-commerce app using Stripe for payments and Google OAuth for auth, with React frontend and API routes.",
+    recentWork:
+      "Shipped the full Google OAuth flow in src/auth/ and a settings page with dark mode toggle in src/components/Settings.tsx.",
+    currentFocus:
+      "Finishing the checkout flow \u2014 cart logic is complete in src/cart/ but payment submission needs to be wired to Stripe's PaymentIntent API in src/api/checkout.ts.",
+    keyFiles: [
+      "src/api/checkout.ts",
+      "src/api/webhooks/stripe.ts",
+      "src/cart/CartProvider.tsx",
+      "src/components/Settings.tsx",
+    ],
+    warnings: [
+      "Don't touch the auth flow \u2014 it's working and tested",
+      "Stripe webhook handler at src/api/webhooks/stripe.ts is fragile \u2014 rewritten 4 times",
+    ],
+  },
+  standupNotes: {
+    yesterday: [
+      "Got Google OAuth fully working \u2014 users can sign in and sessions persist across refreshes",
+      "Built out the settings page with dark mode toggle that saves to localStorage",
+      "Tightened API rate limiting \u2014 was letting too many requests through",
+    ],
+    today: [
+      "Finishing the checkout flow \u2014 need to wire cart total to Stripe's PaymentIntent API",
+      "Might need to rethink the Stripe webhook handler, it's been rewritten too many times",
+    ],
+    blockers: [
+      "Stripe webhook handler keeps breaking \u2014 changed it 4 times yesterday, might need a different approach to verifying webhook signatures",
+    ],
+  },
   health: [
     {
       label: "Momentum",
@@ -60,15 +92,21 @@ export const MOCK_DIGEST: Digest = {
 };
 
 export const MOCK_RESUME =
-  "Recently shipped: Google OAuth login flow; Settings page with dark mode toggle. Recent changes: Pricing page layout; Nav bar links; API rate limiting. Potentially unstable areas: Stripe webhook handler. Continue working on: Checkout flow payment submission.";
+  "This is a Next.js e-commerce app using Stripe for payments and Google OAuth for auth, with a React frontend and API routes for the backend. Recently shipped the full Google OAuth flow in src/auth/ and a settings page with dark mode toggle in src/components/Settings.tsx. Current focus: finishing the checkout flow \u2014 cart logic is complete in src/cart/ but payment submission needs to be wired to Stripe's PaymentIntent API in src/api/checkout.ts. Key files: src/api/checkout.ts, src/api/webhooks/stripe.ts, src/cart/CartProvider.tsx, src/components/Settings.tsx. Heads up: don't touch the auth flow \u2014 it's working and tested. The Stripe webhook handler at src/api/webhooks/stripe.ts is fragile \u2014 has been rewritten 4 times, may need a simpler approach to signature verification.";
 
 export const MOCK_STANDUP = {
-  done: [
-    "Google OAuth login flow \u2014 users can sign in with Google",
-    "Settings page with dark mode toggle",
+  yesterday: [
+    "Got Google OAuth fully working \u2014 users can sign in and sessions persist across refreshes",
+    "Built out the settings page with dark mode toggle that saves to localStorage",
+    "Tightened API rate limiting \u2014 was letting too many requests through",
   ],
-  inProgress: ["Checkout flow \u2014 cart works but payment not wired"],
-  blockers: ["Stripe webhook handler \u2014 changed 4 times, still unstable"],
+  today: [
+    "Finishing the checkout flow \u2014 need to wire cart total to Stripe's PaymentIntent API",
+    "Might need to rethink the Stripe webhook handler, it's been rewritten too many times",
+  ],
+  blockers: [
+    "Stripe webhook handler keeps breaking \u2014 changed it 4 times yesterday, might need a different approach to verifying webhook signatures",
+  ],
 };
 
 export interface HistoryEntry {
