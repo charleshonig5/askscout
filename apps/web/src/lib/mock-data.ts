@@ -132,6 +132,8 @@ export interface HistoryEntry {
   commits: number;
   filesChanged: number;
   shippedCount: number;
+  changedCount: number;
+  unstableCount: number;
 }
 
 export const MOCK_HISTORY: HistoryEntry[] = [
@@ -142,6 +144,8 @@ export const MOCK_HISTORY: HistoryEntry[] = [
     commits: 34,
     filesChanged: 47,
     shippedCount: 2,
+    changedCount: 3,
+    unstableCount: 1,
   },
   {
     id: "yesterday",
@@ -150,6 +154,8 @@ export const MOCK_HISTORY: HistoryEntry[] = [
     commits: 18,
     filesChanged: 12,
     shippedCount: 1,
+    changedCount: 2,
+    unstableCount: 0,
   },
   {
     id: "mar-30",
@@ -158,6 +164,8 @@ export const MOCK_HISTORY: HistoryEntry[] = [
     commits: 22,
     filesChanged: 31,
     shippedCount: 0,
+    changedCount: 4,
+    unstableCount: 0,
   },
   {
     id: "mar-29",
@@ -167,6 +175,8 @@ export const MOCK_HISTORY: HistoryEntry[] = [
     commits: 41,
     filesChanged: 19,
     shippedCount: 1,
+    changedCount: 2,
+    unstableCount: 2,
   },
   {
     id: "mar-28",
@@ -175,6 +185,8 @@ export const MOCK_HISTORY: HistoryEntry[] = [
     commits: 7,
     filesChanged: 5,
     shippedCount: 0,
+    changedCount: 1,
+    unstableCount: 0,
   },
   {
     id: "mar-27",
@@ -183,6 +195,8 @@ export const MOCK_HISTORY: HistoryEntry[] = [
     commits: 28,
     filesChanged: 22,
     shippedCount: 3,
+    changedCount: 1,
+    unstableCount: 0,
   },
 ];
 

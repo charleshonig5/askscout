@@ -582,6 +582,18 @@ a:hover {
   gap: 3px;
 }
 
+.sidebar-item-metric--shipped {
+  color: var(--color-success);
+}
+
+.sidebar-item-metric--changed {
+  color: var(--color-text-tertiary);
+}
+
+.sidebar-item-metric--unstable {
+  color: var(--color-warning);
+}
+
 .sidebar-overlay {
   display: none;
 }

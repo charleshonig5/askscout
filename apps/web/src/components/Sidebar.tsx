@@ -1,6 +1,6 @@
 "use client";
 
-import { GitCommit, FileText, Rocket } from "lucide-react";
+import { GitCommit, FileText, Rocket, Wrench, AlertTriangle } from "lucide-react";
 import type { HistoryEntry } from "@/lib/mock-data";
 
 interface SidebarProps {
@@ -33,21 +33,31 @@ export function Sidebar({ entries, activeId, onSelect, isOpen, onClose }: Sideba
               >
                 <div className="sidebar-item-top">
                   <span className="sidebar-item-date">{entry.date}</span>
-                  <div className="sidebar-item-badges">
-                    {entry.shippedCount > 0 && (
-                      <span className="sidebar-item-badge">
-                        <Rocket size={10} /> {entry.shippedCount}
-                      </span>
-                    )}
+                  <div className="sidebar-item-metrics">
+                    <span className="sidebar-item-metric">
+                      <GitCommit size={10} /> {entry.commits}
+                    </span>
+                    <span className="sidebar-item-metric">
+                      <FileText size={10} /> {entry.filesChanged}
+                    </span>
                   </div>
                 </div>
                 <div className="sidebar-item-metrics">
-                  <span className="sidebar-item-metric">
-                    <GitCommit size={10} /> {entry.commits}
-                  </span>
-                  <span className="sidebar-item-metric">
-                    <FileText size={10} /> {entry.filesChanged}
-                  </span>
+                  {entry.shippedCount > 0 && (
+                    <span className="sidebar-item-metric sidebar-item-metric--shipped">
+                      <Rocket size={10} /> {entry.shippedCount}
+                    </span>
+                  )}
+                  {entry.changedCount > 0 && (
+                    <span className="sidebar-item-metric sidebar-item-metric--changed">
+                      <Wrench size={10} /> {entry.changedCount}
+                    </span>
+                  )}
+                  {entry.unstableCount > 0 && (
+                    <span className="sidebar-item-metric sidebar-item-metric--unstable">
+                      <AlertTriangle size={10} /> {entry.unstableCount}
+                    </span>
+                  )}
                 </div>
               </button>
             ))}
