@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { Copy, Check, Download, Mail } from "lucide-react";
 import type { Digest } from "@askscout/core";
 import { MOCK_STREAMING_TEXT } from "@/lib/mock-data";
@@ -126,21 +126,27 @@ function parseStreamingSections(text: string): ParsedSection[] {
   return sections;
 }
 
-function Cursor() {
-  return <span className="streaming-cursor" />;
-}
-
 interface StreamingDigestProps {
   text: string;
   isStreaming: boolean;
 }
 
 function StreamingDigest({ text, isStreaming }: StreamingDigestProps) {
+  const cursorRef = useRef<HTMLSpanElement>(null);
   const sections = parseStreamingSections(text);
   const isLastSection = (key: string) => {
     const last = sections[sections.length - 1];
     return last?.key === key;
   };
+
+  // Auto-scroll to keep cursor in view
+  useEffect(() => {
+    if (isStreaming && cursorRef.current) {
+      cursorRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }, [text, isStreaming]);
+
+  const cursor = <span ref={cursorRef} className="streaming-cursor" />;
 
   return (
     <div>
@@ -155,7 +161,7 @@ function StreamingDigest({ text, isStreaming }: StreamingDigestProps) {
               </strong>
               <br />
               {section.content}
-              {showCursor && <Cursor />}
+              {showCursor && cursor}
             </div>
           );
         }
@@ -164,7 +170,7 @@ function StreamingDigest({ text, isStreaming }: StreamingDigestProps) {
           return (
             <div key={section.key} className="digest-stats">
               {section.content}
-              {showCursor && <Cursor />}
+              {showCursor && cursor}
             </div>
           );
         }
@@ -185,11 +191,7 @@ function StreamingDigest({ text, isStreaming }: StreamingDigestProps) {
                 {item}
               </div>
             ))}
-            {showCursor && (
-              <div className="digest-item">
-                <Cursor />
-              </div>
-            )}
+            {showCursor && <div className="digest-item">{cursor}</div>}
           </div>
         );
       })}
