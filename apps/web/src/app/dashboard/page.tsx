@@ -24,6 +24,11 @@ export default function DashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const stream = useStreamingText(MOCK_STREAMING_TEXT);
 
+  // Extract just the repo name (drop owner prefix)
+  const repoName = selectedRepo.split("/").pop() ?? selectedRepo;
+  const activeEntry = MOCK_HISTORY.find((e) => e.id === activeHistoryId);
+  const activeDate = activeEntry?.date ?? "Today";
+
   return (
     <div>
       <Header
@@ -44,6 +49,10 @@ export default function DashboardPage() {
 
         <div className="app-main">
           <div className="digest-container">
+            <div className="digest-page-title">
+              <h1 className="digest-page-name">{repoName}</h1>
+              <span className="digest-page-date">{activeDate}</span>
+            </div>
             <div className="digest-header">
               <ModeToggle mode={mode} onChange={setMode} />
             </div>
