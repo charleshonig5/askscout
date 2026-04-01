@@ -53,6 +53,11 @@ async function main(): Promise<void> {
       }
       return true;
     })
+    .example("$0", "Daily digest since your last run")
+    .example("$0 --resume", "Get a context prompt for your AI coding tools")
+    .example("$0 --standup", "Copy-paste standup for Slack")
+    .example("$0 --week", "Review the past 7 days")
+    .example("$0 --setup", "Set up your API key (first time)")
     .help()
     .version(false)
     .strict()
