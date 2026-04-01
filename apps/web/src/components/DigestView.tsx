@@ -8,16 +8,124 @@ function fmt(n: number): string {
   return n.toLocaleString("en-US");
 }
 
-interface StreamingViewProps {
+// Section markers used in the streaming text
+const SECTION_MARKERS = [
+  { key: "vibe", emoji: "\ud83d\udcac", label: "Vibe Check" },
+  { key: "shipped", emoji: "\ud83d\ude80", label: "Shipped" },
+  { key: "changed", emoji: "\ud83d\udd27", label: "Changed" },
+  { key: "unstable", emoji: "\u26a0\ufe0f", label: "Unstable" },
+  { key: "leftOff", emoji: "\ud83d\udccd", label: "Left Off" },
+  { key: "stats", emoji: "\ud83d\udcca", label: "Stats" },
+] as const;
+
+interface ParsedSection {
+  key: string;
+  emoji: string;
+  label: string;
+  content: string;
+}
+
+function parseStreamingSections(text: string): ParsedSection[] {
+  const sections: ParsedSection[] = [];
+
+  for (let i = 0; i < SECTION_MARKERS.length; i++) {
+    const marker = SECTION_MARKERS[i]!;
+    const searchStr = `${marker.emoji} ${marker.label}`;
+    const startIdx = text.indexOf(searchStr);
+    if (startIdx === -1) continue;
+
+    const contentStart = startIdx + searchStr.length;
+
+    // Find where the next section starts
+    let endIdx = text.length;
+    for (let j = i + 1; j < SECTION_MARKERS.length; j++) {
+      const nextMarker = SECTION_MARKERS[j]!;
+      const nextSearch = `${nextMarker.emoji} ${nextMarker.label}`;
+      const nextIdx = text.indexOf(nextSearch, contentStart);
+      if (nextIdx !== -1) {
+        endIdx = nextIdx;
+        break;
+      }
+    }
+
+    sections.push({
+      key: marker.key,
+      emoji: marker.emoji,
+      label: marker.label,
+      content: text.slice(contentStart, endIdx).trim(),
+    });
+  }
+
+  return sections;
+}
+
+function Cursor() {
+  return <span className="streaming-cursor" />;
+}
+
+interface StreamingDigestProps {
   text: string;
   isStreaming: boolean;
 }
 
-function StreamingView({ text, isStreaming }: StreamingViewProps) {
+function StreamingDigest({ text, isStreaming }: StreamingDigestProps) {
+  const sections = parseStreamingSections(text);
+  const isLastSection = (key: string) => {
+    const last = sections[sections.length - 1];
+    return last?.key === key;
+  };
+
   return (
-    <div className="streaming-text">
-      {text}
-      {isStreaming && <span className="streaming-cursor" />}
+    <div>
+      {sections.map((section) => {
+        const showCursor = isStreaming && isLastSection(section.key);
+
+        if (section.key === "vibe") {
+          return (
+            <div key={section.key} className="digest-vibe">
+              <strong>
+                {section.emoji} {section.label}
+              </strong>
+              <br />
+              {section.content}
+              {showCursor && <Cursor />}
+            </div>
+          );
+        }
+
+        if (section.key === "stats") {
+          return (
+            <div key={section.key} className="digest-stats">
+              {section.content}
+              {showCursor && <Cursor />}
+            </div>
+          );
+        }
+
+        // Regular sections: shipped, changed, unstable, leftOff
+        const lines = section.content.split("\n").filter((l) => l.length > 0);
+        const subtitle = lines[0] ?? "";
+        const items = lines.slice(1).map((l) => l.replace(/^\s*\u2022\s*/, ""));
+
+        return (
+          <div key={section.key} className="digest-section">
+            <div className="digest-section-title">
+              {section.emoji} {section.label}
+            </div>
+            {subtitle && <div className="digest-section-subtitle">{subtitle}</div>}
+            {items.map((item, i) => (
+              <div key={i} className="digest-item">
+                {item}
+              </div>
+            ))}
+            {showCursor && (
+              <div className="digest-item">
+                <Cursor />
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -113,7 +221,7 @@ function StructuredDigest({ digest, repoName, timeLabel }: StructuredDigestProps
         </div>
       )}
 
-      {/* Health — before stats, only when available */}
+      {/* Health */}
       {digest.health && digest.health.length > 0 && (
         <div className="digest-section">
           <div className="digest-section-title">Project Health</div>
@@ -129,7 +237,9 @@ function StructuredDigest({ digest, repoName, timeLabel }: StructuredDigestProps
                 <div className="health-card-bar">
                   <div
                     className={`health-card-fill health-card-fill--${h.level.toLowerCase()}`}
-                    style={{ width: `${Math.round(Math.max(0, Math.min(10, h.score)) * 10)}%` }}
+                    style={{
+                      width: `${Math.round(Math.max(0, Math.min(10, h.score)) * 10)}%`,
+                    }}
                   />
                 </div>
                 <div className="health-card-detail">{h.detail}</div>
@@ -139,7 +249,7 @@ function StructuredDigest({ digest, repoName, timeLabel }: StructuredDigestProps
         </div>
       )}
 
-      {/* Stats — always last */}
+      {/* Stats */}
       <div className="digest-stats">
         {fmt(s.linesAdded)} {s.linesAdded === 1 ? "line" : "lines"} added {"\u00b7"}{" "}
         {fmt(s.linesRemoved)} removed
@@ -153,7 +263,6 @@ interface ResumeViewProps {
 }
 
 function ResumeView({ text }: ResumeViewProps) {
-  // Split the formatted prompt into sections by double newline
   const sections = text.split("\n\n").filter((s) => s.trim());
 
   return (
@@ -250,13 +359,13 @@ export function DigestView({
   isStreaming,
   streamingText,
 }: DigestViewProps) {
-  // While streaming, show the raw typewriter text
-  if (mode === "digest" && isStreaming) {
-    return <StreamingView text={streamingText} isStreaming />;
-  }
-
   if (mode === "resume") return <ResumeView text={resume} />;
   if (mode === "standup") return <StandupView standup={standup} />;
+
+  // Digest mode — streaming or complete
+  if (isStreaming) {
+    return <StreamingDigest text={streamingText} isStreaming />;
+  }
 
   return (
     <div>
