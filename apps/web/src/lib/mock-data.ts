@@ -71,6 +71,67 @@ export const MOCK_STANDUP = {
   blockers: ["Stripe webhook handler \u2014 changed 4 times, still unstable"],
 };
 
+export interface HistoryEntry {
+  id: string;
+  date: string;
+  vibeCheck: string;
+  commits: number;
+  filesChanged: number;
+  shippedCount: number;
+}
+
+export const MOCK_HISTORY: HistoryEntry[] = [
+  {
+    id: "today",
+    date: "Today",
+    vibeCheck: "You're building fast \u2014 shipped OAuth and a settings page in one session.",
+    commits: 34,
+    filesChanged: 47,
+    shippedCount: 2,
+  },
+  {
+    id: "yesterday",
+    date: "Yesterday",
+    vibeCheck: "Solid grind day \u2014 mostly wiring up the pricing page and cleaning up nav.",
+    commits: 18,
+    filesChanged: 12,
+    shippedCount: 1,
+  },
+  {
+    id: "mar-30",
+    date: "Mar 30",
+    vibeCheck: "Database day. Migrated from SQLite to Postgres and didn't break anything. Rare W.",
+    commits: 22,
+    filesChanged: 31,
+    shippedCount: 0,
+  },
+  {
+    id: "mar-29",
+    date: "Mar 29",
+    vibeCheck:
+      "You went deep on the Stripe integration. It's half-wired but the foundation is there.",
+    commits: 41,
+    filesChanged: 19,
+    shippedCount: 1,
+  },
+  {
+    id: "mar-28",
+    date: "Mar 28",
+    vibeCheck: "Slow day \u2014 a few bug fixes and some CSS tweaking. Sometimes that's the vibe.",
+    commits: 7,
+    filesChanged: 5,
+    shippedCount: 0,
+  },
+  {
+    id: "mar-27",
+    date: "Mar 27",
+    vibeCheck: "Auth day! Set up the whole login/signup flow from scratch. Big foundation piece.",
+    commits: 28,
+    filesChanged: 22,
+    shippedCount: 3,
+  },
+];
+
 /** Simulates what a streaming digest looks like as raw text before parsing */
 export const MOCK_STREAMING_TEXT = `\ud83d\udcac Vibe Check
 You're building fast \u2014 shipped OAuth and a settings page in one session, and the checkout flow is almost there. Just that Stripe handler needs some love.
