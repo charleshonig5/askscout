@@ -1,6 +1,6 @@
 "use client";
 
-import { GitCommit, FileText, Rocket, Wrench, AlertTriangle } from "lucide-react";
+import { GitCommit, FileText, Rocket, Wrench, AlertTriangle, Clock } from "lucide-react";
 import type { HistoryEntry } from "@/lib/mock-data";
 
 interface SidebarProps {
@@ -18,7 +18,9 @@ export function Sidebar({ entries, activeId, onSelect, isOpen, onClose }: Sideba
 
       <aside className={`sidebar ${isOpen ? "open" : ""}`}>
         <div className="sidebar-content">
-          <div className="sidebar-title">History</div>
+          <div className="sidebar-title">
+            <Clock size={14} /> History
+          </div>
           <div className="sidebar-subtitle">Last 30 days</div>
 
           <div className="sidebar-list">

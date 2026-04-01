@@ -566,6 +566,9 @@ a:hover {
 }
 
 .sidebar-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
   font-size: 13px;
   font-weight: 600;
   color: var(--color-text-primary);
