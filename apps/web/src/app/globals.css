@@ -775,37 +775,47 @@ a:hover {
    Resume / Standup Views
    ============================================ */
 
-.resume-text {
+.ai-context-card {
+  padding: var(--space-lg);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.ai-context-body {
   font-size: 14px;
   line-height: 1.7;
-  padding: var(--space-md);
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-}
-
-.resume-section {
-  margin-bottom: var(--space-lg);
-  padding: var(--space-md);
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-}
-
-.resume-section-title {
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-text-tertiary);
-  margin-bottom: var(--space-sm);
-}
-
-.resume-section-body {
-  font-size: 14px;
-  line-height: 1.6;
   color: var(--color-text-primary);
   white-space: pre-wrap;
+}
+
+.copy-block-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  width: 100%;
+  margin-top: var(--space-md);
+  padding: var(--space-md);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.copy-block-btn:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-hover);
+}
+
+.copy-block-btn.copied {
+  color: var(--color-success);
+  border-color: var(--color-success);
 }
 
 .standup-section {

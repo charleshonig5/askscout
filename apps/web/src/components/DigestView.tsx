@@ -1,8 +1,35 @@
 "use client";
 
+import { useState, useCallback } from "react";
+import { Copy, Check } from "lucide-react";
 import type { Digest } from "@askscout/core";
 import { ExportActions } from "./ExportActions";
 import { MOCK_STREAMING_TEXT } from "@/lib/mock-data";
+
+function CopyBlock({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = useCallback(() => {
+    void navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, [text]);
+
+  return (
+    <button className={`copy-block-btn ${copied ? "copied" : ""}`} onClick={handleCopy}>
+      {copied ? (
+        <>
+          <Check size={18} /> Copied to clipboard
+        </>
+      ) : (
+        <>
+          <Copy size={18} /> Copy to clipboard
+        </>
+      )}
+    </button>
+  );
+}
 
 function fmt(n: number): string {
   return n.toLocaleString("en-US");
@@ -263,27 +290,12 @@ interface ResumeViewProps {
 }
 
 function ResumeView({ text }: ResumeViewProps) {
-  const sections = text.split("\n\n").filter((s) => s.trim());
-
   return (
     <div>
-      {sections.map((section, i) => {
-        const lines = section.split("\n");
-        const title = lines[0] ?? "";
-        const body = lines.slice(1).join("\n");
-        return (
-          <div key={i} className="resume-section">
-            <div className="resume-section-title">{title}</div>
-            <div className="resume-section-body">{body}</div>
-          </div>
-        );
-      })}
-      <p className="text-secondary" style={{ marginTop: "var(--space-md)", fontSize: 13 }}>
-        Paste this into your AI coding tool to pick up where you left off.
-      </p>
-      <div className="export-bar">
-        <ExportActions text={text} filename="resume-prompt.md" />
+      <div className="ai-context-card">
+        <div className="ai-context-body">{text}</div>
       </div>
+      <CopyBlock text={text} />
     </div>
   );
 }
