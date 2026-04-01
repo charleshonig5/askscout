@@ -14,6 +14,7 @@ import {
 } from "@askscout/core";
 import type { OutputMode, ProjectState } from "@askscout/core";
 import { loadConfig } from "../config.js";
+import { inlineSetup } from "../setup.js";
 
 export interface ScanOptions {
   mode: OutputMode;
@@ -78,7 +79,7 @@ export async function scan(options: ScanOptions): Promise<void> {
   const projectRoot = await findProjectRoot();
 
   // 2. Start spinner
-  const spinner = startSpinner("\ud83d\udc15 Scout is sniffing through your commits...");
+  let spinner = startSpinner("\ud83d\udc15 Scout is sniffing through your commits...");
 
   try {
     // 3. Read project state + repo name
@@ -138,20 +139,25 @@ export async function scan(options: ScanOptions): Promise<void> {
       return;
     }
 
-    // 8. Load config (only needed for actual API calls)
-    const config = await loadConfig();
+    // 8. Load config — if missing, run inline setup (first run flows straight to digest)
+    let config = await loadConfig();
     if (!config) {
       spinner.stop();
-      if (isFirstRun) {
-        console.log(`\ud83d\udc15 Hey! Scout here. First time sniffing ${repoName}.\n`);
-        console.log("   I need an API key to summarize your commits.");
-        console.log("   Anthropic (sk-ant-*) or OpenAI (sk-*) \u2014 bring your own.\n");
-        console.log("   Run: askscout --setup");
+      if (process.stdin.isTTY) {
+        config = await inlineSetup();
+        if (!config) {
+          process.exitCode = 1;
+          return;
+        }
+        // Resume spinner for the LLM call
+        console.error("   Generating your first digest...\n");
+        spinner = startSpinner("\ud83d\udc15 Scout is crunching the numbers...");
       } else {
+        // Non-interactive (piped, CI) — can't prompt
         console.error("\u2717 No API key found. Run: askscout --setup");
+        process.exitCode = 1;
+        return;
       }
-      process.exitCode = 1;
-      return;
     }
 
     // 9. Call summarize
