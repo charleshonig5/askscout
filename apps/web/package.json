@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
+    "build": "pnpm --filter @askscout/core build && next build",
     "dev": "next dev",
     "start": "next start",
     "typecheck": "tsc --noEmit",
