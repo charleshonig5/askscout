@@ -24,10 +24,16 @@ export default function DashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const stream = useStreamingText(MOCK_STREAMING_TEXT);
 
-  // Extract just the repo name (drop owner prefix)
-  const repoName = selectedRepo.split("/").pop() ?? selectedRepo;
   const activeEntry = MOCK_HISTORY.find((e) => e.id === activeHistoryId);
   const activeDate = activeEntry?.date ?? "Today";
+  const isToday = activeDate === "Today";
+
+  const modeLabels: Record<Mode, string> = {
+    digest: "Digest",
+    resume: "Resume Prompt",
+    standup: "Standup",
+  };
+  const pageTitle = isToday ? `Today\u2019s ${modeLabels[mode]}` : `${modeLabels[mode]}`;
 
   return (
     <div>
@@ -50,8 +56,8 @@ export default function DashboardPage() {
         <div className="app-main">
           <div className="digest-container">
             <div className="digest-page-title">
-              <h1 className="digest-page-name">{repoName}</h1>
-              <span className="digest-page-date">{activeDate}</span>
+              <h1 className="digest-page-name">{pageTitle}</h1>
+              {!isToday && <span className="digest-page-date">{activeDate}</span>}
             </div>
             <div className="digest-header">
               <ModeToggle mode={mode} onChange={setMode} />

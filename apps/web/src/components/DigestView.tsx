@@ -158,10 +158,6 @@ function ResumeView({ text }: ResumeViewProps) {
 
   return (
     <div>
-      <div className="digest-header">
-        <div className="digest-section-title">Resume Prompt</div>
-        <ExportActions text={text} filename="resume-prompt.md" />
-      </div>
       {sections.map((section, i) => {
         const lines = section.split("\n");
         const title = lines[0] ?? "";
@@ -176,6 +172,9 @@ function ResumeView({ text }: ResumeViewProps) {
       <p className="text-secondary" style={{ marginTop: "var(--space-md)", fontSize: 13 }}>
         Paste this into your AI coding tool to pick up where you left off.
       </p>
+      <div className="export-bar">
+        <ExportActions text={text} filename="resume-prompt.md" />
+      </div>
     </div>
   );
 }
@@ -197,10 +196,6 @@ function StandupView({ standup }: StandupViewProps) {
 
   return (
     <div>
-      <div className="digest-header">
-        <div className="digest-section-title">Standup</div>
-        <ExportActions text={copyText} filename="standup.md" />
-      </div>
       <div className="standup-section">
         <div className="standup-label">Yesterday</div>
         {standup.yesterday.map((item, i) => (
@@ -227,6 +222,9 @@ function StandupView({ standup }: StandupViewProps) {
           ))}
         </div>
       )}
+      <div className="export-bar">
+        <ExportActions text={copyText} filename="standup.md" />
+      </div>
     </div>
   );
 }
@@ -262,10 +260,10 @@ export function DigestView({
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "var(--space-md)" }}>
+      <StructuredDigest digest={digest} repoName={repoName} timeLabel={timeLabel} />
+      <div className="export-bar">
         <ExportActions text={MOCK_STREAMING_TEXT} filename="digest.md" />
       </div>
-      <StructuredDigest digest={digest} repoName={repoName} timeLabel={timeLabel} />
     </div>
   );
 }
