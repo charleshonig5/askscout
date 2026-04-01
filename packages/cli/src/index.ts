@@ -51,6 +51,12 @@ async function main(): Promise<void> {
       if (args.resume && args.standup) {
         throw new Error("--resume and --standup cannot be used together.");
       }
+      if (
+        args.setup &&
+        (args.resume || args.standup || args.week || args.json || args["dry-run"])
+      ) {
+        throw new Error("--setup cannot be combined with other options.");
+      }
       return true;
     })
     .example("$0", "Daily digest since your last run")
