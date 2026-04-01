@@ -25,38 +25,40 @@ export default function DashboardPage() {
   const stream = useStreamingText(MOCK_STREAMING_TEXT);
 
   return (
-    <div className="app-layout">
-      <Sidebar
-        entries={MOCK_HISTORY}
-        activeId={activeHistoryId}
-        onSelect={setActiveHistoryId}
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
+    <div>
+      <Header
+        repos={MOCK_REPOS}
+        selectedRepo={selectedRepo}
+        onRepoChange={setSelectedRepo}
+        onMenuToggle={() => setSidebarOpen((v) => !v)}
       />
 
-      <div className="app-main">
-        <Header
-          repos={MOCK_REPOS}
-          selectedRepo={selectedRepo}
-          onRepoChange={setSelectedRepo}
-          onMenuToggle={() => setSidebarOpen((v) => !v)}
+      <div className="app-layout">
+        <Sidebar
+          entries={MOCK_HISTORY}
+          activeId={activeHistoryId}
+          onSelect={setActiveHistoryId}
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
         />
 
-        <div className="digest-container">
-          <div className="digest-header">
-            <ModeToggle mode={mode} onChange={setMode} />
-          </div>
+        <div className="app-main">
+          <div className="digest-container">
+            <div className="digest-header">
+              <ModeToggle mode={mode} onChange={setMode} />
+            </div>
 
-          <DigestView
-            mode={mode}
-            digest={MOCK_DIGEST}
-            resume={MOCK_RESUME}
-            standup={MOCK_STANDUP}
-            repoName={selectedRepo}
-            timeLabel="today"
-            isStreaming={stream.isStreaming}
-            streamingText={stream.displayText}
-          />
+            <DigestView
+              mode={mode}
+              digest={MOCK_DIGEST}
+              resume={MOCK_RESUME}
+              standup={MOCK_STANDUP}
+              repoName={selectedRepo}
+              timeLabel="today"
+              isStreaming={stream.isStreaming}
+              streamingText={stream.displayText}
+            />
+          </div>
         </div>
       </div>
     </div>

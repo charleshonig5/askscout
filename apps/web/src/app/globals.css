@@ -342,39 +342,93 @@ a:hover {
 }
 
 /* ============================================
-   Health Bars
+   Health Cards
    ============================================ */
 
-.health-section {
-  margin-top: var(--space-lg);
+.health-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-sm);
 }
 
-.health-row {
+@media (max-width: 768px) {
+  .health-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.health-card {
+  padding: var(--space-md);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.health-card-header {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
+}
+
+.health-card-label {
   font-size: 13px;
-  padding: var(--space-xs) 0;
-}
-
-.health-label {
-  width: 80px;
-  color: var(--color-text-secondary);
-}
-
-.health-bar {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 1px;
-}
-
-.health-level {
   font-weight: 500;
-  min-width: 50px;
+  color: var(--color-text-primary);
 }
 
-.health-detail {
+.health-card-level {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-full);
+}
+
+.health-card-level--strong {
+  color: var(--color-success);
+  background: color-mix(in srgb, var(--color-success) 12%, transparent);
+}
+
+.health-card-level--okay {
+  color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+}
+
+.health-card-level--rough {
+  color: var(--color-danger);
+  background: color-mix(in srgb, var(--color-danger) 12%, transparent);
+}
+
+.health-card-bar {
+  height: 4px;
+  background: var(--color-bg-tertiary);
+  border-radius: 2px;
+  margin-bottom: var(--space-sm);
+  overflow: hidden;
+}
+
+.health-card-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.health-card-fill--strong {
+  background: var(--color-success);
+}
+
+.health-card-fill--okay {
+  background: var(--color-warning);
+}
+
+.health-card-fill--rough {
+  background: var(--color-danger);
+}
+
+.health-card-detail {
+  font-size: 12px;
   color: var(--color-text-secondary);
+  line-height: 1.4;
 }
 
 /* ============================================
@@ -411,13 +465,14 @@ a:hover {
 
 .app-layout {
   display: flex;
-  min-height: 100vh;
+  min-height: calc(100vh - var(--header-height));
 }
 
 .app-main {
   flex: 1;
   min-width: 0;
   margin-left: var(--sidebar-width);
+  padding-top: var(--space-md);
 }
 
 /* ============================================
@@ -426,15 +481,15 @@ a:hover {
 
 .sidebar {
   position: fixed;
-  top: 0;
+  top: var(--header-height);
   left: 0;
   width: var(--sidebar-width);
-  height: 100vh;
+  height: calc(100vh - var(--header-height));
   background: var(--color-bg-secondary);
   border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
-  z-index: 20;
+  z-index: 5;
 }
 
 .sidebar-content {
@@ -510,7 +565,7 @@ a:hover {
 }
 
 .sidebar-footer {
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-sm);
   border-top: 1px solid var(--color-border);
   display: flex;
   align-items: center;
@@ -518,6 +573,9 @@ a:hover {
 }
 
 .sidebar-footer-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
   font-size: 13px;
   color: var(--color-text-secondary);
   background: transparent;
@@ -551,8 +609,11 @@ a:hover {
   }
 
   .sidebar {
+    top: var(--header-height);
+    height: calc(100vh - var(--header-height));
     transform: translateX(-100%);
     transition: transform 0.2s ease;
+    z-index: 15;
   }
 
   .sidebar.open {
@@ -563,8 +624,9 @@ a:hover {
     display: block;
     position: fixed;
     inset: 0;
+    top: var(--header-height);
     background: rgba(0, 0, 0, 0.5);
-    z-index: 15;
+    z-index: 10;
   }
 
   .sidebar-toggle {

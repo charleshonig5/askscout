@@ -8,12 +8,6 @@ function fmt(n: number): string {
   return n.toLocaleString("en-US");
 }
 
-function healthBar(score: number): string {
-  const filled = Math.round(Math.max(0, Math.min(10, score)));
-  const empty = 10 - filled;
-  return "\u2588".repeat(filled) + "\u2591".repeat(empty);
-}
-
 interface StreamingViewProps {
   text: string;
   isStreaming: boolean;
@@ -119,28 +113,37 @@ function StructuredDigest({ digest, repoName, timeLabel }: StructuredDigestProps
         </div>
       )}
 
-      {/* Stats */}
+      {/* Health — before stats, only when available */}
+      {digest.health && digest.health.length > 0 && (
+        <div className="digest-section">
+          <div className="digest-section-title">Project Health</div>
+          <div className="health-grid">
+            {digest.health.map((h, i) => (
+              <div key={i} className="health-card">
+                <div className="health-card-header">
+                  <span className="health-card-label">{h.label}</span>
+                  <span className={`health-card-level health-card-level--${h.level.toLowerCase()}`}>
+                    {h.level}
+                  </span>
+                </div>
+                <div className="health-card-bar">
+                  <div
+                    className={`health-card-fill health-card-fill--${h.level.toLowerCase()}`}
+                    style={{ width: `${Math.round(Math.max(0, Math.min(10, h.score)) * 10)}%` }}
+                  />
+                </div>
+                <div className="health-card-detail">{h.detail}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Stats — always last */}
       <div className="digest-stats">
         {fmt(s.linesAdded)} {s.linesAdded === 1 ? "line" : "lines"} added {"\u00b7"}{" "}
         {fmt(s.linesRemoved)} removed
       </div>
-
-      {/* Health */}
-      {digest.health && digest.health.length > 0 && (
-        <div className="health-section">
-          <div className="digest-section-title">{"\ud83e\ude7a"} Project Health</div>
-          {digest.health.map((h, i) => (
-            <div key={i} className="health-row">
-              <span className="health-label">{h.label}</span>
-              <span className="health-bar mono">{healthBar(h.score)}</span>
-              <span className="health-level">{h.level}</span>
-              <span className="health-detail">
-                {"\u2014"} {h.detail}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
