@@ -17,7 +17,7 @@ function healthBar(score: number): string {
 function formatHealthSection(indicators: HealthIndicator[]): string {
   const lines = indicators.map((h) => {
     const label = h.label.padEnd(10);
-    return `  ${label} ${healthBar(h.score)} ${h.level} \u2014 ${h.detail}`;
+    return `  ${label} ${healthBar(h.score)} ${h.level}, ${h.detail}`;
   });
   return `\ud83e\ude7a Project Health\n${lines.join("\n")}`;
 }
@@ -65,7 +65,7 @@ export function formatDigest(digest: Digest, options: FormatOptions): string {
     const items = digest.unstable
       .map(
         (i) =>
-          `  \u2022 ${i.summary} \u2014 changed ${i.changeCount} ${plural(i.changeCount, "time")}, still wobbly`,
+          `  \u2022 ${i.summary}, changed ${i.changeCount} ${plural(i.changeCount, "time")}, still wobbly`,
       )
       .join("\n");
     sections.push(`\u26a0\ufe0f Unstable\nScout keeps tripping over ${label}:\n${items}`);

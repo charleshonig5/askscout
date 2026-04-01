@@ -8,9 +8,9 @@ export const MOCK_REPOS = [
 
 export const MOCK_DIGEST: Digest = {
   vibeCheck:
-    "You're building fast \u2014 shipped OAuth and a settings page in one session, and the checkout flow is almost there. Just that Stripe handler needs some love.",
+    "You're building fast. Shipped OAuth and a settings page in one session, and the checkout flow is almost there. Just that Stripe handler needs some love.",
   shipped: [
-    { summary: "Google OAuth login flow \u2014 users can now sign in with Google" },
+    { summary: "Google OAuth login flow, users can now sign in with Google" },
     { summary: "Settings page with dark mode toggle" },
   ],
   changed: [
@@ -24,9 +24,7 @@ export const MOCK_DIGEST: Digest = {
       changeCount: 4,
     },
   ],
-  leftOff: [
-    { summary: "Checkout flow \u2014 cart works but payment submission isn't wired up yet" },
-  ],
+  leftOff: [{ summary: "Checkout flow. Cart works but payment submission isn't wired up yet" }],
   stats: {
     commits: 34,
     filesChanged: 47,
@@ -39,11 +37,11 @@ export const MOCK_DIGEST: Digest = {
   },
   resumeContext: {
     techStack:
-      "Next.js e-commerce app using Stripe for payments and Google OAuth for auth, with React frontend and API routes.",
+      "Next.js e-commerce app using Stripe for payments and Google OAuth for auth, with a React frontend and API routes for the backend.",
     recentWork:
       "Shipped the full Google OAuth flow in src/auth/ and a settings page with dark mode toggle in src/components/Settings.tsx.",
     currentFocus:
-      "Finishing the checkout flow \u2014 cart logic is complete in src/cart/ but payment submission needs to be wired to Stripe's PaymentIntent API in src/api/checkout.ts.",
+      "Finishing the checkout flow. Cart logic is complete in src/cart/ but payment submission needs to be wired to Stripe's PaymentIntent API in src/api/checkout.ts.",
     keyFiles: [
       "src/api/checkout.ts",
       "src/api/webhooks/stripe.ts",
@@ -51,22 +49,22 @@ export const MOCK_DIGEST: Digest = {
       "src/components/Settings.tsx",
     ],
     warnings: [
-      "Don't touch the auth flow \u2014 it's working and tested",
-      "Stripe webhook handler at src/api/webhooks/stripe.ts is fragile \u2014 rewritten 4 times",
+      "Don't touch the auth flow, it's working and tested",
+      "Stripe webhook handler at src/api/webhooks/stripe.ts is fragile. It's been rewritten 4 times",
     ],
   },
   standupNotes: {
     yesterday: [
-      "Got Google OAuth fully working \u2014 users can sign in and sessions persist across refreshes",
+      "Got Google OAuth fully working. Users can sign in and sessions persist across refreshes",
       "Built out the settings page with dark mode toggle that saves to localStorage",
-      "Tightened API rate limiting \u2014 was letting too many requests through",
+      "Tightened API rate limiting, it was letting too many requests through",
     ],
     today: [
-      "Finishing the checkout flow \u2014 need to wire cart total to Stripe's PaymentIntent API",
+      "Finishing the checkout flow. Need to wire cart total to Stripe's PaymentIntent API",
       "Might need to rethink the Stripe webhook handler, it's been rewritten too many times",
     ],
     blockers: [
-      "Stripe webhook handler keeps breaking \u2014 changed it 4 times yesterday, might need a different approach to verifying webhook signatures",
+      "Stripe webhook handler keeps breaking. Changed it 4 times yesterday and might need a different approach to verifying webhook signatures",
     ],
   },
   health: [
@@ -98,7 +96,7 @@ Recent Work
 Shipped the full Google OAuth flow in src/auth/ and a settings page with dark mode toggle in src/components/Settings.tsx.
 
 Current Focus
-Finishing the checkout flow \u2014 cart logic is complete in src/cart/ but payment submission needs to be wired to Stripe's PaymentIntent API in src/api/checkout.ts.
+Finishing the checkout flow. Cart logic is complete in src/cart/ but payment submission needs to be wired to Stripe's PaymentIntent API in src/api/checkout.ts.
 
 Key Files
 src/api/checkout.ts
@@ -107,21 +105,21 @@ src/cart/CartProvider.tsx
 src/components/Settings.tsx
 
 \u26a0\ufe0f Heads Up
-Don't touch the auth flow \u2014 it's working and tested.
-Stripe webhook handler at src/api/webhooks/stripe.ts is fragile \u2014 rewritten 4 times, may need a simpler approach.`;
+Don't touch the auth flow, it's working and tested.
+Stripe webhook handler at src/api/webhooks/stripe.ts is fragile. It's been rewritten 4 times and may need a simpler approach.`;
 
 export const MOCK_STANDUP = {
   yesterday: [
-    "Got Google OAuth fully working \u2014 users can sign in and sessions persist across refreshes",
+    "Got Google OAuth fully working. Users can sign in and sessions persist across refreshes",
     "Built out the settings page with dark mode toggle that saves to localStorage",
-    "Tightened API rate limiting \u2014 was letting too many requests through",
+    "Tightened API rate limiting, it was letting too many requests through",
   ],
   today: [
-    "Finishing the checkout flow \u2014 need to wire cart total to Stripe's PaymentIntent API",
+    "Finishing the checkout flow. Need to wire cart total to Stripe's PaymentIntent API",
     "Might need to rethink the Stripe webhook handler, it's been rewritten too many times",
   ],
   blockers: [
-    "Stripe webhook handler keeps breaking \u2014 changed it 4 times yesterday, might need a different approach to verifying webhook signatures",
+    "Stripe webhook handler keeps breaking. Changed it 4 times yesterday and might need a different approach to verifying webhook signatures",
   ],
 };
 
@@ -140,7 +138,7 @@ export const MOCK_HISTORY: HistoryEntry[] = [
   {
     id: "today",
     date: "Today",
-    vibeCheck: "You're building fast \u2014 shipped OAuth and a settings page in one session.",
+    vibeCheck: "You're building fast. Shipped OAuth and a settings page in one session.",
     commits: 34,
     filesChanged: 47,
     shippedCount: 2,
@@ -150,7 +148,7 @@ export const MOCK_HISTORY: HistoryEntry[] = [
   {
     id: "yesterday",
     date: "Yesterday",
-    vibeCheck: "Solid grind day \u2014 mostly wiring up the pricing page and cleaning up nav.",
+    vibeCheck: "Solid grind day, mostly wiring up the pricing page and cleaning up nav.",
     commits: 18,
     filesChanged: 12,
     shippedCount: 1,
@@ -181,7 +179,7 @@ export const MOCK_HISTORY: HistoryEntry[] = [
   {
     id: "mar-28",
     date: "Mar 28",
-    vibeCheck: "Slow day \u2014 a few bug fixes and some CSS tweaking. Sometimes that's the vibe.",
+    vibeCheck: "Slow day, a few bug fixes and some CSS tweaking. Sometimes that's the vibe.",
     commits: 7,
     filesChanged: 5,
     shippedCount: 0,
@@ -202,11 +200,11 @@ export const MOCK_HISTORY: HistoryEntry[] = [
 
 /** Simulates what a streaming digest looks like as raw text before parsing */
 export const MOCK_STREAMING_TEXT = `\ud83d\udcac Vibe Check
-You're building fast \u2014 shipped OAuth and a settings page in one session, and the checkout flow is almost there. Just that Stripe handler needs some love.
+You're building fast. Shipped OAuth and a settings page in one session, and the checkout flow is almost there. Just that Stripe handler needs some love.
 
 \ud83d\ude80 Shipped
 Scout dug up 2 new things you got working:
-  \u2022 Google OAuth login flow \u2014 users can now sign in with Google
+  \u2022 Google OAuth login flow, users can now sign in with Google
   \u2022 Settings page with dark mode toggle
 
 \ud83d\udd27 Changed
@@ -217,10 +215,10 @@ Scout noticed you were poking around in 3 spots:
 
 \u26a0\ufe0f Unstable
 Scout keeps tripping over this one:
-  \u2022 Stripe webhook handler \u2014 changed 4 times, still wobbly
+  \u2022 Stripe webhook handler, changed 4 times and still wobbly
 
 \ud83d\udccd Left Off
 Here's where you left your bone:
-  \u2022 Checkout flow \u2014 cart works but payment submission isn't wired up yet
+  \u2022 Checkout flow. Cart works but payment submission isn't wired up yet
 
 \ud83d\udcca 1,204 lines added \u00b7 389 removed`;

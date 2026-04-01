@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "askscout \u2014 The daily digest for vibe coders",
+  title: "askscout | The daily digest for vibe coders",
   description:
     "Scout sniffs through your repo and tells you what you built, what changed, and where you left off.",
 };

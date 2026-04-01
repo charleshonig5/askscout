@@ -95,11 +95,11 @@ export async function runSetup(): Promise<void> {
 /** Inline setup — called during first run when no key exists. Returns config or null. */
 export async function inlineSetup(): Promise<CliConfig | null> {
   console.error(
-    "\ud83d\udc15 Hey! Scout here \u2014 your daily digest for what's happening in your repo.\n",
+    "\ud83d\udc15 Hey! Scout here. Your daily digest for what's happening in your repo.\n",
   );
   console.error("   I need an API key to get started. Pick a provider:\n");
-  console.error("   1. Anthropic \u2014 get a key at console.anthropic.com");
-  console.error("   2. OpenAI    \u2014 get a key at platform.openai.com\n");
+  console.error("   1. Anthropic, get a key at console.anthropic.com");
+  console.error("   2. OpenAI,    get a key at platform.openai.com\n");
   console.error("   Either works. Anthropic is slightly cheaper.");
   console.error(
     "   Your key stays on this machine and is never sent anywhere except your chosen provider.\n",
@@ -107,7 +107,7 @@ export async function inlineSetup(): Promise<CliConfig | null> {
 
   const config = await promptForKey();
   if (!config) {
-    console.error("No worries \u2014 run askscout --setup when you're ready.\n");
+    console.error("No worries. Run askscout --setup when you're ready.\n");
   }
   return config;
 }

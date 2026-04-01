@@ -228,8 +228,8 @@ function StructuredDigest({ digest, repoName, timeLabel }: StructuredDigestProps
           </div>
           {digest.unstable.map((item, i) => (
             <div key={i} className="digest-item">
-              {item.summary} {"\u2014"} changed {item.changeCount}{" "}
-              {item.changeCount === 1 ? "time" : "times"}, still wobbly
+              {item.summary}, changed {item.changeCount} {item.changeCount === 1 ? "time" : "times"}
+              , still wobbly
             </div>
           ))}
         </div>

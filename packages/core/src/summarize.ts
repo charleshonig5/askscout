@@ -19,6 +19,11 @@ const DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
 function buildSystemPrompt(): string {
   return `You are Scout, a friendly code digest assistant. You analyze git diffs and commit history to produce structured project summaries.
 
+IMPORTANT WRITING RULES:
+- NEVER use em dashes (\u2014 or --). Use commas, periods, or just start a new sentence instead.
+- NEVER use semicolons. Use periods or commas instead.
+- Write like a real human, not like AI. Keep it casual and natural.
+
 Respond ONLY with valid JSON matching the schema described in the user message. No markdown fences, no explanation, just raw JSON.`;
 }
 
@@ -45,14 +50,14 @@ function buildUserPrompt(
   const context =
     state?.summary && state.summary.length > 0
       ? state.summary
-      : "No previous context — this is the first run.";
+      : "No previous context. This is the first run.";
 
   const healthInstructions =
     state !== null && state.runCount >= 2
       ? `This is run #${state.runCount + 1}. Enough history to assess project health.
 Provide the "health" array with three indicators: Momentum, Stability, and Focus.
 Each has: label, level (Strong|Okay|Rough), score (0-10), and a brief detail string.`
-      : 'Set "health" to null — not enough history yet (need 3+ runs).';
+      : 'Set "health" to null. Not enough history yet (need 3+ runs).';
 
   return `Analyze the following git activity and produce a structured digest.
 
@@ -75,17 +80,17 @@ Categorize changes into these sections:
 Summarize at the **feature level**, not the file level. Use plain English.
 
 Also produce:
-- **vibeCheck**: 1-2 casual sentences capturing the overall vibe. Be warm, honest, slightly funny. Read the room — are things going well? Is it a grind? Is something exciting coming together? Write like a friend, not a report.
+- **vibeCheck**: 1-2 casual sentences capturing the overall vibe. Be warm, honest, slightly funny. Read the room. Are things going well? Is it a grind? Is something exciting coming together? Write like a friend, not a report.
 - **resumeContext**: Rich context for AI coding tools. Include:
   - **techStack**: What the project is built with (languages, frameworks, key libraries). Be specific.
   - **recentWork**: 2-3 sentences describing what was recently built and how it works. Reference specific directories or files from the diffs.
   - **currentFocus**: What to work on next. Be specific about what's done and what's left.
   - **keyFiles**: Array of 3-6 file paths most relevant to the current work. Pull these from the diffs.
-  - **warnings**: Array of things to avoid or be careful about ("don't touch auth — it's working", "webhook handler is fragile").
+  - **warnings**: Array of things to avoid or be careful about ("don't touch auth, it's working", "webhook handler is fragile").
 - **standupNotes**: What a human would actually say in a standup meeting. Conversational, specific, with context:
-  - **yesterday**: What was accomplished. Include approach and outcome, not just "did X". e.g. "Got Google OAuth fully working — users can sign in and sessions persist across refreshes"
-  - **today**: What's planned next. Be specific about the approach. e.g. "Finishing checkout flow — need to wire the cart total to Stripe's PaymentIntent API"
-  - **blockers**: Only real blockers. Include what's wrong AND why it might be stuck. e.g. "Stripe webhook handler keeps breaking — changed it 4 times, might need a different approach to signature verification"
+  - **yesterday**: What was accomplished. Include approach and outcome, not just "did X". e.g. "Got Google OAuth fully working. Users can sign in and sessions persist across refreshes"
+  - **today**: What's planned next. Be specific about the approach. e.g. "Finishing checkout flow. Need to wire the cart total to Stripe's PaymentIntent API"
+  - **blockers**: Only real blockers. Include what's wrong AND why it might be stuck. e.g. "Stripe webhook handler keeps breaking. Changed it 4 times, might need a different approach to signature verification"
 - **updatedSummary**: 1-paragraph (~200 word) project summary covering tech stack, architecture, current state, and what was last worked on. This replaces the previous summary entirely.
 
 ${healthInstructions}
