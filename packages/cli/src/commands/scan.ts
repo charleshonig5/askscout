@@ -17,7 +17,7 @@ import { loadConfig } from "../config.js";
 
 export interface ScanOptions {
   mode: OutputMode;
-  timeRange: "today" | "week" | "auto";
+  timeRange: "week" | "auto";
   json: boolean;
   dryRun: boolean;
 }
@@ -42,10 +42,6 @@ async function findProjectRoot(): Promise<string> {
 
 /** Calculate the "since" date — smart default based on state */
 function getSinceDate(timeRange: ScanOptions["timeRange"], state: ProjectState | null): Date {
-  if (timeRange === "today") {
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  }
   if (timeRange === "week") {
     return new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
   }
@@ -208,7 +204,7 @@ export async function scan(options: ScanOptions): Promise<void> {
     // 13. Show tip for first 5 runs (discoverability)
     if (newRunCount <= 5 && !options.json) {
       console.log(
-        "Tip: --resume for AI context \u00b7 --standup for meetings \u00b7 --week for 7 days",
+        "Tip: --resume to get a prompt for Cursor/Claude \u00b7 --standup for a copy-paste standup",
       );
     }
   } catch (err) {
