@@ -209,9 +209,7 @@ export async function scan(options: ScanOptions): Promise<void> {
 
     // 13. Show tip for first 5 runs (discoverability)
     if (newRunCount <= 5 && !options.json) {
-      console.log(
-        "Tip: --resume to get a prompt for your AI tools \u00b7 --standup for a copy-paste standup",
-      );
+      console.log("Tip: --standup for a copy-paste standup \u00b7 --resume for AI context");
     }
   } catch (err) {
     spinner.stop();

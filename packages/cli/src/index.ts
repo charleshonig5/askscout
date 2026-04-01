@@ -25,7 +25,7 @@ async function main(): Promise<void> {
     .option("resume", {
       type: "boolean",
       default: false,
-      describe: "Output a resume prompt for AI coding tools",
+      describe: "Output AI context to paste into your coding tools",
     })
     .option("standup", {
       type: "boolean",
@@ -60,8 +60,8 @@ async function main(): Promise<void> {
       return true;
     })
     .example("$0", "Daily digest since your last run")
-    .example("$0 --resume", "Get a context prompt for your AI coding tools")
     .example("$0 --standup", "Copy-paste standup for Slack")
+    .example("$0 --resume", "AI context to paste into your coding tools")
     .example("$0 --week", "Review the past 7 days")
     .example("$0 --setup", "Set up your API key (first time)")
     .help()

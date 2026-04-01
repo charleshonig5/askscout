@@ -30,8 +30,8 @@ export default function DashboardPage() {
 
   const modeLabels: Record<Mode, string> = {
     digest: "Digest",
-    resume: "Resume Prompt",
     standup: "Standup",
+    resume: "AI Context",
   };
   const pageTitle = isToday ? `Today\u2019s ${modeLabels[mode]}` : `${modeLabels[mode]}`;
 

@@ -10,8 +10,8 @@ interface ModeToggleProps {
 export function ModeToggle({ mode, onChange }: ModeToggleProps) {
   const modes: { value: Mode; label: string }[] = [
     { value: "digest", label: "Digest" },
-    { value: "resume", label: "Resume" },
     { value: "standup", label: "Standup" },
+    { value: "resume", label: "AI Context" },
   ];
 
   return (
