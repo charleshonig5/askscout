@@ -1,3 +1,86 @@
+/* ============================================
+   askscout — Theme System
+   No hardcoded colors. All values via custom properties.
+   ============================================ */
+
+:root {
+  /* Backgrounds */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f7f7f8;
+  --color-bg-tertiary: #efefef;
+  --color-bg-elevated: #ffffff;
+
+  /* Text */
+  --color-text-primary: #0f0f0f;
+  --color-text-secondary: #6b6b6b;
+  --color-text-tertiary: #a0a0a0;
+
+  /* Borders */
+  --color-border: #e8e8e8;
+  --color-border-hover: #d0d0d0;
+
+  /* Accent */
+  --color-accent: #6366f1;
+  --color-accent-hover: #4f46e5;
+  --color-accent-text: #ffffff;
+
+  /* Status */
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+
+  /* Typography */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", Menlo, monospace;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  /* Sizing */
+  --header-height: 56px;
+  --max-width: 720px;
+}
+
+[data-theme="dark"] {
+  --color-bg-primary: #0a0a0a;
+  --color-bg-secondary: #111111;
+  --color-bg-tertiary: #1a1a1a;
+  --color-bg-elevated: #141414;
+
+  --color-text-primary: #ededed;
+  --color-text-secondary: #a0a0a0;
+  --color-text-tertiary: #666666;
+
+  --color-border: #222222;
+  --color-border-hover: #333333;
+
+  --color-accent: #818cf8;
+  --color-accent-hover: #6366f1;
+  --color-accent-text: #0a0a0a;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================
+   Reset & Base
+   ============================================ */
+
 *,
 *::before,
 *::after {
@@ -6,14 +89,401 @@
   padding: 0;
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  color: #171717;
-  background: #ffffff;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  background: var(--color-bg-primary);
+  min-height: 100vh;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-tertiary {
+  color: var(--color-text-tertiary);
+}
+
+/* ============================================
+   Header
+   ============================================ */
+
+.header {
+  height: var(--header-height);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-lg);
+  background: var(--color-bg-primary);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.logo {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  font-family: var(--font-sans);
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  border-color: var(--color-accent);
+}
+
+.btn-primary:hover {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+}
+
+.btn-secondary {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+}
+
+.btn-secondary:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-hover);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+
+.btn-ghost:hover {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+/* ============================================
+   Mode Toggle (Tabs)
+   ============================================ */
+
+.mode-toggle {
+  display: inline-flex;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 2px;
+  gap: 2px;
+  border: 1px solid var(--color-border);
+}
+
+.mode-toggle-btn {
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  transition: all 0.15s ease;
+  font-family: var(--font-sans);
+}
+
+.mode-toggle-btn:hover {
+  color: var(--color-text-primary);
+}
+
+.mode-toggle-btn.active {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================
+   Repo Selector
+   ============================================ */
+
+.repo-selector {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+.repo-selector:hover {
+  border-color: var(--color-border-hover);
+}
+
+/* ============================================
+   Digest View
+   ============================================ */
+
+.digest-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--space-lg);
+}
+
+.digest-header {
+  margin-bottom: var(--space-xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.digest-section {
+  margin-bottom: var(--space-xl);
+}
+
+.digest-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: var(--space-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.digest-section-subtitle {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.digest-item {
+  padding: var(--space-xs) 0;
+  padding-left: var(--space-md);
+  position: relative;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.digest-item::before {
+  content: "\2022";
+  position: absolute;
+  left: 0;
+  color: var(--color-text-tertiary);
+}
+
+.digest-vibe {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  padding: var(--space-md);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  margin-bottom: var(--space-xl);
+}
+
+.digest-stats {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+}
+
+/* ============================================
+   Health Bars
+   ============================================ */
+
+.health-section {
+  margin-top: var(--space-lg);
+}
+
+.health-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 13px;
+  padding: var(--space-xs) 0;
+}
+
+.health-label {
+  width: 80px;
+  color: var(--color-text-secondary);
+}
+
+.health-bar {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.health-level {
+  font-weight: 500;
+  min-width: 50px;
+}
+
+.health-detail {
+  color: var(--color-text-secondary);
+}
+
+/* ============================================
+   Streaming / Typewriter
+   ============================================ */
+
+.streaming-text {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  color: var(--color-text-primary);
+}
+
+.streaming-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--color-accent);
+  margin-left: 1px;
+  animation: blink 0.8s step-end infinite;
+  vertical-align: text-bottom;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   Landing Page
+   ============================================ */
+
+.landing {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl);
+  text-align: center;
+}
+
+.landing-title {
+  font-family: var(--font-mono);
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: var(--space-md);
+}
+
+.landing-subtitle {
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  max-width: 480px;
+  margin-bottom: var(--space-xl);
+  line-height: 1.6;
+}
+
+.landing-cta {
+  margin-bottom: var(--space-2xl);
+}
+
+.landing-preview {
+  max-width: var(--max-width);
+  width: 100%;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  text-align: left;
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================
+   Copy Button
+   ============================================ */
+
+.copy-btn {
+  composes: btn btn-ghost;
+  font-size: 12px;
+}
+
+.copy-btn.copied {
+  color: var(--color-success);
+}
+
+/* ============================================
+   Resume / Standup Views
+   ============================================ */
+
+.resume-text {
+  font-size: 14px;
+  line-height: 1.7;
+  padding: var(--space-md);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.standup-section {
+  margin-bottom: var(--space-lg);
+}
+
+.standup-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-sm);
 }
