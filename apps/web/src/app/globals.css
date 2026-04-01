@@ -508,16 +508,21 @@ a:hover {
 .streaming-cursor {
   display: inline-block;
   width: 2px;
-  height: 1em;
+  height: 1.1em;
   background: var(--color-accent);
   margin-left: 1px;
-  animation: blink 0.8s step-end infinite;
+  animation: cursor-pulse 1s ease-in-out infinite;
   vertical-align: text-bottom;
+  border-radius: 1px;
 }
 
-@keyframes blink {
+@keyframes cursor-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
   50% {
-    opacity: 0;
+    opacity: 0.2;
   }
 }
 

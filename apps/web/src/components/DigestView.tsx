@@ -3,7 +3,6 @@
 import { useState, useCallback } from "react";
 import { Copy, Check } from "lucide-react";
 import type { Digest } from "@askscout/core";
-import { ExportActions } from "./ExportActions";
 import { MOCK_STREAMING_TEXT } from "@/lib/mock-data";
 
 function CopyBlock({ text }: { text: string }) {
@@ -343,9 +342,7 @@ function StandupView({ standup }: StandupViewProps) {
           ))}
         </div>
       )}
-      <div className="export-bar">
-        <ExportActions text={copyText} filename="standup.md" />
-      </div>
+      <CopyBlock text={copyText} />
     </div>
   );
 }
@@ -382,9 +379,7 @@ export function DigestView({
   return (
     <div>
       <StructuredDigest digest={digest} repoName={repoName} timeLabel={timeLabel} />
-      <div className="export-bar">
-        <ExportActions text={MOCK_STREAMING_TEXT} filename="digest.md" />
-      </div>
+      <CopyBlock text={MOCK_STREAMING_TEXT} />
     </div>
   );
 }
