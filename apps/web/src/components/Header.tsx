@@ -15,7 +15,7 @@ export function Header({ repos, selectedRepo, onRepoChange, onMenuToggle }: Head
   return (
     <header className="header">
       <div className="header-left">
-        <button className="btn btn-ghost sidebar-toggle" onClick={onMenuToggle} aria-label="Menu">
+        <button className="header-icon-btn sidebar-toggle" onClick={onMenuToggle} aria-label="Menu">
           <Menu size={16} />
         </button>
         <span className="logo">askscout</span>
@@ -23,17 +23,11 @@ export function Header({ repos, selectedRepo, onRepoChange, onMenuToggle }: Head
       </div>
       <div className="header-right">
         <ThemeToggle />
-        <button className="btn btn-ghost" aria-label="Settings">
+        <button className="header-icon-btn" aria-label="Settings">
           <Settings size={16} />
         </button>
-        <div
-          style={{
-            width: 28,
-            height: 28,
-            borderRadius: "var(--radius-full)",
-            background: "var(--color-bg-tertiary)",
-          }}
-        />
+        <div className="header-separator" />
+        <div className="header-avatar" />
       </div>
     </header>
   );
