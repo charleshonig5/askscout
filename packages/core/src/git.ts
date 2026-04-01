@@ -33,6 +33,22 @@ function parseNumstatLine(
   };
 }
 
+/** Get the repo name from git remote, falling back to directory name */
+export async function getRepoName(projectRoot: string): Promise<string> {
+  try {
+    const url = (await execGit(projectRoot, ["remote", "get-url", "origin"])).trim();
+    // Parse owner/repo from URLs like:
+    //   https://github.com/owner/repo.git
+    //   git@github.com:owner/repo.git
+    const match = url.match(/[/:]([^/]+\/[^/]+?)(?:\.git)?$/);
+    if (match) return match[1]!;
+  } catch {
+    // no remote configured
+  }
+  // Fallback to directory name
+  return projectRoot.split("/").pop() ?? "unknown";
+}
+
 /** Read commits from local git history within the given time range */
 export async function getCommits(projectRoot: string, since: Date): Promise<GitCommit[]> {
   let stdout: string;

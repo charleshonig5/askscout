@@ -7,16 +7,17 @@ import {
   formatStandup,
   getCommits,
   getDiffs,
+  getRepoName,
   readState,
   summarize,
   writeState,
 } from "@askscout/core";
-import type { OutputMode, TimeRange } from "@askscout/core";
+import type { OutputMode, ProjectState } from "@askscout/core";
 import { loadConfig } from "../config.js";
 
 export interface ScanOptions {
   mode: OutputMode;
-  timeRange: TimeRange;
+  timeRange: "today" | "week" | "auto";
   json: boolean;
   dryRun: boolean;
 }
@@ -39,21 +40,65 @@ async function findProjectRoot(): Promise<string> {
   throw new Error("Not a git repository (no .git found).");
 }
 
-/** Calculate the "since" date based on time range */
-function getSinceDate(timeRange: TimeRange): Date {
+/** Calculate the "since" date — smart default based on state */
+function getSinceDate(timeRange: ScanOptions["timeRange"], state: ProjectState | null): Date {
+  if (timeRange === "today") {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  }
   if (timeRange === "week") {
     return new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
   }
-  // today: midnight local time
+  // auto: use lastRunAt if available, otherwise today
+  if (state?.lastRunAt) {
+    return new Date(state.lastRunAt);
+  }
   const now = new Date();
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
 }
 
-/** Format a human-readable time label */
-function getTimeLabel(timeRange: TimeRange): string {
-  if (timeRange === "week") return "over the past week";
-  const hour = new Date().getHours();
-  return hour < 12 ? "since this morning" : "since today";
+/** Format a human-readable time label from a since date */
+function formatTimeLabel(since: Date): string {
+  const now = new Date();
+  const diffMs = now.getTime() - since.getTime();
+  const diffHours = diffMs / (1000 * 60 * 60);
+  const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+  // Same day
+  if (since.toDateString() === now.toDateString()) {
+    return `since ${formatTime(since)} today`;
+  }
+
+  // Yesterday
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  if (since.toDateString() === yesterday.toDateString()) {
+    return `since yesterday at ${formatTime(since)}`;
+  }
+
+  // Within a week
+  if (diffDays < 7) {
+    return `since ${formatWeekday(since)} at ${formatTime(since)}`;
+  }
+
+  // Wider range — show dates
+  if (diffHours > 0) {
+    return `${formatShortDate(since)} \u2013 ${formatShortDate(now)}`;
+  }
+
+  return `since ${formatShortDate(since)}`;
+}
+
+function formatTime(date: Date): string {
+  return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+}
+
+function formatWeekday(date: Date): string {
+  return date.toLocaleDateString("en-US", { weekday: "long" });
+}
+
+function formatShortDate(date: Date): string {
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
 /** Main scan command — reads git history and generates a digest */
@@ -61,24 +106,43 @@ export async function scan(options: ScanOptions): Promise<void> {
   // 1. Find project root
   const projectRoot = await findProjectRoot();
 
-  // 2. Calculate time range
-  const since = getSinceDate(options.timeRange);
-  const timeLabel = getTimeLabel(options.timeRange);
-
-  // 3. Start spinner
+  // 2. Start spinner
   const spinner = startSpinner("\ud83d\udc15 Scout is sniffing through your commits...");
 
   try {
-    // 4. Read project state
+    // 3. Read project state + repo name
     const state = await readState(projectRoot);
+    const repoName = await getRepoName(projectRoot);
+    const isFirstRun = state === null;
 
-    // 5. Get commits
-    const commits = await getCommits(projectRoot, since);
+    // 4. Calculate time range with smart defaults
+    let since = getSinceDate(options.timeRange, state);
+    let commits = await getCommits(projectRoot, since);
+
+    // 5. FRE: if first run with auto range and no commits today, widen the search
+    if (isFirstRun && options.timeRange === "auto" && commits.length === 0) {
+      // Try past 7 days
+      since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+      commits = await getCommits(projectRoot, since);
+
+      if (commits.length === 0) {
+        // Try past 30 days
+        since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        commits = await getCommits(projectRoot, since);
+      }
+    }
+
+    const timeLabel = formatTimeLabel(since);
 
     if (commits.length === 0) {
       spinner.stop();
-      console.log(`\ud83d\udc15 Scout didn't find any commits ${timeLabel}.`);
-      if (options.timeRange === "today") {
+      if (isFirstRun) {
+        console.log(
+          `\ud83d\udc15 Scout checked out ${repoName} but didn't find any recent commits.`,
+        );
+        console.log("   Is this a brand new repo? Make some commits and come back!");
+      } else {
+        console.log(`\ud83d\udc15 Scout didn't find any new commits ${timeLabel}.`);
         console.log("   Try: askscout --week");
       }
       return;
@@ -90,14 +154,15 @@ export async function scan(options: ScanOptions): Promise<void> {
     // 7. Dry run — show what would be sent (no API key needed)
     if (options.dryRun) {
       spinner.stop();
-      console.log("[DRY RUN \u2014 No API call will be made]\n");
-      console.log(`Commits: ${commits.length}`);
+      console.log(`[DRY RUN] ${repoName} \u00b7 ${commits.length} commits \u00b7 ${timeLabel}\n`);
       console.log(`Files changed: ${new Set(diffs.map((d) => d.file)).size}`);
       console.log(
         `Lines: +${diffs.reduce((s, d) => s + d.additions, 0)} / -${diffs.reduce((s, d) => s + d.deletions, 0)}`,
       );
-      console.log(`Project context: ${state?.summary || "No previous context (first run)"}\n`);
-      console.log("Commits that would be analyzed:");
+      console.log(
+        `State: ${state ? `run #${state.runCount}, last run ${state.lastRunAt}` : "first run"}\n`,
+      );
+      console.log("Commits:");
       for (const c of commits) {
         console.log(`  ${c.hash.slice(0, 7)} ${c.message}`);
       }
@@ -109,7 +174,14 @@ export async function scan(options: ScanOptions): Promise<void> {
     const config = await loadConfig();
     if (!config) {
       spinner.stop();
-      console.error("\u2717 No API key found. Run: askscout --setup");
+      if (isFirstRun) {
+        console.log(`\ud83d\udc15 Hey! Scout here. First time sniffing ${repoName}.\n`);
+        console.log("   I need an API key to summarize your commits.");
+        console.log("   Anthropic (sk-ant-*) or OpenAI (sk-*) \u2014 bring your own.\n");
+        console.log("   Run: askscout --setup");
+      } else {
+        console.error("\u2717 No API key found. Run: askscout --setup");
+      }
       process.exitCode = 1;
       return;
     }
@@ -123,11 +195,10 @@ export async function scan(options: ScanOptions): Promise<void> {
 
     // 10. Stop spinner
     spinner.stop();
-    console.log(
-      `\ud83d\udc15 Scout sniffed through ${commits.length} ${commits.length === 1 ? "commit" : "commits"} ${timeLabel}...\n`,
-    );
 
     // 11. Format and output
+    const formatOpts = { repoName, timeLabel };
+
     if (options.json) {
       const output =
         options.mode === "digest"
@@ -150,7 +221,10 @@ export async function scan(options: ScanOptions): Promise<void> {
         for (const item of standup.blockers) console.log(`  \u2022 ${item}`);
       }
     } else {
-      console.log(formatDigest(result.digest));
+      if (isFirstRun) {
+        console.log(`\ud83d\udc15 First time sniffing ${repoName}! Here's what Scout found:\n`);
+      }
+      console.log(formatDigest(result.digest, formatOpts));
     }
 
     // 12. Update state

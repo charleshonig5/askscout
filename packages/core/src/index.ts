@@ -1,6 +1,7 @@
-export { getCommits, getDiffs } from "./git.js";
+export { getCommits, getDiffs, getRepoName } from "./git.js";
 export { summarize } from "./summarize.js";
 export { formatDigest, formatResume, formatStandup } from "./format.js";
+export type { FormatOptions } from "./format.js";
 export { readState, writeState } from "./state.js";
 export type {
   AiConfig,

@@ -17,26 +17,40 @@ function healthBar(score: number): string {
 function formatHealthSection(indicators: HealthIndicator[]): string {
   const lines = indicators.map((h) => {
     const label = h.label.padEnd(10);
-    return `${label} ${healthBar(h.score)} ${h.level} \u2014 ${h.detail}`;
+    return `  ${label} ${healthBar(h.score)} ${h.level} \u2014 ${h.detail}`;
   });
-  return `\n\ud83e\ude7a Project Health\n${lines.join("\n")}`;
+  return `\ud83e\ude7a Project Health\n${lines.join("\n")}`;
+}
+
+export interface FormatOptions {
+  repoName: string;
+  timeLabel: string;
 }
 
 /** Format a digest as a human-readable string for terminal or web */
-export function formatDigest(digest: Digest): string {
+export function formatDigest(digest: Digest, options: FormatOptions): string {
   const sections: string[] = [];
+  const s = digest.stats;
+
+  // Intro header
+  sections.push(
+    `\ud83d\udc15 Scout sniffed through ${options.repoName}\n` +
+      `   ${fmt(s.commits)} ${plural(s.commits, "commit")} \u00b7 ${fmt(s.filesChanged)} ${plural(s.filesChanged, "file")} \u00b7 ${options.timeLabel}`,
+  );
 
   if (digest.shipped.length > 0) {
     const n = digest.shipped.length;
     const items = digest.shipped.map((i) => `  \u2022 ${i.summary}`).join("\n");
-    sections.push(`\ud83d\ude80 Shipped\nScout found ${n} new ${plural(n, "feature")}:\n${items}`);
+    sections.push(
+      `\ud83d\ude80 Shipped\nScout dug up ${n} new ${plural(n, "thing")} you got working:\n${items}`,
+    );
   }
 
   if (digest.changed.length > 0) {
     const n = digest.changed.length;
     const items = digest.changed.map((i) => `  \u2022 ${i.summary}`).join("\n");
     sections.push(
-      `\ud83d\udd27 Changed\nScout noticed ${n} ${plural(n, "thing")} look different:\n${items}`,
+      `\ud83d\udd27 Changed\nScout noticed you were poking around in ${n} ${plural(n, "spot")}:\n${items}`,
     );
   }
 
@@ -54,14 +68,12 @@ export function formatDigest(digest: Digest): string {
 
   if (digest.leftOff.length > 0) {
     const items = digest.leftOff.map((i) => `  \u2022 ${i.summary}`).join("\n");
-    sections.push(`\ud83d\udccd Left Off\nLast thing you were working on:\n${items}`);
+    sections.push(`\ud83d\udccd Left Off\nHere's where you left your bone:\n${items}`);
   }
 
   // Stats line
-  const s = digest.stats;
-  sections.push(
-    `\ud83d\udcca ${fmt(s.filesChanged)} ${plural(s.filesChanged, "file")} touched \u00b7 ${fmt(s.linesAdded)} ${plural(s.linesAdded, "line")} added \u00b7 ${fmt(s.linesRemoved)} removed`,
-  );
+  const statsLine = `\ud83d\udcca ${fmt(s.linesAdded)} ${plural(s.linesAdded, "line")} added \u00b7 ${fmt(s.linesRemoved)} removed`;
+  sections.push(statsLine);
 
   // Health indicators (only if available)
   if (digest.health && digest.health.length > 0) {

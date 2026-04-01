@@ -1,6 +1,6 @@
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
-import type { OutputMode, TimeRange } from "@askscout/core";
+import type { OutputMode } from "@askscout/core";
 import { scan } from "./commands/scan.js";
 import { runSetup } from "./setup.js";
 
@@ -36,7 +36,7 @@ async function main(): Promise<void> {
     .option("today", {
       type: "boolean",
       default: false,
-      describe: "Analyze today's commits (default)",
+      describe: "Analyze today's commits (since midnight)",
     })
     .option("week", {
       type: "boolean",
@@ -78,8 +78,8 @@ async function main(): Promise<void> {
   if (argv.resume) mode = "resume";
   if (argv.standup) mode = "standup";
 
-  // Determine time range
-  const timeRange: TimeRange = argv.week ? "week" : "today";
+  // Determine time range: explicit flag or auto (since last run)
+  const timeRange = argv.today ? "today" : argv.week ? "week" : "auto";
 
   await scan({
     mode,
