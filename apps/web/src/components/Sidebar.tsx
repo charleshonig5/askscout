@@ -1,5 +1,6 @@
 "use client";
 
+import { GitCommit, FileText, Rocket } from "lucide-react";
 import type { HistoryEntry } from "@/lib/mock-data";
 
 interface SidebarProps {
@@ -32,14 +33,21 @@ export function Sidebar({ entries, activeId, onSelect, isOpen, onClose }: Sideba
               >
                 <div className="sidebar-item-top">
                   <span className="sidebar-item-date">{entry.date}</span>
-                  {entry.shippedCount > 0 && (
-                    <span className="sidebar-item-badge">
-                      {"\ud83d\ude80"} {entry.shippedCount}
-                    </span>
-                  )}
+                  <div className="sidebar-item-badges">
+                    {entry.shippedCount > 0 && (
+                      <span className="sidebar-item-badge">
+                        <Rocket size={10} /> {entry.shippedCount}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div className="sidebar-item-meta mono">
-                  {entry.commits} commits {"\u00b7"} {entry.filesChanged} files
+                <div className="sidebar-item-metrics">
+                  <span className="sidebar-item-metric">
+                    <GitCommit size={10} /> {entry.commits}
+                  </span>
+                  <span className="sidebar-item-metric">
+                    <FileText size={10} /> {entry.filesChanged}
+                  </span>
                 </div>
               </button>
             ))}

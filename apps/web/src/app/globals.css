@@ -527,7 +527,7 @@ a:hover {
   background: transparent;
   cursor: pointer;
   transition: all 0.1s ease;
-  border: none;
+  border: 1px solid transparent;
   font-family: var(--font-sans);
 }
 
@@ -537,29 +537,49 @@ a:hover {
 
 .sidebar-item.active {
   background: var(--color-bg-tertiary);
+  border-color: var(--color-border);
 }
 
 .sidebar-item-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 
 .sidebar-item-date {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
   color: var(--color-text-primary);
+  letter-spacing: -0.01em;
+}
+
+.sidebar-item-badges {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
 }
 
 .sidebar-item-badge {
-  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
   color: var(--color-text-tertiary);
 }
 
-.sidebar-item-meta {
-  font-size: 11px;
+.sidebar-item-metrics {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 10px;
   color: var(--color-text-tertiary);
+}
+
+.sidebar-item-metric {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
 }
 
 .sidebar-overlay {
