@@ -197,12 +197,20 @@ export async function scan(options: ScanOptions): Promise<void> {
     }
 
     // 12. Update state
+    const newRunCount = (state?.runCount ?? 0) + 1;
     await writeState(projectRoot, {
       version: 1,
       lastRunAt: new Date().toISOString(),
-      runCount: (state?.runCount ?? 0) + 1,
+      runCount: newRunCount,
       summary: result.updatedSummary,
     });
+
+    // 13. Show tip for first 5 runs (discoverability)
+    if (newRunCount <= 5 && !options.json) {
+      console.log(
+        "Tip: --resume for AI context \u00b7 --standup for meetings \u00b7 --week for 7 days",
+      );
+    }
   } catch (err) {
     spinner.stop();
     throw err;

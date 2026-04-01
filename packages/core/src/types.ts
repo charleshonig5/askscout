@@ -28,6 +28,7 @@ export interface HealthIndicator {
 
 /** The full structured digest */
 export interface Digest {
+  vibeCheck: string;
   shipped: DigestItem[];
   changed: DigestItem[];
   unstable: UnstableItem[];

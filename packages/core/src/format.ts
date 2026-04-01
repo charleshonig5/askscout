@@ -38,6 +38,11 @@ export function formatDigest(digest: Digest, options: FormatOptions): string {
       `   ${fmt(s.commits)} ${plural(s.commits, "commit")} \u00b7 ${fmt(s.filesChanged)} ${plural(s.filesChanged, "file")} \u00b7 ${options.timeLabel}`,
   );
 
+  // Vibe check
+  if (digest.vibeCheck) {
+    sections.push(`\ud83d\udcac Vibe Check\n${digest.vibeCheck}`);
+  }
+
   if (digest.shipped.length > 0) {
     const n = digest.shipped.length;
     const items = digest.shipped.map((i) => `  \u2022 ${i.summary}`).join("\n");

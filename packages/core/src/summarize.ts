@@ -72,12 +72,15 @@ Categorize changes into these sections:
 
 Summarize at the **feature level**, not the file level. Use plain English.
 
-Also produce an "updatedSummary" — a 1-paragraph (~200 word) project summary covering tech stack, architecture, current state, and what was last worked on. This replaces the previous summary entirely.
+Also produce:
+- **vibeCheck**: 1-2 casual sentences capturing the overall vibe. Be warm, honest, slightly funny. Read the room — are things going well? Is it a grind? Is something exciting coming together? Write like a friend, not a report.
+- **updatedSummary**: 1-paragraph (~200 word) project summary covering tech stack, architecture, current state, and what was last worked on. This replaces the previous summary entirely.
 
 ${healthInstructions}
 
 Respond with this exact JSON schema:
 {
+  "vibeCheck": "...",
   "shipped": [{ "summary": "..." }],
   "changed": [{ "summary": "..." }],
   "unstable": [{ "summary": "...", "changeCount": 0 }],
@@ -202,6 +205,7 @@ export async function summarize(
   }
 
   const parsed = raw as Record<string, unknown>;
+  const vibeCheck = typeof parsed.vibeCheck === "string" ? parsed.vibeCheck : "";
   const shipped = Array.isArray(parsed.shipped) ? parsed.shipped : [];
   const changed = Array.isArray(parsed.changed) ? parsed.changed : [];
   const unstable = Array.isArray(parsed.unstable) ? parsed.unstable : [];
@@ -210,6 +214,7 @@ export async function summarize(
   const updatedSummary = typeof parsed.updatedSummary === "string" ? parsed.updatedSummary : "";
 
   const digest: Digest = {
+    vibeCheck,
     shipped: shipped as Digest["shipped"],
     changed: changed as Digest["changed"],
     unstable: unstable as Digest["unstable"],
