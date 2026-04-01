@@ -1,0 +1,25 @@
+{
+  "name": "askscout",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "askscout": "./dist/index.cjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@askscout/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "25.5.0"
+  }
+}
