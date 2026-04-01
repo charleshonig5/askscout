@@ -78,7 +78,10 @@ async function promptForKey(): Promise<CliConfig | null> {
 /** Standalone setup — run via `askscout --setup` */
 export async function runSetup(): Promise<void> {
   console.error("\naskscout setup\n");
-  console.error("Get a key at: console.anthropic.com or platform.openai.com\n");
+  console.error("Get a key at: console.anthropic.com or platform.openai.com");
+  console.error(
+    "Your key stays on this machine and is never sent anywhere except your chosen provider.\n",
+  );
 
   const config = await promptForKey();
   if (!config) {
@@ -97,7 +100,10 @@ export async function inlineSetup(): Promise<CliConfig | null> {
   console.error("   I need an API key to get started. Pick a provider:\n");
   console.error("   1. Anthropic \u2014 get a key at console.anthropic.com");
   console.error("   2. OpenAI    \u2014 get a key at platform.openai.com\n");
-  console.error("   Either works. Anthropic is slightly cheaper.\n");
+  console.error("   Either works. Anthropic is slightly cheaper.");
+  console.error(
+    "   Your key stays on this machine and is never sent anywhere except your chosen provider.\n",
+  );
 
   const config = await promptForKey();
   if (!config) {
