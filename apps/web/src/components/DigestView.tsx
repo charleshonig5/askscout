@@ -387,7 +387,6 @@ function StandupView({ standup }: StandupViewProps) {
       )}
       <div className="action-bar">
         <CopyBtn text={copyText} />
-        <DownloadBtn text={copyText} filename="standup.md" />
         <EmailBtn />
       </div>
     </div>

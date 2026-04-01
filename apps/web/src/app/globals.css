@@ -766,8 +766,6 @@ a:hover {
   display: flex;
   gap: var(--space-sm);
   margin-top: var(--space-xl);
-  padding-top: var(--space-md);
-  border-top: 1px solid var(--color-border);
 }
 
 .action-btn {
