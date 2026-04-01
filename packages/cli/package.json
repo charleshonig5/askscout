@@ -17,9 +17,11 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@askscout/core": "workspace:*"
+    "@askscout/core": "workspace:*",
+    "yargs": "^18.0.0"
   },
   "devDependencies": {
-    "@types/node": "25.5.0"
+    "@types/node": "25.5.0",
+    "@types/yargs": "^17.0.35"
   }
 }
