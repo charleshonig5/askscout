@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, Download, Mail } from "lucide-react";
 import type { Digest } from "@askscout/core";
 import { MOCK_STREAMING_TEXT } from "@/lib/mock-data";
 
-function CopyBlock({ text }: { text: string }) {
+function CopyBtn({ text, label }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(() => {
@@ -16,14 +16,55 @@ function CopyBlock({ text }: { text: string }) {
   }, [text]);
 
   return (
-    <button className={`copy-block-btn ${copied ? "copied" : ""}`} onClick={handleCopy}>
+    <button className={`action-btn ${copied ? "copied" : ""}`} onClick={handleCopy}>
       {copied ? (
         <>
-          <Check size={18} /> Copied to clipboard
+          <Check size={16} /> Copied
         </>
       ) : (
         <>
-          <Copy size={18} /> Copy to clipboard
+          <Copy size={16} /> {label ?? "Copy"}
+        </>
+      )}
+    </button>
+  );
+}
+
+function DownloadBtn({ text, filename }: { text: string; filename: string }) {
+  const handleDownload = useCallback(() => {
+    const blob = new Blob([text], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [text, filename]);
+
+  return (
+    <button className="action-btn" onClick={handleDownload}>
+      <Download size={16} /> Download
+    </button>
+  );
+}
+
+function EmailBtn() {
+  const [sent, setSent] = useState(false);
+
+  const handleEmail = useCallback(() => {
+    setSent(true);
+    setTimeout(() => setSent(false), 3000);
+  }, []);
+
+  return (
+    <button className={`action-btn ${sent ? "copied" : ""}`} onClick={handleEmail}>
+      {sent ? (
+        <>
+          <Check size={16} /> Sent
+        </>
+      ) : (
+        <>
+          <Mail size={16} /> Email
         </>
       )}
     </button>
@@ -294,7 +335,9 @@ function ResumeView({ text }: ResumeViewProps) {
       <div className="ai-context-card">
         <div className="ai-context-body">{text}</div>
       </div>
-      <CopyBlock text={text} />
+      <div className="action-bar">
+        <CopyBtn text={text} label="Copy to clipboard" />
+      </div>
     </div>
   );
 }
@@ -342,7 +385,11 @@ function StandupView({ standup }: StandupViewProps) {
           ))}
         </div>
       )}
-      <CopyBlock text={copyText} />
+      <div className="action-bar">
+        <CopyBtn text={copyText} />
+        <DownloadBtn text={copyText} filename="standup.md" />
+        <EmailBtn />
+      </div>
     </div>
   );
 }
@@ -379,7 +426,11 @@ export function DigestView({
   return (
     <div>
       <StructuredDigest digest={digest} repoName={repoName} timeLabel={timeLabel} />
-      <CopyBlock text={MOCK_STREAMING_TEXT} />
+      <div className="action-bar">
+        <CopyBtn text={MOCK_STREAMING_TEXT} />
+        <DownloadBtn text={MOCK_STREAMING_TEXT} filename="digest.md" />
+        <EmailBtn />
+      </div>
     </div>
   );
 }
