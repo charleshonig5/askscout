@@ -91,6 +91,12 @@ export interface AiConfig {
   model?: string;
 }
 
+/** Result from the summarize function — includes the digest and an updated project summary */
+export interface SummarizeResult {
+  digest: Digest;
+  updatedSummary: string;
+}
+
 /** Options passed to the core summarize function */
 export interface SummarizeOptions {
   mode: OutputMode;

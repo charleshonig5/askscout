@@ -16,6 +16,7 @@ export type {
   ResumePrompt,
   Standup,
   SummarizeOptions,
+  SummarizeResult,
   TimeRange,
   UnstableItem,
 } from "./types.js";
