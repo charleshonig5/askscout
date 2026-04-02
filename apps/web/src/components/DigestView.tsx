@@ -80,6 +80,72 @@ function CopyBtn({ text, label }: { text: string; label?: string }) {
   );
 }
 
+/** Renders text with proper styled bullets and section headers */
+function FormattedText({ text, isStreaming }: { text: string; isStreaming: boolean }) {
+  const cursorRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (isStreaming && cursorRef.current) {
+      cursorRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }, [text, isStreaming]);
+
+  const lines = text.split("\n");
+  const elements: React.ReactNode[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]!;
+    const trimmed = line.trim();
+
+    // Bullet item
+    if (/^\s*[\u2022\-*]\s/.test(line)) {
+      const content = trimmed.replace(/^[\u2022\-*]\s*/, "");
+      elements.push(
+        <div key={i} className="digest-item">
+          {content}
+        </div>,
+      );
+    }
+    // Section header (non-empty, non-bullet, followed by content)
+    else if (trimmed && !trimmed.startsWith("•") && trimmed.length < 80) {
+      const nextLine = lines[i + 1]?.trim() ?? "";
+      const isHeader = nextLine === "" || nextLine.startsWith("\u2022") || nextLine.startsWith("-");
+      if (isHeader || i === 0) {
+        elements.push(
+          <div
+            key={i}
+            className="digest-section-title"
+            style={{ marginTop: i > 0 ? "var(--space-lg)" : 0 }}
+          >
+            {trimmed}
+          </div>,
+        );
+      } else {
+        elements.push(
+          <p key={i} className="formatted-paragraph">
+            {trimmed}
+          </p>,
+        );
+      }
+    }
+    // Regular text paragraph
+    else if (trimmed) {
+      elements.push(
+        <p key={i} className="formatted-paragraph">
+          {trimmed}
+        </p>,
+      );
+    }
+  }
+
+  return (
+    <div>
+      {elements}
+      {isStreaming && <span ref={cursorRef} className="streaming-cursor" />}
+    </div>
+  );
+}
+
 // Section markers used in the digest streaming text
 const SECTION_MARKERS = [
   { key: "vibe", emoji: "\ud83d\udcac", label: "Vibe Check" },
@@ -236,14 +302,7 @@ export function DigestView({ mode, isStreaming, streamingText, stats }: DigestVi
     if (mode === "digest") {
       return <StreamingDigest text={streamingText} isStreaming />;
     }
-    return (
-      <div className="ai-context-card">
-        <div className="ai-context-body">
-          {streamingText}
-          <span className="streaming-cursor" />
-        </div>
-      </div>
-    );
+    return <FormattedText text={streamingText} isStreaming />;
   }
 
   // Completed
@@ -259,9 +318,7 @@ export function DigestView({ mode, isStreaming, streamingText, stats }: DigestVi
     }
     return (
       <div>
-        <div className="ai-context-card">
-          <div className="ai-context-body">{streamingText}</div>
-        </div>
+        <FormattedText text={streamingText} isStreaming={false} />
         <CopyBtn text={streamingText} />
       </div>
     );
