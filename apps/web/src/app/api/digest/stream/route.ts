@@ -152,6 +152,8 @@ async function streamOpenAI(
       model: "gpt-4o-mini",
       stream: true,
       max_tokens: 2048,
+      temperature: 0.3,
+      frequency_penalty: 0.5,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
@@ -231,6 +233,7 @@ async function streamAnthropic(
       model: "claude-haiku-4-5-20250414",
       stream: true,
       max_tokens: 2048,
+      temperature: 0.3,
       system: systemPrompt,
       messages: [{ role: "user", content: userPrompt }],
     }),

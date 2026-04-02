@@ -1,8 +1,25 @@
 import type { GitCommit, GitDiff } from "@askscout/core";
 
 const GITHUB_API = "https://api.github.com";
-const MAX_DIFF_CHARS = 16_000;
+const MAX_DIFF_CHARS = 12_000;
 const TRUNCATION_MARKER = "\n... (truncated)";
+const MAX_COMMITS_TO_LLM = 30;
+
+// Files to exclude from diffs (noisy, not useful for summaries)
+const NOISY_FILE_PATTERNS = [
+  /^pnpm-lock\.yaml$/,
+  /^package-lock\.json$/,
+  /^yarn\.lock$/,
+  /\.lock$/,
+  /^\.pnpm-approve-builds\.json$/,
+  /^\.next\//,
+  /^dist\//,
+  /^node_modules\//,
+  /\.min\.(js|css)$/,
+  /\.map$/,
+  /\.d\.ts$/,
+  /\.tsbuildinfo$/,
+];
 
 interface GitHubRepo {
   full_name: string;
@@ -79,7 +96,10 @@ export async function fetchCommits(
   // Merge detailed data back
   const commitMap = new Map(detailed.map((d) => [d.sha, d]));
 
-  return raw.map((c) => {
+  // Cap commits sent to LLM to avoid prompt bloat
+  const capped = raw.slice(0, MAX_COMMITS_TO_LLM);
+
+  return capped.map((c) => {
     const detail = commitMap.get(c.sha);
     return {
       hash: c.sha,
@@ -135,7 +155,12 @@ export async function fetchDiffs(
     }
   }
 
-  const diffs: GitDiff[] = files.map((f) => ({
+  // Filter out noisy files that don't contribute to useful summaries
+  const filtered = files.filter(
+    (f) => !NOISY_FILE_PATTERNS.some((pattern) => pattern.test(f.filename)),
+  );
+
+  const diffs: GitDiff[] = filtered.map((f) => ({
     file: f.filename,
     additions: f.additions,
     deletions: f.deletions,
