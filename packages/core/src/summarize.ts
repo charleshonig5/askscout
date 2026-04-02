@@ -47,7 +47,10 @@ Scout keeps tripping over [this one/these]:
 Here's where you left your bone:
   \u2022 [item]
 
-Only include sections that have items. Skip empty sections entirely. Do NOT include a stats line. Stats are handled separately.`;
+IMPORTANT:
+- The "Left Off" section should ALWAYS have at least one item. Look at the most recent commits to determine what was being worked on last. This is the most important section for the user.
+- Only skip Shipped, Changed, or Unstable if they truly have zero items.
+- Do NOT include a stats line. Stats are handled separately.`;
 }
 
 export function buildAIContextSystemPrompt(): string {
