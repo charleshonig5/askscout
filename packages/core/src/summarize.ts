@@ -47,10 +47,13 @@ Scout keeps tripping over [this one/these]:
 Here's where you left your bone:
   \u2022 [item]
 
-IMPORTANT:
-- The "Left Off" section should ALWAYS have at least one item. Look at the most recent commits to determine what was being worked on last. This is the most important section for the user.
+IMPORTANT RULES:
+- Maximum 7 bullet points per section. If there are more changes than that, group related items together and drop the least important ones. Quality over quantity.
+- Group related changes into single bullets. "Updated auth middleware and session handling" is better than two separate bullets for each file.
+- The "Left Off" section should ALWAYS have at least one item. Look at the most recent commits to determine what was being worked on last.
 - Only skip Shipped, Changed, or Unstable if they truly have zero items.
-- Do NOT include a stats line. Stats are handled separately.`;
+- Do NOT include a stats line. Stats are handled separately.
+- Keep each bullet to 1-2 sentences max. Be concise.`;
 }
 
 export function buildAIContextSystemPrompt(): string {
