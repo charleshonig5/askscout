@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { fetchUserRepos } from "@/lib/github";
+import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 
 export async function GET() {
   const session = await auth();
@@ -7,11 +8,18 @@ export async function GET() {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Rate limit
+  const userKey = session.accessToken.slice(-10);
+  const result = checkRateLimit(`repos:${userKey}`, RATE_LIMITS.reposPerMinute);
+  if (!result.allowed) {
+    return Response.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   try {
     const repos = await fetchUserRepos(session.accessToken);
     return Response.json({ repos });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Failed to fetch repos";
-    return Response.json({ error: message }, { status: 500 });
+    console.error("Repos fetch error:", err);
+    return Response.json({ error: "Failed to fetch repos" }, { status: 500 });
   }
 }

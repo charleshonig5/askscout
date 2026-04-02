@@ -29,11 +29,14 @@ async function githubFetch(endpoint: string, token: string): Promise<Response> {
       Accept: "application/vnd.github+json",
       "X-GitHub-Api-Version": "2022-11-28",
     },
+    signal: AbortSignal.timeout(15000), // 15 second timeout
   });
 
   if (!res.ok) {
+    // Log the real error server-side, but don't expose details
     const body = await res.text().catch(() => "");
-    throw new Error(`GitHub API error (${res.status}): ${body.slice(0, 200)}`);
+    console.error(`GitHub API error (${res.status}): ${body.slice(0, 200)}`);
+    throw new Error(`GitHub API error (${res.status})`);
   }
 
   return res;

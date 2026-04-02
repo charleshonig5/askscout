@@ -34,7 +34,7 @@ export default function DashboardPage() {
         // Silently fail, repos will be empty
       }
     })();
-  }, []);  
+  }, []);
 
   // Generate digest when repo changes
   const generateDigest = useCallback(
@@ -60,7 +60,7 @@ export default function DashboardPage() {
     if (selectedRepo && !stream.text && !stream.isStreaming && !stream.isDone) {
       generateDigest(selectedRepo);
     }
-  }, [selectedRepo]);  
+  }, [selectedRepo]);
 
   const repoName = selectedRepo.split("/").pop() ?? selectedRepo;
   const activeEntry = MOCK_HISTORY.find((e) => e.id === activeHistoryId);
