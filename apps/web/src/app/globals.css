@@ -865,6 +865,45 @@ a:hover {
   border-color: var(--color-border-hover);
 }
 
+.digest-actions {
+  margin-top: var(--space-lg);
+}
+
+.digest-actions-secondary {
+  display: flex;
+  gap: var(--space-xs);
+  margin-top: var(--space-sm);
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex: 1;
+  justify-content: center;
+  padding: var(--space-sm) var(--space-md);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.action-btn:hover {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-hover);
+}
+
+.action-btn.copied {
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+
 .standup-section {
   margin-bottom: var(--space-lg);
 }

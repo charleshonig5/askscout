@@ -1,7 +1,59 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, Download, Mail } from "lucide-react";
+
+function DownloadBtn({ text }: { text: string }) {
+  const handleDownload = useCallback(() => {
+    const blob = new Blob([text], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "digest.md";
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [text]);
+
+  return (
+    <button className="action-btn" onClick={handleDownload}>
+      <Download size={16} /> Download
+    </button>
+  );
+}
+
+function EmailBtn() {
+  const [sent, setSent] = useState(false);
+  const handleEmail = useCallback(() => {
+    setSent(true);
+    setTimeout(() => setSent(false), 3000);
+  }, []);
+
+  return (
+    <button className={`action-btn ${sent ? "copied" : ""}`} onClick={handleEmail}>
+      {sent ? (
+        <>
+          <Check size={16} /> Sent
+        </>
+      ) : (
+        <>
+          <Mail size={16} /> Email
+        </>
+      )}
+    </button>
+  );
+}
+
+function DigestActions({ text }: { text: string }) {
+  return (
+    <div className="digest-actions">
+      <CopyBtn text={text} />
+      <div className="digest-actions-secondary">
+        <DownloadBtn text={text} />
+        <EmailBtn />
+      </div>
+    </div>
+  );
+}
 
 function CopyBtn({ text, label }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false);
@@ -201,7 +253,7 @@ export function DigestView({ mode, isStreaming, streamingText, stats }: DigestVi
         <div>
           <StreamingDigest text={streamingText} isStreaming={false} />
           {stats && <StatsBar stats={stats} />}
-          <CopyBtn text={streamingText} />
+          <DigestActions text={streamingText} />
         </div>
       );
     }
