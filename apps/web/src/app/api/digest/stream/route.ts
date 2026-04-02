@@ -157,7 +157,7 @@ async function streamOpenAI(
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: "gpt-5-mini",
+      model: "gpt-4o",
       stream: true,
       max_tokens: 1024,
       temperature: 0.2,
@@ -173,7 +173,7 @@ async function streamOpenAI(
 
   if (!response.ok) {
     const errBody = await response.text().catch(() => "");
-    console.error(`OpenAI API error (${response.status}):`, errBody.slice(0, 300));
+    console.error(`OpenAI API error (${response.status}):`, errBody.slice(0, 500));
     throw new Error("AI service error");
   }
 
