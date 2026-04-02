@@ -6,7 +6,8 @@ import { Sidebar } from "@/components/Sidebar";
 import { ModeToggle } from "@/components/ModeToggle";
 import { DigestView } from "@/components/DigestView";
 import { useDigestStream } from "@/lib/use-digest-stream";
-import { MOCK_HISTORY, MOCK_STANDUP } from "@/lib/mock-data";
+import { MOCK_STANDUP } from "@/lib/mock-data";
+import type { HistoryEntry } from "@/lib/mock-data";
 
 type Mode = "digest" | "resume" | "standup";
 
@@ -17,6 +18,7 @@ export default function DashboardPage() {
   const [activeHistoryId, setActiveHistoryId] = useState<string>("today");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const stream = useDigestStream();
+  const history: HistoryEntry[] = []; // Empty until Firebase is wired up
 
   // Fetch repos on mount
   useEffect(() => {
@@ -63,7 +65,7 @@ export default function DashboardPage() {
   }, [selectedRepo]);
 
   const repoName = selectedRepo.split("/").pop() ?? selectedRepo;
-  const activeEntry = MOCK_HISTORY.find((e) => e.id === activeHistoryId);
+  const activeEntry = history.find((e) => e.id === activeHistoryId);
   const activeDate = activeEntry?.date ?? "Today";
   const isToday = activeDate === "Today";
 
@@ -90,7 +92,7 @@ export default function DashboardPage() {
 
       <div className="app-layout">
         <Sidebar
-          entries={MOCK_HISTORY}
+          entries={history}
           activeId={activeHistoryId}
           onSelect={setActiveHistoryId}
           isOpen={sidebarOpen}

@@ -24,6 +24,9 @@ export function Sidebar({ entries, activeId, onSelect, isOpen, onClose }: Sideba
           <div className="sidebar-subtitle">Last 30 days</div>
 
           <div className="sidebar-list">
+            {entries.length === 0 && (
+              <div className="sidebar-empty">History will appear here as you generate digests.</div>
+            )}
             {entries.map((entry) => (
               <button
                 key={entry.id}
