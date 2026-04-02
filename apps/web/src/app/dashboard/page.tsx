@@ -55,7 +55,7 @@ export default function DashboardPage() {
         // Silently fail
       }
     })();
-  }, []);  
+  }, []);
 
   // Generate for a specific mode
   const generate = useCallback(
@@ -87,7 +87,7 @@ export default function DashboardPage() {
         }
       }, 50);
     }
-  }, [selectedRepo]);  
+  }, [selectedRepo]);
 
   // When tab changes, generate if that mode hasn't been generated yet
   const handleModeChange = useCallback(
@@ -163,13 +163,9 @@ export default function DashboardPage() {
             ) : (
               <DigestView
                 mode={mode}
-                digest={null}
-                resume={resumeStream.text}
-                standup={{ yesterday: [], today: [], blockers: [] }}
-                repoName={selectedRepo}
-                timeLabel="past 7 days"
                 isStreaming={currentStream.isStreaming}
                 streamingText={currentStream.text}
+                stats={digestStream.stats}
               />
             )}
           </div>

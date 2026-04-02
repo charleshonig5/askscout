@@ -2,8 +2,16 @@
 
 import { useState, useCallback, useRef } from "react";
 
+export interface DigestStats {
+  commits: number;
+  filesChanged: number;
+  linesAdded: number;
+  linesRemoved: number;
+}
+
 interface DigestStreamState {
   text: string;
+  stats: DigestStats | null;
   isStreaming: boolean;
   isDone: boolean;
   error: string | null;
@@ -13,6 +21,7 @@ interface DigestStreamState {
 
 export function useDigestStream(): DigestStreamState {
   const [text, setText] = useState("");
+  const [stats, setStats] = useState<DigestStats | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,19 +30,19 @@ export function useDigestStream(): DigestStreamState {
   const reset = useCallback(() => {
     abortRef.current?.abort();
     setText("");
+    setStats(null);
     setIsStreaming(false);
     setIsDone(false);
     setError(null);
   }, []);
 
   const start = useCallback((owner: string, repo: string, mode?: string) => {
-    // Abort any in-flight request
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
 
-    // Reset state
     setText("");
+    setStats(null);
     setIsStreaming(true);
     setIsDone(false);
     setError(null);
@@ -78,7 +87,9 @@ export function useDigestStream(): DigestStreamState {
               try {
                 const parsed = JSON.parse(rawData) as Record<string, unknown>;
 
-                if (currentEvent === "text" && typeof parsed.text === "string") {
+                if (currentEvent === "stats") {
+                  setStats(parsed as unknown as DigestStats);
+                } else if (currentEvent === "text" && typeof parsed.text === "string") {
                   const chunk = parsed.text;
                   setText((prev) => prev + chunk);
                 } else if (currentEvent === "done") {
@@ -106,5 +117,5 @@ export function useDigestStream(): DigestStreamState {
     })();
   }, []);
 
-  return { text, isStreaming, isDone, error, start, reset };
+  return { text, stats, isStreaming, isDone, error, start, reset };
 }

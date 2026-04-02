@@ -47,9 +47,7 @@ Scout keeps tripping over [this one/these]:
 Here's where you left your bone:
   \u2022 [item]
 
-\ud83d\udcca [lines added] lines added \u00b7 [lines removed] removed
-
-Only include sections that have items. Skip empty sections entirely.`;
+Only include sections that have items. Skip empty sections entirely. Do NOT include a stats line. Stats are handled separately.`;
 }
 
 export function buildAIContextSystemPrompt(): string {

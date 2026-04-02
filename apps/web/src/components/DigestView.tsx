@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Copy, Check } from "lucide-react";
-import type { Digest } from "@askscout/core";
 
 function CopyBtn({ text, label }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false);
@@ -145,18 +144,31 @@ function StreamingDigest({ text, isStreaming }: { text: string; isStreaming: boo
   );
 }
 
-interface DigestViewProps {
-  mode: "digest" | "resume" | "standup";
-  digest: Digest | null;
-  resume: string;
-  standup: { yesterday: string[]; today: string[]; blockers: string[] };
-  repoName: string;
-  timeLabel: string;
-  isStreaming: boolean;
-  streamingText: string;
+interface DigestViewStats {
+  commits: number;
+  filesChanged: number;
+  linesAdded: number;
+  linesRemoved: number;
 }
 
-export function DigestView({ mode, isStreaming, streamingText }: DigestViewProps) {
+interface DigestViewProps {
+  mode: "digest" | "resume" | "standup";
+  isStreaming: boolean;
+  streamingText: string;
+  stats: DigestViewStats | null;
+}
+
+function StatsBar({ stats }: { stats: DigestViewStats }) {
+  const fmt = (n: number) => n.toLocaleString("en-US");
+  return (
+    <div className="digest-stats">
+      {fmt(stats.commits)} commits {"\u00b7"} {fmt(stats.filesChanged)} files {"\u00b7"}{" "}
+      {fmt(stats.linesAdded)} added {"\u00b7"} {fmt(stats.linesRemoved)} removed
+    </div>
+  );
+}
+
+export function DigestView({ mode, isStreaming, streamingText, stats }: DigestViewProps) {
   // Loading state
   if (isStreaming && !streamingText) {
     const loadingMessages: Record<string, string> = {
@@ -188,6 +200,7 @@ export function DigestView({ mode, isStreaming, streamingText }: DigestViewProps
       return (
         <div>
           <StreamingDigest text={streamingText} isStreaming={false} />
+          {stats && <StatsBar stats={stats} />}
           <CopyBtn text={streamingText} />
         </div>
       );
