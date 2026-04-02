@@ -302,7 +302,11 @@ export function DigestView({ mode, isStreaming, streamingText, stats }: DigestVi
     if (mode === "digest") {
       return <StreamingDigest text={streamingText} isStreaming />;
     }
-    return <FormattedText text={streamingText} isStreaming />;
+    return (
+      <div className="digest-vibe">
+        <FormattedText text={streamingText} isStreaming />
+      </div>
+    );
   }
 
   // Completed
@@ -318,7 +322,9 @@ export function DigestView({ mode, isStreaming, streamingText, stats }: DigestVi
     }
     return (
       <div>
-        <FormattedText text={streamingText} isStreaming={false} />
+        <div className="digest-vibe">
+          <FormattedText text={streamingText} isStreaming={false} />
+        </div>
         <CopyBtn text={streamingText} />
       </div>
     );
