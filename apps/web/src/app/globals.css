@@ -379,6 +379,11 @@ a:hover {
   color: var(--color-text-tertiary);
 }
 
+.digest-item-title {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
 .digest-vibe {
   font-size: 14px;
   line-height: 1.6;

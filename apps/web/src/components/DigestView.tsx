@@ -247,11 +247,24 @@ function StreamingDigest({ text, isStreaming }: { text: string; isStreaming: boo
               {section.emoji} {section.label}
             </div>
             {subtitle && <div className="digest-section-subtitle">{subtitle}</div>}
-            {items.map((item: string, i: number) => (
-              <div key={i} className="digest-item">
-                {item}
-              </div>
-            ))}
+            {items.map((item: string, i: number) => {
+              const dashIdx = item.indexOf(" - ");
+              if (dashIdx > 0 && dashIdx < 60) {
+                const title = item.slice(0, dashIdx);
+                const context = item.slice(dashIdx + 3);
+                return (
+                  <div key={i} className="digest-item">
+                    <span className="digest-item-title">{title}</span>
+                    {context && <> {context}</>}
+                  </div>
+                );
+              }
+              return (
+                <div key={i} className="digest-item">
+                  {item}
+                </div>
+              );
+            })}
             {showCursor && <div className="digest-item">{cursor}</div>}
           </div>
         );

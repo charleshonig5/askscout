@@ -31,29 +31,29 @@ Output your response in this EXACT format with these EXACT section headers and e
 
 \ud83d\ude80 Shipped
 Scout dug up N new things you got working:
-  \u2022 [item]
-  \u2022 [item]
+  \u2022 Short Title - rest of the context explaining what happened
+  \u2022 Short Title - more detail here
 
 \ud83d\udd27 Changed
 Scout noticed you were poking around in N spots:
-  \u2022 [item]
-  \u2022 [item]
+  \u2022 Short Title - what changed and why
+  \u2022 Short Title - more context
 
 \u26a0\ufe0f Unstable
 Scout keeps tripping over [this one/these]:
-  \u2022 [item, changed N times, still wobbly]
+  \u2022 Short Title - changed N times, still wobbly
 
 \ud83d\udccd Left Off
 Here's where you left your bone:
-  \u2022 [item]
+  \u2022 Short Title - what's in progress and what's next
 
 IMPORTANT RULES:
-- Maximum 7 bullet points per section. If there are more changes than that, group related items together and drop the least important ones. Quality over quantity.
-- Group related changes into single bullets. "Updated auth middleware and session handling" is better than two separate bullets for each file.
-- The "Left Off" section should ALWAYS have at least one item. Look at the most recent commits to determine what was being worked on last.
+- Every bullet MUST start with a short title (2-5 words) followed by " - " and then the context. Example: "OAuth flow - users can now sign in with Google and sessions persist"
+- Maximum 7 bullet points per section. Group related items and drop the least important.
+- The "Left Off" section should ALWAYS have at least one item.
 - Only skip Shipped, Changed, or Unstable if they truly have zero items.
 - Do NOT include a stats line. Stats are handled separately.
-- Keep each bullet to 1-2 sentences max. Be concise.`;
+- Keep each bullet to 1-2 sentences max after the title.`;
 }
 
 export function buildAIContextSystemPrompt(): string {
