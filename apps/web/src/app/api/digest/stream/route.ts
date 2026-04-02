@@ -5,7 +5,6 @@ import {
   buildStreamingSystemPrompt,
   buildAIContextSystemPrompt,
   buildStandupSystemPrompt,
-  computeStats,
 } from "@askscout/core";
 
 export const maxDuration = 60;
@@ -82,8 +81,18 @@ export async function POST(req: Request) {
 
     const diffs = await fetchDiffs(session.accessToken, owner, repo, commits);
 
-    // 5. Compute stats (deterministic, no LLM needed)
-    const stats = computeStats(commits, diffs);
+    // 5. Compute stats from commits (more reliable than diffs which can fail)
+    const allFiles = new Set(commits.flatMap((c) => c.filesChanged));
+    const stats = {
+      commits: commits.length,
+      filesChanged: allFiles.size > 0 ? allFiles.size : diffs.length,
+      linesAdded: commits.reduce((sum, c) => sum + c.additions, 0),
+      linesRemoved: commits.reduce((sum, c) => sum + c.deletions, 0),
+      timeSpan: {
+        from: commits[0]!.timestamp,
+        to: commits[commits.length - 1]!.timestamp,
+      },
+    };
 
     // 6. Build prompt based on mode
     const mode = body.mode ?? "digest";
@@ -161,7 +170,7 @@ async function streamOpenAI(
   systemPrompt: string,
   userPrompt: string,
   apiKey: string,
-  stats: ReturnType<typeof computeStats>,
+  stats: Record<string, unknown>,
 ): Promise<ReadableStream> {
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -248,7 +257,7 @@ async function streamAnthropic(
   systemPrompt: string,
   userPrompt: string,
   apiKey: string,
-  stats: ReturnType<typeof computeStats>,
+  stats: Record<string, unknown>,
 ): Promise<ReadableStream> {
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
