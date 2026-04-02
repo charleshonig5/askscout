@@ -149,7 +149,7 @@ async function streamOpenAI(
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: "gpt-5.4-nano",
+      model: "gpt-4o",
       stream: true,
       max_tokens: 2048,
       temperature: 0.3,
@@ -162,8 +162,14 @@ async function streamOpenAI(
     signal: AbortSignal.timeout(30000),
   });
 
-  if (!response.ok || !response.body) {
+  if (!response.ok) {
+    const errBody = await response.text().catch(() => "");
+    console.error(`OpenAI API error (${response.status}):`, errBody.slice(0, 300));
     throw new Error("AI service error");
+  }
+
+  if (!response.body) {
+    throw new Error("No response body from AI service");
   }
 
   const reader = response.body.getReader();
