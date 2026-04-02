@@ -102,10 +102,9 @@ Today
   \u2022 [item]
 
 Blockers
-[Only include if there are real blockers. Include what's wrong AND why it's stuck]
-  \u2022 [item]
+  \u2022 [item, or "None" if there are no real blockers]
 
-If there are no blockers, skip that section entirely. Be concise.`;
+Always include all three sections. If there are no blockers, write "None" as the single bullet point. Be concise.`;
 }
 
 export function buildSystemPrompt(): string {
