@@ -63,17 +63,15 @@ function CopyBtn({ text, label }: { text: string; label?: string }) {
     });
   }, [text]);
 
-  const btnClass = label ? "action-btn" : "copy-block-btn";
-
   return (
-    <button className={`${btnClass} ${copied ? "copied" : ""}`} onClick={handleCopy}>
+    <button className={`action-btn ${copied ? "copied" : ""}`} onClick={handleCopy}>
       {copied ? (
         <>
           <Check size={16} /> Copied
         </>
       ) : (
         <>
-          <Copy size={16} /> {label ?? "Copy to clipboard"}
+          <Copy size={16} /> {label ?? "Copy"}
         </>
       )}
     </button>
@@ -325,7 +323,9 @@ export function DigestView({ mode, isStreaming, streamingText, stats }: DigestVi
         <div className="digest-vibe">
           <FormattedText text={streamingText} isStreaming={false} />
         </div>
-        <CopyBtn text={streamingText} />
+        <div className="digest-actions-row">
+          <CopyBtn text={streamingText} />
+        </div>
       </div>
     );
   }
