@@ -1,15 +1,21 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { ModeToggle } from "@/components/ModeToggle";
 import { DigestView } from "@/components/DigestView";
 import { useDigestStream } from "@/lib/use-digest-stream";
-import { MOCK_STANDUP } from "@/lib/mock-data";
 import type { HistoryEntry } from "@/lib/mock-data";
 
 type Mode = "digest" | "resume" | "standup";
+
+// Maps our UI mode names to API mode params
+const API_MODES: Record<Mode, string> = {
+  digest: "digest",
+  standup: "standup",
+  resume: "resume",
+};
 
 export default function DashboardPage() {
   const [repos, setRepos] = useState<string[]>([]);
@@ -17,8 +23,21 @@ export default function DashboardPage() {
   const [mode, setMode] = useState<Mode>("digest");
   const [activeHistoryId, setActiveHistoryId] = useState<string>("today");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const stream = useDigestStream();
-  const history: HistoryEntry[] = []; // Empty until Firebase is wired up
+
+  // Separate streams for each mode
+  const digestStream = useDigestStream();
+  const standupStream = useDigestStream();
+  const resumeStream = useDigestStream();
+
+  const streams: Record<Mode, ReturnType<typeof useDigestStream>> = {
+    digest: digestStream,
+    standup: standupStream,
+    resume: resumeStream,
+  };
+
+  const currentStream = streams[mode];
+  const history: HistoryEntry[] = [];
+  const lastRepoRef = useRef("");
 
   // Fetch repos on mount
   useEffect(() => {
@@ -33,38 +52,58 @@ export default function DashboardPage() {
           }
         }
       } catch {
-        // Silently fail, repos will be empty
+        // Silently fail
       }
     })();
-  }, []);
+  }, []);  
 
-  // Generate digest for a repo
-  const generateDigest = useCallback(
-    (repoFullName: string) => {
+  // Generate for a specific mode
+  const generate = useCallback(
+    (repoFullName: string, targetMode: Mode) => {
       const parts = repoFullName.split("/");
       if (parts.length !== 2) return;
       const [owner, repo] = parts as [string, string];
+      const stream = streams[targetMode];
       stream.reset();
-      // Small delay to let state clear before starting new stream
-      setTimeout(() => stream.start(owner, repo), 50);
+      setTimeout(() => stream.start(owner, repo, API_MODES[targetMode]), 50);
     },
-    [stream],
+    [streams],
   );
 
-  const handleRepoChange = useCallback(
-    (repo: string) => {
-      setSelectedRepo(repo);
-      generateDigest(repo);
-    },
-    [generateDigest],
-  );
-
-  // Auto-generate on first repo load
+  // Auto-generate digest when first repo loads
   useEffect(() => {
-    if (selectedRepo && !stream.text && !stream.isStreaming && !stream.isDone && !stream.error) {
-      generateDigest(selectedRepo);
+    if (selectedRepo && selectedRepo !== lastRepoRef.current) {
+      lastRepoRef.current = selectedRepo;
+      // Reset all streams when repo changes
+      digestStream.reset();
+      standupStream.reset();
+      resumeStream.reset();
+      // Auto-generate digest for new repo
+      setTimeout(() => {
+        const parts = selectedRepo.split("/");
+        if (parts.length === 2) {
+          const [owner, repo] = parts as [string, string];
+          digestStream.start(owner, repo, "digest");
+        }
+      }, 50);
     }
-  }, [selectedRepo]); // eslint-disable-line
+  }, [selectedRepo]);  
+
+  // When tab changes, generate if that mode hasn't been generated yet
+  const handleModeChange = useCallback(
+    (newMode: Mode) => {
+      setMode(newMode);
+      const stream = streams[newMode];
+      if (!stream.text && !stream.isStreaming && !stream.isDone && !stream.error && selectedRepo) {
+        generate(selectedRepo, newMode);
+      }
+    },
+    [streams, selectedRepo, generate],
+  );
+
+  const handleRepoChange = useCallback((repo: string) => {
+    setSelectedRepo(repo);
+  }, []);
 
   const repoName = selectedRepo.split("/").pop() ?? selectedRepo;
   const activeEntry = history.find((e) => e.id === activeHistoryId);
@@ -111,13 +150,13 @@ export default function DashboardPage() {
               <p className="digest-page-subtitle">{modeSubtitles[mode]}</p>
             </div>
             <div className="digest-header">
-              <ModeToggle mode={mode} onChange={setMode} />
+              <ModeToggle mode={mode} onChange={handleModeChange} />
             </div>
 
-            {stream.error ? (
+            {currentStream.error ? (
               <div className="digest-error">
-                <p>{stream.error}</p>
-                <button className="btn btn-secondary" onClick={() => generateDigest(selectedRepo)}>
+                <p>{currentStream.error}</p>
+                <button className="btn btn-secondary" onClick={() => generate(selectedRepo, mode)}>
                   Try again
                 </button>
               </div>
@@ -125,12 +164,12 @@ export default function DashboardPage() {
               <DigestView
                 mode={mode}
                 digest={null}
-                resume={stream.text}
-                standup={MOCK_STANDUP}
+                resume={resumeStream.text}
+                standup={{ yesterday: [], today: [], blockers: [] }}
                 repoName={selectedRepo}
                 timeLabel="past 7 days"
-                isStreaming={stream.isStreaming}
-                streamingText={stream.text}
+                isStreaming={currentStream.isStreaming}
+                streamingText={currentStream.text}
               />
             )}
           </div>

@@ -1,7 +1,12 @@
 import { auth } from "@/auth";
 import { fetchCommits, fetchDiffs } from "@/lib/github";
 import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
-import { buildStreamingSystemPrompt, computeStats } from "@askscout/core";
+import {
+  buildStreamingSystemPrompt,
+  buildAIContextSystemPrompt,
+  buildStandupSystemPrompt,
+  computeStats,
+} from "@askscout/core";
 
 export const maxDuration = 60;
 
@@ -49,9 +54,9 @@ export async function POST(req: Request) {
   }
 
   // 3. Parse and validate input
-  let body: { owner?: string; repo?: string };
+  let body: { owner?: string; repo?: string; mode?: string };
   try {
-    body = (await req.json()) as { owner?: string; repo?: string };
+    body = (await req.json()) as { owner?: string; repo?: string; mode?: string };
   } catch {
     return Response.json({ error: "Invalid request body" }, { status: 400 });
   }
@@ -80,8 +85,16 @@ export async function POST(req: Request) {
     // 5. Compute stats (deterministic, no LLM needed)
     const stats = computeStats(commits, diffs);
 
-    // 6. Build a compact prompt (no raw patches, just commit messages + file summary)
-    const systemPrompt = buildStreamingSystemPrompt();
+    // 6. Build prompt based on mode
+    const mode = body.mode ?? "digest";
+    let systemPrompt: string;
+    if (mode === "resume") {
+      systemPrompt = buildAIContextSystemPrompt();
+    } else if (mode === "standup") {
+      systemPrompt = buildStandupSystemPrompt();
+    } else {
+      systemPrompt = buildStreamingSystemPrompt();
+    }
 
     // Compact commit list: just hash + message
     const commitList = commits
@@ -95,7 +108,7 @@ export async function POST(req: Request) {
       .map((d) => `- ${d.file} (+${d.additions}/-${d.deletions})`)
       .join("\n");
 
-    const userPrompt = `Analyze the following git activity and produce a digest.
+    const userPrompt = `Analyze the following git activity.
 
 ## Stats
 ${stats.commits} commits, ${stats.filesChanged} files changed, ${stats.linesAdded} lines added, ${stats.linesRemoved} lines removed.

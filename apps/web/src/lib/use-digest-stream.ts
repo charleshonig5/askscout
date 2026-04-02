@@ -7,7 +7,7 @@ interface DigestStreamState {
   isStreaming: boolean;
   isDone: boolean;
   error: string | null;
-  start: (owner: string, repo: string) => void;
+  start: (owner: string, repo: string, mode?: string) => void;
   reset: () => void;
 }
 
@@ -26,7 +26,7 @@ export function useDigestStream(): DigestStreamState {
     setError(null);
   }, []);
 
-  const start = useCallback((owner: string, repo: string) => {
+  const start = useCallback((owner: string, repo: string, mode?: string) => {
     // Abort any in-flight request
     abortRef.current?.abort();
     const controller = new AbortController();
@@ -43,7 +43,7 @@ export function useDigestStream(): DigestStreamState {
         const res = await fetch("/api/digest/stream", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ owner, repo }),
+          body: JSON.stringify({ owner, repo, mode }),
           signal: controller.signal,
         });
 

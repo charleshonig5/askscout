@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { Copy, Check, Mail } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 import type { Digest } from "@askscout/core";
-import { MOCK_STREAMING_TEXT } from "@/lib/mock-data";
 
 function CopyBtn({ text, label }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false);
@@ -16,48 +15,21 @@ function CopyBtn({ text, label }: { text: string; label?: string }) {
   }, [text]);
 
   return (
-    <button className={`action-btn ${copied ? "copied" : ""}`} onClick={handleCopy}>
+    <button className="copy-block-btn" onClick={handleCopy}>
       {copied ? (
         <>
           <Check size={16} /> Copied
         </>
       ) : (
         <>
-          <Copy size={16} /> {label ?? "Copy"}
+          <Copy size={16} /> {label ?? "Copy to clipboard"}
         </>
       )}
     </button>
   );
 }
 
-function EmailBtn() {
-  const [sent, setSent] = useState(false);
-
-  const handleEmail = useCallback(() => {
-    setSent(true);
-    setTimeout(() => setSent(false), 3000);
-  }, []);
-
-  return (
-    <button className={`action-btn ${sent ? "copied" : ""}`} onClick={handleEmail}>
-      {sent ? (
-        <>
-          <Check size={16} /> Sent
-        </>
-      ) : (
-        <>
-          <Mail size={16} /> Email
-        </>
-      )}
-    </button>
-  );
-}
-
-function fmt(n: number): string {
-  return n.toLocaleString("en-US");
-}
-
-// Section markers used in the streaming text
+// Section markers used in the digest streaming text
 const SECTION_MARKERS = [
   { key: "vibe", emoji: "\ud83d\udcac", label: "Vibe Check" },
   { key: "shipped", emoji: "\ud83d\ude80", label: "Shipped" },
@@ -85,7 +57,6 @@ function parseStreamingSections(text: string): ParsedSection[] {
 
     const contentStart = startIdx + searchStr.length;
 
-    // Find where the next section starts
     let endIdx = text.length;
     for (let j = i + 1; j < SECTION_MARKERS.length; j++) {
       const nextMarker = SECTION_MARKERS[j]!;
@@ -108,12 +79,7 @@ function parseStreamingSections(text: string): ParsedSection[] {
   return sections;
 }
 
-interface StreamingDigestProps {
-  text: string;
-  isStreaming: boolean;
-}
-
-function StreamingDigest({ text, isStreaming }: StreamingDigestProps) {
+function StreamingDigest({ text, isStreaming }: { text: string; isStreaming: boolean }) {
   const cursorRef = useRef<HTMLSpanElement>(null);
   const sections = parseStreamingSections(text);
   const isLastSection = (key: string) => {
@@ -121,7 +87,6 @@ function StreamingDigest({ text, isStreaming }: StreamingDigestProps) {
     return last?.key === key;
   };
 
-  // Auto-scroll to keep cursor in view
   useEffect(() => {
     if (isStreaming && cursorRef.current) {
       cursorRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -157,10 +122,9 @@ function StreamingDigest({ text, isStreaming }: StreamingDigestProps) {
           );
         }
 
-        // Regular sections: shipped, changed, unstable, leftOff
-        const lines = section.content.split("\n").filter((l) => l.length > 0);
+        const lines = section.content.split("\n").filter((l: string) => l.length > 0);
         const subtitle = lines[0] ?? "";
-        const items = lines.slice(1).map((l) => l.replace(/^\s*\u2022\s*/, ""));
+        const items = lines.slice(1).map((l: string) => l.replace(/^\s*\u2022\s*/, ""));
 
         return (
           <div key={section.key} className="digest-section">
@@ -168,7 +132,7 @@ function StreamingDigest({ text, isStreaming }: StreamingDigestProps) {
               {section.emoji} {section.label}
             </div>
             {subtitle && <div className="digest-section-subtitle">{subtitle}</div>}
-            {items.map((item, i) => (
+            {items.map((item: string, i: number) => (
               <div key={i} className="digest-item">
                 {item}
               </div>
@@ -177,202 +141,6 @@ function StreamingDigest({ text, isStreaming }: StreamingDigestProps) {
           </div>
         );
       })}
-    </div>
-  );
-}
-
-interface StructuredDigestProps {
-  digest: Digest;
-  repoName: string;
-  timeLabel: string;
-}
-
-function StructuredDigest({ digest, repoName, timeLabel }: StructuredDigestProps) {
-  const s = digest.stats;
-
-  return (
-    <div>
-      {/* Intro */}
-      <div className="digest-section">
-        <div className="digest-section-title">
-          {"\ud83d\udc15"} Scout sniffed through {repoName}
-        </div>
-        <div className="digest-section-subtitle">
-          {fmt(s.commits)} commits {"\u00b7"} {fmt(s.filesChanged)} files {"\u00b7"} {timeLabel}
-        </div>
-      </div>
-
-      {/* Vibe Check */}
-      {digest.vibeCheck && (
-        <div className="digest-vibe">
-          <strong>{"\ud83d\udcac"} Vibe Check</strong>
-          <br />
-          {digest.vibeCheck}
-        </div>
-      )}
-
-      {/* Shipped */}
-      {digest.shipped.length > 0 && (
-        <div className="digest-section">
-          <div className="digest-section-title">{"\ud83d\ude80"} Shipped</div>
-          <div className="digest-section-subtitle">
-            Scout dug up {digest.shipped.length} new{" "}
-            {digest.shipped.length === 1 ? "thing" : "things"} you got working:
-          </div>
-          {digest.shipped.map((item, i) => (
-            <div key={i} className="digest-item">
-              {item.summary}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Changed */}
-      {digest.changed.length > 0 && (
-        <div className="digest-section">
-          <div className="digest-section-title">{"\ud83d\udd27"} Changed</div>
-          <div className="digest-section-subtitle">
-            Scout noticed you were poking around in {digest.changed.length}{" "}
-            {digest.changed.length === 1 ? "spot" : "spots"}:
-          </div>
-          {digest.changed.map((item, i) => (
-            <div key={i} className="digest-item">
-              {item.summary}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Unstable */}
-      {digest.unstable.length > 0 && (
-        <div className="digest-section">
-          <div className="digest-section-title">{"\u26a0\ufe0f"} Unstable</div>
-          <div className="digest-section-subtitle">
-            Scout keeps tripping over {digest.unstable.length === 1 ? "this one" : "these"}:
-          </div>
-          {digest.unstable.map((item, i) => (
-            <div key={i} className="digest-item">
-              {item.summary}, changed {item.changeCount} {item.changeCount === 1 ? "time" : "times"}
-              , still wobbly
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Left Off */}
-      {digest.leftOff.length > 0 && (
-        <div className="digest-section">
-          <div className="digest-section-title">{"\ud83d\udccd"} Left Off</div>
-          <div className="digest-section-subtitle">Here&apos;s where you left your bone:</div>
-          {digest.leftOff.map((item, i) => (
-            <div key={i} className="digest-item">
-              {item.summary}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Health */}
-      {digest.health && digest.health.length > 0 && (
-        <div className="digest-section">
-          <div className="digest-section-title">Project Health</div>
-          <div className="health-grid">
-            {digest.health.map((h, i) => (
-              <div key={i} className="health-card">
-                <div className="health-card-header">
-                  <span className="health-card-label">{h.label}</span>
-                  <span className={`health-card-level health-card-level--${h.level.toLowerCase()}`}>
-                    {h.level}
-                  </span>
-                </div>
-                <div className="health-card-bar">
-                  <div
-                    className={`health-card-fill health-card-fill--${h.level.toLowerCase()}`}
-                    style={{
-                      width: `${Math.round(Math.max(0, Math.min(10, h.score)) * 10)}%`,
-                    }}
-                  />
-                </div>
-                <div className="health-card-detail">{h.detail}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Stats */}
-      <div className="digest-stats">
-        {fmt(s.linesAdded)} {s.linesAdded === 1 ? "line" : "lines"} added {"\u00b7"}{" "}
-        {fmt(s.linesRemoved)} removed
-      </div>
-    </div>
-  );
-}
-
-interface ResumeViewProps {
-  text: string;
-}
-
-function ResumeView({ text }: ResumeViewProps) {
-  return (
-    <div>
-      <div className="ai-context-card">
-        <div className="ai-context-body">{text}</div>
-      </div>
-      <div className="action-bar">
-        <CopyBtn text={text} label="Copy to clipboard" />
-      </div>
-    </div>
-  );
-}
-
-interface StandupViewProps {
-  standup: { yesterday: string[]; today: string[]; blockers: string[] };
-}
-
-function StandupView({ standup }: StandupViewProps) {
-  const copyText = [
-    "Yesterday:",
-    ...standup.yesterday.map((d) => `  \u2022 ${d}`),
-    "\nToday:",
-    ...standup.today.map((d) => `  \u2022 ${d}`),
-    ...(standup.blockers.length > 0
-      ? ["\nBlockers:", ...standup.blockers.map((d) => `  \u2022 ${d}`)]
-      : []),
-  ].join("\n");
-
-  return (
-    <div>
-      <div className="standup-section">
-        <div className="standup-label">Yesterday</div>
-        {standup.yesterday.map((item, i) => (
-          <div key={i} className="digest-item">
-            {item}
-          </div>
-        ))}
-      </div>
-      <div className="standup-section">
-        <div className="standup-label">Today</div>
-        {standup.today.map((item, i) => (
-          <div key={i} className="digest-item">
-            {item}
-          </div>
-        ))}
-      </div>
-      {standup.blockers.length > 0 && (
-        <div className="standup-section">
-          <div className="standup-label">Blockers</div>
-          {standup.blockers.map((item, i) => (
-            <div key={i} className="digest-item">
-              {item}
-            </div>
-          ))}
-        </div>
-      )}
-      <div className="action-bar">
-        <CopyBtn text={copyText} />
-        <EmailBtn />
-      </div>
     </div>
   );
 }
@@ -388,49 +156,52 @@ interface DigestViewProps {
   streamingText: string;
 }
 
-export function DigestView({
-  mode,
-  digest,
-  resume,
-  standup,
-  repoName,
-  timeLabel,
-  isStreaming,
-  streamingText,
-}: DigestViewProps) {
-  if (mode === "resume") return <ResumeView text={resume} />;
-  if (mode === "standup") return <StandupView standup={standup} />;
-
-  // Digest mode — streaming
-  if (isStreaming && streamingText) {
-    return <StreamingDigest text={streamingText} isStreaming />;
-  }
-
-  // Loading state (streaming started but no text yet)
+export function DigestView({ mode, isStreaming, streamingText }: DigestViewProps) {
+  // Loading state
   if (isStreaming && !streamingText) {
-    return <div className="digest-loading">Scout is sniffing through your commits...</div>;
+    const loadingMessages: Record<string, string> = {
+      digest: "Scout is sniffing through your commits...",
+      standup: "Scout is putting together your standup...",
+      resume: "Scout is building your AI context...",
+    };
+    return <div className="digest-loading">{loadingMessages[mode] ?? "Loading..."}</div>;
   }
 
-  // Completed streaming text (no parsed digest)
-  if (!digest && streamingText) {
+  // Streaming in progress
+  if (isStreaming && streamingText) {
+    if (mode === "digest") {
+      return <StreamingDigest text={streamingText} isStreaming />;
+    }
+    return (
+      <div className="ai-context-card">
+        <div className="ai-context-body">
+          {streamingText}
+          <span className="streaming-cursor" />
+        </div>
+      </div>
+    );
+  }
+
+  // Completed
+  if (streamingText) {
+    if (mode === "digest") {
+      return (
+        <div>
+          <StreamingDigest text={streamingText} isStreaming={false} />
+          <CopyBtn text={streamingText} />
+        </div>
+      );
+    }
     return (
       <div>
-        <StreamingDigest text={streamingText} isStreaming={false} />
+        <div className="ai-context-card">
+          <div className="ai-context-body">{streamingText}</div>
+        </div>
         <CopyBtn text={streamingText} />
       </div>
     );
   }
 
-  // Parsed digest
-  if (digest) {
-    return (
-      <div>
-        <StructuredDigest digest={digest} repoName={repoName} timeLabel={timeLabel} />
-        <CopyBtn text={streamingText || MOCK_STREAMING_TEXT} />
-      </div>
-    );
-  }
-
-  // Empty state (nothing generated yet)
+  // Empty state
   return <div className="digest-loading">Select a repo to generate your digest.</div>;
 }
