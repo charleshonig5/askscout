@@ -157,9 +157,9 @@ async function streamOpenAI(
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: "gpt-4o",
+      model: "gpt-5.4-nano",
       stream: true,
-      max_tokens: 1024,
+      max_completion_tokens: 1024,
       temperature: 0.2,
       frequency_penalty: 0.8,
       presence_penalty: 0.3,
