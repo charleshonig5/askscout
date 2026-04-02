@@ -175,7 +175,7 @@ function StreamingDigest({ text, isStreaming }: { text: string; isStreaming: boo
 
         const lines = section.content.split("\n").filter((l: string) => l.length > 0);
         const subtitle = lines[0] ?? "";
-        const items = lines.slice(1).map((l: string) => l.replace(/^\s*\u2022\s*/, ""));
+        const items = lines.slice(1).map((l: string) => l.replace(/^\s*[\u2022\-\*]\s*/, ""));
 
         return (
           <div key={section.key} className="digest-section">

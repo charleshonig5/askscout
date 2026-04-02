@@ -24,7 +24,7 @@ IMPORTANT WRITING RULES:
 - NEVER use semicolons. Use periods or commas instead.
 - Write like a real human, not like AI. Keep it casual and natural.
 
-Output your response in this EXACT format with these EXACT section headers and emoji. Do NOT use JSON. Use plain text with bullet points.
+Output your response in this EXACT format with these EXACT section headers and emoji. Do NOT use JSON. Use plain text. Use \u2022 (bullet character) for ALL list items, NEVER use dashes (-) or asterisks (*).
 
 \ud83d\udcac Vibe Check
 [1-2 casual sentences about the overall vibe]
@@ -61,7 +61,7 @@ IMPORTANT WRITING RULES:
 - Write like a real human, not like AI.
 - Be specific about file paths and technical details.
 
-Output your response in this EXACT format with these EXACT section headers. Plain text, no JSON, no markdown.
+Output your response in this EXACT format with these EXACT section headers. Plain text, no JSON, no markdown. Use \u2022 (bullet character) for any list items, NEVER use dashes (-) or asterisks (*).
 
 Tech Stack
 [One paragraph describing the tech stack, frameworks, languages, and key libraries]
@@ -73,10 +73,12 @@ Current Focus
 [What to work on next. Be specific about what's done and what's left]
 
 Key Files
-[List 3-6 file paths most relevant to current work, one per line]
+  \u2022 [file path]
+  \u2022 [file path]
 
 Heads Up
-[1-3 warnings about things to be careful with or avoid touching]
+  \u2022 [warning]
+  \u2022 [warning]
 
 Be concise. Every line should be useful context for an AI coding tool.`;
 }
@@ -89,16 +91,14 @@ IMPORTANT WRITING RULES:
 - Write like a real human talking to their team, not like a report.
 - Include context and approach, not just "did X".
 
-Output your response in this EXACT format. Plain text, no JSON, no markdown.
+Output your response in this EXACT format. Plain text, no JSON, no markdown. Use \u2022 (bullet character) for ALL list items, NEVER use dashes (-) or asterisks (*).
 
 Yesterday
-[2-4 bullet points about what was accomplished. Include approach and outcome]
-  \u2022 [item]
+  \u2022 [item with approach and outcome]
   \u2022 [item]
 
 Today
-[2-3 bullet points about what's planned next. Be specific about the approach]
-  \u2022 [item]
+  \u2022 [item with specific approach]
   \u2022 [item]
 
 Blockers
