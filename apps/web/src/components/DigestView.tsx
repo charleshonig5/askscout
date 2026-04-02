@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { Copy, Check, Download, Mail } from "lucide-react";
+import { Copy, Check, Mail } from "lucide-react";
 import type { Digest } from "@askscout/core";
 import { MOCK_STREAMING_TEXT } from "@/lib/mock-data";
 
@@ -26,24 +26,6 @@ function CopyBtn({ text, label }: { text: string; label?: string }) {
           <Copy size={16} /> {label ?? "Copy"}
         </>
       )}
-    </button>
-  );
-}
-
-function DownloadBtn({ text, filename }: { text: string; filename: string }) {
-  const handleDownload = useCallback(() => {
-    const blob = new Blob([text], { type: "text/markdown" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(url);
-  }, [text, filename]);
-
-  return (
-    <button className="action-btn" onClick={handleDownload}>
-      <Download size={16} /> Download
     </button>
   );
 }
@@ -397,7 +379,7 @@ function StandupView({ standup }: StandupViewProps) {
 
 interface DigestViewProps {
   mode: "digest" | "resume" | "standup";
-  digest: Digest;
+  digest: Digest | null;
   resume: string;
   standup: { yesterday: string[]; today: string[]; blockers: string[] };
   repoName: string;
@@ -424,14 +406,26 @@ export function DigestView({
     return <StreamingDigest text={streamingText} isStreaming />;
   }
 
-  return (
-    <div>
-      <StructuredDigest digest={digest} repoName={repoName} timeLabel={timeLabel} />
-      <div className="action-bar">
-        <CopyBtn text={MOCK_STREAMING_TEXT} />
-        <DownloadBtn text={MOCK_STREAMING_TEXT} filename="digest.md" />
-        <EmailBtn />
+  // If we have streaming text but no parsed digest, show the completed streaming view
+  if (!digest && streamingText) {
+    return (
+      <div>
+        <StreamingDigest text={streamingText} isStreaming={false} />
+        <CopyBtn text={streamingText} />
       </div>
-    </div>
-  );
+    );
+  }
+
+  // If we have a parsed digest, show the structured view
+  if (digest) {
+    return (
+      <div>
+        <StructuredDigest digest={digest} repoName={repoName} timeLabel={timeLabel} />
+        <CopyBtn text={streamingText || MOCK_STREAMING_TEXT} />
+      </div>
+    );
+  }
+
+  // Empty state
+  return null;
 }

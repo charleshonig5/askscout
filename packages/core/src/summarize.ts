@@ -16,7 +16,43 @@ const OPENAI_API = "https://api.openai.com/v1/chat/completions";
 const DEFAULT_ANTHROPIC_MODEL = "claude-haiku-4-5-20250414";
 const DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
 
-function buildSystemPrompt(): string {
+export function buildStreamingSystemPrompt(): string {
+  return `You are Scout, a friendly code digest assistant. You analyze git diffs and commit history to produce structured project summaries.
+
+IMPORTANT WRITING RULES:
+- NEVER use em dashes (\u2014 or --). Use commas, periods, or just start a new sentence instead.
+- NEVER use semicolons. Use periods or commas instead.
+- Write like a real human, not like AI. Keep it casual and natural.
+
+Output your response in this EXACT format with these EXACT section headers and emoji. Do NOT use JSON. Use plain text with bullet points.
+
+\ud83d\udcac Vibe Check
+[1-2 casual sentences about the overall vibe]
+
+\ud83d\ude80 Shipped
+Scout dug up N new things you got working:
+  \u2022 [item]
+  \u2022 [item]
+
+\ud83d\udd27 Changed
+Scout noticed you were poking around in N spots:
+  \u2022 [item]
+  \u2022 [item]
+
+\u26a0\ufe0f Unstable
+Scout keeps tripping over [this one/these]:
+  \u2022 [item, changed N times, still wobbly]
+
+\ud83d\udccd Left Off
+Here's where you left your bone:
+  \u2022 [item]
+
+\ud83d\udcca [lines added] lines added \u00b7 [lines removed] removed
+
+Only include sections that have items. Skip empty sections entirely.`;
+}
+
+export function buildSystemPrompt(): string {
   return `You are Scout, a friendly code digest assistant. You analyze git diffs and commit history to produce structured project summaries.
 
 IMPORTANT WRITING RULES:
@@ -27,7 +63,7 @@ IMPORTANT WRITING RULES:
 Respond ONLY with valid JSON matching the schema described in the user message. No markdown fences, no explanation, just raw JSON.`;
 }
 
-function formatCommitsForPrompt(commits: GitCommit[]): string {
+export function formatCommitsForPrompt(commits: GitCommit[]): string {
   return commits
     .map((c) => {
       const short = c.hash.slice(0, 7);
@@ -37,12 +73,12 @@ function formatCommitsForPrompt(commits: GitCommit[]): string {
     .join("\n");
 }
 
-function formatDiffsForPrompt(diffs: GitDiff[]): string {
+export function formatDiffsForPrompt(diffs: GitDiff[]): string {
   if (diffs.length === 0) return "No diffs available.";
   return diffs.map((d) => `### ${d.file}\n\`\`\`\n${d.patch}\n\`\`\``).join("\n\n");
 }
 
-function buildUserPrompt(
+export function buildUserPrompt(
   commits: GitCommit[],
   diffs: GitDiff[],
   state: ProjectState | null,
@@ -189,7 +225,7 @@ async function callOpenAI(systemPrompt: string, userPrompt: string, ai: AiConfig
   return text;
 }
 
-function computeStats(commits: GitCommit[], diffs: GitDiff[]): DigestStats {
+export function computeStats(commits: GitCommit[], diffs: GitDiff[]): DigestStats {
   const now = new Date();
   let from = now;
   let to = now;

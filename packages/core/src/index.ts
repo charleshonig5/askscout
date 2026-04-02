@@ -1,5 +1,13 @@
 export { getCommits, getDiffs, getRepoName } from "./git.js";
-export { summarize } from "./summarize.js";
+export {
+  summarize,
+  buildSystemPrompt,
+  buildStreamingSystemPrompt,
+  buildUserPrompt,
+  formatCommitsForPrompt,
+  formatDiffsForPrompt,
+  computeStats,
+} from "./summarize.js";
 export { formatDigest, formatResume, formatStandup } from "./format.js";
 export type { FormatOptions } from "./format.js";
 export { readState, writeState } from "./state.js";

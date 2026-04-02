@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { signIn } from "@/auth";
 import { MOCK_STREAMING_TEXT } from "@/lib/mock-data";
 
 export default function LandingPage() {
@@ -10,13 +10,20 @@ export default function LandingPage() {
         built, what changed, and where you left off.
       </p>
       <div className="landing-cta">
-        <Link
-          href="/dashboard"
-          className="btn btn-primary"
-          style={{ fontSize: 15, padding: "10px 24px" }}
+        <form
+          action={async () => {
+            "use server";
+            await signIn("github", { redirectTo: "/dashboard" });
+          }}
         >
-          Sign in with GitHub
-        </Link>
+          <button
+            type="submit"
+            className="btn btn-primary"
+            style={{ fontSize: 15, padding: "10px 24px" }}
+          >
+            Sign in with GitHub
+          </button>
+        </form>
       </div>
       <div className="landing-preview">
         <pre

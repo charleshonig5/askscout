@@ -1,0 +1,165 @@
+import type { GitCommit, GitDiff } from "@askscout/core";
+
+const GITHUB_API = "https://api.github.com";
+const MAX_DIFF_CHARS = 16_000;
+const TRUNCATION_MARKER = "\n... (truncated)";
+
+interface GitHubRepo {
+  full_name: string;
+  name: string;
+  owner: { login: string };
+  private: boolean;
+  pushed_at: string;
+}
+
+interface GitHubCommit {
+  sha: string;
+  commit: {
+    message: string;
+    author: { name: string; date: string };
+  };
+  stats?: { additions: number; deletions: number };
+  files?: { filename: string; additions: number; deletions: number; patch?: string }[];
+}
+
+async function githubFetch(endpoint: string, token: string): Promise<Response> {
+  const res = await fetch(`${GITHUB_API}${endpoint}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+    },
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`GitHub API error (${res.status}): ${body.slice(0, 200)}`);
+  }
+
+  return res;
+}
+
+/** List the authenticated user's repos, sorted by most recently pushed */
+export async function fetchUserRepos(token: string): Promise<string[]> {
+  const res = await githubFetch("/user/repos?sort=pushed&direction=desc&per_page=50", token);
+  const repos = (await res.json()) as GitHubRepo[];
+  return repos.map((r) => r.full_name);
+}
+
+/** Fetch commits for a repo since a given date */
+export async function fetchCommits(
+  token: string,
+  owner: string,
+  repo: string,
+  since?: Date,
+): Promise<GitCommit[]> {
+  let endpoint = `/repos/${owner}/${repo}/commits?per_page=100`;
+  if (since) {
+    endpoint += `&since=${since.toISOString()}`;
+  }
+
+  const res = await githubFetch(endpoint, token);
+  const raw = (await res.json()) as GitHubCommit[];
+
+  // Fetch details for up to 20 most recent commits (for file stats)
+  const detailed = await Promise.all(
+    raw.slice(0, 20).map(async (c) => {
+      try {
+        const detailRes = await githubFetch(`/repos/${owner}/${repo}/commits/${c.sha}`, token);
+        return (await detailRes.json()) as GitHubCommit;
+      } catch {
+        return c;
+      }
+    }),
+  );
+
+  // Merge detailed data back
+  const commitMap = new Map(detailed.map((d) => [d.sha, d]));
+
+  return raw.map((c) => {
+    const detail = commitMap.get(c.sha);
+    return {
+      hash: c.sha,
+      message: c.commit.message.split("\n")[0] ?? c.commit.message,
+      author: c.commit.author.name,
+      timestamp: new Date(c.commit.author.date),
+      filesChanged: detail?.files?.map((f) => f.filename) ?? [],
+      additions: detail?.stats?.additions ?? 0,
+      deletions: detail?.stats?.deletions ?? 0,
+    };
+  });
+}
+
+/** Fetch diffs between two commits using the Compare API */
+export async function fetchDiffs(
+  token: string,
+  owner: string,
+  repo: string,
+  commits: GitCommit[],
+): Promise<GitDiff[]> {
+  if (commits.length === 0) return [];
+
+  const oldest = commits[0]!;
+  const newest = commits[commits.length - 1]!;
+
+  // For single commit or initial commits, fetch the commit directly
+  let files: { filename: string; additions: number; deletions: number; patch?: string }[];
+
+  if (commits.length === 1) {
+    const res = await githubFetch(`/repos/${owner}/${repo}/commits/${oldest.hash}`, token);
+    const data = (await res.json()) as GitHubCommit;
+    files = data.files ?? [];
+  } else {
+    try {
+      const res = await githubFetch(
+        `/repos/${owner}/${repo}/compare/${oldest.hash}^...${newest.hash}`,
+        token,
+      );
+      const data = (await res.json()) as { files?: typeof files };
+      files = data.files ?? [];
+    } catch {
+      // Fallback: compare oldest to newest directly (may miss the oldest commit's changes)
+      try {
+        const res = await githubFetch(
+          `/repos/${owner}/${repo}/compare/${oldest.hash}...${newest.hash}`,
+          token,
+        );
+        const data = (await res.json()) as { files?: typeof files };
+        files = data.files ?? [];
+      } catch {
+        return [];
+      }
+    }
+  }
+
+  const diffs: GitDiff[] = files.map((f) => ({
+    file: f.filename,
+    additions: f.additions,
+    deletions: f.deletions,
+    patch: f.patch ?? "",
+  }));
+
+  // Truncate patches to fit within token budget
+  let totalChars = diffs.reduce((sum, d) => sum + d.patch.length, 0);
+  if (totalChars > MAX_DIFF_CHARS) {
+    const indices = diffs
+      .map((_, i) => i)
+      .sort((a, b) => diffs[b]!.patch.length - diffs[a]!.patch.length);
+
+    for (const idx of indices) {
+      if (totalChars <= MAX_DIFF_CHARS) break;
+      const diff = diffs[idx]!;
+      const minKeep = 200 + TRUNCATION_MARKER.length;
+      if (diff.patch.length <= minKeep) continue;
+
+      const excess = totalChars - MAX_DIFF_CHARS;
+      const canRemove = diff.patch.length - minKeep;
+      const truncateBy = Math.min(excess, canRemove);
+      const newPatch = diff.patch.slice(0, diff.patch.length - truncateBy) + TRUNCATION_MARKER;
+      totalChars -= diff.patch.length - newPatch.length;
+      diff.patch = newPatch;
+    }
+  }
+
+  return diffs;
+}

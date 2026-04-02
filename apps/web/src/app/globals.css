@@ -756,6 +756,16 @@ a:hover {
    Copy Button
    ============================================ */
 
+.digest-error {
+  text-align: center;
+  padding: var(--space-2xl) var(--space-lg);
+  color: var(--color-text-secondary);
+}
+
+.digest-error p {
+  margin-bottom: var(--space-md);
+}
+
 .copy-btn {
   composes: btn btn-ghost;
   font-size: 12px;
