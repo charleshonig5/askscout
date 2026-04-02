@@ -319,12 +319,6 @@ a:hover {
   margin-bottom: var(--space-lg);
 }
 
-.digest-page-title-row {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-sm);
-}
-
 .digest-page-name {
   font-size: 20px;
   font-weight: 600;
@@ -335,6 +329,7 @@ a:hover {
 .digest-page-date {
   font-size: 14px;
   color: var(--color-text-tertiary);
+  margin-top: 2px;
 }
 
 .digest-page-subtitle {

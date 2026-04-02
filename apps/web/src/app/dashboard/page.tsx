@@ -110,6 +110,12 @@ export default function DashboardPage() {
   const activeDate = activeEntry?.date ?? "Today";
   const isToday = activeDate === "Today";
 
+  const fullDate = new Date().toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
   const modeLabels: Record<Mode, string> = {
     digest: "Digest",
     standup: "Standup",
@@ -121,6 +127,7 @@ export default function DashboardPage() {
     resume: `Paste into your AI coding tools to pick up where you left off on ${repoName}`,
   };
   const pageTitle = isToday ? `Today\u2019s ${modeLabels[mode]}` : `${modeLabels[mode]}`;
+  const pageDate = isToday ? fullDate : activeDate;
 
   return (
     <div>
@@ -143,10 +150,8 @@ export default function DashboardPage() {
         <div className="app-main">
           <div className="digest-container">
             <div className="digest-page-title">
-              <div className="digest-page-title-row">
-                <h1 className="digest-page-name">{pageTitle}</h1>
-                {!isToday && <span className="digest-page-date">{activeDate}</span>}
-              </div>
+              <h1 className="digest-page-name">{pageTitle}</h1>
+              <p className="digest-page-date">{pageDate}</p>
               <p className="digest-page-subtitle">{modeSubtitles[mode]}</p>
             </div>
             <div className="digest-header">
