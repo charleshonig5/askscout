@@ -85,20 +85,33 @@ export async function POST(req: Request) {
     // 5. Compute stats (deterministic, no LLM needed)
     const stats = computeStats(commits, diffs);
 
-    // 6. Build prompt
+    // 6. Build a compact prompt (no raw patches, just commit messages + file summary)
     const systemPrompt = buildStreamingSystemPrompt();
+
+    // Compact commit list: just hash + message
+    const commitList = commits
+      .slice(0, 25)
+      .map((c) => `- ${c.hash.slice(0, 7)} ${c.message}`)
+      .join("\n");
+
+    // Compact file summary: just filenames + line counts, no patches
+    const fileSummary = diffs
+      .slice(0, 30)
+      .map((d) => `- ${d.file} (+${d.additions}/-${d.deletions})`)
+      .join("\n");
+
     const userPrompt = `Analyze the following git activity and produce a digest.
 
-## Previous Project Context
-No previous context. This is the first run.
+## Stats
+${stats.commits} commits, ${stats.filesChanged} files changed, ${stats.linesAdded} lines added, ${stats.linesRemoved} lines removed.
 
-## Recent Commits (${commits.length} total)
-${formatCommitsForPrompt(commits)}
+## Commits
+${commitList}
 
-## Diffs
-${formatDiffsForPrompt(diffs)}
+## Files Changed
+${fileSummary}
 
-Produce the digest now. Remember: no em dashes, no semicolons. Write like a human.`;
+Produce the digest now. Be concise. No em dashes, no semicolons.`;
 
     // 7. Stream from AI provider
     const openaiKey = process.env.OPENAI_API_KEY;
@@ -151,9 +164,10 @@ async function streamOpenAI(
     body: JSON.stringify({
       model: "gpt-5-mini",
       stream: true,
-      max_tokens: 2048,
-      temperature: 0.3,
-      frequency_penalty: 0.5,
+      max_tokens: 1024,
+      temperature: 0.2,
+      frequency_penalty: 0.8,
+      presence_penalty: 0.3,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
