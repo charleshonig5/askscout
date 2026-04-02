@@ -71,12 +71,37 @@ export async function POST(req: Request) {
   }
 
   try {
-    // 4. Fetch commits from past 7 days
-    const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-    const commits = await fetchCommits(session.accessToken, owner, repo, since);
+    // 4. Fetch commits with fallback chain: 7d → 30d → 90d
+    let commits = await fetchCommits(
+      session.accessToken,
+      owner,
+      repo,
+      new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+    );
 
     if (commits.length === 0) {
-      return Response.json({ error: "No commits found in the past 7 days" }, { status: 404 });
+      commits = await fetchCommits(
+        session.accessToken,
+        owner,
+        repo,
+        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      );
+    }
+
+    if (commits.length === 0) {
+      commits = await fetchCommits(
+        session.accessToken,
+        owner,
+        repo,
+        new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
+      );
+    }
+
+    if (commits.length === 0) {
+      return Response.json(
+        { error: "No commits found in the past 90 days" },
+        { status: 404 },
+      );
     }
 
     const diffs = await fetchDiffs(session.accessToken, owner, repo, commits);
