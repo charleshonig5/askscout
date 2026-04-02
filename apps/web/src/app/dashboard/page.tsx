@@ -38,13 +38,15 @@ export default function DashboardPage() {
     })();
   }, []);
 
-  // Generate digest when repo changes
+  // Generate digest for a repo
   const generateDigest = useCallback(
     (repoFullName: string) => {
       const parts = repoFullName.split("/");
       if (parts.length !== 2) return;
       const [owner, repo] = parts as [string, string];
-      stream.start(owner, repo);
+      stream.reset();
+      // Small delay to let state clear before starting new stream
+      setTimeout(() => stream.start(owner, repo), 50);
     },
     [stream],
   );
@@ -59,10 +61,10 @@ export default function DashboardPage() {
 
   // Auto-generate on first repo load
   useEffect(() => {
-    if (selectedRepo && !stream.text && !stream.isStreaming && !stream.isDone) {
+    if (selectedRepo && !stream.text && !stream.isStreaming && !stream.isDone && !stream.error) {
       generateDigest(selectedRepo);
     }
-  }, [selectedRepo]);
+  }, [selectedRepo]); // eslint-disable-line
 
   const repoName = selectedRepo.split("/").pop() ?? selectedRepo;
   const activeEntry = history.find((e) => e.id === activeHistoryId);

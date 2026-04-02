@@ -8,6 +8,7 @@ interface DigestStreamState {
   isDone: boolean;
   error: string | null;
   start: (owner: string, repo: string) => void;
+  reset: () => void;
 }
 
 export function useDigestStream(): DigestStreamState {
@@ -16,6 +17,14 @@ export function useDigestStream(): DigestStreamState {
   const [isDone, setIsDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  const reset = useCallback(() => {
+    abortRef.current?.abort();
+    setText("");
+    setIsStreaming(false);
+    setIsDone(false);
+    setError(null);
+  }, []);
 
   const start = useCallback((owner: string, repo: string) => {
     // Abort any in-flight request
@@ -48,44 +57,45 @@ export function useDigestStream(): DigestStreamState {
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
         let buffer = "";
+        let currentEvent = "";
 
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
 
           buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split("\n");
-          buffer = lines.pop() ?? "";
 
-          for (const line of lines) {
+          // Process complete lines
+          while (buffer.includes("\n")) {
+            const newlineIdx = buffer.indexOf("\n");
+            const line = buffer.slice(0, newlineIdx).trim();
+            buffer = buffer.slice(newlineIdx + 1);
+
             if (line.startsWith("event: ")) {
-              const eventType = line.slice(7);
-              // Find the next data line
-              const dataLineIdx = lines.indexOf(line) + 1;
-              const dataLine = lines[dataLineIdx];
+              currentEvent = line.slice(7);
+            } else if (line.startsWith("data: ") && currentEvent) {
+              const rawData = line.slice(6);
+              try {
+                const parsed = JSON.parse(rawData) as Record<string, unknown>;
 
-              if (dataLine?.startsWith("data: ")) {
-                const data = dataLine.slice(6);
-                try {
-                  const parsed = JSON.parse(data) as Record<string, unknown>;
-
-                  if (eventType === "text" && typeof parsed.text === "string") {
-                    const chunk = parsed.text;
-                    setText((prev) => prev + chunk);
-                  } else if (eventType === "done") {
-                    setIsDone(true);
-                    setIsStreaming(false);
-                  } else if (eventType === "error" && typeof parsed.error === "string") {
-                    throw new Error(parsed.error);
-                  }
-                } catch (e) {
-                  if (e instanceof Error && e.message !== data) throw e;
+                if (currentEvent === "text" && typeof parsed.text === "string") {
+                  const chunk = parsed.text;
+                  setText((prev) => prev + chunk);
+                } else if (currentEvent === "done") {
+                  setIsDone(true);
+                  setIsStreaming(false);
+                } else if (currentEvent === "error" && typeof parsed.error === "string") {
+                  throw new Error(parsed.error);
                 }
+              } catch (e) {
+                if (e instanceof Error && e.message !== rawData) throw e;
               }
+              currentEvent = "";
             }
           }
         }
 
+        // If we exit the loop without a done event, mark as done
         setIsDone(true);
         setIsStreaming(false);
       } catch (err) {
@@ -96,5 +106,5 @@ export function useDigestStream(): DigestStreamState {
     })();
   }, []);
 
-  return { text, isStreaming, isDone, error, start };
+  return { text, isStreaming, isDone, error, start, reset };
 }

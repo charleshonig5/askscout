@@ -401,12 +401,17 @@ export function DigestView({
   if (mode === "resume") return <ResumeView text={resume} />;
   if (mode === "standup") return <StandupView standup={standup} />;
 
-  // Digest mode — streaming or complete
-  if (isStreaming) {
+  // Digest mode — streaming
+  if (isStreaming && streamingText) {
     return <StreamingDigest text={streamingText} isStreaming />;
   }
 
-  // If we have streaming text but no parsed digest, show the completed streaming view
+  // Loading state (streaming started but no text yet)
+  if (isStreaming && !streamingText) {
+    return <div className="digest-loading">Scout is sniffing through your commits...</div>;
+  }
+
+  // Completed streaming text (no parsed digest)
   if (!digest && streamingText) {
     return (
       <div>
@@ -416,7 +421,7 @@ export function DigestView({
     );
   }
 
-  // If we have a parsed digest, show the structured view
+  // Parsed digest
   if (digest) {
     return (
       <div>
@@ -426,6 +431,6 @@ export function DigestView({
     );
   }
 
-  // Empty state
-  return null;
+  // Empty state (nothing generated yet)
+  return <div className="digest-loading">Select a repo to generate your digest.</div>;
 }

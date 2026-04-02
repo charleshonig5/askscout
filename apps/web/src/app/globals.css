@@ -763,6 +763,13 @@ a:hover {
    Copy Button
    ============================================ */
 
+.digest-loading {
+  text-align: center;
+  padding: var(--space-2xl) var(--space-lg);
+  color: var(--color-text-tertiary);
+  font-size: 14px;
+}
+
 .digest-error {
   text-align: center;
   padding: var(--space-2xl) var(--space-lg);
