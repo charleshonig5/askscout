@@ -1,12 +1,7 @@
 import { auth } from "@/auth";
 import { fetchCommits, fetchDiffs } from "@/lib/github";
 import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
-import {
-  buildStreamingSystemPrompt,
-  formatCommitsForPrompt,
-  formatDiffsForPrompt,
-  computeStats,
-} from "@askscout/core";
+import { buildStreamingSystemPrompt, computeStats } from "@askscout/core";
 
 export const maxDuration = 60;
 
