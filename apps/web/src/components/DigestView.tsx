@@ -45,12 +45,10 @@ function EmailBtn() {
 
 function DigestActions({ text }: { text: string }) {
   return (
-    <div className="digest-actions">
-      <CopyBtn text={text} />
-      <div className="digest-actions-secondary">
-        <DownloadBtn text={text} />
-        <EmailBtn />
-      </div>
+    <div className="digest-actions-row">
+      <CopyBtn text={text} label="Copy" />
+      <DownloadBtn text={text} />
+      <EmailBtn />
     </div>
   );
 }
@@ -65,8 +63,10 @@ function CopyBtn({ text, label }: { text: string; label?: string }) {
     });
   }, [text]);
 
+  const btnClass = label ? "action-btn" : "copy-block-btn";
+
   return (
-    <button className="copy-block-btn" onClick={handleCopy}>
+    <button className={`${btnClass} ${copied ? "copied" : ""}`} onClick={handleCopy}>
       {copied ? (
         <>
           <Check size={16} /> Copied
@@ -175,7 +175,7 @@ function StreamingDigest({ text, isStreaming }: { text: string; isStreaming: boo
 
         const lines = section.content.split("\n").filter((l: string) => l.length > 0);
         const subtitle = lines[0] ?? "";
-        const items = lines.slice(1).map((l: string) => l.replace(/^\s*[\u2022\-\*]\s*/, ""));
+        const items = lines.slice(1).map((l: string) => l.replace(/^\s*[\u2022\-*]\s*/, ""));
 
         return (
           <div key={section.key} className="digest-section">

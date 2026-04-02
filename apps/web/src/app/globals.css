@@ -865,14 +865,14 @@ a:hover {
   border-color: var(--color-border-hover);
 }
 
-.digest-actions {
+.digest-actions-row {
+  display: flex;
+  gap: var(--space-sm);
   margin-top: var(--space-lg);
 }
 
-.digest-actions-secondary {
-  display: flex;
-  gap: var(--space-xs);
-  margin-top: var(--space-sm);
+.digest-actions-row .action-btn {
+  flex: 1;
 }
 
 .action-btn {
