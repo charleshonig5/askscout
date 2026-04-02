@@ -255,7 +255,7 @@ function StreamingDigest({ text, isStreaming }: { text: string; isStreaming: boo
                 return (
                   <div key={i} className="digest-item">
                     <span className="digest-item-title">{title}</span>
-                    {context && <> {context}</>}
+                    {context && <> - {context}</>}
                   </div>
                 );
               }
