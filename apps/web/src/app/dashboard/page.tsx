@@ -53,6 +53,7 @@ export default function DashboardPage() {
 
   const currentStream = streams[mode];
   const lastRepoRef = useRef("");
+  const [cachedDigests, setCachedDigests] = useState<Record<string, string>>({});
 
   // Fetch repos on mount
   useEffect(() => {
@@ -97,9 +98,33 @@ export default function DashboardPage() {
     }
   }, []);
 
-  // Generate digest for a specific mode
-  const generate = useCallback(
-    (repoFullName: string, targetMode: Mode) => {
+  // Check for existing digest, generate only if none exists today
+  const loadOrGenerate = useCallback(
+    async (repoFullName: string, targetMode: Mode) => {
+      // Check if we already have today's digest cached client-side
+      const cacheKey = `${repoFullName}:${targetMode}`;
+      if (cachedDigests[cacheKey]) return;
+
+      // Check Supabase for today's digest
+      try {
+        const res = await fetch(
+          `/api/digest/today?repo=${encodeURIComponent(repoFullName)}&mode=${targetMode}`,
+        );
+        if (res.ok) {
+          const data = (await res.json()) as {
+            exists: boolean;
+            digest?: { content: string; stats: Record<string, unknown> | null };
+          };
+          if (data.exists && data.digest) {
+            setCachedDigests((prev) => ({ ...prev, [cacheKey]: data.digest!.content }));
+            return;
+          }
+        }
+      } catch {
+        // If check fails, just generate fresh
+      }
+
+      // No existing digest, generate a new one
       const parts = repoFullName.split("/");
       if (parts.length !== 2) return;
       const [owner, repo] = parts as [string, string];
@@ -107,43 +132,87 @@ export default function DashboardPage() {
       stream.reset();
       setTimeout(() => stream.start(owner, repo, API_MODES[targetMode]), 50);
     },
+    [streams, cachedDigests],
+  );
+
+  // Force generate (bypasses cache)
+  const forceGenerate = useCallback(
+    (repoFullName: string, targetMode: Mode) => {
+      const parts = repoFullName.split("/");
+      if (parts.length !== 2) return;
+      const [owner, repo] = parts as [string, string];
+      const cacheKey = `${repoFullName}:${targetMode}`;
+      setCachedDigests((prev) => {
+        const next = { ...prev };
+        delete next[cacheKey];
+        return next;
+      });
+      const stream = streams[targetMode];
+      stream.reset();
+      setTimeout(() => stream.start(owner, repo, API_MODES[targetMode]), 50);
+    },
     [streams],
   );
 
-  // Auto-generate digest when repo changes
+  // Load or generate digest when repo changes
   useEffect(() => {
     if (selectedRepo && selectedRepo !== lastRepoRef.current) {
       lastRepoRef.current = selectedRepo;
       digestStream.reset();
       standupStream.reset();
       resumeStream.reset();
+      setCachedDigests({});
       void fetchHistory(selectedRepo);
-      setTimeout(() => {
-        const parts = selectedRepo.split("/");
-        if (parts.length === 2) {
-          const [owner, repo] = parts as [string, string];
-          digestStream.start(owner, repo, "digest");
-        }
-      }, 50);
+      void loadOrGenerate(selectedRepo, "digest");
     }
   }, [selectedRepo]);
 
-  // Refresh history after digest completes
+  // Cache completed streams and refresh history
   useEffect(() => {
-    if (digestStream.isDone && selectedRepo) {
+    if (digestStream.isDone && digestStream.text && selectedRepo) {
+      setCachedDigests((prev) => ({
+        ...prev,
+        [`${selectedRepo}:digest`]: digestStream.text,
+      }));
       void fetchHistory(selectedRepo);
     }
   }, [digestStream.isDone]);
 
+  useEffect(() => {
+    if (standupStream.isDone && standupStream.text && selectedRepo) {
+      setCachedDigests((prev) => ({
+        ...prev,
+        [`${selectedRepo}:standup`]: standupStream.text,
+      }));
+    }
+  }, [standupStream.isDone]);
+
+  useEffect(() => {
+    if (resumeStream.isDone && resumeStream.text && selectedRepo) {
+      setCachedDigests((prev) => ({
+        ...prev,
+        [`${selectedRepo}:resume`]: resumeStream.text,
+      }));
+    }
+  }, [resumeStream.isDone]);
+
   const handleModeChange = useCallback(
     (newMode: Mode) => {
       setMode(newMode);
+      const cacheKey = `${selectedRepo}:${newMode}`;
       const stream = streams[newMode];
-      if (!stream.text && !stream.isStreaming && !stream.isDone && !stream.error && selectedRepo) {
-        generate(selectedRepo, newMode);
+      if (
+        !cachedDigests[cacheKey] &&
+        !stream.text &&
+        !stream.isStreaming &&
+        !stream.isDone &&
+        !stream.error &&
+        selectedRepo
+      ) {
+        void loadOrGenerate(selectedRepo, newMode);
       }
     },
-    [streams, selectedRepo, generate],
+    [streams, selectedRepo, cachedDigests, loadOrGenerate],
   );
 
   const handleRepoChange = useCallback((repo: string) => {
@@ -216,7 +285,10 @@ export default function DashboardPage() {
             {currentStream.error ? (
               <div className="digest-error">
                 <p>{currentStream.error}</p>
-                <button className="btn btn-secondary" onClick={() => generate(selectedRepo, mode)}>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => forceGenerate(selectedRepo, mode)}
+                >
                   Try again
                 </button>
               </div>
@@ -224,7 +296,7 @@ export default function DashboardPage() {
               <DigestView
                 mode={mode}
                 isStreaming={currentStream.isStreaming}
-                streamingText={currentStream.text}
+                streamingText={currentStream.text || cachedDigests[`${selectedRepo}:${mode}`] || ""}
                 stats={digestStream.stats}
               />
             )}

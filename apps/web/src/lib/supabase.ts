@@ -50,6 +50,29 @@ export async function getLastRunTime(userId: string, repo: string): Promise<Date
   return new Date(data.created_at as string);
 }
 
+/** Get today's digest for a user+repo+mode if one exists */
+export async function getTodaysDigest(
+  userId: string,
+  repo: string,
+  mode: string,
+): Promise<DigestRecord | null> {
+  if (!supabase) return null;
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const { data, error } = await supabase
+    .from("digests")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("repo", repo)
+    .eq("mode", mode)
+    .gte("created_at", todayStart.toISOString())
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
+  if (error || !data) return null;
+  return data as DigestRecord;
+}
+
 /** Get digest history for a user+repo (last 30 days) */
 export async function getDigestHistory(userId: string, repo: string): Promise<DigestRecord[]> {
   if (!supabase) return [];
