@@ -399,7 +399,7 @@ interface DigestViewProps {
   streamingText: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stats: any;
-  timeContext?: string | null;
+  sessionChips?: string[];
   streak?: number;
   visibleSections?: Record<string, boolean>;
   onResumeWithAI?: () => void;
@@ -475,7 +475,7 @@ export function DigestView({
   isLoading,
   streamingText,
   stats,
-  timeContext,
+  sessionChips,
   streak,
   visibleSections,
   onResumeWithAI,
@@ -494,7 +494,8 @@ export function DigestView({
     return <FormattedText text={streamingText} isStreaming />;
   }
 
-  const showMeta = timeContext || (streak && streak >= 2);
+  const hasChips = sessionChips && sessionChips.length > 0;
+  const showMeta = hasChips || (streak && streak >= 2);
 
   if (streamingText) {
     return (
@@ -524,8 +525,16 @@ export function DigestView({
             <div className="digest-section-title">{"\ud83d\udcca"} Statistics</div>
             {showMeta && (
               <div className="digest-meta">
-                {timeContext && <span className="digest-meta-item">{timeContext}</span>}
-                {timeContext && streak && streak >= 2 && (
+                {hasChips && (
+                  <div className="session-chips">
+                    {sessionChips.map((label, i) => (
+                      <span key={i} className="session-chip">
+                        {label}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {hasChips && streak && streak >= 2 && (
                   <span className="digest-meta-sep">{"\u00b7"}</span>
                 )}
                 {streak && streak >= 2 && (

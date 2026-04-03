@@ -351,31 +351,29 @@ export default function DashboardPage() {
       ? viewingHistoryStats
       : digestStream.stats || cachedDigests[`${selectedRepo}:digest`]?.stats || null;
 
-  // Format time context from sessions or active days
-  const timeContext = (() => {
+  // Build session chips from stats
+  const sessionChips = (() => {
     const s = currentStats as Record<string, unknown> | null;
-    if (!s) return null;
+    if (!s) return [];
 
     const sessions = s.sessions as string[] | undefined;
     const activeDays = s.activeDays as string[] | undefined;
 
-    // Multi-day: show which days had activity
+    // Multi-day: day name chips
     if (activeDays && activeDays.length > 1) {
-      return `Active ${activeDays.join(", ")}`;
+      return activeDays;
     }
 
-    // Single-day: show session count and times
+    // Single-day: time chips
     if (sessions && sessions.length > 0) {
-      const times = sessions.map((iso) =>
+      return sessions.map((iso) =>
         new Date(iso)
           .toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })
           .toLowerCase(),
       );
-      const label = sessions.length === 1 ? "1 session" : `${sessions.length} sessions`;
-      return `${label} (${times.join(", ")})`;
     }
 
-    return null;
+    return [];
   })();
 
   // Determine the raw content for the current view (unified text with section markers)
@@ -421,7 +419,7 @@ export default function DashboardPage() {
                   isStreaming={false}
                   streamingText={currentSections?.digest ?? noNewCommits.content}
                   stats={noNewCommits.stats}
-                  timeContext={timeContext}
+                  sessionChips={sessionChips}
                   streak={streak}
                   visibleSections={digestSectionPrefs ?? undefined}
                   onResumeWithAI={() => setAiContextOpen(true)}
@@ -441,7 +439,7 @@ export default function DashboardPage() {
                   isStreaming={false}
                   streamingText={currentSections?.digest ?? viewingHistoryContent ?? ""}
                   stats={viewingHistoryStats}
-                  timeContext={timeContext}
+                  sessionChips={sessionChips}
                   streak={streak}
                   visibleSections={digestSectionPrefs ?? undefined}
                   onResumeWithAI={() => setAiContextOpen(true)}
@@ -470,7 +468,7 @@ export default function DashboardPage() {
                         cachedDigests[`${selectedRepo}:digest`]?.stats ||
                         null) as Record<string, unknown> | null
                     }
-                    timeContext={timeContext}
+                    sessionChips={sessionChips}
                     streak={streak}
                     onResumeWithAI={() => setAiContextOpen(true)}
                     onGenerateStandup={() => setStandupOpen(true)}
