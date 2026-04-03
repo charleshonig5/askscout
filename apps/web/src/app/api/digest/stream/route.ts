@@ -103,7 +103,12 @@ export async function POST(req: Request) {
       return Response.json({ error: "No commits found in the past 90 days" }, { status: 404 });
     }
 
-    const diffs = await fetchDiffs(session.accessToken, owner, repo, commits);
+    const { diffs, filesAdded, filesRemoved: filesDeleted } = await fetchDiffs(
+      session.accessToken,
+      owner,
+      repo,
+      commits,
+    );
 
     // 5. Compute stats from commits (more reliable than diffs which can fail)
     const allFiles = new Set(commits.flatMap((c) => c.filesChanged));
@@ -111,15 +116,44 @@ export async function POST(req: Request) {
     const linesRemoved = commits.reduce((sum, c) => sum + c.deletions, 0);
     const filesChanged = allFiles.size > 0 ? allFiles.size : diffs.length;
 
+    // Detect coding sessions: cluster commits within 30 min of each other
+    const SESSION_GAP_MS = 30 * 60 * 1000;
+    const sortedTimestamps = commits
+      .map((c) => c.timestamp.getTime())
+      .sort((a, b) => a - b);
+
+    const sessions: string[] = [];
+    const activeDaySet = new Set<string>();
+    let sessionStart = sortedTimestamps[0]!;
+
+    for (let i = 0; i < sortedTimestamps.length; i++) {
+      const ts = sortedTimestamps[i]!;
+      const d = new Date(ts);
+      activeDaySet.add(
+        d.toLocaleDateString("en-US", { weekday: "short" }),
+      );
+
+      const next = sortedTimestamps[i + 1];
+      if (!next || next - ts > SESSION_GAP_MS) {
+        // End of session — record the start time as the session marker
+        sessions.push(new Date(sessionStart).toISOString());
+        if (next) sessionStart = next;
+      }
+    }
+
+    const singleDay =
+      new Date(sortedTimestamps[0]!).toDateString() ===
+      new Date(sortedTimestamps[sortedTimestamps.length - 1]!).toDateString();
+
     const stats = {
       commits: commits.length,
       filesChanged,
       linesAdded,
       linesRemoved,
-      timeSpan: {
-        from: commits[0]!.timestamp,
-        to: commits[commits.length - 1]!.timestamp,
-      },
+      filesAdded,
+      filesDeleted,
+      sessions,
+      activeDays: singleDay ? [] : [...activeDaySet],
     };
 
     // 6. Compute codebase health (deterministic, data-driven)
@@ -289,17 +323,9 @@ Produce the digest now. Be concise. No em dashes, no semicolons.`;
     const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
     const onComplete = (fullText: string) => {
-      // Parse the three sections from the unified response
-      const digestMatch =
-        fullText.split("---DIGEST---")[1]?.split("---STANDUP---")[0]?.trim() ?? fullText;
-      const standupMatch =
-        fullText.split("---STANDUP---")[1]?.split("---AI_CONTEXT---")[0]?.trim() ?? "";
-      const aiContextMatch = fullText.split("---AI_CONTEXT---")[1]?.trim() ?? "";
-
-      // Save all three to Supabase
-      void saveDigest(userId, repoFullName, "digest", digestMatch, stats);
-      if (standupMatch) void saveDigest(userId, repoFullName, "standup", standupMatch, stats);
-      if (aiContextMatch) void saveDigest(userId, repoFullName, "resume", aiContextMatch, stats);
+      // Save full unified text (with section markers) as the digest record.
+      // This lets the client parse standup and AI context from any stored digest.
+      void saveDigest(userId, repoFullName, "digest", fullText, stats);
     };
 
     let stream: ReadableStream;

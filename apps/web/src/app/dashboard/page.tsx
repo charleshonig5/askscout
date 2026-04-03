@@ -7,6 +7,7 @@ import { DigestView } from "@/components/DigestView";
 import { AIContextModal } from "@/components/AIContextModal";
 import { StandupModal } from "@/components/StandupModal";
 import { useDigestStream } from "@/lib/use-digest-stream";
+import { parseSections } from "@/lib/parse-sections";
 import type { HistoryEntry } from "@/lib/mock-data";
 
 interface HistoryRecord {
@@ -307,6 +308,75 @@ export default function DashboardPage() {
     pageTitle = "Digest";
   }
 
+  // Compute per-repo streak from history records (consecutive calendar days)
+  const streak = (() => {
+    if (historyRecords.length === 0) return 0;
+    const digestDays = new Set(
+      historyRecords.map((h) => {
+        const d = new Date(h.created_at);
+        return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+      }),
+    );
+    let count = 0;
+    const now = new Date();
+    for (let i = 0; i < 365; i++) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+      if (digestDays.has(key)) {
+        count++;
+      } else if (i === 0) {
+        // Today might not have a digest yet, skip it
+        continue;
+      } else {
+        break;
+      }
+    }
+    return count;
+  })();
+
+  // Get current stats from whichever source is active
+  const currentStats = noNewCommits
+    ? noNewCommits.stats
+    : isViewingHistory
+      ? viewingHistoryStats
+      : digestStream.stats || cachedDigests[`${selectedRepo}:digest`]?.stats || null;
+
+  // Format time context from sessions or active days
+  const timeContext = (() => {
+    const s = currentStats as Record<string, unknown> | null;
+    if (!s) return null;
+
+    const sessions = s.sessions as string[] | undefined;
+    const activeDays = s.activeDays as string[] | undefined;
+
+    // Multi-day: show which days had activity
+    if (activeDays && activeDays.length > 1) {
+      return `Active ${activeDays.join(", ")}`;
+    }
+
+    // Single-day: show session count and times
+    if (sessions && sessions.length > 0) {
+      const times = sessions.map((iso) =>
+        new Date(iso).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).toLowerCase(),
+      );
+      const label = sessions.length === 1 ? "1 session" : `${sessions.length} sessions`;
+      return `${label} (${times.join(", ")})`;
+    }
+
+    return null;
+  })();
+
+  // Determine the raw content for the current view (unified text with section markers)
+  const currentRawContent = noNewCommits
+    ? noNewCommits.content
+    : isViewingHistory
+      ? viewingHistoryContent ?? ""
+      : digestStream.text || cachedDigests[`${selectedRepo}:digest`]?.content || "";
+
+  // Parse sections from whatever content source is active
+  const currentSections = currentRawContent ? parseSections(currentRawContent) : null;
+
   return (
     <div>
       <Header
@@ -331,6 +401,16 @@ export default function DashboardPage() {
               <h1 className="digest-page-name">{pageTitle}</h1>
               <p className="digest-page-date">{displayDate}</p>
               <p className="digest-page-subtitle">{repoName}</p>
+              {(timeContext || streak >= 2) && (
+                <div className="digest-meta">
+                  {timeContext && <span className="digest-meta-item">{timeContext}</span>}
+                  {streak >= 2 && (
+                    <span className="digest-meta-item digest-meta-streak">
+                      {streak}-day streak
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
 
             {noNewCommits ? (
@@ -338,7 +418,7 @@ export default function DashboardPage() {
                 <div className="digest-notice">No new commits since this digest.</div>
                 <DigestView
                   isStreaming={false}
-                  streamingText={noNewCommits.content}
+                  streamingText={currentSections?.digest ?? noNewCommits.content}
                   stats={noNewCommits.stats}
                   onResumeWithAI={() => setAiContextOpen(true)}
                   onGenerateStandup={() => setStandupOpen(true)}
@@ -355,7 +435,7 @@ export default function DashboardPage() {
                 </button>
                 <DigestView
                   isStreaming={false}
-                  streamingText={viewingHistoryContent}
+                  streamingText={currentSections?.digest ?? viewingHistoryContent ?? ""}
                   stats={viewingHistoryStats}
                   onResumeWithAI={() => setAiContextOpen(true)}
                   onGenerateStandup={() => setStandupOpen(true)}
@@ -377,17 +457,7 @@ export default function DashboardPage() {
                   <DigestView
                     isStreaming={digestStream.isStreaming}
                     isLoading={isCheckingCache}
-                    streamingText={(() => {
-                      const raw =
-                        digestStream.text || cachedDigests[`${selectedRepo}:digest`]?.content || "";
-                      // Only show digest portion, strip standup/AI context
-                      if (raw.includes("---DIGEST---")) {
-                        return (
-                          raw.split("---DIGEST---")[1]?.split("---STANDUP---")[0]?.trim() ?? raw
-                        );
-                      }
-                      return raw.split("---STANDUP---")[0]?.trim() ?? raw;
-                    })()}
+                    streamingText={currentSections?.digest ?? ""}
                     stats={
                       (digestStream.stats ||
                         cachedDigests[`${selectedRepo}:digest`]?.stats ||
@@ -406,13 +476,13 @@ export default function DashboardPage() {
       <AIContextModal
         isOpen={aiContextOpen}
         onClose={() => setAiContextOpen(false)}
-        content={digestStream.sections?.aiContext ?? null}
+        content={currentSections?.aiContext || null}
       />
 
       <StandupModal
         isOpen={standupOpen}
         onClose={() => setStandupOpen(false)}
-        content={digestStream.sections?.standup ?? null}
+        content={currentSections?.standup || null}
       />
     </div>
   );

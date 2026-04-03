@@ -113,20 +113,32 @@ export async function fetchCommits(
   });
 }
 
+export interface FetchDiffsResult {
+  diffs: GitDiff[];
+  filesAdded: number;
+  filesRemoved: number;
+}
+
 /** Fetch diffs between two commits using the Compare API */
 export async function fetchDiffs(
   token: string,
   owner: string,
   repo: string,
   commits: GitCommit[],
-): Promise<GitDiff[]> {
-  if (commits.length === 0) return [];
+): Promise<FetchDiffsResult> {
+  if (commits.length === 0) return { diffs: [], filesAdded: 0, filesRemoved: 0 };
 
   const oldest = commits[0]!;
   const newest = commits[commits.length - 1]!;
 
   // For single commit or initial commits, fetch the commit directly
-  let files: { filename: string; additions: number; deletions: number; patch?: string }[];
+  let files: {
+    filename: string;
+    additions: number;
+    deletions: number;
+    patch?: string;
+    status?: string;
+  }[];
 
   if (commits.length === 1) {
     const res = await githubFetch(`/repos/${owner}/${repo}/commits/${oldest.hash}`, token);
@@ -150,10 +162,14 @@ export async function fetchDiffs(
         const data = (await res.json()) as { files?: typeof files };
         files = data.files ?? [];
       } catch {
-        return [];
+        return { diffs: [], filesAdded: 0, filesRemoved: 0 };
       }
     }
   }
+
+  // Count file additions/removals before filtering
+  const filesAdded = files.filter((f) => f.status === "added").length;
+  const filesRemoved = files.filter((f) => f.status === "removed").length;
 
   // Filter out noisy files that don't contribute to useful summaries
   const filtered = files.filter(
@@ -189,5 +205,5 @@ export async function fetchDiffs(
     }
   }
 
-  return diffs;
+  return { diffs, filesAdded, filesRemoved };
 }

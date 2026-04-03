@@ -311,13 +311,18 @@ interface DigestViewStats {
   filesChanged: number;
   linesAdded: number;
   linesRemoved: number;
+  filesAdded?: number;
+  filesDeleted?: number;
   health?: HealthData;
   topFiles?: TopFile[];
   netImpact?: number;
+  sessions?: string[];
+  activeDays?: string[];
 }
 
 function StatsCards({ stats }: { stats: DigestViewStats }) {
   const fmt = (n: number) => n.toLocaleString("en-US");
+  const netFiles = (stats.filesAdded ?? 0) - (stats.filesDeleted ?? 0);
   return (
     <div className="stats-row">
       <span className="stats-item positive">+{fmt(stats.linesAdded)} lines</span>
@@ -331,6 +336,15 @@ function StatsCards({ stats }: { stats: DigestViewStats }) {
       <span className="stats-item">{fmt(stats.commits)} commits</span>
       <span className="stats-sep">{"\u00b7"}</span>
       <span className="stats-item">{fmt(stats.filesChanged)} files</span>
+      {netFiles !== 0 && (
+        <>
+          <span className="stats-sep">{"\u00b7"}</span>
+          <span className={`stats-item ${netFiles > 0 ? "positive" : "negative"}`}>
+            {netFiles > 0 ? "+" : ""}
+            {fmt(netFiles)} net {Math.abs(netFiles) === 1 ? "file" : "files"}
+          </span>
+        </>
+      )}
     </div>
   );
 }
@@ -344,7 +358,7 @@ function TopFiles({ files }: { files: TopFile[] }) {
       <div className="top-files">
         {files.map((f) => (
           <div key={f.file} className="top-file-row">
-            <span className="top-file-name">{f.file.split("/").pop()}</span>
+            <span className="top-file-name">{f.file.split("/").slice(-2).join("/")}</span>
             <div className="top-file-bar-container">
               <div
                 className="top-file-bar"

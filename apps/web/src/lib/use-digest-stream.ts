@@ -9,16 +9,9 @@ export interface DigestStats {
   linesRemoved: number;
 }
 
-export interface ParsedSections {
-  digest: string;
-  standup: string;
-  aiContext: string;
-}
-
 interface DigestStreamState {
   text: string;
   stats: DigestStats | null;
-  sections: ParsedSections | null;
   isStreaming: boolean;
   isDone: boolean;
   error: string | null;
@@ -29,31 +22,16 @@ interface DigestStreamState {
 export function useDigestStream(): DigestStreamState {
   const [text, setText] = useState("");
   const [stats, setStats] = useState<DigestStats | null>(null);
-  const [sections, setSections] = useState<ParsedSections | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const fullTextRef = useRef("");
 
-  const parseSections = useCallback((fullText: string) => {
-    const digestPart =
-      fullText.split("---DIGEST---")[1]?.split("---STANDUP---")[0]?.trim() ?? fullText;
-    const standupPart =
-      fullText.split("---STANDUP---")[1]?.split("---AI_CONTEXT---")[0]?.trim() ?? "";
-    const aiContextPart = fullText.split("---AI_CONTEXT---")[1]?.trim() ?? "";
-
-    // Only set sections if we actually got the markers
-    if (fullText.includes("---STANDUP---")) {
-      setSections({ digest: digestPart, standup: standupPart, aiContext: aiContextPart });
-    }
-  }, []);
-
   const reset = useCallback(() => {
     abortRef.current?.abort();
     setText("");
     setStats(null);
-    setSections(null);
     fullTextRef.current = "";
     setIsStreaming(false);
     setIsDone(false);
@@ -118,7 +96,6 @@ export function useDigestStream(): DigestStreamState {
                   fullTextRef.current += chunk;
                   setText((prev) => prev + chunk);
                 } else if (currentEvent === "done") {
-                  parseSections(fullTextRef.current);
                   setIsDone(true);
                   setIsStreaming(false);
                 } else if (currentEvent === "error" && typeof parsed.error === "string") {
@@ -133,7 +110,6 @@ export function useDigestStream(): DigestStreamState {
         }
 
         // If we exit the loop without a done event, mark as done
-        parseSections(fullTextRef.current);
         setIsDone(true);
         setIsStreaming(false);
       } catch (err) {
@@ -144,5 +120,5 @@ export function useDigestStream(): DigestStreamState {
     })();
   }, []);
 
-  return { text, stats, sections, isStreaming, isDone, error, start, reset };
+  return { text, stats, isStreaming, isDone, error, start, reset };
 }
