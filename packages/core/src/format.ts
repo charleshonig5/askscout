@@ -116,7 +116,7 @@ export function formatCodebaseHealth(
 
   const focusLevel =
     filesPerCommit <= 3
-      ? "Laser"
+      ? "Tight"
       : filesPerCommit <= 6
         ? "Sharp"
         : filesPerCommit <= 12
