@@ -36,7 +36,7 @@ function EmailBtn() {
         </>
       ) : (
         <>
-          <Mail size={16} /> Email
+          <Mail size={16} /> Send to myself
         </>
       )}
     </button>
