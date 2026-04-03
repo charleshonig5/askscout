@@ -36,21 +36,17 @@ Output your response in this EXACT format with these EXACT section headers and e
 [1-2 casual sentences about the overall vibe]
 
 \ud83d\ude80 Shipped
-Scout dug up N new things you got working:
-  \u2022 Short Title - rest of the context explaining what happened
+  \u2022 Short Title - what was built and how it works
   \u2022 Short Title - more detail here
 
 \ud83d\udd27 Changed
-Scout noticed you were poking around in N spots:
   \u2022 Short Title - what changed and why
   \u2022 Short Title - more context
 
 \u26a0\ufe0f Unstable
-Scout keeps tripping over [this one/these]:
-  \u2022 Short Title - changed N times, still wobbly
+  \u2022 Short Title - what keeps breaking, changed N times
 
 \ud83d\udccd Left Off
-Here's where you left your bone:
   \u2022 Short Title - what's in progress and what's next
 
 IMPORTANT RULES:

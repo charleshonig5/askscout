@@ -238,15 +238,18 @@ function StreamingDigest({ text, isStreaming }: { text: string; isStreaming: boo
         }
 
         const lines = section.content.split("\n").filter((l: string) => l.length > 0);
-        const subtitle = lines[0] ?? "";
-        const items = lines.slice(1).map((l: string) => l.replace(/^\s*[\u2022\-*]\s*/, ""));
+        // Filter out the subtitle line (starts with "Scout") and get only bullet items
+        const items = lines
+          .filter((l: string) => /^\s*[\u2022\-*]/.test(l) || !l.startsWith("Scout"))
+          .map((l: string) => l.replace(/^\s*[\u2022\-*]\s*/, ""))
+          .filter((l: string) => l.length > 0);
 
         return (
           <div key={section.key} className="digest-section">
             <div className="digest-section-title">
               {section.emoji} {section.label}
+              {items.length > 0 && <span className="digest-count-badge">{items.length}</span>}
             </div>
-            {subtitle && <div className="digest-section-subtitle">{subtitle}</div>}
             {items.map((item: string, i: number) => {
               const dashIdx = item.indexOf(" - ");
               if (dashIdx > 0 && dashIdx < 60) {

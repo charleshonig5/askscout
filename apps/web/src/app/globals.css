@@ -438,6 +438,20 @@ a:hover {
   gap: var(--space-sm);
 }
 
+.digest-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+}
+
 .digest-section-subtitle {
   font-size: 13px;
   color: var(--color-text-secondary);
