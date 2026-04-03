@@ -41,6 +41,11 @@ export default function DashboardPage() {
     Record<string, { content: string; stats: Record<string, unknown> | null }>
   >({});
   const [isCheckingCache, setIsCheckingCache] = useState(false);
+  const [noNewCommits, setNoNewCommits] = useState<{
+    content: string;
+    stats: Record<string, unknown> | null;
+    date: string;
+  } | null>(null);
 
   // Fetch repos and user settings on mount
   useEffect(() => {
@@ -199,7 +204,9 @@ export default function DashboardPage() {
       setCachedDigests({});
 
       setViewingHistoryContent(null);
+      setViewingHistoryStats(null);
       setActiveHistoryId(null);
+      setNoNewCommits(null);
       void fetchHistory(selectedRepo);
       void loadOrGenerate(selectedRepo, "digest");
     }
@@ -218,6 +225,28 @@ export default function DashboardPage() {
       void fetchHistory(selectedRepo);
     }
   }, [digestStream.isDone]);
+
+  // Handle "no commits" error by showing most recent digest
+  useEffect(() => {
+    if (
+      digestStream.error &&
+      digestStream.error.toLowerCase().includes("no commits") &&
+      historyRecords.length > 0
+    ) {
+      const latest = historyRecords[0]!;
+      setNoNewCommits({
+        content: latest.content,
+        stats: latest.stats,
+        date: new Date(latest.created_at).toLocaleDateString("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        }),
+      });
+      digestStream.reset();
+    }
+  }, [digestStream.error, historyRecords]);
 
   const handleRepoChange = useCallback((repo: string) => {
     setSelectedRepo(repo);
@@ -255,22 +284,28 @@ export default function DashboardPage() {
   // Find the active history entry for the title
   const activeHistoryEntry = historyRecords.find((h) => h.id === activeHistoryId);
 
-  const displayDate =
-    isViewingHistory && activeHistoryEntry
-      ? new Date(activeHistoryEntry.created_at).toLocaleDateString("en-US", {
-          weekday: "long",
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-        })
-      : new Date().toLocaleDateString("en-US", {
-          weekday: "long",
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-        });
+  const todayStr = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 
-  const pageTitle = isViewingHistory ? "Digest" : "Today\u2019s Digest";
+  let displayDate = todayStr;
+  let pageTitle = "Today\u2019s Digest";
+
+  if (noNewCommits) {
+    displayDate = noNewCommits.date;
+    pageTitle = "Your Digest";
+  } else if (isViewingHistory && activeHistoryEntry) {
+    displayDate = new Date(activeHistoryEntry.created_at).toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+    pageTitle = "Digest";
+  }
 
   return (
     <div>
@@ -298,7 +333,18 @@ export default function DashboardPage() {
               <p className="digest-page-subtitle">{repoName}</p>
             </div>
 
-            {isViewingHistory ? (
+            {noNewCommits ? (
+              <>
+                <div className="digest-notice">No new commits since this digest.</div>
+                <DigestView
+                  isStreaming={false}
+                  streamingText={noNewCommits.content}
+                  stats={noNewCommits.stats}
+                  onResumeWithAI={() => setAiContextOpen(true)}
+                  onGenerateStandup={() => setStandupOpen(true)}
+                />
+              </>
+            ) : isViewingHistory ? (
               <>
                 <button
                   className="btn btn-secondary"
