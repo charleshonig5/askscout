@@ -183,6 +183,8 @@ export default function DashboardPage() {
       resumeStream.reset();
       setCachedDigests({});
       setMode("digest");
+      setViewingHistoryContent(null);
+      setActiveHistoryId(null);
       void fetchHistory(selectedRepo);
       void loadOrGenerate(selectedRepo, "digest");
     }
@@ -240,27 +242,46 @@ export default function DashboardPage() {
     setSelectedRepo(repo);
   }, []);
 
-  // Click history entry to view old digest
+  // State for viewing historical digests
+  const [viewingHistoryContent, setViewingHistoryContent] = useState<string | null>(null);
+
+  // Click history entry to view that digest
   const handleHistorySelect = useCallback(
     (id: string) => {
       setActiveHistoryId(id);
       const record = historyRecords.find((h) => h.id === id);
       if (record) {
-        digestStream.reset();
-        // Show the historical content by setting it directly
-        // For now just regenerate (history viewing comes later)
+        setViewingHistoryContent(record.content);
+        setMode("digest");
       }
     },
-    [historyRecords, digestStream],
+    [historyRecords],
   );
 
+  // "Back to today" — clear historical view
+  const handleBackToToday = useCallback(() => {
+    setActiveHistoryId(null);
+    setViewingHistoryContent(null);
+  }, []);
+
+  const isViewingHistory = viewingHistoryContent !== null;
   const repoName = selectedRepo.split("/").pop() ?? selectedRepo;
 
-  const fullDate = new Date().toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  // Find the active history entry for the title
+  const activeHistoryEntry = historyRecords.find((h) => h.id === activeHistoryId);
+
+  const displayDate =
+    isViewingHistory && activeHistoryEntry
+      ? new Date(activeHistoryEntry.created_at).toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })
+      : new Date().toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        });
 
   const modeLabels: Record<Mode, string> = {
     digest: "Digest",
@@ -272,7 +293,7 @@ export default function DashboardPage() {
     standup: `Copy-paste standup for ${repoName}`,
     resume: `Paste into your AI coding tools to pick up where you left off on ${repoName}`,
   };
-  const pageTitle = `Today\u2019s ${modeLabels[mode]}`;
+  const pageTitle = isViewingHistory ? modeLabels[mode] : `Today\u2019s ${modeLabels[mode]}`;
 
   return (
     <div>
@@ -296,31 +317,54 @@ export default function DashboardPage() {
           <div className="digest-container">
             <div className="digest-page-title">
               <h1 className="digest-page-name">{pageTitle}</h1>
-              <p className="digest-page-date">{fullDate}</p>
+              <p className="digest-page-date">{displayDate}</p>
               <p className="digest-page-subtitle">{modeSubtitles[mode]}</p>
             </div>
-            <div className="digest-header">
-              <ModeToggle mode={mode} onChange={handleModeChange} />
-            </div>
 
-            {currentStream.error ? (
-              <div className="digest-error">
-                <p>{currentStream.error}</p>
+            {isViewingHistory ? (
+              <>
                 <button
                   className="btn btn-secondary"
-                  onClick={() => forceGenerate(selectedRepo, mode)}
+                  onClick={handleBackToToday}
+                  style={{ marginBottom: "var(--space-lg)" }}
                 >
-                  Try again
+                  Back to today
                 </button>
-              </div>
+                <DigestView
+                  mode="digest"
+                  isStreaming={false}
+                  streamingText={viewingHistoryContent}
+                  stats={null}
+                />
+              </>
             ) : (
-              <DigestView
-                mode={mode}
-                isStreaming={currentStream.isStreaming}
-                isLoading={isCheckingCache}
-                streamingText={currentStream.text || cachedDigests[`${selectedRepo}:${mode}`] || ""}
-                stats={digestStream.stats}
-              />
+              <>
+                <div className="digest-header">
+                  <ModeToggle mode={mode} onChange={handleModeChange} />
+                </div>
+
+                {currentStream.error ? (
+                  <div className="digest-error">
+                    <p>{currentStream.error}</p>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => forceGenerate(selectedRepo, mode)}
+                    >
+                      Try again
+                    </button>
+                  </div>
+                ) : (
+                  <DigestView
+                    mode={mode}
+                    isStreaming={currentStream.isStreaming}
+                    isLoading={isCheckingCache}
+                    streamingText={
+                      currentStream.text || cachedDigests[`${selectedRepo}:${mode}`] || ""
+                    }
+                    stats={digestStream.stats}
+                  />
+                )}
+              </>
             )}
           </div>
         </div>
