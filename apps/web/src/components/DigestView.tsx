@@ -318,9 +318,6 @@ interface DigestViewStats {
 
 function StatsCards({ stats }: { stats: DigestViewStats }) {
   const fmt = (n: number) => n.toLocaleString("en-US");
-  const net = stats.netImpact ?? stats.linesAdded - stats.linesRemoved;
-  const isPositive = net >= 0;
-
   return (
     <div className="stats-row">
       <span className="stats-item positive">+{fmt(stats.linesAdded)} lines</span>
