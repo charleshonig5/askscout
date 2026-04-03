@@ -53,7 +53,9 @@ export default function DashboardPage() {
 
   const currentStream = streams[mode];
   const lastRepoRef = useRef("");
-  const [cachedDigests, setCachedDigests] = useState<Record<string, string>>({});
+  const [cachedDigests, setCachedDigests] = useState<
+    Record<string, { content: string; stats: Record<string, unknown> | null }>
+  >({});
   const [isCheckingCache, setIsCheckingCache] = useState(false);
 
   // Fetch repos and user settings on mount
@@ -116,7 +118,10 @@ export default function DashboardPage() {
 
   // Check Supabase for today's digest, return content or null
   const checkTodaysDigest = useCallback(
-    async (repoFullName: string, targetMode: Mode): Promise<string | null> => {
+    async (
+      repoFullName: string,
+      targetMode: Mode,
+    ): Promise<{ content: string; stats: Record<string, unknown> | null } | null> => {
       try {
         const res = await fetch(
           `/api/digest/today?repo=${encodeURIComponent(repoFullName)}&mode=${targetMode}`,
@@ -125,9 +130,11 @@ export default function DashboardPage() {
         if (res.ok) {
           const data = (await res.json()) as {
             exists: boolean;
-            digest?: { content: string };
+            digest?: { content: string; stats: Record<string, unknown> | null };
           };
-          if (data.exists && data.digest) return data.digest.content;
+          if (data.exists && data.digest) {
+            return { content: data.digest.content, stats: data.digest.stats };
+          }
         }
       } catch {
         // Timeout or network error, fall through to generate
@@ -210,7 +217,10 @@ export default function DashboardPage() {
     if (digestStream.isDone && digestStream.text && selectedRepo) {
       setCachedDigests((prev) => ({
         ...prev,
-        [`${selectedRepo}:digest`]: digestStream.text,
+        [`${selectedRepo}:digest`]: {
+          content: digestStream.text,
+          stats: digestStream.stats as Record<string, unknown> | null,
+        },
       }));
       void fetchHistory(selectedRepo);
     }
@@ -220,7 +230,7 @@ export default function DashboardPage() {
     if (standupStream.isDone && standupStream.text && selectedRepo) {
       setCachedDigests((prev) => ({
         ...prev,
-        [`${selectedRepo}:standup`]: standupStream.text,
+        [`${selectedRepo}:standup`]: { content: standupStream.text, stats: null },
       }));
     }
   }, [standupStream.isDone]);
@@ -229,7 +239,7 @@ export default function DashboardPage() {
     if (resumeStream.isDone && resumeStream.text && selectedRepo) {
       setCachedDigests((prev) => ({
         ...prev,
-        [`${selectedRepo}:resume`]: resumeStream.text,
+        [`${selectedRepo}:resume`]: { content: resumeStream.text, stats: null },
       }));
     }
   }, [resumeStream.isDone]);
@@ -259,6 +269,9 @@ export default function DashboardPage() {
 
   // State for viewing historical digests
   const [viewingHistoryContent, setViewingHistoryContent] = useState<string | null>(null);
+  const [viewingHistoryStats, setViewingHistoryStats] = useState<Record<string, unknown> | null>(
+    null,
+  );
 
   // Click history entry to view that digest
   const handleHistorySelect = useCallback(
@@ -267,6 +280,7 @@ export default function DashboardPage() {
       const record = historyRecords.find((h) => h.id === id);
       if (record) {
         setViewingHistoryContent(record.content);
+        setViewingHistoryStats(record.stats);
         setMode("digest");
       }
     },
@@ -277,6 +291,7 @@ export default function DashboardPage() {
   const handleBackToToday = useCallback(() => {
     setActiveHistoryId(null);
     setViewingHistoryContent(null);
+    setViewingHistoryStats(null);
   }, []);
 
   const isViewingHistory = viewingHistoryContent !== null;
@@ -349,7 +364,7 @@ export default function DashboardPage() {
                   mode="digest"
                   isStreaming={false}
                   streamingText={viewingHistoryContent}
-                  stats={null}
+                  stats={viewingHistoryStats}
                 />
               </>
             ) : (
@@ -374,9 +389,13 @@ export default function DashboardPage() {
                     isStreaming={currentStream.isStreaming}
                     isLoading={isCheckingCache}
                     streamingText={
-                      currentStream.text || cachedDigests[`${selectedRepo}:${mode}`] || ""
+                      currentStream.text || cachedDigests[`${selectedRepo}:${mode}`]?.content || ""
                     }
-                    stats={digestStream.stats}
+                    stats={
+                      (digestStream.stats ||
+                        cachedDigests[`${selectedRepo}:${mode}`]?.stats ||
+                        null) as Record<string, unknown> | null
+                    }
                   />
                 )}
               </>

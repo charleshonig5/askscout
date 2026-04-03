@@ -363,7 +363,8 @@ interface DigestViewProps {
   isStreaming: boolean;
   isLoading?: boolean;
   streamingText: string;
-  stats: DigestViewStats | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  stats: any;
 }
 
 function levelColor(level: string): string {
