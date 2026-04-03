@@ -17,7 +17,13 @@ export async function POST(req: Request) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
   const userId = session.user?.id ?? session.user?.email ?? "unknown";
-  const body = (await req.json()) as { default_repo?: string };
-  await saveUserSettings(userId, { default_repo: body.default_repo ?? null });
+  const body = (await req.json()) as {
+    default_repo?: string;
+    digest_sections?: Record<string, boolean>;
+  };
+  const updates: Record<string, unknown> = {};
+  if ("default_repo" in body) updates.default_repo = body.default_repo ?? null;
+  if ("digest_sections" in body) updates.digest_sections = body.digest_sections ?? null;
+  await saveUserSettings(userId, updates);
   return Response.json({ ok: true });
 }

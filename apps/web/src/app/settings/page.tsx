@@ -5,6 +5,22 @@ import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Trash2, AlertTriangle } from "lucide-react";
 
+const SECTION_OPTIONS = [
+  { key: "vibeCheck", label: "Vibe Check", desc: "Casual overview of your day" },
+  { key: "shipped", label: "Shipped", desc: "New features and functionality" },
+  { key: "changed", label: "Changed", desc: "Modifications to existing code" },
+  { key: "unstable", label: "Unstable", desc: "Files that keep getting reworked" },
+  { key: "leftOff", label: "Left Off", desc: "Where you stopped working" },
+  { key: "activity", label: "Activity", desc: "Coding sessions and streak" },
+  { key: "stats", label: "Stats", desc: "Lines added, removed, commits, files" },
+  { key: "topFiles", label: "Most Active Files", desc: "Ranked list of busiest files" },
+  { key: "codebaseHealth", label: "Codebase Health", desc: "Growth, focus, and churn indicators" },
+] as const;
+
+const DEFAULT_SECTIONS: Record<string, boolean> = Object.fromEntries(
+  SECTION_OPTIONS.map((s) => [s.key, true]),
+);
+
 export default function SettingsPage() {
   const router = useRouter();
   const [repos, setRepos] = useState<string[]>([]);
@@ -12,6 +28,7 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [sectionPrefs, setSectionPrefs] = useState<Record<string, boolean>>(DEFAULT_SECTIONS);
 
   // Fetch repos and current settings
   useEffect(() => {
@@ -26,8 +43,14 @@ export default function SettingsPage() {
           setRepos(data.repos);
         }
         if (settingsRes.ok) {
-          const data = (await settingsRes.json()) as { default_repo: string | null };
+          const data = (await settingsRes.json()) as {
+            default_repo: string | null;
+            digest_sections: Record<string, boolean> | null;
+          };
           if (data.default_repo) setDefaultRepo(data.default_repo);
+          if (data.digest_sections) {
+            setSectionPrefs({ ...DEFAULT_SECTIONS, ...data.digest_sections });
+          }
         }
       } catch {
         // Silently fail
@@ -82,6 +105,24 @@ export default function SettingsPage() {
     }
   }, []);
 
+  const toggleSection = useCallback(
+    async (key: string, enabled: boolean) => {
+      const updated = { ...sectionPrefs, [key]: enabled };
+      setSectionPrefs(updated);
+      try {
+        await fetch("/api/settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ digest_sections: updated }),
+        });
+      } catch {
+        // Revert on failure
+        setSectionPrefs((prev) => ({ ...prev, [key]: !enabled }));
+      }
+    },
+    [sectionPrefs],
+  );
+
   const showMessage = (msg: string) => {
     setMessage(msg);
     setTimeout(() => setMessage(null), 3000);
@@ -115,6 +156,30 @@ export default function SettingsPage() {
               </option>
             ))}
           </select>
+        </div>
+
+        {/* Customize Digest */}
+        <div className="settings-section">
+          <h2 className="settings-section-title">Customize Digest</h2>
+          <p className="settings-section-desc">
+            Choose which sections appear in your digest. Changes are saved automatically.
+          </p>
+          <div className="settings-toggles">
+            {SECTION_OPTIONS.map((opt) => (
+              <label key={opt.key} className="settings-toggle-row">
+                <div className="settings-toggle-info">
+                  <span className="settings-toggle-label">{opt.label}</span>
+                  <span className="settings-toggle-desc">{opt.desc}</span>
+                </div>
+                <input
+                  type="checkbox"
+                  className="settings-toggle"
+                  checked={sectionPrefs[opt.key] !== false}
+                  onChange={(e) => void toggleSection(opt.key, e.target.checked)}
+                />
+              </label>
+            ))}
+          </div>
         </div>
 
         {/* Clear History */}

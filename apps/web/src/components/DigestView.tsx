@@ -194,16 +194,28 @@ function parseStreamingSections(text: string): ParsedSection[] {
   return sections;
 }
 
+/** Map from SECTION_MARKERS keys to DigestSections keys */
+const sectionKeyMap: Record<string, string> = {
+  vibe: "vibeCheck",
+  shipped: "shipped",
+  changed: "changed",
+  unstable: "unstable",
+  leftOff: "leftOff",
+  stats: "stats",
+};
+
 function StreamingDigest({
   text,
   isStreaming,
   afterVibe,
   afterLeftOff,
+  visibleSections,
 }: {
   text: string;
   isStreaming: boolean;
   afterVibe?: React.ReactNode;
   afterLeftOff?: React.ReactNode;
+  visibleSections?: Record<string, boolean>;
 }) {
   const cursorRef = useRef<HTMLSpanElement>(null);
   const sections = parseStreamingSections(text);
@@ -223,6 +235,12 @@ function StreamingDigest({
   return (
     <div>
       {sections.map((section) => {
+        // Check if this section is hidden by user preferences
+        const settingsKey = sectionKeyMap[section.key];
+        if (settingsKey && visibleSections && visibleSections[settingsKey] === false) {
+          return null;
+        }
+
         const showCursor = isStreaming && isLastSection(section.key);
 
         if (section.key === "vibe") {
@@ -386,6 +404,7 @@ interface DigestViewProps {
   stats: any;
   timeContext?: string | null;
   streak?: number;
+  visibleSections?: Record<string, boolean>;
   onResumeWithAI?: () => void;
   onGenerateStandup?: () => void;
 }
@@ -461,9 +480,11 @@ export function DigestView({
   stats,
   timeContext,
   streak,
+  visibleSections,
   onResumeWithAI,
   onGenerateStandup,
 }: DigestViewProps) {
+  const vis = (key: string) => !visibleSections || visibleSections[key] !== false;
   if (isLoading) {
     return <div className="digest-loading">Loading...</div>;
   }
@@ -490,22 +511,21 @@ export function DigestView({
         <StreamingDigest
           text={streamingText}
           isStreaming={false}
+          visibleSections={visibleSections}
           afterVibe={
             <>
-              {showMeta && (
+              {vis("activity") && showMeta && (
                 <div className="digest-meta">
                   {timeContext && <span className="digest-meta-item">{timeContext}</span>}
                   {timeContext && streak && streak >= 2 && (
                     <span className="digest-meta-sep">{"\u00b7"}</span>
                   )}
                   {streak && streak >= 2 && (
-                    <span className="digest-meta-item digest-meta-streak">
-                      {streak}-day streak
-                    </span>
+                    <span className="digest-meta-item digest-meta-streak">{streak}-day streak</span>
                   )}
                 </div>
               )}
-              {stats && <StatsCards stats={stats} />}
+              {vis("stats") && stats && <StatsCards stats={stats} />}
             </>
           }
           afterLeftOff={
@@ -516,8 +536,8 @@ export function DigestView({
             ) : undefined
           }
         />
-        {stats?.topFiles && <TopFiles files={stats.topFiles} />}
-        {stats?.health && <CodebaseHealth health={stats.health} />}
+        {vis("topFiles") && stats?.topFiles && <TopFiles files={stats.topFiles} />}
+        {vis("codebaseHealth") && stats?.health && <CodebaseHealth health={stats.health} />}
 
         {/* Standup button at the bottom */}
         {onGenerateStandup && (

@@ -13,8 +13,7 @@ export function parseSections(fullText: string): ParsedSections {
     fullText.split("---DIGEST---")[1]?.split("---STANDUP---")[0]?.trim() ??
     fullText.split("---STANDUP---")[0]?.trim() ??
     fullText;
-  const standup =
-    fullText.split("---STANDUP---")[1]?.split("---AI_CONTEXT---")[0]?.trim() ?? "";
+  const standup = fullText.split("---STANDUP---")[1]?.split("---AI_CONTEXT---")[0]?.trim() ?? "";
   const aiContext = fullText.split("---AI_CONTEXT---")[1]?.trim() ?? "";
 
   return { digest, standup, aiContext };

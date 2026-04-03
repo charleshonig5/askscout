@@ -47,6 +47,9 @@ export default function DashboardPage() {
     stats: Record<string, unknown> | null;
     date: string;
   } | null>(null);
+  const [digestSectionPrefs, setDigestSectionPrefs] = useState<Record<string, boolean> | null>(
+    null,
+  );
 
   // Fetch repos and user settings on mount
   useEffect(() => {
@@ -59,8 +62,14 @@ export default function DashboardPage() {
 
         let defaultRepoSetting: string | null = null;
         if (settingsRes.ok) {
-          const settings = (await settingsRes.json()) as { default_repo: string | null };
+          const settings = (await settingsRes.json()) as {
+            default_repo: string | null;
+            digest_sections: Record<string, boolean> | null;
+          };
           defaultRepoSetting = settings.default_repo;
+          if (settings.digest_sections) {
+            setDigestSectionPrefs(settings.digest_sections);
+          }
         }
 
         if (reposRes.ok) {
@@ -358,7 +367,9 @@ export default function DashboardPage() {
     // Single-day: show session count and times
     if (sessions && sessions.length > 0) {
       const times = sessions.map((iso) =>
-        new Date(iso).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).toLowerCase(),
+        new Date(iso)
+          .toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })
+          .toLowerCase(),
       );
       const label = sessions.length === 1 ? "1 session" : `${sessions.length} sessions`;
       return `${label} (${times.join(", ")})`;
@@ -371,7 +382,7 @@ export default function DashboardPage() {
   const currentRawContent = noNewCommits
     ? noNewCommits.content
     : isViewingHistory
-      ? viewingHistoryContent ?? ""
+      ? (viewingHistoryContent ?? "")
       : digestStream.text || cachedDigests[`${selectedRepo}:digest`]?.content || "";
 
   // Parse sections from whatever content source is active
@@ -412,6 +423,7 @@ export default function DashboardPage() {
                   stats={noNewCommits.stats}
                   timeContext={timeContext}
                   streak={streak}
+                  visibleSections={digestSectionPrefs ?? undefined}
                   onResumeWithAI={() => setAiContextOpen(true)}
                   onGenerateStandup={() => setStandupOpen(true)}
                 />
@@ -431,6 +443,7 @@ export default function DashboardPage() {
                   stats={viewingHistoryStats}
                   timeContext={timeContext}
                   streak={streak}
+                  visibleSections={digestSectionPrefs ?? undefined}
                   onResumeWithAI={() => setAiContextOpen(true)}
                   onGenerateStandup={() => setStandupOpen(true)}
                 />

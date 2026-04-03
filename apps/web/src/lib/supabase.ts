@@ -24,20 +24,48 @@ export interface DigestRecord {
 // User Settings
 // ============================================
 
+export interface DigestSections {
+  vibeCheck: boolean;
+  shipped: boolean;
+  changed: boolean;
+  unstable: boolean;
+  leftOff: boolean;
+  activity: boolean;
+  stats: boolean;
+  topFiles: boolean;
+  codebaseHealth: boolean;
+}
+
+export const DEFAULT_SECTIONS: DigestSections = {
+  vibeCheck: true,
+  shipped: true,
+  changed: true,
+  unstable: true,
+  leftOff: true,
+  activity: true,
+  stats: true,
+  topFiles: true,
+  codebaseHealth: true,
+};
+
 export interface UserSettings {
   default_repo: string | null;
+  digest_sections: DigestSections | null;
 }
 
 /** Get user settings */
 export async function getUserSettings(userId: string): Promise<UserSettings> {
-  if (!supabase) return { default_repo: null };
+  if (!supabase) return { default_repo: null, digest_sections: null };
   const { data } = await supabase
     .from("user_settings")
-    .select("default_repo")
+    .select("default_repo, digest_sections")
     .eq("user_id", userId)
     .single();
-  if (!data) return { default_repo: null };
-  return { default_repo: (data.default_repo as string) ?? null };
+  if (!data) return { default_repo: null, digest_sections: null };
+  return {
+    default_repo: (data.default_repo as string) ?? null,
+    digest_sections: (data.digest_sections as DigestSections) ?? null,
+  };
 }
 
 /** Save user settings (upsert) */

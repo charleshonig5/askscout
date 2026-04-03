@@ -103,12 +103,11 @@ export async function POST(req: Request) {
       return Response.json({ error: "No commits found in the past 90 days" }, { status: 404 });
     }
 
-    const { diffs, filesAdded, filesRemoved: filesDeleted } = await fetchDiffs(
-      session.accessToken,
-      owner,
-      repo,
-      commits,
-    );
+    const {
+      diffs,
+      filesAdded,
+      filesRemoved: filesDeleted,
+    } = await fetchDiffs(session.accessToken, owner, repo, commits);
 
     // 5. Compute stats from commits (more reliable than diffs which can fail)
     const allFiles = new Set(commits.flatMap((c) => c.filesChanged));
@@ -118,9 +117,7 @@ export async function POST(req: Request) {
 
     // Detect coding sessions: cluster commits within 30 min of each other
     const SESSION_GAP_MS = 30 * 60 * 1000;
-    const sortedTimestamps = commits
-      .map((c) => c.timestamp.getTime())
-      .sort((a, b) => a - b);
+    const sortedTimestamps = commits.map((c) => c.timestamp.getTime()).sort((a, b) => a - b);
 
     const sessions: string[] = [];
     const activeDaySet = new Set<string>();
@@ -129,9 +126,7 @@ export async function POST(req: Request) {
     for (let i = 0; i < sortedTimestamps.length; i++) {
       const ts = sortedTimestamps[i]!;
       const d = new Date(ts);
-      activeDaySet.add(
-        d.toLocaleDateString("en-US", { weekday: "short" }),
-      );
+      activeDaySet.add(d.toLocaleDateString("en-US", { weekday: "short" }));
 
       const next = sortedTimestamps[i + 1];
       if (!next || next - ts > SESSION_GAP_MS) {
