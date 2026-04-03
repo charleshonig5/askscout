@@ -527,6 +527,7 @@ export function DigestView({
               <div className="digest-meta">
                 {hasChips && (
                   <div className="session-chips">
+                    <span className="session-chips-label">Coding Activity</span>
                     {sessionChips.map((label, i) => (
                       <span key={i} className="session-chip">
                         {label}
