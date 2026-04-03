@@ -11,10 +11,11 @@ const SECTION_OPTIONS = [
   { key: "changed", label: "Changed", desc: "Modifications to existing code" },
   { key: "unstable", label: "Unstable", desc: "Files that keep getting reworked" },
   { key: "leftOff", label: "Left Off", desc: "Where you stopped working" },
-  { key: "activity", label: "Activity", desc: "Coding sessions and streak" },
-  { key: "stats", label: "Stats", desc: "Lines added, removed, commits, files" },
-  { key: "topFiles", label: "Most Active Files", desc: "Ranked list of busiest files" },
-  { key: "codebaseHealth", label: "Codebase Health", desc: "Growth, focus, and churn indicators" },
+  {
+    key: "statistics",
+    label: "Statistics",
+    desc: "Sessions, lines, commits, active files, and codebase health",
+  },
 ] as const;
 
 const DEFAULT_SECTIONS: Record<string, boolean> = Object.fromEntries(

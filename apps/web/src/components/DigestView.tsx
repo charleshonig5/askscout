@@ -201,19 +201,17 @@ const sectionKeyMap: Record<string, string> = {
   changed: "changed",
   unstable: "unstable",
   leftOff: "leftOff",
-  stats: "stats",
+  stats: "statistics",
 };
 
 function StreamingDigest({
   text,
   isStreaming,
-  afterVibe,
   afterLeftOff,
   visibleSections,
 }: {
   text: string;
   isStreaming: boolean;
-  afterVibe?: React.ReactNode;
   afterLeftOff?: React.ReactNode;
   visibleSections?: Record<string, boolean>;
 }) {
@@ -254,7 +252,6 @@ function StreamingDigest({
                 {section.content}
                 {showCursor && cursor}
               </div>
-              {afterVibe}
             </div>
           );
         }
@@ -512,22 +509,6 @@ export function DigestView({
           text={streamingText}
           isStreaming={false}
           visibleSections={visibleSections}
-          afterVibe={
-            <>
-              {vis("activity") && showMeta && (
-                <div className="digest-meta">
-                  {timeContext && <span className="digest-meta-item">{timeContext}</span>}
-                  {timeContext && streak && streak >= 2 && (
-                    <span className="digest-meta-sep">{"\u00b7"}</span>
-                  )}
-                  {streak && streak >= 2 && (
-                    <span className="digest-meta-item digest-meta-streak">{streak}-day streak</span>
-                  )}
-                </div>
-              )}
-              {vis("stats") && stats && <StatsCards stats={stats} />}
-            </>
-          }
           afterLeftOff={
             onResumeWithAI ? (
               <button className="resume-ai-btn" onClick={onResumeWithAI}>
@@ -536,8 +517,27 @@ export function DigestView({
             ) : undefined
           }
         />
-        {vis("topFiles") && stats?.topFiles && <TopFiles files={stats.topFiles} />}
-        {vis("codebaseHealth") && stats?.health && <CodebaseHealth health={stats.health} />}
+
+        {/* Statistics section */}
+        {vis("statistics") && stats && (
+          <div className="digest-section">
+            <div className="digest-section-title">Statistics</div>
+            {showMeta && (
+              <div className="digest-meta">
+                {timeContext && <span className="digest-meta-item">{timeContext}</span>}
+                {timeContext && streak && streak >= 2 && (
+                  <span className="digest-meta-sep">{"\u00b7"}</span>
+                )}
+                {streak && streak >= 2 && (
+                  <span className="digest-meta-item digest-meta-streak">{streak}-day streak</span>
+                )}
+              </div>
+            )}
+            <StatsCards stats={stats} />
+            {stats.topFiles && <TopFiles files={stats.topFiles} />}
+            {stats.health && <CodebaseHealth health={stats.health} />}
+          </div>
+        )}
 
         {/* Standup button at the bottom */}
         {onGenerateStandup && (
