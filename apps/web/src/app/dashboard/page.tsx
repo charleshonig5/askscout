@@ -401,16 +401,6 @@ export default function DashboardPage() {
               <h1 className="digest-page-name">{pageTitle}</h1>
               <p className="digest-page-date">{displayDate}</p>
               <p className="digest-page-subtitle">{repoName}</p>
-              {(timeContext || streak >= 2) && (
-                <div className="digest-meta">
-                  {timeContext && <span className="digest-meta-item">{timeContext}</span>}
-                  {streak >= 2 && (
-                    <span className="digest-meta-item digest-meta-streak">
-                      {streak}-day streak
-                    </span>
-                  )}
-                </div>
-              )}
             </div>
 
             {noNewCommits ? (
@@ -420,6 +410,8 @@ export default function DashboardPage() {
                   isStreaming={false}
                   streamingText={currentSections?.digest ?? noNewCommits.content}
                   stats={noNewCommits.stats}
+                  timeContext={timeContext}
+                  streak={streak}
                   onResumeWithAI={() => setAiContextOpen(true)}
                   onGenerateStandup={() => setStandupOpen(true)}
                 />
@@ -437,6 +429,8 @@ export default function DashboardPage() {
                   isStreaming={false}
                   streamingText={currentSections?.digest ?? viewingHistoryContent ?? ""}
                   stats={viewingHistoryStats}
+                  timeContext={timeContext}
+                  streak={streak}
                   onResumeWithAI={() => setAiContextOpen(true)}
                   onGenerateStandup={() => setStandupOpen(true)}
                 />
@@ -463,6 +457,8 @@ export default function DashboardPage() {
                         cachedDigests[`${selectedRepo}:digest`]?.stats ||
                         null) as Record<string, unknown> | null
                     }
+                    timeContext={timeContext}
+                    streak={streak}
                     onResumeWithAI={() => setAiContextOpen(true)}
                     onGenerateStandup={() => setStandupOpen(true)}
                   />

@@ -219,11 +219,22 @@ export async function POST(req: Request) {
       },
     };
 
-    // 6b. Compute most active files (top 5 by commit frequency)
+    // 6b. Compute most active files (top 3 by commit frequency, with line stats)
+    const fileStats = new Map<string, { added: number; removed: number }>();
+    for (const d of diffs) {
+      const existing = fileStats.get(d.file) ?? { added: 0, removed: 0 };
+      existing.added += d.additions;
+      existing.removed += d.deletions;
+      fileStats.set(d.file, existing);
+    }
+
     const topFiles = [...fileFrequency.entries()]
       .sort((a, b) => b[1] - a[1])
       .slice(0, 3)
-      .map(([file, count]) => ({ file, commits: count }));
+      .map(([file, count]) => {
+        const s = fileStats.get(file);
+        return { file, commits: count, added: s?.added ?? 0, removed: s?.removed ?? 0 };
+      });
 
     // 6c. Compute activity chart (commit count per time bucket)
     const timeSpanMs =

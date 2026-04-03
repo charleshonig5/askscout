@@ -304,6 +304,8 @@ interface HealthData {
 interface TopFile {
   file: string;
   commits: number;
+  added?: number;
+  removed?: number;
 }
 
 interface DigestViewStats {
@@ -351,22 +353,23 @@ function StatsCards({ stats }: { stats: DigestViewStats }) {
 
 function TopFiles({ files }: { files: TopFile[] }) {
   if (files.length === 0) return null;
-  const maxCommits = Math.max(...files.map((f) => f.commits));
+  const fmt = (n: number) => n.toLocaleString("en-US");
   return (
     <div className="digest-section">
       <div className="digest-section-title">Most Active Files</div>
       <div className="top-files">
-        {files.map((f) => (
+        {files.map((f, i) => (
           <div key={f.file} className="top-file-row">
+            <span className="top-file-rank">{i + 1}.</span>
             <span className="top-file-name">{f.file.split("/").slice(-2).join("/")}</span>
-            <div className="top-file-bar-container">
-              <div
-                className="top-file-bar"
-                style={{ width: `${(f.commits / maxCommits) * 100}%` }}
-              />
-            </div>
-            <span className="top-file-count">
-              {f.commits} {f.commits === 1 ? "commit" : "commits"}
+            <span className="top-file-detail">
+              <span className="top-file-added">+{fmt(f.added ?? 0)}</span>
+              {" / "}
+              <span className="top-file-removed">-{fmt(f.removed ?? 0)}</span>
+              <span className="top-file-commits">
+                {" \u00b7 "}
+                {f.commits} {f.commits === 1 ? "commit" : "commits"}
+              </span>
             </span>
           </div>
         ))}
@@ -381,6 +384,8 @@ interface DigestViewProps {
   streamingText: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stats: any;
+  timeContext?: string | null;
+  streak?: number;
   onResumeWithAI?: () => void;
   onGenerateStandup?: () => void;
 }
@@ -454,6 +459,8 @@ export function DigestView({
   isLoading,
   streamingText,
   stats,
+  timeContext,
+  streak,
   onResumeWithAI,
   onGenerateStandup,
 }: DigestViewProps) {
@@ -469,6 +476,8 @@ export function DigestView({
     return <FormattedText text={streamingText} isStreaming />;
   }
 
+  const showMeta = timeContext || (streak && streak >= 2);
+
   if (streamingText) {
     return (
       <div>
@@ -481,7 +490,24 @@ export function DigestView({
         <StreamingDigest
           text={streamingText}
           isStreaming={false}
-          afterVibe={stats ? <StatsCards stats={stats} /> : undefined}
+          afterVibe={
+            <>
+              {showMeta && (
+                <div className="digest-meta">
+                  {timeContext && <span className="digest-meta-item">{timeContext}</span>}
+                  {timeContext && streak && streak >= 2 && (
+                    <span className="digest-meta-sep">{"\u00b7"}</span>
+                  )}
+                  {streak && streak >= 2 && (
+                    <span className="digest-meta-item digest-meta-streak">
+                      {streak}-day streak
+                    </span>
+                  )}
+                </div>
+              )}
+              {stats && <StatsCards stats={stats} />}
+            </>
+          }
           afterLeftOff={
             onResumeWithAI ? (
               <button className="resume-ai-btn" onClick={onResumeWithAI}>

@@ -421,15 +421,19 @@ a:hover {
 .digest-meta {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  margin-top: var(--space-sm);
+  gap: var(--space-sm);
   font-size: 12px;
   font-family: var(--font-mono);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-xs);
+}
+
+.digest-meta-sep {
   color: var(--color-text-tertiary);
 }
 
 .digest-meta-streak {
-  color: var(--color-warning);
+  color: var(--color-text-secondary);
 }
 
 .digest-header {
@@ -555,40 +559,38 @@ a:hover {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+
+.top-file-rank {
+  color: var(--color-text-tertiary);
+  min-width: 18px;
 }
 
 .top-file-name {
-  font-size: 12px;
-  font-family: var(--font-mono);
   color: var(--color-text-primary);
-  min-width: 140px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.top-file-bar-container {
-  flex: 1;
-  height: 8px;
-  background: var(--color-bg-tertiary);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.top-file-bar {
-  height: 100%;
-  background: var(--color-accent);
-  border-radius: 4px;
-  opacity: 0.35;
-  transition: width 0.3s ease;
-}
-
-.top-file-count {
-  font-size: 11px;
-  font-family: var(--font-mono);
+.top-file-detail {
   color: var(--color-text-tertiary);
-  min-width: 16px;
-  text-align: right;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.top-file-added {
+  color: var(--color-success);
+}
+
+.top-file-removed {
+  color: var(--color-accent);
+}
+
+.top-file-commits {
+  color: var(--color-text-tertiary);
 }
 
 /* ============================================
