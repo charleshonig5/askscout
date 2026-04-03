@@ -54,6 +54,7 @@ export default function DashboardPage() {
   const currentStream = streams[mode];
   const lastRepoRef = useRef("");
   const [cachedDigests, setCachedDigests] = useState<Record<string, string>>({});
+  const [isCheckingCache, setIsCheckingCache] = useState(false);
 
   // Fetch repos on mount
   useEffect(() => {
@@ -101,9 +102,10 @@ export default function DashboardPage() {
   // Check for existing digest, generate only if none exists today
   const loadOrGenerate = useCallback(
     async (repoFullName: string, targetMode: Mode) => {
-      // Check if we already have today's digest cached client-side
       const cacheKey = `${repoFullName}:${targetMode}`;
       if (cachedDigests[cacheKey]) return;
+
+      setIsCheckingCache(true);
 
       // Check Supabase for today's digest
       try {
@@ -117,12 +119,15 @@ export default function DashboardPage() {
           };
           if (data.exists && data.digest) {
             setCachedDigests((prev) => ({ ...prev, [cacheKey]: data.digest!.content }));
+            setIsCheckingCache(false);
             return;
           }
         }
       } catch {
         // If check fails, just generate fresh
       }
+
+      setIsCheckingCache(false);
 
       // No existing digest, generate a new one
       const parts = repoFullName.split("/");
@@ -296,6 +301,7 @@ export default function DashboardPage() {
               <DigestView
                 mode={mode}
                 isStreaming={currentStream.isStreaming}
+                isLoading={isCheckingCache}
                 streamingText={currentStream.text || cachedDigests[`${selectedRepo}:${mode}`] || ""}
                 stats={digestStream.stats}
               />

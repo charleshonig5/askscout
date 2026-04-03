@@ -283,6 +283,7 @@ interface DigestViewStats {
 interface DigestViewProps {
   mode: "digest" | "resume" | "standup";
   isStreaming: boolean;
+  isLoading?: boolean;
   streamingText: string;
   stats: DigestViewStats | null;
 }
@@ -297,8 +298,19 @@ function StatsBar({ stats }: { stats: DigestViewStats }) {
   );
 }
 
-export function DigestView({ mode, isStreaming, streamingText, stats }: DigestViewProps) {
-  // Loading state
+export function DigestView({
+  mode,
+  isStreaming,
+  isLoading,
+  streamingText,
+  stats,
+}: DigestViewProps) {
+  // Checking cache
+  if (isLoading) {
+    return <div className="digest-loading">Loading...</div>;
+  }
+
+  // Streaming started but no text yet
   if (isStreaming && !streamingText) {
     const loadingMessages: Record<string, string> = {
       digest: "Scout is sniffing through your commits...",
