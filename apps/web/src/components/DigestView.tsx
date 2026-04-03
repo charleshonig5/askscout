@@ -303,11 +303,6 @@ interface TopFile {
   commits: number;
 }
 
-interface ActivityBucket {
-  label: string;
-  count: number;
-}
-
 interface DigestViewStats {
   commits: number;
   filesChanged: number;
@@ -315,7 +310,6 @@ interface DigestViewStats {
   linesRemoved: number;
   health?: HealthData;
   topFiles?: TopFile[];
-  activity?: ActivityBucket[];
   netImpact?: number;
 }
 
@@ -325,22 +319,15 @@ function StatsCards({ stats }: { stats: DigestViewStats }) {
   const isPositive = net >= 0;
 
   return (
-    <div className="stats-cards">
-      <div className="stats-card">
-        <div className="stats-card-value">{fmt(stats.commits)}</div>
-        <div className="stats-card-label">commits</div>
-      </div>
-      <div className="stats-card">
-        <div className="stats-card-value">{fmt(stats.filesChanged)}</div>
-        <div className="stats-card-label">files changed</div>
-      </div>
-      <div className="stats-card">
-        <div className={`stats-card-value ${isPositive ? "positive" : "negative"}`}>
-          {isPositive ? "+" : ""}
-          {fmt(net)}
-        </div>
-        <div className="stats-card-label">net lines</div>
-      </div>
+    <div className="stats-row">
+      <span className="stats-item">{fmt(stats.commits)} commits</span>
+      <span className="stats-sep">{"\u00b7"}</span>
+      <span className="stats-item">{fmt(stats.filesChanged)} files</span>
+      <span className="stats-sep">{"\u00b7"}</span>
+      <span className={`stats-item ${isPositive ? "positive" : "negative"}`}>
+        {isPositive ? "+" : ""}
+        {fmt(net)} lines
+      </span>
     </div>
   );
 }
@@ -361,32 +348,9 @@ function TopFiles({ files }: { files: TopFile[] }) {
                 style={{ width: `${(f.commits / maxCommits) * 100}%` }}
               />
             </div>
-            <span className="top-file-count">{f.commits}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function ActivityChart({ buckets }: { buckets: ActivityBucket[] }) {
-  if (buckets.length === 0) return null;
-  const maxCount = Math.max(...buckets.map((b) => b.count), 1);
-  // Only show labels for every Nth bucket to avoid crowding
-  const labelInterval = buckets.length > 12 ? 4 : buckets.length > 7 ? 2 : 1;
-  return (
-    <div className="digest-section">
-      <div className="digest-section-title">Activity</div>
-      <div className="activity-chart">
-        {buckets.map((b, i) => (
-          <div key={i} className="activity-bar-col">
-            <div className="activity-bar-wrapper">
-              <div
-                className={`activity-bar ${b.count === 0 ? "empty" : ""}`}
-                style={{ height: `${Math.max(2, (b.count / maxCount) * 100)}%` }}
-              />
-            </div>
-            {i % labelInterval === 0 && <span className="activity-label">{b.label}</span>}
+            <span className="top-file-count">
+              {f.commits} {f.commits === 1 ? "commit" : "commits"}
+            </span>
           </div>
         ))}
       </div>
@@ -418,8 +382,8 @@ function CodebaseHealth({ health }: { health: HealthData }) {
       label: "Growth",
       level: health.growth.level,
       score: health.growth.score,
-      stat: `${fmt(health.growth.added)} added / ${fmt(health.growth.removed)} removed`,
-      detail: `${health.growth.ratio}:1 ratio`,
+      stat: `+${fmt(health.growth.added)} / -${fmt(health.growth.removed)}`,
+      detail: health.growth.removed > 0 ? "Adding and cleaning up" : "Building new code",
     },
     {
       label: "Focus",
@@ -510,7 +474,6 @@ export function DigestView({
             isStreaming={false}
             afterVibe={stats ? <StatsCards stats={stats} /> : undefined}
           />
-          {stats?.activity && <ActivityChart buckets={stats.activity} />}
           {stats?.topFiles && <TopFiles files={stats.topFiles} />}
           {stats?.health && <CodebaseHealth health={stats.health} />}
           <DigestActions text={streamingText} />
