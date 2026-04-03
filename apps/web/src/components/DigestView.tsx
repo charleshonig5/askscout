@@ -322,8 +322,8 @@ export function DigestView({
 
   // Streaming in progress
   if (isStreaming && streamingText) {
-    if (mode === "digest") {
-      return <StreamingDigest text={streamingText} isStreaming />;
+    if (mode === "digest" || mode === "standup") {
+      return <FormattedText text={streamingText} isStreaming />;
     }
     return (
       <div className="digest-vibe">
@@ -343,6 +343,17 @@ export function DigestView({
         </div>
       );
     }
+    if (mode === "standup") {
+      return (
+        <div>
+          <FormattedText text={streamingText} isStreaming={false} />
+          <div className="digest-actions-row">
+            <CopyBtn text={streamingText} />
+          </div>
+        </div>
+      );
+    }
+    // AI Context — stays in the box
     return (
       <div>
         <div className="digest-vibe">
