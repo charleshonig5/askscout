@@ -1,6 +1,8 @@
 "use client";
 
-import { Menu, Settings } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { useSession, signOut } from "next-auth/react";
+import { Menu, Settings, LogOut } from "lucide-react";
 import { RepoSelector } from "./RepoSelector";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -12,6 +14,25 @@ interface HeaderProps {
 }
 
 export function Header({ repos, selectedRepo, onRepoChange, onMenuToggle }: HeaderProps) {
+  const { data: session } = useSession();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [menuOpen]);
+
+  const avatarUrl = session?.user?.image;
+  const userName = session?.user?.name ?? "User";
+
   return (
     <header className="header">
       <div className="header-left">
@@ -27,7 +48,36 @@ export function Header({ repos, selectedRepo, onRepoChange, onMenuToggle }: Head
           <Settings size={16} />
         </button>
         <div className="header-separator" />
-        <div className="header-avatar" />
+        <div className="header-profile" ref={menuRef}>
+          <button
+            className="header-avatar-btn"
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label="Profile menu"
+          >
+            {avatarUrl ? (
+              <img src={avatarUrl} alt={userName} className="header-avatar-img" />
+            ) : (
+              <div className="header-avatar" />
+            )}
+          </button>
+          {menuOpen && (
+            <div className="header-dropdown">
+              <div className="header-dropdown-user">
+                {avatarUrl && (
+                  <img src={avatarUrl} alt={userName} className="header-dropdown-avatar" />
+                )}
+                <span className="header-dropdown-name">{userName}</span>
+              </div>
+              <div className="header-dropdown-divider" />
+              <button
+                className="header-dropdown-item"
+                onClick={() => void signOut({ callbackUrl: "/" })}
+              >
+                <LogOut size={14} /> Sign out
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );
