@@ -567,6 +567,14 @@ a:hover {
   background: var(--color-danger);
 }
 
+.health-card-stat {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  margin-bottom: 2px;
+}
+
 .health-card-detail {
   font-size: 12px;
   color: var(--color-text-secondary);

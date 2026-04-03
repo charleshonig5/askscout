@@ -273,11 +273,23 @@ function StreamingDigest({ text, isStreaming }: { text: string; isStreaming: boo
   );
 }
 
+interface HealthIndicator {
+  score: number;
+  level: string;
+}
+
+interface HealthData {
+  growth: HealthIndicator & { ratio: number; added: number; removed: number };
+  focus: HealthIndicator & { filesPerCommit: number };
+  churn: HealthIndicator & { files: number };
+}
+
 interface DigestViewStats {
   commits: number;
   filesChanged: number;
   linesAdded: number;
   linesRemoved: number;
+  health?: HealthData;
 }
 
 interface DigestViewProps {
@@ -294,6 +306,70 @@ function StatsBar({ stats }: { stats: DigestViewStats }) {
     <div className="digest-stats">
       {fmt(stats.commits)} commits {"\u00b7"} {fmt(stats.filesChanged)} files {"\u00b7"}{" "}
       {fmt(stats.linesAdded)} added {"\u00b7"} {fmt(stats.linesRemoved)} removed
+    </div>
+  );
+}
+
+function levelColor(level: string): string {
+  const good = ["Lean", "Sharp", "Clean", "Low"];
+  const mid = ["Growing", "Moderate"];
+  if (good.includes(level)) return "strong";
+  if (mid.includes(level)) return "okay";
+  return "rough";
+}
+
+function CodebaseHealth({ health }: { health: HealthData }) {
+  const fmt = (n: number) => n.toLocaleString("en-US");
+
+  const indicators = [
+    {
+      label: "Growth",
+      level: health.growth.level,
+      score: health.growth.score,
+      stat: `${fmt(health.growth.added)} added / ${fmt(health.growth.removed)} removed`,
+      detail: `${health.growth.ratio}:1 ratio`,
+    },
+    {
+      label: "Focus",
+      level: health.focus.level,
+      score: health.focus.score,
+      stat: `${health.focus.filesPerCommit} files per commit`,
+      detail:
+        health.focus.filesPerCommit <= 3 ? "Changes are concentrated" : "Changes are spread out",
+    },
+    {
+      label: "Churn",
+      level: health.churn.level,
+      score: health.churn.score,
+      stat: `${health.churn.files} ${health.churn.files === 1 ? "file" : "files"} reworked`,
+      detail: health.churn.files === 0 ? "No repeated edits" : "Same files edited 3+ times",
+    },
+  ];
+
+  return (
+    <div className="digest-section">
+      <div className="digest-section-title">Codebase Health</div>
+      <div className="health-grid">
+        {indicators.map((h) => {
+          const color = levelColor(h.level);
+          return (
+            <div key={h.label} className="health-card">
+              <div className="health-card-header">
+                <span className="health-card-label">{h.label}</span>
+                <span className={`health-card-level health-card-level--${color}`}>{h.level}</span>
+              </div>
+              <div className="health-card-bar">
+                <div
+                  className={`health-card-fill health-card-fill--${color}`}
+                  style={{ width: `${Math.max(0, Math.min(100, h.score * 10))}%` }}
+                />
+              </div>
+              <div className="health-card-stat">{h.stat}</div>
+              <div className="health-card-detail">{h.detail}</div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -338,6 +414,7 @@ export function DigestView({
       return (
         <div>
           <StreamingDigest text={streamingText} isStreaming={false} />
+          {stats?.health && <CodebaseHealth health={stats.health} />}
           {stats && <StatsBar stats={stats} />}
           <DigestActions text={streamingText} />
         </div>

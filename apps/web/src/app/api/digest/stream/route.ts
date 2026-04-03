@@ -111,16 +111,73 @@ export async function POST(req: Request) {
 
     // 5. Compute stats from commits (more reliable than diffs which can fail)
     const allFiles = new Set(commits.flatMap((c) => c.filesChanged));
+    const linesAdded = commits.reduce((sum, c) => sum + c.additions, 0);
+    const linesRemoved = commits.reduce((sum, c) => sum + c.deletions, 0);
+    const filesChanged = allFiles.size > 0 ? allFiles.size : diffs.length;
+
     const stats = {
       commits: commits.length,
-      filesChanged: allFiles.size > 0 ? allFiles.size : diffs.length,
-      linesAdded: commits.reduce((sum, c) => sum + c.additions, 0),
-      linesRemoved: commits.reduce((sum, c) => sum + c.deletions, 0),
+      filesChanged,
+      linesAdded,
+      linesRemoved,
       timeSpan: {
         from: commits[0]!.timestamp,
         to: commits[commits.length - 1]!.timestamp,
       },
     };
+
+    // 6. Compute codebase health (deterministic, data-driven)
+    const growthRatio = linesRemoved > 0 ? linesAdded / linesRemoved : linesAdded > 0 ? 99 : 1;
+    const filesPerCommit =
+      commits.length > 0
+        ? commits.reduce((sum, c) => sum + c.filesChanged.length, 0) / commits.length
+        : 0;
+
+    // Churn: count files that appear in 3+ commits
+    const fileFrequency = new Map<string, number>();
+    for (const c of commits) {
+      for (const f of c.filesChanged) {
+        fileFrequency.set(f, (fileFrequency.get(f) ?? 0) + 1);
+      }
+    }
+    const churnFiles = [...fileFrequency.entries()].filter(([, count]) => count >= 3).length;
+
+    const health = {
+      growth: {
+        ratio: Math.round(growthRatio * 10) / 10,
+        added: linesAdded,
+        removed: linesRemoved,
+        level:
+          growthRatio <= 2
+            ? "Lean"
+            : growthRatio <= 5
+              ? "Growing"
+              : growthRatio <= 10
+                ? "Heavy"
+                : "Ballooning",
+        score: Math.max(0, Math.min(10, Math.round(10 - Math.min(growthRatio, 10)))),
+      },
+      focus: {
+        filesPerCommit: Math.round(filesPerCommit * 10) / 10,
+        level: filesPerCommit <= 3 ? "Sharp" : filesPerCommit <= 8 ? "Moderate" : "Scattered",
+        score: Math.max(0, Math.min(10, Math.round(10 - filesPerCommit))),
+      },
+      churn: {
+        files: churnFiles,
+        level:
+          churnFiles === 0
+            ? "Clean"
+            : churnFiles <= 3
+              ? "Low"
+              : churnFiles <= 7
+                ? "Moderate"
+                : "High",
+        score: Math.max(0, Math.min(10, 10 - churnFiles)),
+      },
+    };
+
+    // Include health in stats event
+    Object.assign(stats, { health });
 
     // 6. Build prompt based on mode
     const mode = body.mode ?? "digest";
