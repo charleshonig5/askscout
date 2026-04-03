@@ -1,6 +1,6 @@
 "use client";
 
-type Mode = "digest" | "resume" | "standup";
+type Mode = "digest" | "standup";
 
 interface ModeToggleProps {
   mode: Mode;
@@ -11,7 +11,6 @@ export function ModeToggle({ mode, onChange }: ModeToggleProps) {
   const modes: { value: Mode; label: string }[] = [
     { value: "digest", label: "Digest" },
     { value: "standup", label: "Standup" },
-    { value: "resume", label: "AI Context" },
   ];
 
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { Copy, Check, Download, Mail } from "lucide-react";
+import { Copy, Check, Download, Mail, Sparkles } from "lucide-react";
 
 function DownloadBtn({ text }: { text: string }) {
   const handleDownload = useCallback(() => {
@@ -198,10 +198,12 @@ function StreamingDigest({
   text,
   isStreaming,
   afterVibe,
+  afterLeftOff,
 }: {
   text: string;
   isStreaming: boolean;
   afterVibe?: React.ReactNode;
+  afterLeftOff?: React.ReactNode;
 }) {
   const cursorRef = useRef<HTMLSpanElement>(null);
   const sections = parseStreamingSections(text);
@@ -280,6 +282,7 @@ function StreamingDigest({
               );
             })}
             {showCursor && <div className="digest-item">{cursor}</div>}
+            {section.key === "leftOff" && !isStreaming && afterLeftOff}
           </div>
         );
       })}
@@ -359,12 +362,13 @@ function TopFiles({ files }: { files: TopFile[] }) {
 }
 
 interface DigestViewProps {
-  mode: "digest" | "resume" | "standup";
+  mode: "digest" | "standup";
   isStreaming: boolean;
   isLoading?: boolean;
   streamingText: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stats: any;
+  onResumeWithAI?: () => void;
 }
 
 function levelColor(level: string): string {
@@ -437,6 +441,7 @@ export function DigestView({
   isLoading,
   streamingText,
   stats,
+  onResumeWithAI,
 }: DigestViewProps) {
   // Checking cache
   if (isLoading) {
@@ -448,21 +453,13 @@ export function DigestView({
     const loadingMessages: Record<string, string> = {
       digest: "Scout is sniffing through your commits...",
       standup: "Scout is putting together your standup...",
-      resume: "Scout is building your AI context...",
     };
     return <div className="digest-loading">{loadingMessages[mode] ?? "Loading..."}</div>;
   }
 
   // Streaming in progress
   if (isStreaming && streamingText) {
-    if (mode === "digest" || mode === "standup") {
-      return <FormattedText text={streamingText} isStreaming />;
-    }
-    return (
-      <div className="digest-vibe">
-        <FormattedText text={streamingText} isStreaming />
-      </div>
-    );
+    return <FormattedText text={streamingText} isStreaming />;
   }
 
   // Completed
@@ -474,6 +471,13 @@ export function DigestView({
             text={streamingText}
             isStreaming={false}
             afterVibe={stats ? <StatsCards stats={stats} /> : undefined}
+            afterLeftOff={
+              onResumeWithAI ? (
+                <button className="resume-ai-btn" onClick={onResumeWithAI}>
+                  <Sparkles size={14} /> Resume with AI
+                </button>
+              ) : undefined
+            }
           />
           {stats?.topFiles && <TopFiles files={stats.topFiles} />}
           {stats?.health && <CodebaseHealth health={stats.health} />}
@@ -481,22 +485,10 @@ export function DigestView({
         </div>
       );
     }
-    if (mode === "standup") {
-      return (
-        <div>
-          <FormattedText text={streamingText} isStreaming={false} />
-          <div className="digest-actions-row">
-            <CopyBtn text={streamingText} />
-          </div>
-        </div>
-      );
-    }
-    // AI Context — stays in the box
+    // Standup
     return (
       <div>
-        <div className="digest-vibe">
-          <FormattedText text={streamingText} isStreaming={false} />
-        </div>
+        <FormattedText text={streamingText} isStreaming={false} />
         <div className="digest-actions-row">
           <CopyBtn text={streamingText} />
         </div>

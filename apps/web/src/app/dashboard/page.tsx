@@ -5,15 +5,15 @@ import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { ModeToggle } from "@/components/ModeToggle";
 import { DigestView } from "@/components/DigestView";
+import { AIContextModal } from "@/components/AIContextModal";
 import { useDigestStream } from "@/lib/use-digest-stream";
 import type { HistoryEntry } from "@/lib/mock-data";
 
-type Mode = "digest" | "resume" | "standup";
+type Mode = "digest" | "standup";
 
 const API_MODES: Record<Mode, string> = {
   digest: "digest",
   standup: "standup",
-  resume: "resume",
 };
 
 interface HistoryRecord {
@@ -43,12 +43,11 @@ export default function DashboardPage() {
 
   const digestStream = useDigestStream();
   const standupStream = useDigestStream();
-  const resumeStream = useDigestStream();
+  const [aiContextOpen, setAiContextOpen] = useState(false);
 
   const streams: Record<Mode, ReturnType<typeof useDigestStream>> = {
     digest: digestStream,
     standup: standupStream,
-    resume: resumeStream,
   };
 
   const currentStream = streams[mode];
@@ -202,7 +201,6 @@ export default function DashboardPage() {
       // Abort all in-flight streams
       digestStream.reset();
       standupStream.reset();
-      resumeStream.reset();
       setCachedDigests({});
       setMode("digest");
       setViewingHistoryContent(null);
@@ -234,15 +232,6 @@ export default function DashboardPage() {
       }));
     }
   }, [standupStream.isDone]);
-
-  useEffect(() => {
-    if (resumeStream.isDone && resumeStream.text && selectedRepo) {
-      setCachedDigests((prev) => ({
-        ...prev,
-        [`${selectedRepo}:resume`]: { content: resumeStream.text, stats: null },
-      }));
-    }
-  }, [resumeStream.isDone]);
 
   const handleModeChange = useCallback(
     (newMode: Mode) => {
@@ -316,13 +305,16 @@ export default function DashboardPage() {
   const modeLabels: Record<Mode, string> = {
     digest: "Digest",
     standup: "Standup",
-    resume: "AI Context",
   };
   const modeSubtitles: Record<Mode, string> = {
     digest: repoName,
     standup: `Copy-paste standup for ${repoName}`,
-    resume: `Paste into your AI coding tools to pick up where you left off on ${repoName}`,
   };
+
+  // Parse owner/repo for the AI context modal
+  const repoParts = selectedRepo.split("/");
+  const repoOwner = repoParts[0] ?? "";
+  const repoShortName = repoParts[1] ?? "";
   const pageTitle = isViewingHistory ? modeLabels[mode] : `Today\u2019s ${modeLabels[mode]}`;
 
   return (
@@ -396,6 +388,7 @@ export default function DashboardPage() {
                         cachedDigests[`${selectedRepo}:${mode}`]?.stats ||
                         null) as Record<string, unknown> | null
                     }
+                    onResumeWithAI={() => setAiContextOpen(true)}
                   />
                 )}
               </>
@@ -403,6 +396,13 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      <AIContextModal
+        isOpen={aiContextOpen}
+        onClose={() => setAiContextOpen(false)}
+        owner={repoOwner}
+        repo={repoShortName}
+      />
     </div>
   );
 }
