@@ -308,16 +308,28 @@ interface DigestViewStats {
   netImpact?: number;
 }
 
-function NetImpact({ value }: { value: number }) {
-  const fmt = (n: number) => Math.abs(n).toLocaleString("en-US");
-  const isPositive = value >= 0;
+function StatsCards({ stats }: { stats: DigestViewStats }) {
+  const fmt = (n: number) => n.toLocaleString("en-US");
+  const net = stats.netImpact ?? stats.linesAdded - stats.linesRemoved;
+  const isPositive = net >= 0;
+
   return (
-    <div className="net-impact">
-      <span className={`net-impact-number ${isPositive ? "positive" : "negative"}`}>
-        {isPositive ? "+" : "-"}
-        {fmt(value)}
-      </span>
-      <span className="net-impact-label">net lines</span>
+    <div className="stats-cards">
+      <div className="stats-card">
+        <div className="stats-card-value">{fmt(stats.commits)}</div>
+        <div className="stats-card-label">commits</div>
+      </div>
+      <div className="stats-card">
+        <div className="stats-card-value">{fmt(stats.filesChanged)}</div>
+        <div className="stats-card-label">files changed</div>
+      </div>
+      <div className="stats-card">
+        <div className={`stats-card-value ${isPositive ? "positive" : "negative"}`}>
+          {isPositive ? "+" : ""}
+          {fmt(net)}
+        </div>
+        <div className="stats-card-label">net lines</div>
+      </div>
     </div>
   );
 }
@@ -377,16 +389,6 @@ interface DigestViewProps {
   isLoading?: boolean;
   streamingText: string;
   stats: DigestViewStats | null;
-}
-
-function StatsBar({ stats }: { stats: DigestViewStats }) {
-  const fmt = (n: number) => n.toLocaleString("en-US");
-  return (
-    <div className="digest-stats">
-      {fmt(stats.commits)} commits {"\u00b7"} {fmt(stats.filesChanged)} files {"\u00b7"}{" "}
-      {fmt(stats.linesAdded)} added {"\u00b7"} {fmt(stats.linesRemoved)} removed
-    </div>
-  );
 }
 
 function levelColor(level: string): string {
@@ -493,11 +495,10 @@ export function DigestView({
       return (
         <div>
           <StreamingDigest text={streamingText} isStreaming={false} />
-          {stats?.netImpact !== undefined && <NetImpact value={stats.netImpact} />}
+          {stats && <StatsCards stats={stats} />}
           {stats?.activity && <ActivityChart buckets={stats.activity} />}
           {stats?.topFiles && <TopFiles files={stats.topFiles} />}
           {stats?.health && <CodebaseHealth health={stats.health} />}
-          {stats && <StatsBar stats={stats} />}
           <DigestActions text={streamingText} />
         </div>
       );

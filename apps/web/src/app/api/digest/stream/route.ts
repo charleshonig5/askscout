@@ -148,14 +148,14 @@ export async function POST(req: Request) {
         added: linesAdded,
         removed: linesRemoved,
         level:
-          growthRatio <= 2
+          growthRatio <= 5
             ? "Lean"
-            : growthRatio <= 5
+            : growthRatio <= 15
               ? "Growing"
-              : growthRatio <= 10
+              : growthRatio <= 30
                 ? "Heavy"
                 : "Ballooning",
-        score: Math.max(0, Math.min(10, Math.round(10 - Math.min(growthRatio, 10)))),
+        score: Math.max(0, Math.min(10, Math.round(10 - Math.min(growthRatio / 3, 10)))),
       },
       focus: {
         filesPerCommit: Math.round(filesPerCommit * 10) / 10,
@@ -179,7 +179,7 @@ export async function POST(req: Request) {
     // 6b. Compute most active files (top 5 by commit frequency)
     const topFiles = [...fileFrequency.entries()]
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 5)
+      .slice(0, 3)
       .map(([file, count]) => ({ file, commits: count }));
 
     // 6c. Compute activity chart (commit count per time bucket)

@@ -498,35 +498,44 @@ a:hover {
 }
 
 /* ============================================
-   Net Impact
+   Stats Cards
    ============================================ */
 
-.net-impact {
+.stats-cards {
   display: flex;
-  align-items: baseline;
   gap: var(--space-sm);
-  padding: var(--space-lg) 0;
-  border-top: 1px solid var(--color-border);
+  margin: var(--space-lg) 0;
 }
 
-.net-impact-number {
-  font-size: 28px;
+.stats-card {
+  flex: 1;
+  padding: var(--space-md);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.stats-card-value {
+  font-size: 22px;
   font-weight: 700;
   font-family: var(--font-mono);
+  color: var(--color-text-primary);
   letter-spacing: -0.02em;
 }
 
-.net-impact-number.positive {
+.stats-card-value.positive {
   color: var(--color-success);
 }
 
-.net-impact-number.negative {
+.stats-card-value.negative {
   color: var(--color-accent);
 }
 
-.net-impact-label {
-  font-size: 13px;
+.stats-card-label {
+  font-size: 11px;
   color: var(--color-text-tertiary);
+  margin-top: 2px;
 }
 
 /* ============================================
@@ -536,9 +545,8 @@ a:hover {
 .activity-chart {
   display: flex;
   align-items: flex-end;
-  gap: 2px;
-  height: 60px;
-  padding-bottom: var(--space-md);
+  gap: 3px;
+  padding: var(--space-sm) 0 var(--space-md);
 }
 
 .activity-bar-col {
@@ -551,7 +559,7 @@ a:hover {
 
 .activity-bar-wrapper {
   width: 100%;
-  height: 48px;
+  height: 64px;
   display: flex;
   align-items: flex-end;
 }
@@ -559,15 +567,14 @@ a:hover {
 .activity-bar {
   width: 100%;
   background: var(--color-accent);
-  border-radius: 2px 2px 0 0;
+  border-radius: 3px 3px 0 0;
   min-height: 2px;
-  transition: height 0.3s ease;
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 .activity-bar.empty {
   background: var(--color-bg-tertiary);
-  opacity: 0.3;
+  opacity: 0.2;
 }
 
 .activity-label {
