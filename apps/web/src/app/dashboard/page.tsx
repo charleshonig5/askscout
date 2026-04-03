@@ -83,16 +83,27 @@ export default function DashboardPage() {
         const data = (await res.json()) as { history: HistoryRecord[] };
         setHistoryRecords(data.history);
         setHistory(
-          data.history.map((h) => ({
-            id: h.id,
-            date: formatHistoryDate(h.created_at),
-            vibeCheck: h.content.slice(0, 100),
-            commits: (h.stats as Record<string, number> | null)?.commits ?? 0,
-            filesChanged: (h.stats as Record<string, number> | null)?.filesChanged ?? 0,
-            shippedCount: 0,
-            changedCount: 0,
-            unstableCount: 0,
-          })),
+          data.history.map((h) => {
+            // Count bullets in each section from the stored content
+            const countBullets = (sectionEmoji: string, nextEmoji: string) => {
+              const start = h.content.indexOf(sectionEmoji);
+              if (start === -1) return 0;
+              const end = nextEmoji ? h.content.indexOf(nextEmoji, start + 1) : h.content.length;
+              const section = h.content.slice(start, end === -1 ? undefined : end);
+              return (section.match(/\u2022/g) ?? []).length;
+            };
+
+            return {
+              id: h.id,
+              date: formatHistoryDate(h.created_at),
+              vibeCheck: h.content.slice(0, 100),
+              commits: (h.stats as Record<string, number> | null)?.commits ?? 0,
+              filesChanged: (h.stats as Record<string, number> | null)?.filesChanged ?? 0,
+              shippedCount: countBullets("\ud83d\ude80", "\ud83d\udd27"),
+              changedCount: countBullets("\ud83d\udd27", "\u26a0\ufe0f"),
+              unstableCount: countBullets("\u26a0\ufe0f", "\ud83d\udccd"),
+            };
+          }),
         );
       }
     } catch {
