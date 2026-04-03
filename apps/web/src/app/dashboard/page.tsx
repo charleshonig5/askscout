@@ -105,6 +105,7 @@ export default function DashboardPage() {
       try {
         const res = await fetch(
           `/api/digest/today?repo=${encodeURIComponent(repoFullName)}&mode=${targetMode}`,
+          { signal: AbortSignal.timeout(5000) },
         );
         if (res.ok) {
           const data = (await res.json()) as {
@@ -114,7 +115,7 @@ export default function DashboardPage() {
           if (data.exists && data.digest) return data.digest.content;
         }
       } catch {
-        // Fall through to generate
+        // Timeout or network error, fall through to generate
       }
       return null;
     },
@@ -127,6 +128,13 @@ export default function DashboardPage() {
       setIsCheckingCache(true);
 
       const cached = await checkTodaysDigest(repoFullName, targetMode);
+
+      // Discard result if repo changed while we were checking
+      if (lastRepoRef.current !== repoFullName) {
+        setIsCheckingCache(false);
+        return;
+      }
+
       if (cached) {
         const cacheKey = `${repoFullName}:${targetMode}`;
         setCachedDigests((prev) => ({ ...prev, [cacheKey]: cached }));
@@ -135,6 +143,9 @@ export default function DashboardPage() {
       }
 
       setIsCheckingCache(false);
+
+      // Double-check repo hasn't changed before generating
+      if (lastRepoRef.current !== repoFullName) return;
 
       // Generate fresh
       const parts = repoFullName.split("/");
