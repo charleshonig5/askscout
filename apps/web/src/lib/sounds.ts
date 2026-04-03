@@ -1,6 +1,6 @@
 "use client";
 
-/** Play a soft pop/bubble sound using Web Audio API */
+/** Play a satisfying soft pop/bubble sound using Web Audio API */
 export function playCompletionPop() {
   try {
     const ctx = new AudioContext();
@@ -10,21 +10,20 @@ export function playCompletionPop() {
     oscillator.connect(gain);
     gain.connect(ctx.destination);
 
-    // Soft pop: short sine wave that rises then fades
+    // Punchy pop: sine wave with a quick pitch rise
     oscillator.type = "sine";
-    oscillator.frequency.setValueAtTime(400, ctx.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.08);
-    oscillator.frequency.exponentialRampToValueAtTime(500, ctx.currentTime + 0.15);
+    oscillator.frequency.setValueAtTime(300, ctx.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.06);
+    oscillator.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.15);
 
-    // Quick fade in, then fade out
+    // Audible volume with quick attack and smooth decay
     gain.gain.setValueAtTime(0, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+    gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
 
     oscillator.start(ctx.currentTime);
-    oscillator.stop(ctx.currentTime + 0.2);
+    oscillator.stop(ctx.currentTime + 0.3);
 
-    // Clean up
     oscillator.onended = () => ctx.close();
   } catch {
     // Audio not available — silently skip

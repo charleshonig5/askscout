@@ -464,7 +464,7 @@ export function DigestView({
               {"\ud83d\udcca"} Statistics
             </div>
             {showMeta && (
-              <div className="digest-meta stats-reveal-item" style={{ animationDelay: "100ms" }}>
+              <div className="digest-meta stats-reveal-item" style={{ animationDelay: "150ms" }}>
                 {hasChips && (
                   <div className="session-chips">
                     <span className="session-chips-label">Coding Activity</span>
@@ -483,16 +483,16 @@ export function DigestView({
                 )}
               </div>
             )}
-            <div className="stats-reveal-item" style={{ animationDelay: "200ms" }}>
+            <div className="stats-reveal-item" style={{ animationDelay: "300ms" }}>
               <StatsCards stats={stats} />
             </div>
             {stats.topFiles && (
-              <div className="stats-reveal-item" style={{ animationDelay: "400ms" }}>
+              <div className="stats-reveal-item" style={{ animationDelay: "550ms" }}>
                 <TopFiles files={stats.topFiles} />
               </div>
             )}
             {stats.health && (
-              <div className="stats-reveal-item" style={{ animationDelay: "600ms" }}>
+              <div className="stats-reveal-item" style={{ animationDelay: "800ms" }}>
                 <CodebaseHealth health={stats.health} />
               </div>
             )}

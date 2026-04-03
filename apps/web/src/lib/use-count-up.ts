@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 
 /** Animates a number from 0 to the target value over a duration */
-export function useCountUp(target: number, duration = 800): number {
+export function useCountUp(target: number, duration = 1000): number {
   const [value, setValue] = useState(0);
   const startTime = useRef<number | null>(null);
   const rafRef = useRef<number>(0);
