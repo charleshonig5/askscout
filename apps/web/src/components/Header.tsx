@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
+import Image from "next/image";
 import { Menu, Settings, LogOut } from "lucide-react";
 import { RepoSelector } from "./RepoSelector";
 import { ThemeToggle } from "./ThemeToggle";
@@ -55,7 +56,13 @@ export function Header({ repos, selectedRepo, onRepoChange, onMenuToggle }: Head
             aria-label="Profile menu"
           >
             {avatarUrl ? (
-              <img src={avatarUrl} alt={userName} className="header-avatar-img" />
+              <Image
+                src={avatarUrl}
+                alt={userName}
+                width={28}
+                height={28}
+                className="header-avatar-img"
+              />
             ) : (
               <div className="header-avatar" />
             )}
@@ -64,7 +71,13 @@ export function Header({ repos, selectedRepo, onRepoChange, onMenuToggle }: Head
             <div className="header-dropdown">
               <div className="header-dropdown-user">
                 {avatarUrl && (
-                  <img src={avatarUrl} alt={userName} className="header-dropdown-avatar" />
+                  <Image
+                    src={avatarUrl}
+                    alt={userName}
+                    width={24}
+                    height={24}
+                    className="header-dropdown-avatar"
+                  />
                 )}
                 <span className="header-dropdown-name">{userName}</span>
               </div>

@@ -59,6 +59,7 @@ export async function getTodaysDigest(
   if (!supabase) return null;
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { data, error } = await supabase
     .from("digests")
     .select("*")
