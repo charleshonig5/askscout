@@ -247,11 +247,13 @@ export default function DashboardPage() {
   const displayDate =
     isViewingHistory && activeHistoryEntry
       ? new Date(activeHistoryEntry.created_at).toLocaleDateString("en-US", {
+          weekday: "long",
           month: "long",
           day: "numeric",
           year: "numeric",
         })
       : new Date().toLocaleDateString("en-US", {
+          weekday: "long",
           month: "long",
           day: "numeric",
           year: "numeric",
