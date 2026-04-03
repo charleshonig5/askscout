@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Copy, Check, Download, Mail, Sparkles, ClipboardList } from "lucide-react";
+import { useCountUp } from "@/lib/use-count-up";
 
 function DownloadBtn({ text }: { text: string }) {
   const handleDownload = useCallback(() => {
@@ -274,25 +275,30 @@ interface DigestViewStats {
 function StatsCards({ stats }: { stats: DigestViewStats }) {
   const fmt = (n: number) => n.toLocaleString("en-US");
   const netFiles = (stats.filesAdded ?? 0) - (stats.filesDeleted ?? 0);
+  const added = useCountUp(stats.linesAdded);
+  const removed = useCountUp(stats.linesRemoved);
+  const commits = useCountUp(stats.commits);
+  const files = useCountUp(stats.filesChanged);
+  const net = useCountUp(Math.abs(netFiles));
   return (
     <div className="stats-row">
-      <span className="stats-item positive">+{fmt(stats.linesAdded)} lines</span>
+      <span className="stats-item positive">+{fmt(added)} lines</span>
       {stats.linesRemoved > 0 && (
         <>
           <span className="stats-sep">{"\u00b7"}</span>
-          <span className="stats-item negative">-{fmt(stats.linesRemoved)} lines</span>
+          <span className="stats-item negative">-{fmt(removed)} lines</span>
         </>
       )}
       <span className="stats-sep">{"\u00b7"}</span>
-      <span className="stats-item">{fmt(stats.commits)} commits</span>
+      <span className="stats-item">{fmt(commits)} commits</span>
       <span className="stats-sep">{"\u00b7"}</span>
-      <span className="stats-item">{fmt(stats.filesChanged)} files</span>
+      <span className="stats-item">{fmt(files)} files</span>
       {netFiles !== 0 && (
         <>
           <span className="stats-sep">{"\u00b7"}</span>
           <span className={`stats-item ${netFiles > 0 ? "positive" : "negative"}`}>
             {netFiles > 0 ? "+" : ""}
-            {fmt(netFiles)} net {Math.abs(netFiles) === 1 ? "file" : "files"}
+            {fmt(netFiles > 0 ? net : -net)} net {Math.abs(netFiles) === 1 ? "file" : "files"}
           </span>
         </>
       )}
@@ -451,12 +457,14 @@ export function DigestView({
           }
         />
 
-        {/* Statistics section */}
+        {/* Statistics section — staggered reveal */}
         {vis("statistics") && stats && (
-          <div className="digest-section">
-            <div className="digest-section-title">{"\ud83d\udcca"} Statistics</div>
+          <div className="digest-section stats-reveal">
+            <div className="digest-section-title stats-reveal-item">
+              {"\ud83d\udcca"} Statistics
+            </div>
             {showMeta && (
-              <div className="digest-meta">
+              <div className="digest-meta stats-reveal-item" style={{ animationDelay: "100ms" }}>
                 {hasChips && (
                   <div className="session-chips">
                     <span className="session-chips-label">Coding Activity</span>
@@ -475,9 +483,19 @@ export function DigestView({
                 )}
               </div>
             )}
-            <StatsCards stats={stats} />
-            {stats.topFiles && <TopFiles files={stats.topFiles} />}
-            {stats.health && <CodebaseHealth health={stats.health} />}
+            <div className="stats-reveal-item" style={{ animationDelay: "200ms" }}>
+              <StatsCards stats={stats} />
+            </div>
+            {stats.topFiles && (
+              <div className="stats-reveal-item" style={{ animationDelay: "400ms" }}>
+                <TopFiles files={stats.topFiles} />
+              </div>
+            )}
+            {stats.health && (
+              <div className="stats-reveal-item" style={{ animationDelay: "600ms" }}>
+                <CodebaseHealth health={stats.health} />
+              </div>
+            )}
           </div>
         )}
 

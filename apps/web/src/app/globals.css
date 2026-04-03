@@ -460,6 +460,22 @@ a:hover {
   border-radius: var(--radius-full);
 }
 
+/* Staggered reveal for Statistics section */
+@keyframes statsReveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stats-reveal-item {
+  animation: statsReveal 0.4s ease-out both;
+}
+
 .digest-header {
   margin-bottom: var(--space-xl);
   display: flex;
@@ -686,8 +702,14 @@ a:hover {
 .health-card-fill {
   height: 100%;
   border-radius: 2px;
-  transition: width 0.3s ease;
   opacity: 0.5;
+  animation: healthBarFill 0.8s ease-out 0.8s both;
+}
+
+@keyframes healthBarFill {
+  from {
+    width: 0% !important;
+  }
 }
 
 .health-card-fill--strong {
