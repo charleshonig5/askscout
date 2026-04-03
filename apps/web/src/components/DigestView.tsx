@@ -372,7 +372,7 @@ interface DigestViewProps {
 }
 
 function levelColor(level: string): string {
-  const good = ["Lean", "Sharp", "Clean", "Low"];
+  const good = ["Lean", "Laser", "Sharp", "Clean", "Minimal", "Steady"];
   const mid = ["Growing", "Moderate"];
   if (good.includes(level)) return "strong";
   if (mid.includes(level)) return "okay";

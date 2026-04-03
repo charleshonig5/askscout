@@ -144,19 +144,30 @@ export async function POST(req: Request) {
         added: linesAdded,
         removed: linesRemoved,
         level:
-          growthRatio <= 5
+          growthRatio <= 3
             ? "Lean"
-            : growthRatio <= 15
-              ? "Growing"
-              : growthRatio <= 30
-                ? "Heavy"
-                : "Ballooning",
-        score: Math.max(0, Math.min(10, Math.round(10 - Math.min(growthRatio / 3, 10)))),
+            : growthRatio <= 8
+              ? "Steady"
+              : growthRatio <= 20
+                ? "Growing"
+                : growthRatio <= 40
+                  ? "Heavy"
+                  : "Ballooning",
+        score: Math.max(0, Math.min(10, Math.round(10 - Math.min(growthRatio / 4, 10)))),
       },
       focus: {
         filesPerCommit: Math.round(filesPerCommit * 10) / 10,
-        level: filesPerCommit <= 3 ? "Sharp" : filesPerCommit <= 8 ? "Moderate" : "Scattered",
-        score: Math.max(0, Math.min(10, Math.round(10 - filesPerCommit))),
+        level:
+          filesPerCommit <= 3
+            ? "Laser"
+            : filesPerCommit <= 6
+              ? "Sharp"
+              : filesPerCommit <= 12
+                ? "Moderate"
+                : filesPerCommit <= 20
+                  ? "Wide"
+                  : "Scattered",
+        score: Math.max(0, Math.min(10, Math.round(10 - Math.min(filesPerCommit / 2, 10)))),
       },
       churn: {
         files: churnFiles,
@@ -164,11 +175,13 @@ export async function POST(req: Request) {
           churnFiles === 0
             ? "Clean"
             : churnFiles <= 3
-              ? "Low"
+              ? "Minimal"
               : churnFiles <= 7
                 ? "Moderate"
-                : "High",
-        score: Math.max(0, Math.min(10, 10 - churnFiles)),
+                : churnFiles <= 12
+                  ? "Noisy"
+                  : "High",
+        score: Math.max(0, Math.min(10, Math.round(10 - Math.min(churnFiles, 12) * 0.8))),
       },
     };
 

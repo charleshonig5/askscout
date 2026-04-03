@@ -61,12 +61,18 @@ export function formatDigest(digest: Digest, options: FormatOptions): string {
 }
 
 /** Format codebase health for the terminal */
-export function formatCodebaseHealth(commits: { filesChanged: string[] }[]): string {
+export function formatCodebaseHealth(
+  commits: { filesChanged: string[]; additions: number; deletions: number }[],
+): string {
   // Compute metrics
   const fileFrequency = new Map<string, number>();
   let totalFilesPerCommit = 0;
+  let totalAdded = 0;
+  let totalRemoved = 0;
   for (const c of commits) {
     totalFilesPerCommit += c.filesChanged.length;
+    totalAdded += c.additions;
+    totalRemoved += c.deletions;
     for (const f of c.filesChanged) {
       fileFrequency.set(f, (fileFrequency.get(f) ?? 0) + 1);
     }
@@ -75,6 +81,7 @@ export function formatCodebaseHealth(commits: { filesChanged: string[] }[]): str
   const filesPerCommit =
     commits.length > 0 ? Math.round((totalFilesPerCommit / commits.length) * 10) / 10 : 0;
   const churnFiles = [...fileFrequency.entries()].filter(([, count]) => count >= 3).length;
+  const growthRatio = totalRemoved > 0 ? totalAdded / totalRemoved : totalAdded > 0 ? 99 : 1;
 
   // Top files
   const topFiles = [...fileFrequency.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3);
@@ -95,14 +102,44 @@ export function formatCodebaseHealth(commits: { filesChanged: string[] }[]): str
     sections.push(`Most Active Files\n${fileLines}`);
   }
 
-  // Health indicators
-  const focusLevel = filesPerCommit <= 3 ? "Sharp" : filesPerCommit <= 8 ? "Moderate" : "Scattered";
+  // Health indicators (5 levels each)
+  const growthLevel =
+    growthRatio <= 3
+      ? "Lean"
+      : growthRatio <= 8
+        ? "Steady"
+        : growthRatio <= 20
+          ? "Growing"
+          : growthRatio <= 40
+            ? "Heavy"
+            : "Ballooning";
+
+  const focusLevel =
+    filesPerCommit <= 3
+      ? "Laser"
+      : filesPerCommit <= 6
+        ? "Sharp"
+        : filesPerCommit <= 12
+          ? "Moderate"
+          : filesPerCommit <= 20
+            ? "Wide"
+            : "Scattered";
+
   const churnLevel =
-    churnFiles === 0 ? "Clean" : churnFiles <= 3 ? "Low" : churnFiles <= 7 ? "Moderate" : "High";
+    churnFiles === 0
+      ? "Clean"
+      : churnFiles <= 3
+        ? "Minimal"
+        : churnFiles <= 7
+          ? "Moderate"
+          : churnFiles <= 12
+            ? "Noisy"
+            : "High";
 
   const healthLines = [
-    `  Focus      ${focusLevel.padEnd(10)} ${filesPerCommit} files/commit`,
-    `  Churn      ${churnLevel.padEnd(10)} ${churnFiles} files reworked`,
+    `  Growth     ${growthLevel.padEnd(12)} +${fmt(totalAdded)} / -${fmt(totalRemoved)}`,
+    `  Focus      ${focusLevel.padEnd(12)} ${filesPerCommit} files/commit`,
+    `  Churn      ${churnLevel.padEnd(12)} ${churnFiles} files reworked`,
   ].join("\n");
 
   sections.push(`Codebase Health\n${healthLines}`);
