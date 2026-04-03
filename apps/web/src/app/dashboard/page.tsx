@@ -56,16 +56,31 @@ export default function DashboardPage() {
   const [cachedDigests, setCachedDigests] = useState<Record<string, string>>({});
   const [isCheckingCache, setIsCheckingCache] = useState(false);
 
-  // Fetch repos on mount
+  // Fetch repos and user settings on mount
   useEffect(() => {
     void (async () => {
       try {
-        const res = await fetch("/api/repos");
-        if (res.ok) {
-          const data = (await res.json()) as { repos: string[] };
+        const [reposRes, settingsRes] = await Promise.all([
+          fetch("/api/repos"),
+          fetch("/api/settings"),
+        ]);
+
+        let defaultRepoSetting: string | null = null;
+        if (settingsRes.ok) {
+          const settings = (await settingsRes.json()) as { default_repo: string | null };
+          defaultRepoSetting = settings.default_repo;
+        }
+
+        if (reposRes.ok) {
+          const data = (await reposRes.json()) as { repos: string[] };
           setRepos(data.repos);
           if (data.repos.length > 0 && !selectedRepo) {
-            setSelectedRepo(data.repos[0]!);
+            // Use saved default repo if it exists and is in the list
+            const preferred =
+              defaultRepoSetting && data.repos.includes(defaultRepoSetting)
+                ? defaultRepoSetting
+                : data.repos[0]!;
+            setSelectedRepo(preferred);
           }
         }
       } catch {

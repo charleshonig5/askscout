@@ -20,6 +20,66 @@ export interface DigestRecord {
   created_at: string;
 }
 
+// ============================================
+// User Settings
+// ============================================
+
+export interface UserSettings {
+  default_repo: string | null;
+}
+
+/** Get user settings */
+export async function getUserSettings(userId: string): Promise<UserSettings> {
+  if (!supabase) return { default_repo: null };
+  const { data } = await supabase
+    .from("user_settings")
+    .select("default_repo")
+    .eq("user_id", userId)
+    .single();
+  if (!data) return { default_repo: null };
+  return { default_repo: (data.default_repo as string) ?? null };
+}
+
+/** Save user settings (upsert) */
+export async function saveUserSettings(
+  userId: string,
+  settings: Partial<UserSettings>,
+): Promise<void> {
+  if (!supabase) return;
+  const { error } = await supabase
+    .from("user_settings")
+    .upsert(
+      { user_id: userId, ...settings, updated_at: new Date().toISOString() },
+      { onConflict: "user_id" },
+    );
+  if (error) console.error("[askscout] Failed to save settings:", error.message);
+}
+
+/** Delete all digests for a user (all repos) */
+export async function deleteAllDigests(userId: string): Promise<void> {
+  if (!supabase) return;
+  const { error } = await supabase.from("digests").delete().eq("user_id", userId);
+  if (error) console.error("[askscout] Failed to delete digests:", error.message);
+}
+
+/** Delete digests for a specific repo */
+export async function deleteRepoDigests(userId: string, repo: string): Promise<void> {
+  if (!supabase) return;
+  const { error } = await supabase.from("digests").delete().eq("user_id", userId).eq("repo", repo);
+  if (error) console.error("[askscout] Failed to delete repo digests:", error.message);
+}
+
+/** Delete user account entirely (settings + all digests) */
+export async function deleteUserAccount(userId: string): Promise<void> {
+  if (!supabase) return;
+  await supabase.from("digests").delete().eq("user_id", userId);
+  await supabase.from("user_settings").delete().eq("user_id", userId);
+}
+
+// ============================================
+// Digests
+// ============================================
+
 /** Save a completed digest to the database */
 export async function saveDigest(
   userId: string,

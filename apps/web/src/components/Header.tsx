@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Menu, Settings, LogOut } from "lucide-react";
 import { RepoSelector } from "./RepoSelector";
@@ -16,6 +17,7 @@ interface HeaderProps {
 
 export function Header({ repos, selectedRepo, onRepoChange, onMenuToggle }: HeaderProps) {
   const { data: session } = useSession();
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -45,7 +47,11 @@ export function Header({ repos, selectedRepo, onRepoChange, onMenuToggle }: Head
       </div>
       <div className="header-right">
         <ThemeToggle />
-        <button className="header-icon-btn" aria-label="Settings">
+        <button
+          className="header-icon-btn"
+          aria-label="Settings"
+          onClick={() => router.push("/settings")}
+        >
           <Settings size={16} />
         </button>
         <div className="header-separator" />
