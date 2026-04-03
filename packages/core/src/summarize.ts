@@ -133,7 +133,7 @@ Tone: Warm, casual, playful. Like a friend catching you up. Be honest and a litt
 
 Format:
 \ud83d\udcac Vibe Check
-[1-2 casual sentences]
+[3-4 casual sentences. Give a real feel for the day. What was the energy like? What stood out? What's the overall trajectory? Be specific about what happened, not generic.]
 
 \ud83d\ude80 Shipped
   \u2022 Short Title - context
