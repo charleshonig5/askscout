@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { fetchCommits, fetchDiffs } from "@/lib/github";
 import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
+import { saveDigest, getLastRunTime } from "@/lib/supabase";
 import {
   buildStreamingSystemPrompt,
   buildAIContextSystemPrompt,
@@ -71,25 +72,39 @@ export async function POST(req: Request) {
   }
 
   try {
-    // 4. Fetch commits with fallback chain: 24h → 7d → 30d → 90d
-    const FALLBACK_DAYS = [1, 7, 30, 90] as const;
+    // 4. Determine time range: returning user vs first run
+    const userId = session.user?.id ?? session.user?.email ?? "unknown";
+    const repoFullName = `${owner}/${repo}`;
+    const lastRun = await getLastRunTime(userId, repoFullName);
+
     let commits: Awaited<ReturnType<typeof fetchCommits>> = [];
 
-    for (const days of FALLBACK_DAYS) {
-      commits = await fetchCommits(
-        session.accessToken,
-        owner,
-        repo,
-        new Date(Date.now() - days * 24 * 60 * 60 * 1000),
-      );
-      if (commits.length > 0) break;
+    if (lastRun) {
+      // Returning user: since last run, capped at 30 days
+      const daysSinceLastRun = (Date.now() - lastRun.getTime()) / (1000 * 60 * 60 * 24);
+      const since = daysSinceLastRun <= 30 ? lastRun : null;
+
+      if (since) {
+        commits = await fetchCommits(session.accessToken, owner, repo, since);
+      }
+    }
+
+    // First run or stale last run: fallback chain 24h → 7d → 30d → 90d
+    if (commits.length === 0) {
+      const FALLBACK_DAYS = [1, 7, 30, 90] as const;
+      for (const days of FALLBACK_DAYS) {
+        commits = await fetchCommits(
+          session.accessToken,
+          owner,
+          repo,
+          new Date(Date.now() - days * 24 * 60 * 60 * 1000),
+        );
+        if (commits.length > 0) break;
+      }
     }
 
     if (commits.length === 0) {
-      return Response.json(
-        { error: "No commits found in the past 90 days" },
-        { status: 404 },
-      );
+      return Response.json({ error: "No commits found in the past 90 days" }, { status: 404 });
     }
 
     const diffs = await fetchDiffs(session.accessToken, owner, repo, commits);
@@ -143,16 +158,20 @@ ${fileSummary}
 
 Produce the digest now. Be concise. No em dashes, no semicolons.`;
 
-    // 7. Stream from AI provider
+    // 7. Stream from AI provider, save digest on completion
     const openaiKey = process.env.OPENAI_API_KEY;
     const anthropicKey = process.env.ANTHROPIC_API_KEY;
+
+    const onComplete = (fullText: string) => {
+      void saveDigest(userId, repoFullName, mode, fullText, stats);
+    };
 
     let stream: ReadableStream;
 
     if (openaiKey) {
-      stream = await streamOpenAI(systemPrompt, userPrompt, openaiKey, stats);
+      stream = await streamOpenAI(systemPrompt, userPrompt, openaiKey, stats, onComplete);
     } else if (anthropicKey) {
-      stream = await streamAnthropic(systemPrompt, userPrompt, anthropicKey, stats);
+      stream = await streamAnthropic(systemPrompt, userPrompt, anthropicKey, stats, onComplete);
     } else {
       return Response.json({ error: "Service unavailable" }, { status: 503 });
     }
@@ -184,6 +203,7 @@ async function streamOpenAI(
   userPrompt: string,
   apiKey: string,
   stats: Record<string, unknown>,
+  onComplete?: (fullText: string) => void,
 ): Promise<ReadableStream> {
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -224,6 +244,7 @@ async function streamOpenAI(
       controller.enqueue(new TextEncoder().encode(sseEvent("stats", stats)));
 
       let buffer = "";
+      let fullText = "";
 
       try {
         while (true) {
@@ -245,6 +266,7 @@ async function streamOpenAI(
               };
               const text = parsed.choices[0]?.delta?.content;
               if (text) {
+                fullText += text;
                 controller.enqueue(new TextEncoder().encode(sseEvent("text", { text })));
               }
             } catch {
@@ -253,6 +275,7 @@ async function streamOpenAI(
           }
         }
 
+        onComplete?.(fullText);
         controller.enqueue(new TextEncoder().encode(sseEvent("done", {})));
       } catch (err) {
         console.error("OpenAI stream error:", err);
@@ -271,6 +294,7 @@ async function streamAnthropic(
   userPrompt: string,
   apiKey: string,
   stats: Record<string, unknown>,
+  onComplete?: (fullText: string) => void,
 ): Promise<ReadableStream> {
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -302,6 +326,7 @@ async function streamAnthropic(
       controller.enqueue(new TextEncoder().encode(sseEvent("stats", stats)));
 
       let buffer = "";
+      let fullText = "";
 
       try {
         while (true) {
@@ -321,6 +346,7 @@ async function streamAnthropic(
                 delta?: { type: string; text?: string };
               };
               if (parsed.type === "content_block_delta" && parsed.delta?.text) {
+                fullText += parsed.delta.text;
                 controller.enqueue(
                   new TextEncoder().encode(sseEvent("text", { text: parsed.delta.text })),
                 );
@@ -331,6 +357,7 @@ async function streamAnthropic(
           }
         }
 
+        onComplete?.(fullText);
         controller.enqueue(new TextEncoder().encode(sseEvent("done", {})));
       } catch (err) {
         console.error("Anthropic stream error:", err);

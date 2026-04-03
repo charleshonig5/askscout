@@ -10,21 +10,37 @@ import type { HistoryEntry } from "@/lib/mock-data";
 
 type Mode = "digest" | "resume" | "standup";
 
-// Maps our UI mode names to API mode params
 const API_MODES: Record<Mode, string> = {
   digest: "digest",
   standup: "standup",
   resume: "resume",
 };
 
+interface HistoryRecord {
+  id: string;
+  content: string;
+  stats: Record<string, unknown> | null;
+  created_at: string;
+}
+
+function formatHistoryDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffDays = Math.round((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return "Today";
+  if (diffDays === 1) return "Yesterday";
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
 export default function DashboardPage() {
   const [repos, setRepos] = useState<string[]>([]);
   const [selectedRepo, setSelectedRepo] = useState("");
   const [mode, setMode] = useState<Mode>("digest");
-  const [activeHistoryId, setActiveHistoryId] = useState<string>("today");
+  const [activeHistoryId, setActiveHistoryId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [historyRecords, setHistoryRecords] = useState<HistoryRecord[]>([]);
 
-  // Separate streams for each mode
   const digestStream = useDigestStream();
   const standupStream = useDigestStream();
   const resumeStream = useDigestStream();
@@ -36,7 +52,6 @@ export default function DashboardPage() {
   };
 
   const currentStream = streams[mode];
-  const history: HistoryEntry[] = [];
   const lastRepoRef = useRef("");
 
   // Fetch repos on mount
@@ -57,7 +72,32 @@ export default function DashboardPage() {
     })();
   }, []);
 
-  // Generate for a specific mode
+  // Fetch history when repo changes
+  const fetchHistory = useCallback(async (repo: string) => {
+    try {
+      const res = await fetch(`/api/history?repo=${encodeURIComponent(repo)}`);
+      if (res.ok) {
+        const data = (await res.json()) as { history: HistoryRecord[] };
+        setHistoryRecords(data.history);
+        setHistory(
+          data.history.map((h) => ({
+            id: h.id,
+            date: formatHistoryDate(h.created_at),
+            vibeCheck: h.content.slice(0, 100),
+            commits: (h.stats as Record<string, number> | null)?.commits ?? 0,
+            filesChanged: (h.stats as Record<string, number> | null)?.filesChanged ?? 0,
+            shippedCount: 0,
+            changedCount: 0,
+            unstableCount: 0,
+          })),
+        );
+      }
+    } catch {
+      // History fetch failed silently
+    }
+  }, []);
+
+  // Generate digest for a specific mode
   const generate = useCallback(
     (repoFullName: string, targetMode: Mode) => {
       const parts = repoFullName.split("/");
@@ -70,15 +110,14 @@ export default function DashboardPage() {
     [streams],
   );
 
-  // Auto-generate digest when first repo loads
+  // Auto-generate digest when repo changes
   useEffect(() => {
     if (selectedRepo && selectedRepo !== lastRepoRef.current) {
       lastRepoRef.current = selectedRepo;
-      // Reset all streams when repo changes
       digestStream.reset();
       standupStream.reset();
       resumeStream.reset();
-      // Auto-generate digest for new repo
+      void fetchHistory(selectedRepo);
       setTimeout(() => {
         const parts = selectedRepo.split("/");
         if (parts.length === 2) {
@@ -89,7 +128,13 @@ export default function DashboardPage() {
     }
   }, [selectedRepo]);
 
-  // When tab changes, generate if that mode hasn't been generated yet
+  // Refresh history after digest completes
+  useEffect(() => {
+    if (digestStream.isDone && selectedRepo) {
+      void fetchHistory(selectedRepo);
+    }
+  }, [digestStream.isDone]);
+
   const handleModeChange = useCallback(
     (newMode: Mode) => {
       setMode(newMode);
@@ -105,10 +150,21 @@ export default function DashboardPage() {
     setSelectedRepo(repo);
   }, []);
 
+  // Click history entry to view old digest
+  const handleHistorySelect = useCallback(
+    (id: string) => {
+      setActiveHistoryId(id);
+      const record = historyRecords.find((h) => h.id === id);
+      if (record) {
+        digestStream.reset();
+        // Show the historical content by setting it directly
+        // For now just regenerate (history viewing comes later)
+      }
+    },
+    [historyRecords, digestStream],
+  );
+
   const repoName = selectedRepo.split("/").pop() ?? selectedRepo;
-  const activeEntry = history.find((e) => e.id === activeHistoryId);
-  const activeDate = activeEntry?.date ?? "Today";
-  const isToday = activeDate === "Today";
 
   const fullDate = new Date().toLocaleDateString("en-US", {
     month: "long",
@@ -126,8 +182,7 @@ export default function DashboardPage() {
     standup: `Copy-paste standup for ${repoName}`,
     resume: `Paste into your AI coding tools to pick up where you left off on ${repoName}`,
   };
-  const pageTitle = isToday ? `Today\u2019s ${modeLabels[mode]}` : `${modeLabels[mode]}`;
-  const pageDate = isToday ? fullDate : activeDate;
+  const pageTitle = `Today\u2019s ${modeLabels[mode]}`;
 
   return (
     <div>
@@ -142,7 +197,7 @@ export default function DashboardPage() {
         <Sidebar
           entries={history}
           activeId={activeHistoryId}
-          onSelect={setActiveHistoryId}
+          onSelect={handleHistorySelect}
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
         />
@@ -151,7 +206,7 @@ export default function DashboardPage() {
           <div className="digest-container">
             <div className="digest-page-title">
               <h1 className="digest-page-name">{pageTitle}</h1>
-              <p className="digest-page-date">{pageDate}</p>
+              <p className="digest-page-date">{fullDate}</p>
               <p className="digest-page-subtitle">{modeSubtitles[mode]}</p>
             </div>
             <div className="digest-header">
