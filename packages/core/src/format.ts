@@ -1,25 +1,7 @@
-import type { Digest, HealthIndicator, ResumePrompt, Standup } from "./types.js";
-
-function plural(count: number, singular: string, pluralForm?: string): string {
-  return count === 1 ? singular : (pluralForm ?? `${singular}s`);
-}
+import type { Digest, ResumePrompt, Standup } from "./types.js";
 
 function fmt(n: number): string {
   return n.toLocaleString("en-US");
-}
-
-function healthBar(score: number): string {
-  const filled = Math.round(Math.max(0, Math.min(10, score)));
-  const empty = 10 - filled;
-  return "\u2588".repeat(filled) + "\u2591".repeat(empty);
-}
-
-function formatHealthSection(indicators: HealthIndicator[]): string {
-  const lines = indicators.map((h) => {
-    const label = h.label.padEnd(10);
-    return `  ${label} ${healthBar(h.score)} ${h.level}, ${h.detail}`;
-  });
-  return `\ud83e\ude7a Project Health\n${lines.join("\n")}`;
 }
 
 export interface FormatOptions {
@@ -27,7 +9,7 @@ export interface FormatOptions {
   timeLabel: string;
 }
 
-/** Format a digest as a human-readable string for terminal or web */
+/** Format a digest as a human-readable string for the terminal */
 export function formatDigest(digest: Digest, options: FormatOptions): string {
   const sections: string[] = [];
   const s = digest.stats;
@@ -35,7 +17,7 @@ export function formatDigest(digest: Digest, options: FormatOptions): string {
   // Intro header
   sections.push(
     `\ud83d\udc15 Scout sniffed through ${options.repoName}\n` +
-      `   ${fmt(s.commits)} ${plural(s.commits, "commit")} \u00b7 ${fmt(s.filesChanged)} ${plural(s.filesChanged, "file")} \u00b7 ${options.timeLabel}`,
+      `   ${fmt(s.commits)} commits \u00b7 ${fmt(s.filesChanged)} files \u00b7 ${options.timeLabel}`,
   );
 
   // Vibe check
@@ -43,52 +25,92 @@ export function formatDigest(digest: Digest, options: FormatOptions): string {
     sections.push(`\ud83d\udcac Vibe Check\n${digest.vibeCheck}`);
   }
 
+  // Stats inline
+  const net = s.linesAdded - s.linesRemoved;
+  sections.push(
+    `   ${fmt(s.commits)} commits \u00b7 ${fmt(s.filesChanged)} files \u00b7 ${net >= 0 ? "+" : ""}${fmt(net)} lines`,
+  );
+
+  // Shipped
   if (digest.shipped.length > 0) {
-    const n = digest.shipped.length;
     const items = digest.shipped.map((i) => `  \u2022 ${i.summary}`).join("\n");
-    sections.push(
-      `\ud83d\ude80 Shipped\nScout dug up ${n} new ${plural(n, "thing")} you got working:\n${items}`,
-    );
+    sections.push(`\ud83d\ude80 Shipped  ${digest.shipped.length}\n${items}`);
   }
 
+  // Changed
   if (digest.changed.length > 0) {
-    const n = digest.changed.length;
     const items = digest.changed.map((i) => `  \u2022 ${i.summary}`).join("\n");
-    sections.push(
-      `\ud83d\udd27 Changed\nScout noticed you were poking around in ${n} ${plural(n, "spot")}:\n${items}`,
-    );
+    sections.push(`\ud83d\udd27 Changed  ${digest.changed.length}\n${items}`);
   }
 
+  // Unstable
   if (digest.unstable.length > 0) {
-    const n = digest.unstable.length;
-    const label = n === 1 ? "this one" : "these";
     const items = digest.unstable
-      .map(
-        (i) =>
-          `  \u2022 ${i.summary}, changed ${i.changeCount} ${plural(i.changeCount, "time")}, still wobbly`,
-      )
+      .map((i) => `  \u2022 ${i.summary}, changed ${i.changeCount} times, still wobbly`)
       .join("\n");
-    sections.push(`\u26a0\ufe0f Unstable\nScout keeps tripping over ${label}:\n${items}`);
+    sections.push(`\u26a0\ufe0f Unstable  ${digest.unstable.length}\n${items}`);
   }
 
+  // Left Off
   if (digest.leftOff.length > 0) {
     const items = digest.leftOff.map((i) => `  \u2022 ${i.summary}`).join("\n");
-    sections.push(`\ud83d\udccd Left Off\nHere's where you left your bone:\n${items}`);
-  }
-
-  // Stats line
-  const statsLine = `\ud83d\udcca ${fmt(s.linesAdded)} ${plural(s.linesAdded, "line")} added \u00b7 ${fmt(s.linesRemoved)} removed`;
-  sections.push(statsLine);
-
-  // Health indicators (only if available)
-  if (digest.health && digest.health.length > 0) {
-    sections.push(formatHealthSection(digest.health));
+    sections.push(`\ud83d\udccd Left Off  ${digest.leftOff.length}\n${items}`);
   }
 
   return sections.join("\n\n") + "\n";
 }
 
-/** Format a resume prompt from digest data — rich context for AI coding tools */
+/** Format codebase health for the terminal */
+export function formatCodebaseHealth(commits: { filesChanged: string[] }[]): string {
+  // Compute metrics
+  const fileFrequency = new Map<string, number>();
+  let totalFilesPerCommit = 0;
+  for (const c of commits) {
+    totalFilesPerCommit += c.filesChanged.length;
+    for (const f of c.filesChanged) {
+      fileFrequency.set(f, (fileFrequency.get(f) ?? 0) + 1);
+    }
+  }
+
+  const filesPerCommit =
+    commits.length > 0 ? Math.round((totalFilesPerCommit / commits.length) * 10) / 10 : 0;
+  const churnFiles = [...fileFrequency.entries()].filter(([, count]) => count >= 3).length;
+
+  // Top files
+  const topFiles = [...fileFrequency.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3);
+
+  const sections: string[] = [];
+
+  // Top files section
+  if (topFiles.length > 0) {
+    const maxCount = topFiles[0]![1];
+    const fileLines = topFiles
+      .map(([file, count]) => {
+        const name = file.split("/").pop() ?? file;
+        const barLen = Math.round((count / maxCount) * 10);
+        const bar = "\u2588".repeat(barLen) + "\u2591".repeat(10 - barLen);
+        return `  ${name.padEnd(24)} ${bar} ${count} commits`;
+      })
+      .join("\n");
+    sections.push(`Most Active Files\n${fileLines}`);
+  }
+
+  // Health indicators
+  const focusLevel = filesPerCommit <= 3 ? "Sharp" : filesPerCommit <= 8 ? "Moderate" : "Scattered";
+  const churnLevel =
+    churnFiles === 0 ? "Clean" : churnFiles <= 3 ? "Low" : churnFiles <= 7 ? "Moderate" : "High";
+
+  const healthLines = [
+    `  Focus      ${focusLevel.padEnd(10)} ${filesPerCommit} files/commit`,
+    `  Churn      ${churnLevel.padEnd(10)} ${churnFiles} files reworked`,
+  ].join("\n");
+
+  sections.push(`Codebase Health\n${healthLines}`);
+
+  return sections.join("\n\n");
+}
+
+/** Format a resume prompt from digest data */
 export function formatResume(digest: Digest): ResumePrompt {
   const r = digest.resumeContext;
   const sections: string[] = [];
@@ -102,7 +124,7 @@ export function formatResume(digest: Digest): ResumePrompt {
   return { prompt: sections.join("\n\n") };
 }
 
-/** Format a standup summary from digest data — conversational, human-sounding */
+/** Format a standup summary from digest data */
 export function formatStandup(digest: Digest): Standup {
   const s = digest.standupNotes;
   return {

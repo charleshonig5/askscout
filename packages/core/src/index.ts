@@ -11,7 +11,7 @@ export {
   formatDiffsForPrompt,
   computeStats,
 } from "./summarize.js";
-export { formatDigest, formatResume, formatStandup } from "./format.js";
+export { formatDigest, formatResume, formatStandup, formatCodebaseHealth } from "./format.js";
 export type { FormatOptions } from "./format.js";
 export { readState, writeState } from "./state.js";
 export type {
