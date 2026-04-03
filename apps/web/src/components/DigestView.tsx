@@ -457,8 +457,8 @@ export function DigestView({
           }
         />
 
-        {/* Statistics section — staggered reveal */}
-        {vis("statistics") && stats && (
+        {/* Statistics section — staggered reveal after streaming completes */}
+        {!isStreaming && vis("statistics") && stats && (
           <div className="digest-section stats-reveal">
             <div className="digest-section-title stats-reveal-item">
               {"\ud83d\udcca"} Statistics
