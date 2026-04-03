@@ -5,6 +5,7 @@ export {
   buildStreamingSystemPrompt,
   buildAIContextSystemPrompt,
   buildStandupSystemPrompt,
+  buildUnifiedSystemPrompt,
   buildUserPrompt,
   formatCommitsForPrompt,
   formatDiffsForPrompt,

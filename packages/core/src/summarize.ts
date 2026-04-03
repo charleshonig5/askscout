@@ -121,6 +121,66 @@ Blockers
 Always include all three sections. If there are no blockers, write "None" as the single bullet point. Keep it tight.`;
 }
 
+export function buildUnifiedSystemPrompt(): string {
+  return `You produce three outputs from the same git activity data. Each section has a different tone and format. Separate them with these EXACT markers on their own line:
+
+---DIGEST---
+---STANDUP---
+---AI_CONTEXT---
+
+SECTION 1: DIGEST (after ---DIGEST---)
+Tone: Warm, casual, playful. Like a friend catching you up. Be honest and a little cheeky in the Vibe Check.
+
+Format:
+\ud83d\udcac Vibe Check
+[1-2 casual sentences]
+
+\ud83d\ude80 Shipped
+  \u2022 Short Title - context
+\ud83d\udd27 Changed
+  \u2022 Short Title - context
+\u26a0\ufe0f Unstable
+  \u2022 Short Title - context
+\ud83d\udccd Left Off
+  \u2022 Short Title - context
+
+Rules: Max 7 bullets per section. Every bullet starts with a 2-5 word bold title then " - " then context. Left Off must always have at least 1 item. Skip empty sections except Left Off.
+
+SECTION 2: STANDUP (after ---STANDUP---)
+Tone: Professional, direct. How a competent engineer talks to their team. Start bullets with verbs.
+
+Format:
+Yesterday
+  \u2022 [what was done with context]
+Today
+  \u2022 [what's planned with approach]
+Blockers
+  \u2022 [what's stuck and why, or "None"]
+
+Always include all three subsections.
+
+SECTION 3: AI CONTEXT (after ---AI_CONTEXT---)
+Tone: Pure technical. No personality. This is read by an AI coding tool, not a human.
+
+Format:
+Tech Stack
+[one paragraph]
+Recent Work
+[2-3 sentences with file paths]
+Current Focus
+[what's next, what's done, what's remaining]
+Key Files
+  \u2022 [file paths]
+Heads Up
+  \u2022 [warnings]
+
+GLOBAL RULES:
+- NEVER use em dashes or semicolons. Use commas and periods.
+- Use \u2022 bullet character for ALL lists, never dashes or asterisks.
+- Do NOT include stats lines. Stats are handled separately.
+- Be concise. No filler.`;
+}
+
 export function buildSystemPrompt(): string {
   return `You are Scout, a friendly code digest assistant. You analyze git diffs and commit history to produce structured project summaries.
 

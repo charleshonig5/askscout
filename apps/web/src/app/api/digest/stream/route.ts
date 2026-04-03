@@ -2,11 +2,7 @@ import { auth } from "@/auth";
 import { fetchCommits, fetchDiffs } from "@/lib/github";
 import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 import { saveDigest, getLastRunTime } from "@/lib/supabase";
-import {
-  buildStreamingSystemPrompt,
-  buildAIContextSystemPrompt,
-  buildStandupSystemPrompt,
-} from "@askscout/core";
+import { buildUnifiedSystemPrompt } from "@askscout/core";
 
 export const maxDuration = 60;
 
@@ -247,16 +243,8 @@ export async function POST(req: Request) {
     // Include all computed data in stats event
     Object.assign(stats, { health, topFiles, activity: activityBuckets, netImpact });
 
-    // 6. Build prompt based on mode
-    const mode = body.mode ?? "digest";
-    let systemPrompt: string;
-    if (mode === "resume") {
-      systemPrompt = buildAIContextSystemPrompt();
-    } else if (mode === "standup") {
-      systemPrompt = buildStandupSystemPrompt();
-    } else {
-      systemPrompt = buildStreamingSystemPrompt();
-    }
+    // 7. Build unified prompt (generates digest + standup + AI context in one call)
+    const systemPrompt = buildUnifiedSystemPrompt();
 
     // Compact commit list: just hash + message
     const commitList = commits
@@ -288,7 +276,17 @@ Produce the digest now. Be concise. No em dashes, no semicolons.`;
     const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
     const onComplete = (fullText: string) => {
-      void saveDigest(userId, repoFullName, mode, fullText, stats);
+      // Parse the three sections from the unified response
+      const digestMatch =
+        fullText.split("---DIGEST---")[1]?.split("---STANDUP---")[0]?.trim() ?? fullText;
+      const standupMatch =
+        fullText.split("---STANDUP---")[1]?.split("---AI_CONTEXT---")[0]?.trim() ?? "";
+      const aiContextMatch = fullText.split("---AI_CONTEXT---")[1]?.trim() ?? "";
+
+      // Save all three to Supabase
+      void saveDigest(userId, repoFullName, "digest", digestMatch, stats);
+      if (standupMatch) void saveDigest(userId, repoFullName, "standup", standupMatch, stats);
+      if (aiContextMatch) void saveDigest(userId, repoFullName, "resume", aiContextMatch, stats);
     };
 
     let stream: ReadableStream;

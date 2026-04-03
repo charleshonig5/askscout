@@ -257,10 +257,6 @@ export default function DashboardPage() {
           year: "numeric",
         });
 
-  // Parse owner/repo for modals
-  const repoParts = selectedRepo.split("/");
-  const repoOwner = repoParts[0] ?? "";
-  const repoShortName = repoParts[1] ?? "";
   const pageTitle = isViewingHistory ? "Digest" : "Today\u2019s Digest";
 
   return (
@@ -322,9 +318,17 @@ export default function DashboardPage() {
                   <DigestView
                     isStreaming={digestStream.isStreaming}
                     isLoading={isCheckingCache}
-                    streamingText={
-                      digestStream.text || cachedDigests[`${selectedRepo}:digest`]?.content || ""
-                    }
+                    streamingText={(() => {
+                      const raw =
+                        digestStream.text || cachedDigests[`${selectedRepo}:digest`]?.content || "";
+                      // Only show digest portion, strip standup/AI context
+                      if (raw.includes("---DIGEST---")) {
+                        return (
+                          raw.split("---DIGEST---")[1]?.split("---STANDUP---")[0]?.trim() ?? raw
+                        );
+                      }
+                      return raw.split("---STANDUP---")[0]?.trim() ?? raw;
+                    })()}
                     stats={
                       (digestStream.stats ||
                         cachedDigests[`${selectedRepo}:digest`]?.stats ||
@@ -343,15 +347,13 @@ export default function DashboardPage() {
       <AIContextModal
         isOpen={aiContextOpen}
         onClose={() => setAiContextOpen(false)}
-        owner={repoOwner}
-        repo={repoShortName}
+        content={digestStream.sections?.aiContext ?? null}
       />
 
       <StandupModal
         isOpen={standupOpen}
         onClose={() => setStandupOpen(false)}
-        owner={repoOwner}
-        repo={repoShortName}
+        content={digestStream.sections?.standup ?? null}
       />
     </div>
   );

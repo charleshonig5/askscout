@@ -1,44 +1,24 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { X, Copy, Check, Sparkles } from "lucide-react";
-import { useDigestStream } from "@/lib/use-digest-stream";
 
 interface AIContextModalProps {
   isOpen: boolean;
   onClose: () => void;
-  owner: string;
-  repo: string;
+  content: string | null;
 }
 
-export function AIContextModal({ isOpen, onClose, owner, repo }: AIContextModalProps) {
-  const stream = useDigestStream();
+export function AIContextModal({ isOpen, onClose, content }: AIContextModalProps) {
   const [copied, setCopied] = useState(false);
-  const [hasGenerated, setHasGenerated] = useState(false);
-
-  // Generate on open
-  useEffect(() => {
-    if (isOpen && !hasGenerated && owner && repo) {
-      stream.start(owner, repo, "resume");
-      setHasGenerated(true);
-    }
-  }, [isOpen, owner, repo, hasGenerated, stream]);
-
-  // Reset when closed
-  useEffect(() => {
-    if (!isOpen) {
-      setHasGenerated(false);
-      stream.reset();
-    }
-  }, [isOpen, stream]);
 
   const handleCopy = useCallback(() => {
-    if (!stream.text) return;
-    void navigator.clipboard.writeText(stream.text).then(() => {
+    if (!content) return;
+    void navigator.clipboard.writeText(content).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
-  }, [stream.text]);
+  }, [content]);
 
   if (!isOpen) return null;
 
@@ -59,26 +39,16 @@ export function AIContextModal({ isOpen, onClose, owner, repo }: AIContextModalP
         </p>
 
         <div className="modal-body">
-          {stream.isStreaming && !stream.text && (
-            <div className="digest-loading">Generating context...</div>
-          )}
-          {stream.isStreaming && stream.text && (
-            <div className="ai-context-body">
-              {stream.text}
-              <span className="streaming-cursor" />
-            </div>
-          )}
-          {!stream.isStreaming && stream.text && (
-            <div className="ai-context-body">{stream.text}</div>
-          )}
-          {stream.error && (
-            <div className="digest-error">
-              <p>{stream.error}</p>
+          {content ? (
+            <div className="ai-context-body">{content}</div>
+          ) : (
+            <div className="digest-loading">
+              AI context will be ready when the digest finishes generating.
             </div>
           )}
         </div>
 
-        {stream.text && !stream.isStreaming && (
+        {content && (
           <div className="modal-footer">
             <button
               className={`action-btn modal-copy-btn ${copied ? "copied" : ""}`}
