@@ -521,7 +521,7 @@ export function DigestView({
         {/* Statistics section */}
         {vis("statistics") && stats && (
           <div className="digest-section">
-            <div className="digest-section-title">Statistics</div>
+            <div className="digest-section-title">{"\ud83d\udcca"} Statistics</div>
             {showMeta && (
               <div className="digest-meta">
                 {timeContext && <span className="digest-meta-item">{timeContext}</span>}
