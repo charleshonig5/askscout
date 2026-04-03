@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { Copy, Check, Download, Mail, Sparkles } from "lucide-react";
+import { Copy, Check, Download, Mail, Sparkles, ClipboardList } from "lucide-react";
 
 function DownloadBtn({ text }: { text: string }) {
   const handleDownload = useCallback(() => {
@@ -362,13 +362,13 @@ function TopFiles({ files }: { files: TopFile[] }) {
 }
 
 interface DigestViewProps {
-  mode: "digest" | "standup";
   isStreaming: boolean;
   isLoading?: boolean;
   streamingText: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stats: any;
   onResumeWithAI?: () => void;
+  onGenerateStandup?: () => void;
 }
 
 function levelColor(level: string): string {
@@ -436,66 +436,58 @@ function CodebaseHealth({ health }: { health: HealthData }) {
 }
 
 export function DigestView({
-  mode,
   isStreaming,
   isLoading,
   streamingText,
   stats,
   onResumeWithAI,
+  onGenerateStandup,
 }: DigestViewProps) {
-  // Checking cache
   if (isLoading) {
     return <div className="digest-loading">Loading...</div>;
   }
 
-  // Streaming started but no text yet
   if (isStreaming && !streamingText) {
-    const loadingMessages: Record<string, string> = {
-      digest: "Scout is sniffing through your commits...",
-      standup: "Scout is putting together your standup...",
-    };
-    return <div className="digest-loading">{loadingMessages[mode] ?? "Loading..."}</div>;
+    return <div className="digest-loading">Scout is sniffing through your commits...</div>;
   }
 
-  // Streaming in progress
   if (isStreaming && streamingText) {
     return <FormattedText text={streamingText} isStreaming />;
   }
 
-  // Completed
   if (streamingText) {
-    if (mode === "digest") {
-      return (
-        <div>
-          <StreamingDigest
-            text={streamingText}
-            isStreaming={false}
-            afterVibe={stats ? <StatsCards stats={stats} /> : undefined}
-            afterLeftOff={
-              onResumeWithAI ? (
-                <button className="resume-ai-btn" onClick={onResumeWithAI}>
-                  <Sparkles size={14} /> Resume with AI
-                </button>
-              ) : undefined
-            }
-          />
-          {stats?.topFiles && <TopFiles files={stats.topFiles} />}
-          {stats?.health && <CodebaseHealth health={stats.health} />}
-          <DigestActions text={streamingText} />
-        </div>
-      );
-    }
-    // Standup
     return (
       <div>
-        <FormattedText text={streamingText} isStreaming={false} />
-        <div className="digest-actions-row">
-          <CopyBtn text={streamingText} />
+        {/* Actions at the top */}
+        <div className="digest-actions-top">
+          <DigestActions text={streamingText} />
         </div>
+
+        {/* Digest content */}
+        <StreamingDigest
+          text={streamingText}
+          isStreaming={false}
+          afterVibe={stats ? <StatsCards stats={stats} /> : undefined}
+          afterLeftOff={
+            onResumeWithAI ? (
+              <button className="resume-ai-btn" onClick={onResumeWithAI}>
+                <Sparkles size={14} /> Resume with AI
+              </button>
+            ) : undefined
+          }
+        />
+        {stats?.topFiles && <TopFiles files={stats.topFiles} />}
+        {stats?.health && <CodebaseHealth health={stats.health} />}
+
+        {/* Standup button at the bottom */}
+        {onGenerateStandup && (
+          <button className="standup-btn" onClick={onGenerateStandup}>
+            <ClipboardList size={14} /> Generate Standup
+          </button>
+        )}
       </div>
     );
   }
 
-  // Empty state
   return <div className="digest-loading">Select a repo to generate your digest.</div>;
 }

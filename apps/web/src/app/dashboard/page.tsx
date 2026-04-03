@@ -3,18 +3,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
-import { ModeToggle } from "@/components/ModeToggle";
 import { DigestView } from "@/components/DigestView";
 import { AIContextModal } from "@/components/AIContextModal";
+import { StandupModal } from "@/components/StandupModal";
 import { useDigestStream } from "@/lib/use-digest-stream";
 import type { HistoryEntry } from "@/lib/mock-data";
-
-type Mode = "digest" | "standup";
-
-const API_MODES: Record<Mode, string> = {
-  digest: "digest",
-  standup: "standup",
-};
 
 interface HistoryRecord {
   id: string;
@@ -35,22 +28,14 @@ function formatHistoryDate(dateStr: string): string {
 export default function DashboardPage() {
   const [repos, setRepos] = useState<string[]>([]);
   const [selectedRepo, setSelectedRepo] = useState("");
-  const [mode, setMode] = useState<Mode>("digest");
   const [activeHistoryId, setActiveHistoryId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [historyRecords, setHistoryRecords] = useState<HistoryRecord[]>([]);
 
   const digestStream = useDigestStream();
-  const standupStream = useDigestStream();
   const [aiContextOpen, setAiContextOpen] = useState(false);
-
-  const streams: Record<Mode, ReturnType<typeof useDigestStream>> = {
-    digest: digestStream,
-    standup: standupStream,
-  };
-
-  const currentStream = streams[mode];
+  const [standupOpen, setStandupOpen] = useState(false);
   const lastRepoRef = useRef("");
   const [cachedDigests, setCachedDigests] = useState<
     Record<string, { content: string; stats: Record<string, unknown> | null }>
@@ -119,7 +104,7 @@ export default function DashboardPage() {
   const checkTodaysDigest = useCallback(
     async (
       repoFullName: string,
-      targetMode: Mode,
+      targetMode: string,
     ): Promise<{ content: string; stats: Record<string, unknown> | null } | null> => {
       try {
         const res = await fetch(
@@ -145,7 +130,7 @@ export default function DashboardPage() {
 
   // Load cached or generate fresh for a repo+mode
   const loadOrGenerate = useCallback(
-    async (repoFullName: string, targetMode: Mode) => {
+    async (repoFullName: string, targetMode: string) => {
       setIsCheckingCache(true);
 
       const cached = await checkTodaysDigest(repoFullName, targetMode);
@@ -172,14 +157,14 @@ export default function DashboardPage() {
       const parts = repoFullName.split("/");
       if (parts.length !== 2) return;
       const [owner, repo] = parts as [string, string];
-      streams[targetMode].start(owner, repo, API_MODES[targetMode]);
+      digestStream.start(owner, repo, targetMode);
     },
-    [checkTodaysDigest, streams],
+    [checkTodaysDigest, digestStream],
   );
 
   // Force generate (bypasses cache)
   const forceGenerate = useCallback(
-    (repoFullName: string, targetMode: Mode) => {
+    (repoFullName: string, targetMode: string) => {
       const parts = repoFullName.split("/");
       if (parts.length !== 2) return;
       const cacheKey = `${repoFullName}:${targetMode}`;
@@ -189,9 +174,9 @@ export default function DashboardPage() {
         return next;
       });
       const [owner, repo] = parts as [string, string];
-      streams[targetMode].start(owner, repo, API_MODES[targetMode]);
+      digestStream.start(owner, repo, targetMode);
     },
-    [streams],
+    [digestStream],
   );
 
   // When repo changes: reset everything and load digest
@@ -200,9 +185,8 @@ export default function DashboardPage() {
       lastRepoRef.current = selectedRepo;
       // Abort all in-flight streams
       digestStream.reset();
-      standupStream.reset();
       setCachedDigests({});
-      setMode("digest");
+
       setViewingHistoryContent(null);
       setActiveHistoryId(null);
       void fetchHistory(selectedRepo);
@@ -224,34 +208,6 @@ export default function DashboardPage() {
     }
   }, [digestStream.isDone]);
 
-  useEffect(() => {
-    if (standupStream.isDone && standupStream.text && selectedRepo) {
-      setCachedDigests((prev) => ({
-        ...prev,
-        [`${selectedRepo}:standup`]: { content: standupStream.text, stats: null },
-      }));
-    }
-  }, [standupStream.isDone]);
-
-  const handleModeChange = useCallback(
-    (newMode: Mode) => {
-      setMode(newMode);
-      const cacheKey = `${selectedRepo}:${newMode}`;
-      const stream = streams[newMode];
-      if (
-        !cachedDigests[cacheKey] &&
-        !stream.text &&
-        !stream.isStreaming &&
-        !stream.isDone &&
-        !stream.error &&
-        selectedRepo
-      ) {
-        void loadOrGenerate(selectedRepo, newMode);
-      }
-    },
-    [streams, selectedRepo, cachedDigests, loadOrGenerate],
-  );
-
   const handleRepoChange = useCallback((repo: string) => {
     setSelectedRepo(repo);
   }, []);
@@ -270,7 +226,6 @@ export default function DashboardPage() {
       if (record) {
         setViewingHistoryContent(record.content);
         setViewingHistoryStats(record.stats);
-        setMode("digest");
       }
     },
     [historyRecords],
@@ -302,20 +257,11 @@ export default function DashboardPage() {
           year: "numeric",
         });
 
-  const modeLabels: Record<Mode, string> = {
-    digest: "Digest",
-    standup: "Standup",
-  };
-  const modeSubtitles: Record<Mode, string> = {
-    digest: repoName,
-    standup: `Copy-paste standup for ${repoName}`,
-  };
-
-  // Parse owner/repo for the AI context modal
+  // Parse owner/repo for modals
   const repoParts = selectedRepo.split("/");
   const repoOwner = repoParts[0] ?? "";
   const repoShortName = repoParts[1] ?? "";
-  const pageTitle = isViewingHistory ? modeLabels[mode] : `Today\u2019s ${modeLabels[mode]}`;
+  const pageTitle = isViewingHistory ? "Digest" : "Today\u2019s Digest";
 
   return (
     <div>
@@ -340,7 +286,7 @@ export default function DashboardPage() {
             <div className="digest-page-title">
               <h1 className="digest-page-name">{pageTitle}</h1>
               <p className="digest-page-date">{displayDate}</p>
-              <p className="digest-page-subtitle">{modeSubtitles[mode]}</p>
+              <p className="digest-page-subtitle">{repoName}</p>
             </div>
 
             {isViewingHistory ? (
@@ -353,42 +299,39 @@ export default function DashboardPage() {
                   Back to today
                 </button>
                 <DigestView
-                  mode="digest"
                   isStreaming={false}
                   streamingText={viewingHistoryContent}
                   stats={viewingHistoryStats}
+                  onResumeWithAI={() => setAiContextOpen(true)}
+                  onGenerateStandup={() => setStandupOpen(true)}
                 />
               </>
             ) : (
               <>
-                <div className="digest-header">
-                  <ModeToggle mode={mode} onChange={handleModeChange} />
-                </div>
-
-                {currentStream.error ? (
+                {digestStream.error ? (
                   <div className="digest-error">
-                    <p>{currentStream.error}</p>
+                    <p>{digestStream.error}</p>
                     <button
                       className="btn btn-secondary"
-                      onClick={() => forceGenerate(selectedRepo, mode)}
+                      onClick={() => forceGenerate(selectedRepo, "digest")}
                     >
                       Try again
                     </button>
                   </div>
                 ) : (
                   <DigestView
-                    mode={mode}
-                    isStreaming={currentStream.isStreaming}
+                    isStreaming={digestStream.isStreaming}
                     isLoading={isCheckingCache}
                     streamingText={
-                      currentStream.text || cachedDigests[`${selectedRepo}:${mode}`]?.content || ""
+                      digestStream.text || cachedDigests[`${selectedRepo}:digest`]?.content || ""
                     }
                     stats={
                       (digestStream.stats ||
-                        cachedDigests[`${selectedRepo}:${mode}`]?.stats ||
+                        cachedDigests[`${selectedRepo}:digest`]?.stats ||
                         null) as Record<string, unknown> | null
                     }
                     onResumeWithAI={() => setAiContextOpen(true)}
+                    onGenerateStandup={() => setStandupOpen(true)}
                   />
                 )}
               </>
@@ -400,6 +343,13 @@ export default function DashboardPage() {
       <AIContextModal
         isOpen={aiContextOpen}
         onClose={() => setAiContextOpen(false)}
+        owner={repoOwner}
+        repo={repoShortName}
+      />
+
+      <StandupModal
+        isOpen={standupOpen}
+        onClose={() => setStandupOpen(false)}
         owner={repoOwner}
         repo={repoShortName}
       />
