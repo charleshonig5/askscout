@@ -128,8 +128,9 @@ export async function fetchDiffs(
 ): Promise<FetchDiffsResult> {
   if (commits.length === 0) return { diffs: [], filesAdded: 0, filesRemoved: 0 };
 
-  const oldest = commits[0]!;
-  const newest = commits[commits.length - 1]!;
+  // GitHub API returns commits newest-first, so reverse the order for compare
+  const oldest = commits[commits.length - 1]!;
+  const newest = commits[0]!;
 
   // For single commit or initial commits, fetch the commit directly
   let files: {
