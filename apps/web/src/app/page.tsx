@@ -1,7 +1,15 @@
-import { signIn } from "@/auth";
+import { redirect } from "next/navigation";
+import { auth, signIn } from "@/auth";
 import { MOCK_STREAMING_TEXT } from "@/lib/mock-data";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const session = await auth();
+
+  // If already logged in, go straight to dashboard
+  if (session?.user) {
+    redirect("/dashboard");
+  }
+
   return (
     <main className="landing">
       <h1 className="landing-title">askscout</h1>
