@@ -287,12 +287,88 @@ interface HealthData {
   churn: HealthIndicator & { files: number };
 }
 
+interface TopFile {
+  file: string;
+  commits: number;
+}
+
+interface ActivityBucket {
+  label: string;
+  count: number;
+}
+
 interface DigestViewStats {
   commits: number;
   filesChanged: number;
   linesAdded: number;
   linesRemoved: number;
   health?: HealthData;
+  topFiles?: TopFile[];
+  activity?: ActivityBucket[];
+  netImpact?: number;
+}
+
+function NetImpact({ value }: { value: number }) {
+  const fmt = (n: number) => Math.abs(n).toLocaleString("en-US");
+  const isPositive = value >= 0;
+  return (
+    <div className="net-impact">
+      <span className={`net-impact-number ${isPositive ? "positive" : "negative"}`}>
+        {isPositive ? "+" : "-"}
+        {fmt(value)}
+      </span>
+      <span className="net-impact-label">net lines</span>
+    </div>
+  );
+}
+
+function TopFiles({ files }: { files: TopFile[] }) {
+  if (files.length === 0) return null;
+  const maxCommits = Math.max(...files.map((f) => f.commits));
+  return (
+    <div className="digest-section">
+      <div className="digest-section-title">Most Active Files</div>
+      <div className="top-files">
+        {files.map((f) => (
+          <div key={f.file} className="top-file-row">
+            <span className="top-file-name">{f.file.split("/").pop()}</span>
+            <div className="top-file-bar-container">
+              <div
+                className="top-file-bar"
+                style={{ width: `${(f.commits / maxCommits) * 100}%` }}
+              />
+            </div>
+            <span className="top-file-count">{f.commits}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ActivityChart({ buckets }: { buckets: ActivityBucket[] }) {
+  if (buckets.length === 0) return null;
+  const maxCount = Math.max(...buckets.map((b) => b.count), 1);
+  // Only show labels for every Nth bucket to avoid crowding
+  const labelInterval = buckets.length > 12 ? 4 : buckets.length > 7 ? 2 : 1;
+  return (
+    <div className="digest-section">
+      <div className="digest-section-title">Activity</div>
+      <div className="activity-chart">
+        {buckets.map((b, i) => (
+          <div key={i} className="activity-bar-col">
+            <div className="activity-bar-wrapper">
+              <div
+                className={`activity-bar ${b.count === 0 ? "empty" : ""}`}
+                style={{ height: `${Math.max(2, (b.count / maxCount) * 100)}%` }}
+              />
+            </div>
+            {i % labelInterval === 0 && <span className="activity-label">{b.label}</span>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 interface DigestViewProps {
@@ -417,6 +493,9 @@ export function DigestView({
       return (
         <div>
           <StreamingDigest text={streamingText} isStreaming={false} />
+          {stats?.netImpact !== undefined && <NetImpact value={stats.netImpact} />}
+          {stats?.activity && <ActivityChart buckets={stats.activity} />}
+          {stats?.topFiles && <TopFiles files={stats.topFiles} />}
           {stats?.health && <CodebaseHealth health={stats.health} />}
           {stats && <StatsBar stats={stats} />}
           <DigestActions text={streamingText} />

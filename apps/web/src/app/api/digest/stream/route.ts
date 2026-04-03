@@ -176,8 +176,76 @@ export async function POST(req: Request) {
       },
     };
 
-    // Include health in stats event
-    Object.assign(stats, { health });
+    // 6b. Compute most active files (top 5 by commit frequency)
+    const topFiles = [...fileFrequency.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([file, count]) => ({ file, commits: count }));
+
+    // 6c. Compute activity chart (commit count per time bucket)
+    const timeSpanMs =
+      commits[commits.length - 1]!.timestamp.getTime() - commits[0]!.timestamp.getTime();
+    const timeSpanDays = timeSpanMs / (1000 * 60 * 60 * 24);
+
+    let activityBuckets: { label: string; count: number }[];
+
+    if (timeSpanDays <= 1.5) {
+      // Hourly buckets for ≤1.5 days
+      const hours = new Array(24).fill(0) as number[];
+      for (const c of commits) {
+        const h = c.timestamp.getHours();
+        hours[h] = (hours[h] ?? 0) + 1;
+      }
+      activityBuckets = hours.map((count, h) => ({
+        label: h === 0 ? "12a" : h < 12 ? `${h}a` : h === 12 ? "12p" : `${h - 12}p`,
+        count,
+      }));
+    } else if (timeSpanDays <= 10) {
+      // Daily buckets for ≤10 days
+      const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const dayMap = new Map<string, number>();
+      for (const c of commits) {
+        const key = c.timestamp.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        dayMap.set(key, (dayMap.get(key) ?? 0) + 1);
+      }
+      // Build buckets for each day in the range
+      const startDate = new Date(commits[0]!.timestamp);
+      startDate.setHours(0, 0, 0, 0);
+      activityBuckets = [];
+      for (
+        let d = new Date(startDate);
+        d <= commits[commits.length - 1]!.timestamp;
+        d.setDate(d.getDate() + 1)
+      ) {
+        const key = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        activityBuckets.push({
+          label: dayNames[d.getDay()]!,
+          count: dayMap.get(key) ?? 0,
+        });
+      }
+    } else {
+      // Weekly buckets for longer periods
+      const weekMap = new Map<number, number>();
+      const startTime = commits[0]!.timestamp.getTime();
+      for (const c of commits) {
+        const weekNum = Math.floor((c.timestamp.getTime() - startTime) / (7 * 24 * 60 * 60 * 1000));
+        weekMap.set(weekNum, (weekMap.get(weekNum) ?? 0) + 1);
+      }
+      const totalWeeks = Math.ceil(timeSpanDays / 7);
+      activityBuckets = [];
+      for (let w = 0; w < totalWeeks; w++) {
+        activityBuckets.push({
+          label: `W${w + 1}`,
+          count: weekMap.get(w) ?? 0,
+        });
+      }
+    }
+
+    // 6d. Net impact
+    const netImpact = linesAdded - linesRemoved;
+
+    // Include all computed data in stats event
+    Object.assign(stats, { health, topFiles, activity: activityBuckets, netImpact });
 
     // 6. Build prompt based on mode
     const mode = body.mode ?? "digest";
