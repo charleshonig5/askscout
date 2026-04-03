@@ -194,7 +194,15 @@ function parseStreamingSections(text: string): ParsedSection[] {
   return sections;
 }
 
-function StreamingDigest({ text, isStreaming }: { text: string; isStreaming: boolean }) {
+function StreamingDigest({
+  text,
+  isStreaming,
+  afterVibe,
+}: {
+  text: string;
+  isStreaming: boolean;
+  afterVibe?: React.ReactNode;
+}) {
   const cursorRef = useRef<HTMLSpanElement>(null);
   const sections = parseStreamingSections(text);
   const isLastSection = (key: string) => {
@@ -217,13 +225,16 @@ function StreamingDigest({ text, isStreaming }: { text: string; isStreaming: boo
 
         if (section.key === "vibe") {
           return (
-            <div key={section.key} className="digest-vibe">
-              <strong>
-                {section.emoji} {section.label}
-              </strong>
-              <br />
-              {section.content}
-              {showCursor && cursor}
+            <div key={section.key}>
+              <div className="digest-vibe">
+                <strong>
+                  {section.emoji} {section.label}
+                </strong>
+                <br />
+                {section.content}
+                {showCursor && cursor}
+              </div>
+              {afterVibe}
             </div>
           );
         }
@@ -494,8 +505,11 @@ export function DigestView({
     if (mode === "digest") {
       return (
         <div>
-          <StreamingDigest text={streamingText} isStreaming={false} />
-          {stats && <StatsCards stats={stats} />}
+          <StreamingDigest
+            text={streamingText}
+            isStreaming={false}
+            afterVibe={stats ? <StatsCards stats={stats} /> : undefined}
+          />
           {stats?.activity && <ActivityChart buckets={stats.activity} />}
           {stats?.topFiles && <TopFiles files={stats.topFiles} />}
           {stats?.health && <CodebaseHealth health={stats.health} />}
