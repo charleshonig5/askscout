@@ -323,14 +323,17 @@ function StatsCards({ stats }: { stats: DigestViewStats }) {
 
   return (
     <div className="stats-row">
+      <span className="stats-item positive">+{fmt(stats.linesAdded)} lines</span>
+      {stats.linesRemoved > 0 && (
+        <>
+          <span className="stats-sep">{"\u00b7"}</span>
+          <span className="stats-item negative">-{fmt(stats.linesRemoved)} lines</span>
+        </>
+      )}
+      <span className="stats-sep">{"\u00b7"}</span>
       <span className="stats-item">{fmt(stats.commits)} commits</span>
       <span className="stats-sep">{"\u00b7"}</span>
       <span className="stats-item">{fmt(stats.filesChanged)} files</span>
-      <span className="stats-sep">{"\u00b7"}</span>
-      <span className={`stats-item ${isPositive ? "positive" : "negative"}`}>
-        {isPositive ? "+" : ""}
-        {fmt(net)} lines
-      </span>
     </div>
   );
 }

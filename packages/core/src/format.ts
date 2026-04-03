@@ -28,7 +28,7 @@ export function formatDigest(digest: Digest, options: FormatOptions): string {
   // Stats inline
   const net = s.linesAdded - s.linesRemoved;
   sections.push(
-    `   ${fmt(s.commits)} commits \u00b7 ${fmt(s.filesChanged)} files \u00b7 ${net >= 0 ? "+" : ""}${fmt(net)} lines`,
+    `   +${fmt(s.linesAdded)} lines${s.linesRemoved > 0 ? ` \u00b7 -${fmt(s.linesRemoved)} lines` : ""} \u00b7 ${fmt(s.commits)} commits \u00b7 ${fmt(s.filesChanged)} files`,
   );
 
   // Shipped
