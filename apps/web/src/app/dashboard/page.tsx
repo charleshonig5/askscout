@@ -108,7 +108,7 @@ export default function DashboardPage() {
     ): Promise<{ content: string; stats: Record<string, unknown> | null } | null> => {
       try {
         const res = await fetch(
-          `/api/digest/today?repo=${encodeURIComponent(repoFullName)}&mode=${targetMode}`,
+          `/api/digest/today?repo=${encodeURIComponent(repoFullName)}&mode=${targetMode}&tz=${new Date().getTimezoneOffset()}`,
           { signal: AbortSignal.timeout(5000) },
         );
         if (res.ok) {

@@ -115,10 +115,17 @@ export async function getTodaysDigest(
   userId: string,
   repo: string,
   mode: string,
+  tzOffsetMinutes?: number,
 ): Promise<DigestRecord | null> {
   if (!supabase) return null;
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
+  // Calculate midnight in the user's timezone using their offset
+  // tzOffsetMinutes: e.g. -420 for PDT (UTC-7), 0 for UTC, 60 for CET
+  const offset = tzOffsetMinutes ?? 0;
+  const nowUtc = Date.now();
+  const nowLocal = nowUtc - offset * 60 * 1000;
+  const midnightLocal = new Date(nowLocal);
+  midnightLocal.setUTCHours(0, 0, 0, 0);
+  const todayStart = new Date(midnightLocal.getTime() + offset * 60 * 1000);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { data, error } = await supabase
     .from("digests")

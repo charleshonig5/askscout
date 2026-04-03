@@ -11,6 +11,7 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const repo = url.searchParams.get("repo");
   const mode = url.searchParams.get("mode") ?? "digest";
+  const tzOffset = url.searchParams.get("tz") ? Number(url.searchParams.get("tz")) : undefined;
 
   if (!repo) {
     return Response.json({ error: "Missing repo param" }, { status: 400 });
@@ -19,7 +20,7 @@ export async function GET(req: Request) {
   const userId = session.user?.id ?? session.user?.email ?? "unknown";
 
   try {
-    const existing = await getTodaysDigest(userId, repo, mode);
+    const existing = await getTodaysDigest(userId, repo, mode, tzOffset);
     if (existing) {
       return Response.json({ exists: true, digest: existing });
     }
