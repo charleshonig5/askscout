@@ -99,15 +99,9 @@ export default function DashboardPage() {
     }
   }, []);
 
-  // Check for existing digest, generate only if none exists today
-  const loadOrGenerate = useCallback(
-    async (repoFullName: string, targetMode: Mode) => {
-      const cacheKey = `${repoFullName}:${targetMode}`;
-      if (cachedDigests[cacheKey]) return;
-
-      setIsCheckingCache(true);
-
-      // Check Supabase for today's digest
+  // Check Supabase for today's digest, return content or null
+  const checkTodaysDigest = useCallback(
+    async (repoFullName: string, targetMode: Mode): Promise<string | null> => {
       try {
         const res = await fetch(
           `/api/digest/today?repo=${encodeURIComponent(repoFullName)}&mode=${targetMode}`,
@@ -115,29 +109,40 @@ export default function DashboardPage() {
         if (res.ok) {
           const data = (await res.json()) as {
             exists: boolean;
-            digest?: { content: string; stats: Record<string, unknown> | null };
+            digest?: { content: string };
           };
-          if (data.exists && data.digest) {
-            setCachedDigests((prev) => ({ ...prev, [cacheKey]: data.digest!.content }));
-            setIsCheckingCache(false);
-            return;
-          }
+          if (data.exists && data.digest) return data.digest.content;
         }
       } catch {
-        // If check fails, just generate fresh
+        // Fall through to generate
+      }
+      return null;
+    },
+    [],
+  );
+
+  // Load cached or generate fresh for a repo+mode
+  const loadOrGenerate = useCallback(
+    async (repoFullName: string, targetMode: Mode) => {
+      setIsCheckingCache(true);
+
+      const cached = await checkTodaysDigest(repoFullName, targetMode);
+      if (cached) {
+        const cacheKey = `${repoFullName}:${targetMode}`;
+        setCachedDigests((prev) => ({ ...prev, [cacheKey]: cached }));
+        setIsCheckingCache(false);
+        return;
       }
 
       setIsCheckingCache(false);
 
-      // No existing digest, generate a new one
+      // Generate fresh
       const parts = repoFullName.split("/");
       if (parts.length !== 2) return;
       const [owner, repo] = parts as [string, string];
-      const stream = streams[targetMode];
-      stream.reset();
-      setTimeout(() => stream.start(owner, repo, API_MODES[targetMode]), 50);
+      streams[targetMode].start(owner, repo, API_MODES[targetMode]);
     },
-    [streams, cachedDigests],
+    [checkTodaysDigest, streams],
   );
 
   // Force generate (bypasses cache)
@@ -145,28 +150,28 @@ export default function DashboardPage() {
     (repoFullName: string, targetMode: Mode) => {
       const parts = repoFullName.split("/");
       if (parts.length !== 2) return;
-      const [owner, repo] = parts as [string, string];
       const cacheKey = `${repoFullName}:${targetMode}`;
       setCachedDigests((prev) => {
         const next = { ...prev };
         delete next[cacheKey];
         return next;
       });
-      const stream = streams[targetMode];
-      stream.reset();
-      setTimeout(() => stream.start(owner, repo, API_MODES[targetMode]), 50);
+      const [owner, repo] = parts as [string, string];
+      streams[targetMode].start(owner, repo, API_MODES[targetMode]);
     },
     [streams],
   );
 
-  // Load or generate digest when repo changes
+  // When repo changes: reset everything and load digest
   useEffect(() => {
     if (selectedRepo && selectedRepo !== lastRepoRef.current) {
       lastRepoRef.current = selectedRepo;
+      // Abort all in-flight streams
       digestStream.reset();
       standupStream.reset();
       resumeStream.reset();
       setCachedDigests({});
+      setMode("digest");
       void fetchHistory(selectedRepo);
       void loadOrGenerate(selectedRepo, "digest");
     }
