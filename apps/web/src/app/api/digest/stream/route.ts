@@ -71,30 +71,18 @@ export async function POST(req: Request) {
   }
 
   try {
-    // 4. Fetch commits with fallback chain: 7d → 30d → 90d
-    let commits = await fetchCommits(
-      session.accessToken,
-      owner,
-      repo,
-      new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-    );
+    // 4. Fetch commits with fallback chain: 24h → 7d → 30d → 90d
+    const FALLBACK_DAYS = [1, 7, 30, 90] as const;
+    let commits: Awaited<ReturnType<typeof fetchCommits>> = [];
 
-    if (commits.length === 0) {
+    for (const days of FALLBACK_DAYS) {
       commits = await fetchCommits(
         session.accessToken,
         owner,
         repo,
-        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        new Date(Date.now() - days * 24 * 60 * 60 * 1000),
       );
-    }
-
-    if (commits.length === 0) {
-      commits = await fetchCommits(
-        session.accessToken,
-        owner,
-        repo,
-        new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
-      );
+      if (commits.length > 0) break;
     }
 
     if (commits.length === 0) {
