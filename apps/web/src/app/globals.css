@@ -20,14 +20,14 @@
   --color-border-hover: #d0d0d0;
 
   /* Accent */
-  --color-accent: #6366f1;
-  --color-accent-hover: #4f46e5;
+  --color-accent: #5e6ad2;
+  --color-accent-hover: #4e5bc2;
   --color-accent-text: #ffffff;
 
-  /* Status */
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-danger: #ef4444;
+  /* Status (muted, Linear-style) */
+  --color-success: #4da676;
+  --color-warning: #d4a038;
+  --color-danger: #d45050;
 
   /* Typography */
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -70,8 +70,8 @@
   --color-border: #222222;
   --color-border-hover: #333333;
 
-  --color-accent: #818cf8;
-  --color-accent-hover: #6366f1;
+  --color-accent: #6e79d6;
+  --color-accent-hover: #5e6ad2;
   --color-accent-text: #0a0a0a;
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
@@ -565,7 +565,7 @@ a:hover {
   height: 100%;
   background: var(--color-accent);
   border-radius: 4px;
-  opacity: 0.6;
+  opacity: 0.35;
   transition: width 0.3s ease;
 }
 
@@ -622,21 +622,21 @@ a:hover {
 
 .health-card-level--strong {
   color: var(--color-success);
-  background: color-mix(in srgb, var(--color-success) 12%, transparent);
+  background: color-mix(in srgb, var(--color-success) 8%, transparent);
 }
 
 .health-card-level--okay {
   color: var(--color-warning);
-  background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+  background: color-mix(in srgb, var(--color-warning) 8%, transparent);
 }
 
 .health-card-level--rough {
   color: var(--color-danger);
-  background: color-mix(in srgb, var(--color-danger) 12%, transparent);
+  background: color-mix(in srgb, var(--color-danger) 8%, transparent);
 }
 
 .health-card-bar {
-  height: 4px;
+  height: 3px;
   background: var(--color-bg-tertiary);
   border-radius: 2px;
   margin-bottom: var(--space-sm);
@@ -647,6 +647,7 @@ a:hover {
   height: 100%;
   border-radius: 2px;
   transition: width 0.3s ease;
+  opacity: 0.5;
 }
 
 .health-card-fill--strong {
