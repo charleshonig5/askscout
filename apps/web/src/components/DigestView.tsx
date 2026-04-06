@@ -32,6 +32,36 @@ function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function buildFullMarkdown(text: string, stats?: any): string {
+  let md = text;
+  if (!stats) return md;
+
+  const fmt = (n: number) => n.toLocaleString("en-US");
+  const lines: string[] = ["\n\n---\n\n## Statistics\n"];
+  if (stats.commits != null)
+    lines.push(
+      `+${fmt(stats.linesAdded ?? 0)} lines · -${fmt(stats.linesRemoved ?? 0)} lines · ${fmt(stats.commits)} commits · ${fmt(stats.filesChanged ?? 0)} files`,
+    );
+  if (stats.topFiles?.length > 0) {
+    lines.push("\n### Most Active Files\n");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    stats.topFiles.forEach((f: any, i: number) => {
+      lines.push(
+        `${i + 1}. ${f.file} (+${fmt(f.added ?? 0)} / -${fmt(f.removed ?? 0)}, ${f.commits} commits)`,
+      );
+    });
+  }
+  if (stats.pace) {
+    lines.push(`\n### Pace Check\n`);
+    lines.push(
+      `${stats.pace.multiplier}x — ${stats.pace.label} (${stats.pace.todayCommits} commits today, ${stats.pace.avgCommits}-commit average)`,
+    );
+  }
+  md += lines.join("\n");
+  return md;
+}
+
 function DownloadBtn({
   text,
   stats,
@@ -46,33 +76,7 @@ function DownloadBtn({
     const name = repoName ?? "digest";
     const date = new Date().toISOString().slice(0, 10);
     const filename = `${name}-${date}.md`;
-
-    // Build markdown with statistics
-    let md = text;
-    if (stats) {
-      const fmt = (n: number) => n.toLocaleString("en-US");
-      const lines: string[] = ["\n\n---\n\n## Statistics\n"];
-      if (stats.commits != null)
-        lines.push(
-          `+${fmt(stats.linesAdded ?? 0)} lines · -${fmt(stats.linesRemoved ?? 0)} lines · ${fmt(stats.commits)} commits · ${fmt(stats.filesChanged ?? 0)} files`,
-        );
-      if (stats.topFiles?.length > 0) {
-        lines.push("\n### Most Active Files\n");
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        stats.topFiles.forEach((f: any, i: number) => {
-          lines.push(
-            `${i + 1}. ${f.file} (+${fmt(f.added ?? 0)} / -${fmt(f.removed ?? 0)}, ${f.commits} commits)`,
-          );
-        });
-      }
-      if (stats.pace) {
-        lines.push(`\n### Pace Check\n`);
-        lines.push(
-          `${stats.pace.multiplier}x — ${stats.pace.label} (${stats.pace.todayCommits} commits today, ${stats.pace.avgCommits}-commit average)`,
-        );
-      }
-      md += lines.join("\n");
-    }
+    const md = buildFullMarkdown(text, stats);
 
     const blob = new Blob([md], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
@@ -124,7 +128,7 @@ function DigestActions({
 }) {
   return (
     <div className="digest-actions-row">
-      <CopyBtn text={text} label="Copy" />
+      <CopyBtn text={buildFullMarkdown(text, stats)} label="Copy" />
       <DownloadBtn text={text} stats={stats} repoName={repoName} />
       <EmailBtn />
     </div>
