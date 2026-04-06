@@ -32,6 +32,7 @@ export interface DigestSections {
   leftOff: boolean;
   closingThoughts: boolean;
   statistics: boolean;
+  codebaseHealth: boolean;
 }
 
 export const DEFAULT_SECTIONS: DigestSections = {
@@ -42,6 +43,7 @@ export const DEFAULT_SECTIONS: DigestSections = {
   leftOff: true,
   closingThoughts: true,
   statistics: true,
+  codebaseHealth: true,
 };
 
 export interface UserSettings {

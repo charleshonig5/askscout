@@ -19,7 +19,12 @@ const SECTION_OPTIONS = [
   {
     key: "statistics",
     label: "Statistics",
-    desc: "Sessions, lines, commits, active files, and codebase health",
+    desc: "Lines, commits, files, and most active files",
+  },
+  {
+    key: "codebaseHealth",
+    label: "Codebase Health",
+    desc: "Growth, focus, and churn indicators",
   },
 ] as const;
 

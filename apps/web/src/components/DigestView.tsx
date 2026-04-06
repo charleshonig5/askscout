@@ -398,8 +398,7 @@ function CodebaseHealth({ health }: { health: HealthData }) {
   ];
 
   return (
-    <div className="digest-section">
-      <div className="digest-section-title">Codebase Health</div>
+    <div>
       <div className="health-grid">
         {indicators.map((h) => {
           const color = levelColor(h.level);
@@ -482,15 +481,22 @@ export function DigestView({
                 <TopFiles files={stats.topFiles} />
               </div>
             )}
-            {stats.health && (
-              <div className="stats-reveal-item" style={{ animationDelay: "800ms" }}>
-                <CodebaseHealth health={stats.health} />
-              </div>
-            )}
           </div>
         )}
 
-        {/* Closing Thoughts — after Statistics */}
+        {/* Codebase Health — own section */}
+        {!isStreaming && vis("codebaseHealth") && stats?.health && (
+          <div className="digest-section stats-reveal">
+            <div className="digest-section-title stats-reveal-item">
+              {"\ud83e\ude7a"} Codebase Health
+            </div>
+            <div className="stats-reveal-item" style={{ animationDelay: "200ms" }}>
+              <CodebaseHealth health={stats.health} />
+            </div>
+          </div>
+        )}
+
+        {/* Closing Thoughts — after everything */}
         {!isStreaming &&
           vis("closingThoughts") &&
           (() => {
