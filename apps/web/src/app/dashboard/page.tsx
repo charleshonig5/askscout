@@ -355,14 +355,6 @@ export default function DashboardPage() {
     return count;
   })();
 
-  // Get current stats from whichever source is active
-  const currentStats = noNewCommits
-    ? noNewCommits.stats
-    : isViewingHistory
-      ? viewingHistoryStats
-      : digestStream.stats || cachedDigests[`${selectedRepo}:digest`]?.stats || null;
-
-  // Build session chips from stats
 
   // Determine the raw content for the current view (unified text with section markers)
   const currentRawContent = noNewCommits
