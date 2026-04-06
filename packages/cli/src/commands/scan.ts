@@ -187,12 +187,12 @@ export async function scan(options: ScanOptions): Promise<void> {
       console.log(resume.prompt);
     } else if (options.mode === "standup") {
       const standup = formatStandup(result.digest);
-      console.log("Yesterday:");
+      console.log("Done:");
       for (const item of standup.yesterday) console.log(`  \u2022 ${item}`);
-      console.log("\nToday:");
+      console.log("\nUp Next:");
       for (const item of standup.today) console.log(`  \u2022 ${item}`);
       if (standup.blockers.length > 0) {
-        console.log("\nBlockers:");
+        console.log("\nHeads Up:");
         for (const item of standup.blockers) console.log(`  \u2022 ${item}`);
       }
     } else {

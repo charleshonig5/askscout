@@ -17,11 +17,13 @@ function FormattedStandup({ text }: { text: string }) {
     const trimmed = lines[i]!.trim();
     if (!trimmed) continue;
 
-    // Section header (Yesterday, Today, Blockers)
-    if (/^(Yesterday|Today|Blockers)/i.test(trimmed)) {
+    // Section header (Done, Up Next, Heads Up — or legacy Yesterday, Today, Blockers)
+    // Also match Slack bold format *Done*, *Up Next*, etc.
+    const cleanHeader = trimmed.replace(/^\*|\*$/g, "");
+    if (/^(Done|Up Next|Heads Up|Yesterday|Today|Blockers)$/i.test(cleanHeader)) {
       elements.push(
         <div key={i} className="standup-section-title">
-          {trimmed}
+          {cleanHeader}
         </div>,
       );
     }
@@ -72,7 +74,7 @@ export function StandupModal({ isOpen, onClose, content }: StandupModalProps) {
             <X size={16} />
           </button>
         </div>
-        <p className="modal-desc">Copy-paste this into Slack or your team standup.</p>
+        <p className="modal-desc">Formatted for Slack. Copy and paste.</p>
 
         <div className="modal-body">
           {content ? (

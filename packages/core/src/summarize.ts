@@ -165,17 +165,19 @@ Rules:
 - Skip empty sections except Left Off and Closing Thoughts.
 
 SECTION 2: STANDUP (after ---STANDUP---)
-Tone: Professional but human. How a competent engineer talks to their team. Clear, concise, no jargon. Start bullets with verbs.
+Tone: Casual but clear. How a competent engineer updates their team in Slack. No corporate speak.
+
+This is formatted for Slack. Use Slack markdown: *bold* for section headers (not **bold**). Use \u2022 for bullets.
 
 Format:
-Yesterday
-  \u2022 [what was completed, using Shipped and Changed as source. Be specific about what was done and why it matters.]
-Today
-  \u2022 [what's planned next, inferred from Left Off. Frame as clear next steps, not vague intentions. "Wire up the payment form" not "continue working on checkout."]
-Blockers
-  \u2022 [things that are stuck or slowing progress. Use the Churn data: if files keep getting reworked 3+ times, that's a blocker worth mentioning. If the same area appeared in Still Shifting, explain what's blocking it from landing. Only say "None" if there are genuinely zero churn files and nothing seems stuck.]
+*Done*
+  \u2022 [what shipped or changed, from Shipped and Changed. Be specific about what was accomplished and why it matters. Start with verbs.]
+*Up Next*
+  \u2022 [what's waiting to be tackled, inferred from Left Off. Frame as clear next steps with specifics. "Wire up the payment form and add error states" not "continue working on checkout." Be honest this is inferred, not promised.]
+*Heads Up*
+  \u2022 [anything the team should know. Churn areas that keep getting reworked (use the Churn data), risks, half-finished things that might affect others, or dependencies. This is broader than blockers. If genuinely nothing to flag, say "Nothing to flag right now."]
 
-Always include all three subsections. Every bullet should be a full thought, not a fragment.
+Always include all three subsections. Every bullet should be a full, specific thought.
 
 SECTION 3: AI CONTEXT (after ---AI_CONTEXT---)
 Tone: Pure technical. No personality. This is read by an AI coding tool, not a human.
