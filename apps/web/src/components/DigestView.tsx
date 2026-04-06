@@ -137,6 +137,7 @@ const sectionKeyMap: Record<string, string> = {
   changed: "changed",
   unstable: "unstable",
   leftOff: "leftOff",
+  closing: "closingThoughts",
   stats: "statistics",
 };
 

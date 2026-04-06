@@ -12,6 +12,11 @@ const SECTION_OPTIONS = [
   { key: "unstable", label: "Unstable", desc: "Files that keep getting reworked" },
   { key: "leftOff", label: "Left Off", desc: "Where you stopped working" },
   {
+    key: "closingThoughts",
+    label: "Closing Thoughts",
+    desc: "Scout's sign-off with a nudge and a smile",
+  },
+  {
     key: "statistics",
     label: "Statistics",
     desc: "Sessions, lines, commits, active files, and codebase health",

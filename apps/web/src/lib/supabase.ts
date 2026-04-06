@@ -30,6 +30,7 @@ export interface DigestSections {
   changed: boolean;
   unstable: boolean;
   leftOff: boolean;
+  closingThoughts: boolean;
   statistics: boolean;
 }
 
@@ -39,6 +40,7 @@ export const DEFAULT_SECTIONS: DigestSections = {
   changed: true,
   unstable: true,
   leftOff: true,
+  closingThoughts: true,
   statistics: true,
 };
 
