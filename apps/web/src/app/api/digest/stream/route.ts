@@ -318,11 +318,13 @@ export async function POST(req: Request) {
         const multiplier = Math.round((stats.commits / avgCommits) * 10) / 10;
         const roundedAvg = Math.round(avgCommits);
         let label: string;
-        if (multiplier >= 2) label = "Big day.";
-        else if (multiplier >= 1.3) label = "Busier than usual. Solid momentum.";
-        else if (multiplier >= 0.8) label = "Right around your typical pace.";
-        else if (multiplier >= 0.5) label = "Lighter day. Quality over quantity.";
-        else label = "Quiet day. Sometimes that's the move.";
+        if (multiplier >= 4) label = "You went full beast mode. Scout can barely keep up.";
+        else if (multiplier >= 3) label = "Three times your usual output. Someone had coffee today.";
+        else if (multiplier >= 2) label = "Double your usual pace. You're cooking.";
+        else if (multiplier >= 1.3) label = "Moving faster than usual. Good energy.";
+        else if (multiplier >= 0.8) label = "Classic you. Steady and consistent.";
+        else if (multiplier >= 0.5) label = "Chill day. The code will be there tomorrow.";
+        else label = "Scout had to double-check you were still here.";
         pace = { multiplier, label, todayCommits: stats.commits, avgCommits: roundedAvg };
       }
     }
