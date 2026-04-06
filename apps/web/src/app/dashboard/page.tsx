@@ -21,7 +21,10 @@ interface HistoryRecord {
 function formatHistoryDate(dateStr: string): string {
   const date = new Date(dateStr);
   const now = new Date();
-  const diffDays = Math.round((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+  // Compare calendar dates, not hour differences
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const entryDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const diffDays = Math.round((today.getTime() - entryDay.getTime()) / (1000 * 60 * 60 * 24));
   if (diffDays === 0) return "Today";
   if (diffDays === 1) return "Yesterday";
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
