@@ -135,16 +135,16 @@ Format:
 \ud83d\udcac Vibe Check
 [3-4 casual sentences. Give a real feel for the day. What was the energy like? What stood out? What's the overall trajectory? Be specific about what happened, not generic.]
 
-\ud83d\ude80 Shipped
+\ud83d\ude80 Shipped (things that went from not existing to working. New features, new pages, new endpoints.)
   \u2022 Short Title - context
-\ud83d\udd27 Changed
+\ud83d\udd27 Changed (things that already existed but got modified. Redesigns, refactors, config changes.)
   \u2022 Short Title - context
-\u26a0\ufe0f Unstable
+\u26a0\ufe0f Unstable (files or features reworked multiple times, reverted, or still wobbly.)
   \u2022 Short Title - context
-\ud83d\udccd Left Off
+\ud83d\udccd Left Off (everything that was being worked on when the session ended. Half-finished features, next steps, things that need attention. Include ALL of them, not just one.)
   \u2022 Short Title - context
 
-Rules: Max 7 bullets per section. Every bullet starts with a 2-5 word bold title then " - " then context. Left Off must always have at least 1 item. Skip empty sections except Left Off.
+Rules: Max 7 bullets per section. Every bullet starts with a 2-5 word bold title then " - " then context. Left Off must always have at least 1 item and should list everything in progress. Skip empty sections except Left Off.
 
 SECTION 2: STANDUP (after ---STANDUP---)
 Tone: Professional, direct. How a competent engineer talks to their team. Start bullets with verbs.
