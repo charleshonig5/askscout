@@ -273,12 +273,22 @@ export default function DashboardPage() {
   // Click history entry to view that digest
   const handleHistorySelect = useCallback(
     (id: string) => {
-      setActiveHistoryId(id);
       const record = historyRecords.find((h) => h.id === id);
-      if (record) {
-        setViewingHistoryContent(record.content);
-        setViewingHistoryStats(record.stats);
+      if (!record) return;
+
+      // If this entry is from today, go back to the live view
+      const entryDate = new Date(record.created_at).toDateString();
+      const today = new Date().toDateString();
+      if (entryDate === today) {
+        setActiveHistoryId(null);
+        setViewingHistoryContent(null);
+        setViewingHistoryStats(null);
+        return;
       }
+
+      setActiveHistoryId(id);
+      setViewingHistoryContent(record.content);
+      setViewingHistoryStats(record.stats);
     },
     [historyRecords],
   );
