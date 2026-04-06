@@ -355,7 +355,6 @@ export default function DashboardPage() {
     return count;
   })();
 
-
   // Determine the raw content for the current view (unified text with section markers)
   const currentRawContent = noNewCommits
     ? noNewCommits.content
@@ -387,7 +386,14 @@ export default function DashboardPage() {
         <div className="app-main">
           <div className="digest-container">
             <div className="digest-page-title">
-              <h1 className="digest-page-name">{pageTitle}</h1>
+              <h1 className="digest-page-name">
+                {pageTitle}
+                {!noNewCommits && !isViewingHistory && streak >= 2 && (
+                  <span className="digest-streak">
+                    {"\ud83d\udd25"} {streak}-day streak
+                  </span>
+                )}
+              </h1>
               <p className="digest-page-date">{displayDate}</p>
               <p className="digest-page-subtitle">{repoName}</p>
             </div>
@@ -399,7 +405,6 @@ export default function DashboardPage() {
                   isStreaming={false}
                   streamingText={currentSections?.digest ?? noNewCommits.content}
                   stats={noNewCommits.stats}
-                  streak={streak}
                   visibleSections={digestSectionPrefs ?? undefined}
                   onResumeWithAI={() => setAiContextOpen(true)}
                   onGenerateStandup={() => setStandupOpen(true)}
@@ -418,7 +423,6 @@ export default function DashboardPage() {
                   isStreaming={false}
                   streamingText={currentSections?.digest ?? viewingHistoryContent ?? ""}
                   stats={viewingHistoryStats}
-                  streak={streak}
                   visibleSections={digestSectionPrefs ?? undefined}
                   onResumeWithAI={() => setAiContextOpen(true)}
                   onGenerateStandup={() => setStandupOpen(true)}

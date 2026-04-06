@@ -355,7 +355,7 @@ interface DigestViewProps {
   streamingText: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stats: any;
-  streak?: number;
+
   visibleSections?: Record<string, boolean>;
   onResumeWithAI?: () => void;
   onGenerateStandup?: () => void;
@@ -430,7 +430,7 @@ export function DigestView({
   isLoading,
   streamingText,
   stats,
-  streak,
+
   visibleSections,
   onResumeWithAI,
   onGenerateStandup,
@@ -443,8 +443,6 @@ export function DigestView({
   if (isStreaming && !streamingText) {
     return <div className="digest-loading">Scout is sniffing through your commits...</div>;
   }
-
-  const showStreak = streak && streak >= 2;
 
   if (streamingText) {
     return (
@@ -476,12 +474,7 @@ export function DigestView({
             <div className="digest-section-title stats-reveal-item">
               {"\ud83d\udcca"} Statistics
             </div>
-            {showStreak && (
-              <div className="digest-meta stats-reveal-item" style={{ animationDelay: "150ms" }}>
-                <span className="digest-meta-item digest-meta-streak">{streak}-day streak</span>
-              </div>
-            )}
-            <div className="stats-reveal-item" style={{ animationDelay: "300ms" }}>
+            <div className="stats-reveal-item" style={{ animationDelay: "150ms" }}>
               <StatsCards stats={stats} />
             </div>
             {stats.topFiles && (
