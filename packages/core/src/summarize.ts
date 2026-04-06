@@ -139,7 +139,7 @@ Format:
   \u2022 Short Title - context
 \ud83d\udd27 Changed (things that already existed but got modified. Redesigns, refactors, config changes.)
   \u2022 Short Title - context
-\u26a0\ufe0f Unstable (files or features reworked multiple times, reverted, or still wobbly.)
+\u26a0\ufe0f Unstable (files or features that keep getting reworked. Use the Churn data provided to identify these. If a file was edited 3+ times, it belongs here. Explain WHY it might be unstable based on the commits.)
   \u2022 Short Title - context
 \ud83d\udccd Left Off (everything that was being worked on when the session ended. Half-finished features, next steps, things that need attention. Include ALL of them, not just one.)
   \u2022 Short Title - context

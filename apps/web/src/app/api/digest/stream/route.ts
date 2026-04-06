@@ -311,6 +311,14 @@ export async function POST(req: Request) {
       .map((d) => `- ${d.file} (+${d.additions}/-${d.deletions})`)
       .join("\n");
 
+    // Build churn data for the LLM
+    const churnList = [...fileFrequency.entries()]
+      .filter(([, count]) => count >= 3)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([file, count]) => `- ${file} (${count} commits)`)
+      .join("\n");
+
     const userPrompt = `Analyze the following git activity.
 
 ## Stats
@@ -321,6 +329,7 @@ ${commitList}
 
 ## Files Changed
 ${fileSummary}
+${churnList ? `\n## Churn (files edited 3+ times — these are your Unstable candidates)\n${churnList}` : ""}
 
 Produce the digest now. Be concise. No em dashes, no semicolons.`;
 
