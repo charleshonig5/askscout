@@ -450,7 +450,6 @@ export default function DashboardPage() {
                         cachedDigests[`${selectedRepo}:digest`]?.stats ||
                         null) as Record<string, unknown> | null
                     }
-                    streak={streak}
                     onResumeWithAI={() => setAiContextOpen(true)}
                     onGenerateStandup={() => setStandupOpen(true)}
                   />
