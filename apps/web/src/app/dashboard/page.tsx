@@ -447,6 +447,7 @@ export default function DashboardPage() {
                   <DigestView
                     isStreaming={digestStream.isStreaming}
                     isLoading={isCheckingCache}
+                    animate
                     streamingText={currentSections?.digest ?? ""}
                     stats={
                       (digestStream.stats ||

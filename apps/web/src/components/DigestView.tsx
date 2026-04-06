@@ -370,6 +370,7 @@ function TopFiles({ files }: { files: TopFile[] }) {
 interface DigestViewProps {
   isStreaming: boolean;
   isLoading?: boolean;
+  animate?: boolean;
   streamingText: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stats: any;
@@ -445,6 +446,7 @@ function CodebaseHealth({ health }: { health: HealthData }) {
 export function DigestView({
   isStreaming,
   isLoading,
+  animate = false,
   streamingText,
   stats,
 
@@ -548,7 +550,11 @@ export function DigestView({
                   {closingSection.emoji} {closingSection.label}
                 </div>
                 <p className="formatted-paragraph">
-                  <TypewriterText text={closingSection.content} delay={1200} />
+                  {animate ? (
+                    <TypewriterText text={closingSection.content} delay={1200} />
+                  ) : (
+                    closingSection.content
+                  )}
                 </p>
               </div>
             );
