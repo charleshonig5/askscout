@@ -1103,6 +1103,46 @@ a:hover {
   white-space: pre-wrap;
 }
 
+.standup-formatted {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+}
+
+.standup-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-xs);
+}
+
+.standup-section-title:first-child {
+  margin-top: 0;
+}
+
+.standup-item {
+  padding: var(--space-xs) 0;
+  padding-left: var(--space-md);
+  position: relative;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.standup-item::before {
+  content: "\2022";
+  position: absolute;
+  left: 0;
+  color: var(--color-text-tertiary);
+}
+
+.standup-text {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  padding: var(--space-xs) 0;
+}
+
 .copy-block-btn {
   display: flex;
   align-items: center;

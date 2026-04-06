@@ -9,6 +9,44 @@ interface StandupModalProps {
   content: string | null;
 }
 
+function FormattedStandup({ text }: { text: string }) {
+  const lines = text.split("\n");
+  const elements: React.ReactNode[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i]!.trim();
+    if (!trimmed) continue;
+
+    // Section header (Yesterday, Today, Blockers)
+    if (/^(Yesterday|Today|Blockers)/i.test(trimmed)) {
+      elements.push(
+        <div key={i} className="standup-section-title">
+          {trimmed}
+        </div>,
+      );
+    }
+    // Bullet item
+    else if (/^[\u2022\-*]/.test(trimmed)) {
+      const content = trimmed.replace(/^[\u2022\-*]\s*/, "");
+      elements.push(
+        <div key={i} className="standup-item">
+          {content}
+        </div>,
+      );
+    }
+    // Regular text
+    else {
+      elements.push(
+        <div key={i} className="standup-text">
+          {trimmed}
+        </div>,
+      );
+    }
+  }
+
+  return <div className="standup-formatted">{elements}</div>;
+}
+
 export function StandupModal({ isOpen, onClose, content }: StandupModalProps) {
   const [copied, setCopied] = useState(false);
 
@@ -38,7 +76,7 @@ export function StandupModal({ isOpen, onClose, content }: StandupModalProps) {
 
         <div className="modal-body">
           {content ? (
-            <div className="ai-context-body">{content}</div>
+            <FormattedStandup text={content} />
           ) : (
             <div className="digest-loading">
               Standup will be ready when the digest finishes generating.
