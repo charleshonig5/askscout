@@ -196,11 +196,10 @@ function StreamingDigest({
         if (section.key === "closing") {
           return (
             <div key={section.key} className="digest-section">
-              <div className="digest-closing">
-                <strong>
-                  {section.emoji} {section.label}
-                </strong>
-                <br />
+              <div className="digest-section-title">
+                {section.emoji} {section.label}
+              </div>
+              <div className="digest-item">
                 {section.content}
                 {showCursor && cursor}
               </div>
@@ -531,13 +530,10 @@ export function DigestView({
                 className="digest-section stats-reveal-item"
                 style={{ animationDelay: "1000ms" }}
               >
-                <div className="digest-closing">
-                  <strong>
-                    {closingSection.emoji} {closingSection.label}
-                  </strong>
-                  <br />
-                  {closingSection.content}
+                <div className="digest-section-title">
+                  {closingSection.emoji} {closingSection.label}
                 </div>
+                <div className="digest-item">{closingSection.content}</div>
               </div>
             );
           })()}

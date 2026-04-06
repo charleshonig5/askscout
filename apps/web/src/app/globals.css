@@ -547,12 +547,6 @@ a:hover {
   margin-bottom: var(--space-xl);
 }
 
-.digest-closing {
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--color-text-secondary);
-}
-
 .digest-stats {
   font-size: 13px;
   color: var(--color-text-secondary);
