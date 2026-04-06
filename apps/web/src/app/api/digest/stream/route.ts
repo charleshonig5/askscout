@@ -307,7 +307,11 @@ export async function POST(req: Request) {
       return d.toDateString() !== new Date().toDateString();
     });
 
-    if (pastDigests.length >= 3) {
+    // Only show pace for roughly single-day digests (under 36 hours)
+    const commitSpanHours =
+      (sortedTimestamps[sortedTimestamps.length - 1]! - sortedTimestamps[0]!) / (1000 * 60 * 60);
+
+    if (pastDigests.length >= 3 && commitSpanHours <= 36) {
       const avgCommits =
         pastDigests.reduce((sum, h) => {
           const s = h.stats as Record<string, number> | null;
@@ -318,13 +322,15 @@ export async function POST(req: Request) {
         const multiplier = Math.round((stats.commits / avgCommits) * 10) / 10;
         const roundedAvg = Math.round(avgCommits);
         let label: string;
-        if (multiplier >= 4) label = "You went full beast mode. Scout can barely keep up.";
-        else if (multiplier >= 3) label = "Three times your usual output. Someone had coffee today.";
-        else if (multiplier >= 2) label = "Double your usual pace. You're cooking.";
-        else if (multiplier >= 1.3) label = "Moving faster than usual. Good energy.";
-        else if (multiplier >= 0.8) label = "Classic you. Steady and consistent.";
-        else if (multiplier >= 0.5) label = "Chill day. The code will be there tomorrow.";
-        else label = "Scout had to double-check you were still here.";
+        if (multiplier >= 4) label = "Whatever's in that water, keep drinking it.";
+        else if (multiplier >= 3)
+          label = "You tripled your usual output. Scout is genuinely impressed.";
+        else if (multiplier >= 2)
+          label = "Twice your usual pace. That's not a fluke, that's focus.";
+        else if (multiplier >= 1.3) label = "A little faster than usual. Good rhythm today.";
+        else if (multiplier >= 0.8) label = "Right in your groove. Steady as always.";
+        else if (multiplier >= 0.5) label = "Lighter day. Not every day needs to be a marathon.";
+        else label = "Quiet one. Scout barely had anything to sniff.";
         pace = { multiplier, label, todayCommits: stats.commits, avgCommits: roundedAvg };
       }
     }
