@@ -314,7 +314,7 @@ interface DigestViewStats {
   netImpact?: number;
   sessions?: string[];
   activeDays?: string[];
-  pace?: { multiplier: number; label: string } | null;
+  pace?: { multiplier: number; label: string; todayCommits: number; avgCommits: number } | null;
 }
 
 function StatsCards({ stats }: { stats: DigestViewStats }) {
@@ -506,12 +506,16 @@ export function DigestView({
         {!isStreaming && vis("paceCheck") && stats?.pace && (
           <div className="digest-section stats-reveal">
             <div className="digest-section-title stats-reveal-item">{"\u26a1"} Pace Check</div>
-            <p
-              className="formatted-paragraph stats-reveal-item"
-              style={{ animationDelay: "150ms" }}
-            >
-              {stats.pace.label}
-            </p>
+            <div className="pace-card stats-reveal-item" style={{ animationDelay: "150ms" }}>
+              <div className="pace-multiplier">{stats.pace.multiplier}x</div>
+              <div className="pace-detail">
+                <div className="pace-label">{stats.pace.label}</div>
+                <div className="pace-comparison">
+                  {stats.pace.todayCommits} commits today {"\u00b7"} {stats.pace.avgCommits}-commit
+                  average
+                </div>
+              </div>
+            </div>
           </div>
         )}
 

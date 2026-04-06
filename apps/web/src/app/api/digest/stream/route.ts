@@ -294,7 +294,12 @@ export async function POST(req: Request) {
     const netImpact = linesAdded - linesRemoved;
 
     // 6e. Compute pace from digest history (needs 3+ past digests)
-    let pace: { multiplier: number; label: string } | null = null;
+    let pace: {
+      multiplier: number;
+      label: string;
+      todayCommits: number;
+      avgCommits: number;
+    } | null = null;
     const history = await getDigestHistory(userId, repoFullName);
     // Exclude today's entry if it exists, use only past digests
     const pastDigests = history.filter((h) => {
@@ -311,13 +316,14 @@ export async function POST(req: Request) {
 
       if (avgCommits > 0) {
         const multiplier = Math.round((stats.commits / avgCommits) * 10) / 10;
+        const roundedAvg = Math.round(avgCommits);
         let label: string;
-        if (multiplier >= 2) label = `${multiplier}x your usual pace. Big day.`;
-        else if (multiplier >= 1.3) label = `Busier than usual, about ${multiplier}x your average.`;
+        if (multiplier >= 2) label = "Big day.";
+        else if (multiplier >= 1.3) label = "Busier than usual. Solid momentum.";
         else if (multiplier >= 0.8) label = "Right around your typical pace.";
-        else if (multiplier >= 0.5) label = "Lighter day, about half your usual output.";
+        else if (multiplier >= 0.5) label = "Lighter day. Quality over quantity.";
         else label = "Quiet day. Sometimes that's the move.";
-        pace = { multiplier, label };
+        pace = { multiplier, label, todayCommits: stats.commits, avgCommits: roundedAvg };
       }
     }
 

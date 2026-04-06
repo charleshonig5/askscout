@@ -568,6 +568,43 @@ a:hover {
 }
 
 /* ============================================
+   Pace Check
+   ============================================ */
+
+.pace-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.pace-multiplier {
+  font-size: 28px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+  min-width: 56px;
+}
+
+.pace-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pace-label {
+  font-size: 14px;
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.pace-comparison {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--color-text-tertiary);
+}
+
+/* ============================================
    Top Files
    ============================================ */
 
