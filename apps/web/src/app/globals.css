@@ -1567,6 +1567,29 @@ a:hover {
   background: color-mix(in srgb, var(--color-accent) 10%, transparent);
 }
 
+.share-shipped-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.share-shipped-btn:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-hover);
+  background: var(--color-bg-secondary);
+}
+
 .digest-actions-top {
   margin-bottom: var(--space-lg);
 }

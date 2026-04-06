@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { Copy, Check, Download, Mail, Sparkles, ClipboardList } from "lucide-react";
+import { Copy, Check, Download, Mail, Sparkles, ClipboardList, Share2 } from "lucide-react";
 import { useCountUp } from "@/lib/use-count-up";
 
 /** Types out text character by character after an initial delay */
@@ -90,6 +90,40 @@ function DownloadBtn({
   return (
     <button className="action-btn" onClick={handleDownload}>
       <Download size={16} /> Download
+    </button>
+  );
+}
+
+function buildTweet(items: string[]): string {
+  // Extract just the titles (before " - ") for a clean tweet
+  const titles = items.map((item) => {
+    const dashIdx = item.indexOf(" - ");
+    return dashIdx > 0 && dashIdx < 60 ? item.slice(0, dashIdx) : item;
+  });
+
+  let tweet: string;
+  if (titles.length === 1) {
+    tweet = `Just shipped: ${titles[0]}`;
+  } else if (titles.length === 2) {
+    tweet = `Just shipped ${titles[0]} and ${titles[1]}`;
+  } else {
+    tweet = `Just shipped ${titles.length} things:\n${titles.map((t) => `\u2022 ${t}`).join("\n")}`;
+  }
+
+  tweet += ` \ud83d\ude80\n\nBuilt with @askscout\n\n#buildinpublic`;
+  return tweet;
+}
+
+function ShareBtn({ items }: { items: string[] }) {
+  const handleShare = useCallback(() => {
+    const tweet = buildTweet(items);
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweet)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  }, [items]);
+
+  return (
+    <button className="share-shipped-btn" onClick={handleShare}>
+      <Share2 size={14} /> Share on X
     </button>
   );
 }
@@ -329,6 +363,9 @@ function StreamingDigest({
               );
             })}
             {showCursor && <div className="digest-item">{cursor}</div>}
+            {section.key === "shipped" && !isStreaming && items.length > 0 && (
+              <ShareBtn items={items} />
+            )}
             {section.key === "leftOff" && !isStreaming && afterLeftOff}
           </div>
         );
