@@ -340,6 +340,7 @@ interface DigestViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stats: any;
   sessionChips?: string[];
+  sessionLabel?: string;
   streak?: number;
   visibleSections?: Record<string, boolean>;
   onResumeWithAI?: () => void;
@@ -416,6 +417,7 @@ export function DigestView({
   streamingText,
   stats,
   sessionChips,
+  sessionLabel,
   streak,
   visibleSections,
   onResumeWithAI,
@@ -467,7 +469,7 @@ export function DigestView({
               <div className="digest-meta stats-reveal-item" style={{ animationDelay: "150ms" }}>
                 {hasChips && (
                   <div className="session-chips">
-                    <span className="session-chips-label">Coding Activity</span>
+                    <span className="session-chips-label">{sessionLabel || "Coding Activity"}</span>
                     {sessionChips.map((label, i) => (
                       <span key={i} className="session-chip">
                         {label}
