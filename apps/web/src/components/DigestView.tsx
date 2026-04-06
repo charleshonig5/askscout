@@ -466,7 +466,7 @@ export function DigestView({
         <StreamingDigest
           text={streamingText}
           isStreaming={isStreaming}
-          visibleSections={visibleSections}
+          visibleSections={{ ...visibleSections, closingThoughts: false }}
           afterLeftOff={
             onResumeWithAI ? (
               <button className="resume-ai-btn" onClick={onResumeWithAI}>
@@ -517,6 +517,30 @@ export function DigestView({
             )}
           </div>
         )}
+
+        {/* Closing Thoughts — after Statistics */}
+        {!isStreaming &&
+          vis("closingThoughts") &&
+          (() => {
+            const closingSection = parseStreamingSections(streamingText).find(
+              (s) => s.key === "closing",
+            );
+            if (!closingSection) return null;
+            return (
+              <div
+                className="digest-section stats-reveal-item"
+                style={{ animationDelay: "1000ms" }}
+              >
+                <div className="digest-closing">
+                  <strong>
+                    {closingSection.emoji} {closingSection.label}
+                  </strong>
+                  <br />
+                  {closingSection.content}
+                </div>
+              </div>
+            );
+          })()}
 
         {/* Standup button at the bottom (hide while streaming) */}
         {!isStreaming && onGenerateStandup && (
