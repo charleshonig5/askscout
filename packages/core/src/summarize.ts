@@ -43,8 +43,8 @@ Output your response in this EXACT format with these EXACT section headers and e
   \u2022 Short Title - what changed and why
   \u2022 Short Title - more context
 
-\u26a0\ufe0f Unstable
-  \u2022 Short Title - what keeps breaking, changed N times
+\ud83d\udd01 Still Shifting
+  \u2022 Short Title - what keeps changing and hasn't settled yet
 
 \ud83d\udccd Left Off
   \u2022 Short Title - what's in progress and what's next
@@ -53,7 +53,7 @@ IMPORTANT RULES:
 - Every bullet MUST start with a short title (2-5 words) followed by " - " and then the context. Example: "OAuth flow - users can now sign in with Google and sessions persist"
 - Maximum 7 bullet points per section. Group related items and drop the least important.
 - The "Left Off" section should ALWAYS have at least one item.
-- Only skip Shipped, Changed, or Unstable if they truly have zero items.
+- Only skip Shipped, Changed, or Still Shifting if they truly have zero items.
 - Do NOT include a stats line. Stats are handled separately.
 - Keep each bullet to 1-2 sentences max after the title.`;
 }
@@ -140,8 +140,8 @@ Format:
   \u2022 Plain Title - explain what this means for the project in a sentence. What can the user do now that they couldn't before? Why does it matter?
 \ud83d\udd27 Changed
   \u2022 Plain Title - explain what's different and why. What was it before, what is it now? How does the user experience change?
-\u26a0\ufe0f Unstable
-  \u2022 Plain Title - explain what's going on and why it's wobbly. What keeps changing? What should the user watch out for?
+\ud83d\udd01 Still Shifting
+  \u2022 Plain Title - explain what's going on and why it hasn't settled yet. What keeps changing? What should the user be aware of?
 \ud83d\udccd Left Off
   \u2022 Plain Title - explain where this stands and what's needed to finish it. Be specific about what works and what doesn't yet.
 
@@ -151,7 +151,7 @@ Format:
 Section definitions (do NOT include these in the output, they are instructions for you):
 - Shipped = things that went from not existing to working. New features, new pages, new endpoints.
 - Changed = things that already existed but got modified. Redesigns, refactors, config changes.
-- Unstable = areas that keep getting reworked. Use the Churn data to identify these. Describe as FEATURES ("the checkout flow"), NEVER file names.
+- Still Shifting = areas that keep getting reworked and haven't settled yet. Use the Churn data to identify these. Describe as FEATURES ("the checkout flow"), NEVER file names. Tone is observational, not alarming.
 - Left Off = everything in progress when the session ended. Include ALL of them, not just one.
 - Closing Thoughts = Scout's sign-off. Genuine, grounded, witty. Reference specific things from the digest. One sentence of honest perspective, one nudge about what to tackle next, and a witty closer. NO motivational poster energy. Talk like a sharp friend.
 

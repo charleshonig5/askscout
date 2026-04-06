@@ -119,8 +119,8 @@ export default function DashboardPage() {
               commits: (h.stats as Record<string, number> | null)?.commits ?? 0,
               filesChanged: (h.stats as Record<string, number> | null)?.filesChanged ?? 0,
               shippedCount: countBullets("\ud83d\ude80", "\ud83d\udd27"),
-              changedCount: countBullets("\ud83d\udd27", "\u26a0\ufe0f"),
-              unstableCount: countBullets("\u26a0\ufe0f", "\ud83d\udccd"),
+              changedCount: countBullets("\ud83d\udd27", "\ud83d\udd01"),
+              unstableCount: countBullets("\ud83d\udd01", "\ud83d\udccd"),
             };
           }),
         );

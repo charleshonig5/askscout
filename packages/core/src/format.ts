@@ -42,12 +42,12 @@ export function formatDigest(digest: Digest, options: FormatOptions): string {
     sections.push(`\ud83d\udd27 Changed  ${digest.changed.length}\n${items}`);
   }
 
-  // Unstable
+  // Still Shifting
   if (digest.unstable.length > 0) {
     const items = digest.unstable
-      .map((i) => `  \u2022 ${i.summary}, changed ${i.changeCount} times, still wobbly`)
+      .map((i) => `  \u2022 ${i.summary}, changed ${i.changeCount} times, still shifting`)
       .join("\n");
-    sections.push(`\u26a0\ufe0f Unstable  ${digest.unstable.length}\n${items}`);
+    sections.push(`\ud83d\udd01 Still Shifting  ${digest.unstable.length}\n${items}`);
   }
 
   // Left Off

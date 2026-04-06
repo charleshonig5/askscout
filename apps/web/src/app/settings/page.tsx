@@ -9,7 +9,7 @@ const SECTION_OPTIONS = [
   { key: "vibeCheck", label: "Vibe Check", desc: "Casual overview of your day" },
   { key: "shipped", label: "Shipped", desc: "New features and functionality" },
   { key: "changed", label: "Changed", desc: "Modifications to existing code" },
-  { key: "unstable", label: "Unstable", desc: "Files that keep getting reworked" },
+  { key: "unstable", label: "Still Shifting", desc: "Things that keep getting reworked" },
   { key: "leftOff", label: "Left Off", desc: "Where you stopped working" },
   {
     key: "closingThoughts",

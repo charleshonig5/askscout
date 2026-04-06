@@ -112,7 +112,7 @@ const SECTION_MARKERS = [
   { key: "vibe", emoji: "\ud83d\udcac", label: "Vibe Check" },
   { key: "shipped", emoji: "\ud83d\ude80", label: "Shipped" },
   { key: "changed", emoji: "\ud83d\udd27", label: "Changed" },
-  { key: "unstable", emoji: "\u26a0\ufe0f", label: "Unstable" },
+  { key: "unstable", emoji: "\ud83d\udd01", label: "Still Shifting" },
   { key: "leftOff", emoji: "\ud83d\udccd", label: "Left Off" },
   { key: "closing", emoji: "\ud83d\udc15", label: "Closing Thoughts" },
   { key: "stats", emoji: "\ud83d\udcca", label: "Stats" },

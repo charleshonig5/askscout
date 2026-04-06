@@ -384,7 +384,7 @@ ${commitList}
 
 ## Files Changed
 ${fileSummary}
-${churnList ? `\n## Churn (files edited 3+ times — these are your Unstable candidates)\n${churnList}` : ""}
+${churnList ? `\n## Churn (files edited 3+ times — these are your Still Shifting candidates)\n${churnList}` : ""}
 
 Produce the digest now. Be concise. No em dashes, no semicolons.`;
 
