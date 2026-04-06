@@ -62,8 +62,9 @@ export function useDigestStream(): DigestStreamState {
         return;
       }
 
-      // Reveal next batch of characters
-      const next = Math.min(revealed + CHARS_PER_TICK, buf.length);
+      // Reveal next batch — flush fast if stream is done
+      const chunkSize = streamDoneRef.current ? 50 : CHARS_PER_TICK;
+      const next = Math.min(revealed + chunkSize, buf.length);
       revealedRef.current = next;
       setText(buf.slice(0, next));
     }, TICK_INTERVAL_MS);
