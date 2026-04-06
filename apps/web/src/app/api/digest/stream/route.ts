@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { fetchCommits, fetchDiffs } from "@/lib/github";
 import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
-import { saveDigest, getLastRunTime } from "@/lib/supabase";
+import { saveDigest, getLastRunTime, getDigestHistory } from "@/lib/supabase";
 import { buildUnifiedSystemPrompt } from "@askscout/core";
 
 export const maxDuration = 60;
@@ -293,8 +293,36 @@ export async function POST(req: Request) {
     // 6d. Net impact
     const netImpact = linesAdded - linesRemoved;
 
+    // 6e. Compute pace from digest history (needs 3+ past digests)
+    let pace: { multiplier: number; label: string } | null = null;
+    const history = await getDigestHistory(userId, repoFullName);
+    // Exclude today's entry if it exists, use only past digests
+    const pastDigests = history.filter((h) => {
+      const d = new Date(h.created_at);
+      return d.toDateString() !== new Date().toDateString();
+    });
+
+    if (pastDigests.length >= 3) {
+      const avgCommits =
+        pastDigests.reduce((sum, h) => {
+          const s = h.stats as Record<string, number> | null;
+          return sum + (s?.commits ?? 0);
+        }, 0) / pastDigests.length;
+
+      if (avgCommits > 0) {
+        const multiplier = Math.round((stats.commits / avgCommits) * 10) / 10;
+        let label: string;
+        if (multiplier >= 2) label = `${multiplier}x your usual pace. Big day.`;
+        else if (multiplier >= 1.3) label = `Busier than usual, about ${multiplier}x your average.`;
+        else if (multiplier >= 0.8) label = "Right around your typical pace.";
+        else if (multiplier >= 0.5) label = "Lighter day, about half your usual output.";
+        else label = "Quiet day. Sometimes that's the move.";
+        pace = { multiplier, label };
+      }
+    }
+
     // Include all computed data in stats event
-    Object.assign(stats, { health, topFiles, activity: activityBuckets, netImpact });
+    Object.assign(stats, { health, topFiles, activity: activityBuckets, netImpact, pace });
 
     // 7. Build unified prompt (generates digest + standup + AI context in one call)
     const systemPrompt = buildUnifiedSystemPrompt();

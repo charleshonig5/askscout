@@ -22,6 +22,11 @@ const SECTION_OPTIONS = [
     desc: "Lines, commits, files, and most active files",
   },
   {
+    key: "paceCheck",
+    label: "Pace Check",
+    desc: "Compare today's output to your rolling average",
+  },
+  {
     key: "codebaseHealth",
     label: "Codebase Health",
     desc: "Growth, focus, and churn indicators",

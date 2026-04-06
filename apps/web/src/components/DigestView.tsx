@@ -314,6 +314,7 @@ interface DigestViewStats {
   netImpact?: number;
   sessions?: string[];
   activeDays?: string[];
+  pace?: { multiplier: number; label: string } | null;
 }
 
 function StatsCards({ stats }: { stats: DigestViewStats }) {
@@ -498,6 +499,19 @@ export function DigestView({
                 <TopFiles files={stats.topFiles} />
               </div>
             )}
+          </div>
+        )}
+
+        {/* Pace Check — only shows with 3+ past digests */}
+        {!isStreaming && vis("paceCheck") && stats?.pace && (
+          <div className="digest-section stats-reveal">
+            <div className="digest-section-title stats-reveal-item">{"\u26a1"} Pace Check</div>
+            <p
+              className="formatted-paragraph stats-reveal-item"
+              style={{ animationDelay: "150ms" }}
+            >
+              {stats.pace.label}
+            </p>
           </div>
         )}
 
