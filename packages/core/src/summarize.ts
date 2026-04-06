@@ -135,16 +135,22 @@ Format:
 \ud83d\udcac Vibe Check
 [3-4 casual sentences in PRESENT TENSE. This is about where the project stands RIGHT NOW, not a recap of what happened. What's the current state? What's working, what's close, what needs attention? Talk about the project like you're checking in on it today. Don't summarize past actions (that's what Shipped/Changed are for). Be specific and honest. Sneak in a little humor, a light joke or a witty observation. Not forced, not corny, just a small moment that makes the reader smile. One touch of personality, not a comedy routine.]
 
-\ud83d\ude80 Shipped (things that went from not existing to working. New features, new pages, new endpoints.)
+\ud83d\ude80 Shipped
   \u2022 Short Title - context
-\ud83d\udd27 Changed (things that already existed but got modified. Redesigns, refactors, config changes.)
+\ud83d\udd27 Changed
   \u2022 Short Title - context
-\u26a0\ufe0f Unstable (files or features that keep getting reworked. Use the Churn data provided to identify these. If a file was edited 3+ times, it belongs here. Explain WHY it might be unstable based on the commits.)
+\u26a0\ufe0f Unstable
   \u2022 Short Title - context
-\ud83d\udccd Left Off (everything that was being worked on when the session ended. Half-finished features, next steps, things that need attention. Include ALL of them, not just one.)
+\ud83d\udccd Left Off
   \u2022 Short Title - context
 
-Rules: Max 7 bullets per section. Every bullet starts with a 2-5 word bold title then " - " then context. Left Off must always have at least 1 item and should list everything in progress. Skip empty sections except Left Off.
+Section definitions (do NOT include these in the output, they are instructions for you):
+- Shipped = things that went from not existing to working. New features, new pages, new endpoints.
+- Changed = things that already existed but got modified. Redesigns, refactors, config changes.
+- Unstable = areas that keep getting reworked. Use the Churn data provided to identify these. Describe them as FEATURES in plain language ("the checkout flow", "the auth system"), NEVER as file names or paths. Explain why it might be unstable.
+- Left Off = everything that was being worked on when the session ended. Half-finished features, next steps, things that need attention. Include ALL of them, not just one.
+
+Rules: Output ONLY the emoji + section name as the header (e.g. "\ud83d\ude80 Shipped"), nothing else on that line. Max 7 bullets per section. Every bullet starts with a 2-5 word plain-language title then " - " then context. NEVER use file names or code paths in bullet titles. Left Off must always have at least 1 item and should list everything in progress. Skip empty sections except Left Off.
 
 SECTION 2: STANDUP (after ---STANDUP---)
 Tone: Professional, direct. How a competent engineer talks to their team. Start bullets with verbs.
