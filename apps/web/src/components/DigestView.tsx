@@ -4,6 +4,34 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { Copy, Check, Download, Mail, Sparkles, ClipboardList } from "lucide-react";
 import { useCountUp } from "@/lib/use-count-up";
 
+/** Types out text character by character after an initial delay */
+function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
+  const [revealed, setRevealed] = useState(0);
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setStarted(true), delay);
+    return () => clearTimeout(timer);
+  }, [delay]);
+
+  useEffect(() => {
+    if (!started || revealed >= text.length) return;
+    const timer = setTimeout(() => {
+      setRevealed((r) => Math.min(r + 2, text.length));
+    }, 16);
+    return () => clearTimeout(timer);
+  }, [started, revealed, text.length]);
+
+  if (!started) return null;
+
+  return (
+    <>
+      {text.slice(0, revealed)}
+      {revealed < text.length && <span className="streaming-cursor" />}
+    </>
+  );
+}
+
 function DownloadBtn({ text }: { text: string }) {
   const handleDownload = useCallback(() => {
     const blob = new Blob([text], { type: "text/markdown" });
@@ -496,7 +524,7 @@ export function DigestView({
           </div>
         )}
 
-        {/* Closing Thoughts — after everything */}
+        {/* Closing Thoughts — types out after Statistics */}
         {!isStreaming &&
           vis("closingThoughts") &&
           (() => {
@@ -512,7 +540,9 @@ export function DigestView({
                 <div className="digest-section-title">
                   {closingSection.emoji} {closingSection.label}
                 </div>
-                <p className="formatted-paragraph">{closingSection.content}</p>
+                <p className="formatted-paragraph">
+                  <TypewriterText text={closingSection.content} delay={1200} />
+                </p>
               </div>
             );
           })()}
