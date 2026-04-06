@@ -32,16 +32,56 @@ function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
   );
 }
 
-function DownloadBtn({ text }: { text: string }) {
+function DownloadBtn({
+  text,
+  stats,
+  repoName,
+}: {
+  text: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  stats?: any;
+  repoName?: string;
+}) {
   const handleDownload = useCallback(() => {
-    const blob = new Blob([text], { type: "text/markdown" });
+    const name = repoName ?? "digest";
+    const date = new Date().toISOString().slice(0, 10);
+    const filename = `${name}-${date}.md`;
+
+    // Build markdown with statistics
+    let md = text;
+    if (stats) {
+      const fmt = (n: number) => n.toLocaleString("en-US");
+      const lines: string[] = ["\n\n---\n\n## Statistics\n"];
+      if (stats.commits != null)
+        lines.push(
+          `+${fmt(stats.linesAdded ?? 0)} lines · -${fmt(stats.linesRemoved ?? 0)} lines · ${fmt(stats.commits)} commits · ${fmt(stats.filesChanged ?? 0)} files`,
+        );
+      if (stats.topFiles?.length > 0) {
+        lines.push("\n### Most Active Files\n");
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        stats.topFiles.forEach((f: any, i: number) => {
+          lines.push(
+            `${i + 1}. ${f.file} (+${fmt(f.added ?? 0)} / -${fmt(f.removed ?? 0)}, ${f.commits} commits)`,
+          );
+        });
+      }
+      if (stats.pace) {
+        lines.push(`\n### Pace Check\n`);
+        lines.push(
+          `${stats.pace.multiplier}x — ${stats.pace.label} (${stats.pace.todayCommits} commits today, ${stats.pace.avgCommits}-commit average)`,
+        );
+      }
+      md += lines.join("\n");
+    }
+
+    const blob = new Blob([md], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "digest.md";
+    a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
-  }, [text]);
+  }, [text, stats, repoName]);
 
   return (
     <button className="action-btn" onClick={handleDownload}>
@@ -72,11 +112,20 @@ function EmailBtn() {
   );
 }
 
-function DigestActions({ text }: { text: string }) {
+function DigestActions({
+  text,
+  stats,
+  repoName,
+}: {
+  text: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  stats?: any;
+  repoName?: string;
+}) {
   return (
     <div className="digest-actions-row">
       <CopyBtn text={text} label="Copy" />
-      <DownloadBtn text={text} />
+      <DownloadBtn text={text} stats={stats} repoName={repoName} />
       <EmailBtn />
     </div>
   );
@@ -374,7 +423,7 @@ interface DigestViewProps {
   streamingText: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stats: any;
-
+  repoName?: string;
   visibleSections?: Record<string, boolean>;
   onResumeWithAI?: () => void;
   onGenerateStandup?: () => void;
@@ -449,7 +498,7 @@ export function DigestView({
   animate = false,
   streamingText,
   stats,
-
+  repoName,
   visibleSections,
   onResumeWithAI,
   onGenerateStandup,
@@ -469,7 +518,7 @@ export function DigestView({
         {/* Actions at the top (hide while streaming) */}
         {!isStreaming && (
           <div className="digest-actions-top">
-            <DigestActions text={streamingText} />
+            <DigestActions text={streamingText} stats={stats} repoName={repoName} />
           </div>
         )}
 

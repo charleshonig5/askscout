@@ -408,6 +408,7 @@ export default function DashboardPage() {
                   isStreaming={false}
                   streamingText={currentSections?.digest ?? noNewCommits.content}
                   stats={noNewCommits.stats}
+                  repoName={repoName}
                   visibleSections={digestSectionPrefs ?? undefined}
                   onResumeWithAI={() => setAiContextOpen(true)}
                   onGenerateStandup={() => setStandupOpen(true)}
@@ -426,6 +427,7 @@ export default function DashboardPage() {
                   isStreaming={false}
                   streamingText={currentSections?.digest ?? viewingHistoryContent ?? ""}
                   stats={viewingHistoryStats}
+                  repoName={repoName}
                   visibleSections={digestSectionPrefs ?? undefined}
                   onResumeWithAI={() => setAiContextOpen(true)}
                   onGenerateStandup={() => setStandupOpen(true)}
