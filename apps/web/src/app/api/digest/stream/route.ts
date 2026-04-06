@@ -78,15 +78,28 @@ export async function POST(req: Request) {
     if (lastRun) {
       // Returning user: since last run, capped at 30 days
       const daysSinceLastRun = (Date.now() - lastRun.getTime()) / (1000 * 60 * 60 * 24);
-      const since = daysSinceLastRun <= 30 ? lastRun : null;
 
-      if (since) {
-        commits = await fetchCommits(session.accessToken, owner, repo, since);
+      if (daysSinceLastRun <= 30) {
+        // Recent returning user — only show new commits since last run
+        commits = await fetchCommits(session.accessToken, owner, repo, lastRun);
+        if (commits.length === 0) {
+          return Response.json({ error: "No new commits since your last digest" }, { status: 404 });
+        }
+      } else {
+        // Stale user (30+ days) — treat like first run
+        const FALLBACK_DAYS = [7, 30, 90] as const;
+        for (const days of FALLBACK_DAYS) {
+          commits = await fetchCommits(
+            session.accessToken,
+            owner,
+            repo,
+            new Date(Date.now() - days * 24 * 60 * 60 * 1000),
+          );
+          if (commits.length > 0) break;
+        }
       }
-    }
-
-    // First run or stale last run: fallback chain 24h → 7d → 30d → 90d
-    if (commits.length === 0) {
+    } else {
+      // First run: fallback chain 24h → 7d → 30d → 90d
       const FALLBACK_DAYS = [1, 7, 30, 90] as const;
       for (const days of FALLBACK_DAYS) {
         commits = await fetchCommits(
