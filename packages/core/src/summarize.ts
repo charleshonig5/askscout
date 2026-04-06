@@ -133,7 +133,7 @@ Tone: Warm, casual, playful. Like a friend catching you up. Be honest and a litt
 
 Format:
 \ud83d\udcac Vibe Check
-[3-4 casual sentences. Give a real feel for the day. What was the energy like? What stood out? What's the overall trajectory? Be specific about what happened, not generic.]
+[3-4 casual sentences in PRESENT TENSE. This is about where the project stands RIGHT NOW, not a recap of what happened. What's the current state? What's working, what's close, what needs attention? Talk about the project like you're checking in on it today. Don't summarize past actions (that's what Shipped/Changed are for). Be specific and honest.]
 
 \ud83d\ude80 Shipped (things that went from not existing to working. New features, new pages, new endpoints.)
   \u2022 Short Title - context
