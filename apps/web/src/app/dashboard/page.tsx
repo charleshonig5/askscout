@@ -8,7 +8,7 @@ import { AIContextModal } from "@/components/AIContextModal";
 import { StandupModal } from "@/components/StandupModal";
 import { useDigestStream } from "@/lib/use-digest-stream";
 import { parseSections } from "@/lib/parse-sections";
-import { playCompletionPop } from "@/lib/sounds";
+
 import type { HistoryEntry } from "@/lib/mock-data";
 
 interface HistoryRecord {
@@ -234,7 +234,6 @@ export default function DashboardPage() {
         },
       }));
       void fetchHistory(selectedRepo);
-      playCompletionPop();
     }
   }, [digestStream.isDone]);
 
