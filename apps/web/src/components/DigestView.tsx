@@ -318,12 +318,10 @@ interface DigestViewStats {
 
 function StatsCards({ stats }: { stats: DigestViewStats }) {
   const fmt = (n: number) => n.toLocaleString("en-US");
-  const netFiles = (stats.filesAdded ?? 0) - (stats.filesDeleted ?? 0);
   const added = useCountUp(stats.linesAdded);
   const removed = useCountUp(stats.linesRemoved);
   const commits = useCountUp(stats.commits);
   const files = useCountUp(stats.filesChanged);
-  const net = useCountUp(Math.abs(netFiles));
   return (
     <div className="stats-row">
       <span className="stats-item positive">+{fmt(added)} lines</span>
@@ -337,15 +335,6 @@ function StatsCards({ stats }: { stats: DigestViewStats }) {
       <span className="stats-item">{fmt(commits)} commits</span>
       <span className="stats-sep">{"\u00b7"}</span>
       <span className="stats-item">{fmt(files)} files</span>
-      {netFiles !== 0 && (
-        <>
-          <span className="stats-sep">{"\u00b7"}</span>
-          <span className={`stats-item ${netFiles > 0 ? "positive" : "negative"}`}>
-            {netFiles > 0 ? "+" : ""}
-            {fmt(netFiles > 0 ? net : -net)} net {Math.abs(netFiles) === 1 ? "file" : "files"}
-          </span>
-        </>
-      )}
     </div>
   );
 }
