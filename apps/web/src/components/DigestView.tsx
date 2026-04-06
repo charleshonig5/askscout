@@ -199,10 +199,10 @@ function StreamingDigest({
               <div className="digest-section-title">
                 {section.emoji} {section.label}
               </div>
-              <div className="digest-item">
+              <p className="formatted-paragraph">
                 {section.content}
                 {showCursor && cursor}
-              </div>
+              </p>
             </div>
           );
         }
@@ -533,7 +533,7 @@ export function DigestView({
                 <div className="digest-section-title">
                   {closingSection.emoji} {closingSection.label}
                 </div>
-                <div className="digest-item">{closingSection.content}</div>
+                <p className="formatted-paragraph">{closingSection.content}</p>
               </div>
             );
           })()}
