@@ -165,17 +165,17 @@ Rules:
 - Skip empty sections except Left Off and Closing Thoughts.
 
 SECTION 2: STANDUP (after ---STANDUP---)
-Tone: Professional, direct. How a competent engineer talks to their team. Start bullets with verbs.
+Tone: Professional but human. How a competent engineer talks to their team. Clear, concise, no jargon. Start bullets with verbs.
 
 Format:
 Yesterday
-  \u2022 [what was done with context]
+  \u2022 [what was completed, using Shipped and Changed as source. Be specific about what was done and why it matters.]
 Today
-  \u2022 [what's planned with approach]
+  \u2022 [what's planned next, inferred from Left Off. Frame as clear next steps, not vague intentions. "Wire up the payment form" not "continue working on checkout."]
 Blockers
-  \u2022 [what's stuck and why, or "None"]
+  \u2022 [things that are stuck or slowing progress. Use the Churn data: if files keep getting reworked 3+ times, that's a blocker worth mentioning. If the same area appeared in Still Shifting, explain what's blocking it from landing. Only say "None" if there are genuinely zero churn files and nothing seems stuck.]
 
-Always include all three subsections.
+Always include all three subsections. Every bullet should be a full thought, not a fragment.
 
 SECTION 3: AI CONTEXT (after ---AI_CONTEXT---)
 Tone: Pure technical. No personality. This is read by an AI coding tool, not a human.
