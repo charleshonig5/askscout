@@ -95,22 +95,45 @@ function DownloadBtn({
 }
 
 function buildTweet(items: string[]): string {
-  // Extract just the titles (before " - ") for a clean tweet
-  const titles = items.map((item) => {
+  const MAX_CHARS = 280;
+  const suffix = "\n\n#buildinpublic";
+
+  // Build short descriptions: "Title - brief context" trimmed to fit
+  const descriptions = items.map((item) => {
     const dashIdx = item.indexOf(" - ");
-    return dashIdx > 0 && dashIdx < 60 ? item.slice(0, dashIdx) : item;
+    if (dashIdx > 0 && dashIdx < 60) {
+      const title = item.slice(0, dashIdx);
+      // Take first sentence of context
+      const context =
+        item
+          .slice(dashIdx + 3)
+          .split(/[.!]/)[0]
+          ?.trim() ?? "";
+      return context ? `${title} \u2014 ${context}` : title;
+    }
+    return item.split(/[.!]/)[0]?.trim() ?? item;
   });
 
   let tweet: string;
-  if (titles.length === 1) {
-    tweet = `Just shipped: ${titles[0]}`;
-  } else if (titles.length === 2) {
-    tweet = `Just shipped ${titles[0]} and ${titles[1]}`;
+  if (descriptions.length === 1) {
+    tweet = `Just shipped: ${descriptions[0]} \ud83d\ude80`;
   } else {
-    tweet = `Just shipped ${titles.length} things:\n${titles.map((t) => `\u2022 ${t}`).join("\n")}`;
+    tweet = `Just shipped ${descriptions.length} things \ud83d\ude80\n${descriptions.map((d) => `\u2022 ${d}`).join("\n")}`;
   }
 
-  tweet += ` \ud83d\ude80\n\nBuilt with @askscout\n\n#buildinpublic`;
+  tweet += suffix;
+
+  // Trim items from the bottom if over limit
+  while (tweet.length > MAX_CHARS && descriptions.length > 1) {
+    descriptions.pop();
+    tweet = `Just shipped ${descriptions.length}+ things \ud83d\ude80\n${descriptions.map((d) => `\u2022 ${d}`).join("\n")}${suffix}`;
+  }
+
+  // If still over, truncate the description
+  if (tweet.length > MAX_CHARS) {
+    tweet = tweet.slice(0, MAX_CHARS - 3) + "...";
+  }
+
   return tweet;
 }
 
