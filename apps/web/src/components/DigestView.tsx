@@ -355,8 +355,6 @@ interface DigestViewProps {
   streamingText: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stats: any;
-  sessionChips?: string[];
-  sessionLabel?: string;
   streak?: number;
   visibleSections?: Record<string, boolean>;
   onResumeWithAI?: () => void;
@@ -432,8 +430,6 @@ export function DigestView({
   isLoading,
   streamingText,
   stats,
-  sessionChips,
-  sessionLabel,
   streak,
   visibleSections,
   onResumeWithAI,
@@ -448,8 +444,7 @@ export function DigestView({
     return <div className="digest-loading">Scout is sniffing through your commits...</div>;
   }
 
-  const hasChips = sessionChips && sessionChips.length > 0;
-  const showMeta = hasChips || (streak && streak >= 2);
+  const showStreak = streak && streak >= 2;
 
   if (streamingText) {
     return (
@@ -481,24 +476,9 @@ export function DigestView({
             <div className="digest-section-title stats-reveal-item">
               {"\ud83d\udcca"} Statistics
             </div>
-            {showMeta && (
+            {showStreak && (
               <div className="digest-meta stats-reveal-item" style={{ animationDelay: "150ms" }}>
-                {hasChips && (
-                  <div className="session-chips">
-                    <span className="session-chips-label">{sessionLabel || "Coding Activity"}</span>
-                    {sessionChips.map((label, i) => (
-                      <span key={i} className="session-chip">
-                        {label}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                {hasChips && streak && streak >= 2 && (
-                  <span className="digest-meta-sep">{"\u00b7"}</span>
-                )}
-                {streak && streak >= 2 && (
-                  <span className="digest-meta-item digest-meta-streak">{streak}-day streak</span>
-                )}
+                <span className="digest-meta-item digest-meta-streak">{streak}-day streak</span>
               </div>
             )}
             <div className="stats-reveal-item" style={{ animationDelay: "300ms" }}>
