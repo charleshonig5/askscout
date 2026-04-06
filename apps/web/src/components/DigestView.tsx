@@ -109,7 +109,7 @@ function buildTweet(items: string[]): string {
           .slice(dashIdx + 3)
           .split(/[.!]/)[0]
           ?.trim() ?? "";
-      return context ? `${title} \u2014 ${context}` : title;
+      return context ? `${title}, ${context}` : title;
     }
     return item.split(/[.!]/)[0]?.trim() ?? item;
   });
