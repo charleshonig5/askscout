@@ -86,6 +86,7 @@ const SECTION_MARKERS = [
   { key: "changed", emoji: "\ud83d\udd27", label: "Changed" },
   { key: "unstable", emoji: "\u26a0\ufe0f", label: "Unstable" },
   { key: "leftOff", emoji: "\ud83d\udccd", label: "Left Off" },
+  { key: "closing", emoji: "\ud83d\udc15", label: "Closing Thoughts" },
   { key: "stats", emoji: "\ud83d\udcca", label: "Stats" },
 ] as const;
 
@@ -180,6 +181,21 @@ function StreamingDigest({
           return (
             <div key={section.key}>
               <div className="digest-vibe">
+                <strong>
+                  {section.emoji} {section.label}
+                </strong>
+                <br />
+                {section.content}
+                {showCursor && cursor}
+              </div>
+            </div>
+          );
+        }
+
+        if (section.key === "closing") {
+          return (
+            <div key={section.key} className="digest-section">
+              <div className="digest-closing">
                 <strong>
                   {section.emoji} {section.label}
                 </strong>

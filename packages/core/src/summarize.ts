@@ -144,13 +144,17 @@ Format:
 \ud83d\udccd Left Off
   \u2022 Short Title - context
 
+\ud83d\udc15 Closing Thoughts
+[2-3 sentences to close out the digest.]
+
 Section definitions (do NOT include these in the output, they are instructions for you):
 - Shipped = things that went from not existing to working. New features, new pages, new endpoints.
 - Changed = things that already existed but got modified. Redesigns, refactors, config changes.
 - Unstable = areas that keep getting reworked. Use the Churn data provided to identify these. Describe them as FEATURES in plain language ("the checkout flow", "the auth system"), NEVER as file names or paths. Explain why it might be unstable.
 - Left Off = everything that was being worked on when the session ended. Half-finished features, next steps, things that need attention. Include ALL of them, not just one.
+- Closing Thoughts = Scout's sign-off. Be genuine, grounded, and a little witty. Reference specific things from the digest, not generic praise. One sentence of honest perspective on the work, one light nudge about what to tackle next based on Left Off, and a witty closer. NO motivational poster energy. NO "great job!" or "keep it up!". Talk like a sharp friend who actually looked at your code.
 
-Rules: Output ONLY the emoji + section name as the header (e.g. "\ud83d\ude80 Shipped"), nothing else on that line. Max 7 bullets per section. Every bullet starts with a 2-5 word plain-language title then " - " then context. NEVER use file names or code paths in bullet titles. Left Off must always have at least 1 item and should list everything in progress. Skip empty sections except Left Off.
+Rules: Output ONLY the emoji + section name as the header (e.g. "\ud83d\ude80 Shipped"), nothing else on that line. Max 7 bullets per section. Every bullet starts with a 2-5 word plain-language title then " - " then context. NEVER use file names or code paths in bullet titles. Left Off must always have at least 1 item and should list everything in progress. Closing Thoughts must always be included. Skip empty sections except Left Off and Closing Thoughts.
 
 SECTION 2: STANDUP (after ---STANDUP---)
 Tone: Professional, direct. How a competent engineer talks to their team. Start bullets with verbs.
