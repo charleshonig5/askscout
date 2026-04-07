@@ -215,7 +215,6 @@ export default function DashboardPage() {
       lastRepoRef.current = selectedRepo;
       // Abort all in-flight streams
       digestStream.reset();
-      setCachedDigests({});
 
       setViewingHistoryContent(null);
       setViewingHistoryStats(null);
