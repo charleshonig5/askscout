@@ -32,6 +32,10 @@ export default async function LandingPage() {
             Sign in with GitHub
           </button>
         </form>
+        <p className="landing-security">
+          Read-only. Scout reads your commit history and diffs. Never your source code, never your
+          secrets.
+        </p>
       </div>
       <div className="landing-preview">
         <pre

@@ -1012,6 +1012,12 @@ a:hover {
   margin-bottom: var(--space-2xl);
 }
 
+.landing-security {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  margin-top: var(--space-sm);
+}
+
 .landing-preview {
   max-width: var(--max-width);
   width: 100%;
@@ -1413,6 +1419,75 @@ a:hover {
 
 .settings-danger-zone {
   border-bottom: none;
+}
+
+.privacy-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+@media (max-width: 600px) {
+  .privacy-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.privacy-card {
+  padding: var(--space-md);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.privacy-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.privacy-card-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.privacy-item {
+  font-size: 13px;
+  padding-left: var(--space-md);
+  position: relative;
+}
+
+.privacy-item::before {
+  position: absolute;
+  left: 0;
+  font-size: 12px;
+}
+
+.privacy-item--safe {
+  color: var(--color-text-secondary);
+}
+
+.privacy-item--safe::before {
+  content: "\2713";
+  color: var(--color-success);
+}
+
+.privacy-item--never {
+  color: var(--color-text-secondary);
+}
+
+.privacy-item--never::before {
+  content: "\2717";
+  color: var(--color-danger);
+}
+
+.privacy-footer {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  line-height: 1.5;
 }
 
 .btn-danger {

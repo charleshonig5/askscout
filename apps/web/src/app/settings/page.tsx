@@ -249,6 +249,44 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        {/* Privacy & Security */}
+        <div className="settings-section">
+          <h2 className="settings-section-title">Privacy &amp; Security</h2>
+          <p className="settings-section-desc">
+            Scout is read-only. Here is exactly what we access and what we don&apos;t.
+          </p>
+          <div className="privacy-grid">
+            <div className="privacy-card">
+              <div className="privacy-card-title">What Scout reads</div>
+              <div className="privacy-card-items">
+                <div className="privacy-item privacy-item--safe">Commit messages and metadata</div>
+                <div className="privacy-item privacy-item--safe">
+                  File diffs (lines added and removed)
+                </div>
+                <div className="privacy-item privacy-item--safe">File names and paths</div>
+              </div>
+            </div>
+            <div className="privacy-card">
+              <div className="privacy-card-title">What Scout never touches</div>
+              <div className="privacy-card-items">
+                <div className="privacy-item privacy-item--never">
+                  Source code (files are never opened)
+                </div>
+                <div className="privacy-item privacy-item--never">
+                  Environment variables and secrets
+                </div>
+                <div className="privacy-item privacy-item--never">
+                  Dependencies and node_modules
+                </div>
+              </div>
+            </div>
+          </div>
+          <p className="privacy-footer">
+            Diffs are processed in memory and discarded. Only the plain-English digest is stored.
+            Your code never leaves GitHub.
+          </p>
+        </div>
+
         {/* Delete Account */}
         <div className="settings-section settings-danger-zone">
           <h2 className="settings-section-title">
