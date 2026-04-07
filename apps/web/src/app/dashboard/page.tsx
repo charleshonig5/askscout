@@ -180,7 +180,6 @@ export default function DashboardPage() {
       }
 
       if (cached) {
-        const cacheKey = `${repoFullName}:${targetMode}`;
         setCachedDigests((prev) => ({ ...prev, [cacheKey]: cached }));
         setIsCheckingCache(false);
         return;
