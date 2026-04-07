@@ -45,6 +45,8 @@ export default function DashboardPage() {
   const [cachedDigests, setCachedDigests] = useState<
     Record<string, { content: string; stats: Record<string, unknown> | null }>
   >({});
+  const cachedDigestsRef = useRef(cachedDigests);
+  cachedDigestsRef.current = cachedDigests;
   const [isCheckingCache, setIsCheckingCache] = useState(false);
   const [noNewCommits, setNoNewCommits] = useState<{
     content: string;
@@ -161,6 +163,12 @@ export default function DashboardPage() {
   // Load cached or generate fresh for a repo+mode
   const loadOrGenerate = useCallback(
     async (repoFullName: string, targetMode: string) => {
+      // Check in-memory cache first (instant, no network)
+      const cacheKey = `${repoFullName}:${targetMode}`;
+      if (cachedDigestsRef.current[cacheKey]) {
+        return;
+      }
+
       setIsCheckingCache(true);
 
       const cached = await checkTodaysDigest(repoFullName, targetMode);
