@@ -658,28 +658,37 @@ export function DigestView({
           }
         />
 
-        {/* Statistics section — staggered reveal after streaming completes */}
+        {/* Statistics → Pace Check → Codebase Health → Closing Thoughts
+            cascade in that order when streaming finishes */}
         {!isStreaming && vis("statistics") && stats && (
           <div className="digest-section stats-reveal">
-            <div className="digest-section-title stats-reveal-item">
+            <div
+              className="digest-section-title stats-reveal-item"
+              style={{ animationDelay: "0ms" }}
+            >
               {"\ud83d\udcca"} Statistics
             </div>
-            <div className="stats-reveal-item" style={{ animationDelay: "150ms" }}>
+            <div className="stats-reveal-item" style={{ animationDelay: "200ms" }}>
               <StatsCards stats={stats} />
             </div>
             {stats.topFiles && (
-              <div className="stats-reveal-item" style={{ animationDelay: "550ms" }}>
+              <div className="stats-reveal-item" style={{ animationDelay: "450ms" }}>
                 <TopFiles files={stats.topFiles} />
               </div>
             )}
           </div>
         )}
 
-        {/* Pace Check — only shows with 3+ past digests */}
+        {/* Pace Check — appears after Statistics */}
         {!isStreaming && vis("paceCheck") && stats?.pace && (
           <div className="digest-section stats-reveal">
-            <div className="digest-section-title stats-reveal-item">{"\u26a1"} Pace Check</div>
-            <div className="pace-card stats-reveal-item" style={{ animationDelay: "150ms" }}>
+            <div
+              className="digest-section-title stats-reveal-item"
+              style={{ animationDelay: "800ms" }}
+            >
+              {"\u26a1"} Pace Check
+            </div>
+            <div className="pace-card stats-reveal-item" style={{ animationDelay: "1000ms" }}>
               <div className="pace-multiplier">{stats.pace.multiplier}x</div>
               <div className="pace-detail">
                 <div className="pace-label">{stats.pace.label}</div>
@@ -692,19 +701,22 @@ export function DigestView({
           </div>
         )}
 
-        {/* Codebase Health — own section */}
+        {/* Codebase Health — appears after Pace Check */}
         {!isStreaming && vis("codebaseHealth") && stats?.health && (
           <div className="digest-section stats-reveal">
-            <div className="digest-section-title stats-reveal-item">
+            <div
+              className="digest-section-title stats-reveal-item"
+              style={{ animationDelay: "1400ms" }}
+            >
               {"\ud83e\ude7a"} Codebase Health
             </div>
-            <div className="stats-reveal-item" style={{ animationDelay: "200ms" }}>
+            <div className="stats-reveal-item" style={{ animationDelay: "1600ms" }}>
               <CodebaseHealth health={stats.health} />
             </div>
           </div>
         )}
 
-        {/* Closing Thoughts — types out after Statistics */}
+        {/* Closing Thoughts — comes last, after all data sections */}
         {!isStreaming &&
           vis("closingThoughts") &&
           (() => {
@@ -715,14 +727,14 @@ export function DigestView({
             return (
               <div
                 className="digest-section stats-reveal-item"
-                style={{ animationDelay: "1000ms" }}
+                style={{ animationDelay: "2200ms" }}
               >
                 <div className="digest-section-title">
                   {closingSection.emoji} {closingSection.label}
                 </div>
                 <p className="formatted-paragraph">
                   {animate ? (
-                    <TypewriterText text={closingSection.content} delay={1200} />
+                    <TypewriterText text={closingSection.content} delay={2400} />
                   ) : (
                     closingSection.content
                   )}

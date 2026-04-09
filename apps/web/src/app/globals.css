@@ -722,7 +722,7 @@ a:hover {
   height: 100%;
   border-radius: 2px;
   opacity: 0.5;
-  animation: healthBarFill 1s ease-out 1s both;
+  animation: healthBarFill 1s ease-out 1.7s both;
 }
 
 @keyframes healthBarFill {
