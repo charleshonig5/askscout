@@ -128,20 +128,30 @@ export function useDigestStream(): DigestStreamState {
       return;
     }
 
-    const char = buf[revealed]!;
-    const upcoming = buf.slice(revealed + 1, revealed + 5);
+    // Handle surrogate pairs: emojis are 2 code units in UTF-16 strings.
+    // Advance by 2 if we're revealing a high surrogate so we never split an emoji.
+    const firstCode = buf.charCodeAt(revealed);
+    const isHighSurrogate = firstCode >= 0xd800 && firstCode <= 0xdbff;
+    const advance = isHighSurrogate ? 2 : 1;
+    const nextRevealed = revealed + advance;
+
+    // The "character" we just revealed (full emoji or single ASCII char)
+    const revealedChar = buf.slice(revealed, nextRevealed);
+    // Upcoming context for delay calculation
+    const upcoming = buf.slice(nextRevealed, nextRevealed + 6);
     const bufferLead = buf.length - revealed;
 
-    revealedRef.current = revealed + 1;
-    setText(buf.slice(0, revealed + 1));
+    revealedRef.current = nextRevealed;
+    setText(buf.slice(0, nextRevealed));
 
-    const delay = calculateDelay(char, upcoming, bufferLead, streamDoneRef.current);
+    const delay = calculateDelay(revealedChar, upcoming, bufferLead, streamDoneRef.current);
     timerRef.current = setTimeout(dripTick, delay);
   }, []);
 
   const startDrip = useCallback(() => {
     if (timerRef.current) return;
-    timerRef.current = setTimeout(dripTick, 0);
+    // Small opening beat before the first char appears, makes the start feel intentional
+    timerRef.current = setTimeout(dripTick, 150);
   }, [dripTick]);
 
   // Cleanup on unmount
