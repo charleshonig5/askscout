@@ -248,11 +248,12 @@ export default function DashboardPage() {
 
   // Handle "no commits" error by showing most recent digest
   useEffect(() => {
-    if (
-      digestStream.error &&
-      digestStream.error.toLowerCase().includes("no commits") &&
-      historyRecords.length > 0
-    ) {
+    if (!digestStream.error || !digestStream.error.toLowerCase().includes("no commits")) {
+      return;
+    }
+
+    // If history is loaded, show the latest digest
+    if (historyRecords.length > 0) {
       const latest = historyRecords[0]!;
       setNoNewCommits({
         content: latest.content,
@@ -265,8 +266,45 @@ export default function DashboardPage() {
         }),
       });
       digestStream.reset();
+      return;
     }
-  }, [digestStream.error, historyRecords]);
+
+    // History not loaded yet — try to fetch it so the effect can re-run
+    if (selectedRepo) {
+      void fetchHistory(selectedRepo);
+    }
+  }, [digestStream.error, historyRecords, selectedRepo, fetchHistory]);
+
+  // Manual fallback: show latest digest when auto-redirect fails
+  const showLatestFromHistory = useCallback(async () => {
+    let records = historyRecords;
+    // If history is empty, fetch it on demand
+    if (records.length === 0 && selectedRepo) {
+      try {
+        const res = await fetch(`/api/history?repo=${encodeURIComponent(selectedRepo)}`);
+        if (res.ok) {
+          const data = (await res.json()) as { history: HistoryRecord[] };
+          records = data.history;
+          setHistoryRecords(data.history);
+        }
+      } catch {
+        return;
+      }
+    }
+    if (records.length === 0) return;
+    const latest = records[0]!;
+    setNoNewCommits({
+      content: latest.content,
+      stats: latest.stats,
+      date: new Date(latest.created_at).toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      }),
+    });
+    digestStream.reset();
+  }, [historyRecords, selectedRepo, digestStream]);
 
   const handleRepoChange = useCallback((repo: string) => {
     setSelectedRepo(repo);
@@ -444,12 +482,22 @@ export default function DashboardPage() {
                 {digestStream.error ? (
                   <div className="digest-error">
                     <p>{digestStream.error}</p>
-                    <button
-                      className="btn btn-secondary"
-                      onClick={() => forceGenerate(selectedRepo, "digest")}
-                    >
-                      Try again
-                    </button>
+                    <div className="digest-error-actions">
+                      <button
+                        className="btn btn-secondary"
+                        onClick={() => forceGenerate(selectedRepo, "digest")}
+                      >
+                        Try again
+                      </button>
+                      {digestStream.error.toLowerCase().includes("no commits") && (
+                        <button
+                          className="btn btn-secondary"
+                          onClick={() => void showLatestFromHistory()}
+                        >
+                          Show latest digest
+                        </button>
+                      )}
+                    </div>
                   </div>
                 ) : (
                   <DigestView

@@ -1060,6 +1060,13 @@ a:hover {
   margin-bottom: var(--space-md);
 }
 
+.digest-error-actions {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 .copy-btn {
   composes: btn btn-ghost;
   font-size: 12px;
