@@ -9,9 +9,17 @@ export interface DigestStats {
   linesRemoved: number;
 }
 
-// Drip rate: characters revealed per tick
-const CHARS_PER_TICK = 3;
-const TICK_INTERVAL_MS = 16; // ~60fps
+// Variable pacing constants — designed for a premium, natural feel
+const BASE_CHAR_DELAY_MS = 14; // ~70 chars/sec baseline
+const SENTENCE_PAUSE_MS = 260;
+const CLAUSE_PAUSE_MS = 80;
+const LINE_BREAK_MS = 110;
+const PARAGRAPH_PAUSE_MS = 380;
+const SECTION_PAUSE_MS = 450;
+const MIN_DELAY_MS = 2;
+
+// Emojis that start a new digest section — trigger a longer pause before them
+const SECTION_EMOJI_PATTERN = /[\u{1F4AC}\u{1F680}\u{1F527}\u{1F501}\u{1F4CD}\u{1F415}]/u;
 
 interface DigestStreamState {
   text: string;
@@ -23,54 +31,120 @@ interface DigestStreamState {
   reset: () => void;
 }
 
+/**
+ * Calculate delay to the next character reveal, based on the char that was
+ * just revealed, upcoming content, buffer lead, and stream status.
+ */
+function calculateDelay(
+  revealedChar: string,
+  upcoming: string,
+  bufferLead: number,
+  streamDone: boolean,
+): number {
+  let delay = BASE_CHAR_DELAY_MS;
+  const next = upcoming[0] ?? "";
+
+  // Punctuation pauses — only at real sentence/clause boundaries
+  if (revealedChar === "." || revealedChar === "!" || revealedChar === "?") {
+    if (next === " " || next === "\n" || next === "") {
+      delay = SENTENCE_PAUSE_MS;
+    }
+  } else if (revealedChar === "," || revealedChar === ";" || revealedChar === ":") {
+    delay = CLAUSE_PAUSE_MS;
+  } else if (revealedChar === "\n") {
+    delay = next === "\n" ? PARAGRAPH_PAUSE_MS : LINE_BREAK_MS;
+  }
+
+  // Section transition pause — if upcoming content starts with a section emoji,
+  // let the reader breathe before the new header appears
+  if (upcoming && SECTION_EMOJI_PATTERN.test(upcoming.slice(0, 3))) {
+    delay = Math.max(delay, SECTION_PAUSE_MS);
+  }
+
+  // Small random jitter (±10%) to avoid mechanical cadence
+  delay *= 0.9 + Math.random() * 0.2;
+
+  // Adaptive speed — if the LLM is streaming faster than we're revealing,
+  // gently speed up so we don't fall behind
+  if (bufferLead > 400) {
+    delay *= 0.35;
+  } else if (bufferLead > 200) {
+    delay *= 0.55;
+  } else if (bufferLead > 100) {
+    delay *= 0.75;
+  }
+
+  // Stream done — smoothly accelerate to finish, don't just dump
+  if (streamDone) {
+    // The larger the remaining buffer, the more we accelerate
+    const remaining = bufferLead;
+    if (remaining > 30) {
+      // Exponential ramp: from 0.5x at 30 remaining to 0.1x at 300+ remaining
+      const factor = Math.max(0.1, 0.5 - (remaining / 300) * 0.4);
+      delay *= factor;
+    }
+  }
+
+  return Math.max(MIN_DELAY_MS, delay);
+}
+
 export function useDigestStream(): DigestStreamState {
   const [text, setText] = useState("");
   const [stats, setStats] = useState<DigestStats | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   const abortRef = useRef<AbortController | null>(null);
   const fullTextRef = useRef("");
-
-  // Text buffering: accumulate chunks, reveal gradually
   const bufferRef = useRef("");
   const revealedRef = useRef(0);
-  const dripRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const streamDoneRef = useRef(false);
 
   const stopDrip = useCallback(() => {
-    if (dripRef.current) {
-      clearInterval(dripRef.current);
-      dripRef.current = null;
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
     }
   }, []);
 
-  const startDrip = useCallback(() => {
-    if (dripRef.current) return;
-    dripRef.current = setInterval(() => {
-      const buf = bufferRef.current;
-      const revealed = revealedRef.current;
+  const dripTick = useCallback(() => {
+    const buf = bufferRef.current;
+    const revealed = revealedRef.current;
 
-      if (revealed >= buf.length) {
-        // Buffer drained — if stream is done, finalize
-        if (streamDoneRef.current) {
-          stopDrip();
-          setText(bufferRef.current);
-          setIsDone(true);
-          setIsStreaming(false);
-        }
+    if (revealed >= buf.length) {
+      // Buffer drained
+      if (streamDoneRef.current) {
+        // Finalize — ensure text matches the full buffer
+        setText(buf);
+        setIsDone(true);
+        setIsStreaming(false);
+        timerRef.current = null;
         return;
       }
+      // Stream still active but no content to reveal — wait a bit
+      timerRef.current = setTimeout(dripTick, 32);
+      return;
+    }
 
-      // Reveal next batch — flush fast if stream is done
-      const chunkSize = streamDoneRef.current ? 50 : CHARS_PER_TICK;
-      const next = Math.min(revealed + chunkSize, buf.length);
-      revealedRef.current = next;
-      setText(buf.slice(0, next));
-    }, TICK_INTERVAL_MS);
-  }, [stopDrip]);
+    const char = buf[revealed]!;
+    const upcoming = buf.slice(revealed + 1, revealed + 5);
+    const bufferLead = buf.length - revealed;
 
-  // Clean up interval on unmount
+    revealedRef.current = revealed + 1;
+    setText(buf.slice(0, revealed + 1));
+
+    const delay = calculateDelay(char, upcoming, bufferLead, streamDoneRef.current);
+    timerRef.current = setTimeout(dripTick, delay);
+  }, []);
+
+  const startDrip = useCallback(() => {
+    if (timerRef.current) return;
+    timerRef.current = setTimeout(dripTick, 0);
+  }, [dripTick]);
+
+  // Cleanup on unmount
   useEffect(() => stopDrip, [stopDrip]);
 
   const reset = useCallback(() => {
@@ -152,7 +226,6 @@ export function useDigestStream(): DigestStreamState {
                     bufferRef.current += chunk;
                     startDrip();
                   } else if (currentEvent === "done") {
-                    // Mark stream as done — drip will finalize when buffer drains
                     streamDoneRef.current = true;
                   } else if (currentEvent === "error" && typeof parsed.error === "string") {
                     throw new Error(parsed.error);

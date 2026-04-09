@@ -297,10 +297,37 @@ function StreamingDigest({
     return last?.key === key;
   };
 
+  // Manual scroll: only auto-scroll if the user is already near the bottom.
+  // Throttled via RAF to avoid jank from per-tick updates.
+  const lastScrollRef = useRef(0);
   useEffect(() => {
-    if (isStreaming && cursorRef.current) {
-      cursorRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
+    if (!isStreaming) return;
+
+    const now = performance.now();
+    // Throttle scroll checks to ~30Hz
+    if (now - lastScrollRef.current < 33) return;
+    lastScrollRef.current = now;
+
+    const rafId = requestAnimationFrame(() => {
+      const cursor = cursorRef.current;
+      if (!cursor) return;
+
+      const rect = cursor.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+
+      // Only scroll if cursor is below the visible area, and
+      // only if user hasn't scrolled up (near the bottom of page)
+      const pageBottom = window.scrollY + window.innerHeight;
+      const documentBottom = document.documentElement.scrollHeight;
+      const nearBottom = documentBottom - pageBottom < 200;
+
+      if (rect.bottom > viewportHeight - 80 && nearBottom) {
+        // Instant scroll — smooth fights the stream updates
+        cursor.scrollIntoView({ block: "end", behavior: "instant" as ScrollBehavior });
+      }
+    });
+
+    return () => cancelAnimationFrame(rafId);
   }, [text, isStreaming]);
 
   const cursor = <span ref={cursorRef} className="streaming-cursor" />;
