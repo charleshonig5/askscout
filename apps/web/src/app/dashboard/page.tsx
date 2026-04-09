@@ -239,6 +239,19 @@ export default function DashboardPage() {
     }
   }, [selectedRepo]);
 
+  // When a new stream begins, treat this digest as fresh: remove it from the
+  // revealed set so the animation plays from the start. This handles both
+  // first-time generation and "Try again" regeneration of a previously
+  // revealed repo.
+  useEffect(() => {
+    if (digestStream.isStreaming && selectedRepo) {
+      if (revealedReposRef.current.has(selectedRepo)) {
+        revealedReposRef.current.delete(selectedRepo);
+        forceUpdate({});
+      }
+    }
+  }, [digestStream.isStreaming, selectedRepo]);
+
   // Cache completed streams and refresh history
   useEffect(() => {
     if (digestStream.isDone && digestStream.text && selectedRepo) {
@@ -518,7 +531,10 @@ export default function DashboardPage() {
                   <DigestView
                     isStreaming={digestStream.isStreaming}
                     isLoading={isCheckingCache}
-                    animate={!revealedReposRef.current.has(selectedRepo)}
+                    animate={
+                      digestStream.isStreaming ||
+                      (digestStream.isDone && !revealedReposRef.current.has(selectedRepo))
+                    }
                     streamingText={currentSections?.digest ?? ""}
                     stats={
                       (digestStream.stats ||
