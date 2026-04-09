@@ -227,6 +227,9 @@ export default function DashboardPage() {
       setViewingHistoryStats(null);
       setActiveHistoryId(null);
       setNoNewCommits(null);
+      // Clear history so the no-commits effect can't use the previous repo's data
+      setHistoryRecords([]);
+      setHistory([]);
       void fetchHistory(selectedRepo);
       void loadOrGenerate(selectedRepo, "digest");
     }
