@@ -458,6 +458,13 @@ a:hover {
   animation: statsReveal 0.5s ease-out both;
 }
 
+/* Skip all reveal animations when this wrapper class is present
+   (e.g., returning to an already-generated digest). */
+.no-animation .stats-reveal-item,
+.no-animation .health-card-fill {
+  animation: none !important;
+}
+
 .digest-header {
   margin-bottom: var(--space-xl);
   display: flex;

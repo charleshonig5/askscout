@@ -488,12 +488,12 @@ interface DigestViewStats {
   pace?: { multiplier: number; label: string; todayCommits: number; avgCommits: number } | null;
 }
 
-function StatsCards({ stats }: { stats: DigestViewStats }) {
+function StatsCards({ stats, animate = true }: { stats: DigestViewStats; animate?: boolean }) {
   const fmt = (n: number) => n.toLocaleString("en-US");
-  const added = useCountUp(stats.linesAdded);
-  const removed = useCountUp(stats.linesRemoved);
-  const commits = useCountUp(stats.commits);
-  const files = useCountUp(stats.filesChanged);
+  const added = useCountUp(stats.linesAdded, 1000, animate);
+  const removed = useCountUp(stats.linesRemoved, 1000, animate);
+  const commits = useCountUp(stats.commits, 1000, animate);
+  const files = useCountUp(stats.filesChanged, 1000, animate);
   return (
     <div className="stats-row">
       <span className="stats-item positive">+{fmt(added)} lines</span>
@@ -636,7 +636,7 @@ export function DigestView({
 
   if (streamingText) {
     return (
-      <div>
+      <div className={animate ? "" : "no-animation"}>
         {/* Actions at the top (hide while streaming) */}
         {!isStreaming && (
           <div className="digest-actions-top">
@@ -669,7 +669,7 @@ export function DigestView({
               {"\ud83d\udcca"} Statistics
             </div>
             <div className="stats-reveal-item" style={{ animationDelay: "200ms" }}>
-              <StatsCards stats={stats} />
+              <StatsCards stats={stats} animate={animate} />
             </div>
             {stats.topFiles && (
               <div className="stats-reveal-item" style={{ animationDelay: "450ms" }}>

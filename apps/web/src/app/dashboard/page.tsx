@@ -47,6 +47,10 @@ export default function DashboardPage() {
   >({});
   const cachedDigestsRef = useRef(cachedDigests);
   cachedDigestsRef.current = cachedDigests;
+  // Track which repos have already completed their reveal animation in this
+  // session so switching away and back doesn't replay the typing/cascade.
+  const revealedReposRef = useRef<Set<string>>(new Set());
+  const [, forceUpdate] = useState({});
   const [isCheckingCache, setIsCheckingCache] = useState(false);
   const [noNewCommits, setNoNewCommits] = useState<{
     content: string;
@@ -246,6 +250,14 @@ export default function DashboardPage() {
         },
       }));
       void fetchHistory(selectedRepo);
+      // Mark this repo's reveal animation as complete after the full
+      // cascade has played (~3 seconds covers all staggered reveals).
+      const repo = selectedRepo;
+      const revealTimer = setTimeout(() => {
+        revealedReposRef.current.add(repo);
+        forceUpdate({});
+      }, 3000);
+      return () => clearTimeout(revealTimer);
     }
   }, [digestStream.isDone]);
 
@@ -506,7 +518,7 @@ export default function DashboardPage() {
                   <DigestView
                     isStreaming={digestStream.isStreaming}
                     isLoading={isCheckingCache}
-                    animate
+                    animate={!revealedReposRef.current.has(selectedRepo)}
                     streamingText={currentSections?.digest ?? ""}
                     stats={
                       (digestStream.stats ||

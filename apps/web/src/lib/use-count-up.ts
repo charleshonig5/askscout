@@ -2,13 +2,18 @@
 
 import { useState, useEffect, useRef } from "react";
 
-/** Animates a number from 0 to the target value over a duration */
-export function useCountUp(target: number, duration = 1000): number {
-  const [value, setValue] = useState(0);
+/** Animates a number from 0 to the target value over a duration.
+ *  When `enabled` is false, returns the target value immediately. */
+export function useCountUp(target: number, duration = 1000, enabled = true): number {
+  const [value, setValue] = useState(enabled ? 0 : target);
   const startTime = useRef<number | null>(null);
   const rafRef = useRef<number>(0);
 
   useEffect(() => {
+    if (!enabled) {
+      setValue(target);
+      return;
+    }
     if (target === 0) {
       setValue(0);
       return;
@@ -31,7 +36,7 @@ export function useCountUp(target: number, duration = 1000): number {
 
     rafRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [target, duration]);
+  }, [target, duration, enabled]);
 
   return value;
 }
