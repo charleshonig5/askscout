@@ -21,6 +21,11 @@ const MIN_DELAY_MS = 2;
 // Emojis that start a new digest section — trigger a longer pause before them
 const SECTION_EMOJI_PATTERN = /[\u{1F4AC}\u{1F680}\u{1F527}\u{1F501}\u{1F4CD}\u{1F415}]/u;
 
+// Closing Thoughts emoji — marks the end of the VISIBLE streaming narrative.
+// Content after this is rendered separately after Statistics, so we stop the
+// drip here to avoid an invisible "hang" while revealing closing text off-screen.
+const CLOSING_MARKER = "\ud83d\udc15"; // 🐕
+
 interface DigestStreamState {
   text: string;
   stats: DigestStats | null;
@@ -113,10 +118,16 @@ export function useDigestStream(): DigestStreamState {
     const buf = bufferRef.current;
     const revealed = revealedRef.current;
 
-    if (revealed >= buf.length) {
-      // Buffer drained
-      if (streamDoneRef.current) {
-        // Finalize — ensure text matches the full buffer
+    // Determine the visible end of the stream. If the Closing Thoughts marker
+    // is in the buffer, stop visible reveal there — everything after renders
+    // separately after Statistics.
+    const closingIdx = buf.indexOf(CLOSING_MARKER);
+    const visibleEnd = closingIdx !== -1 ? closingIdx : buf.length;
+
+    if (revealed >= visibleEnd) {
+      // We've revealed everything the user should see during streaming
+      if (streamDoneRef.current || closingIdx !== -1) {
+        // Expose the full buffer so the closing section can parse correctly
         setText(buf);
         setIsDone(true);
         setIsStreaming(false);
@@ -137,9 +148,9 @@ export function useDigestStream(): DigestStreamState {
 
     // The "character" we just revealed (full emoji or single ASCII char)
     const revealedChar = buf.slice(revealed, nextRevealed);
-    // Upcoming context for delay calculation
-    const upcoming = buf.slice(nextRevealed, nextRevealed + 6);
-    const bufferLead = buf.length - revealed;
+    // Upcoming context for delay calculation (limited to the visible portion)
+    const upcoming = buf.slice(nextRevealed, Math.min(nextRevealed + 6, visibleEnd));
+    const bufferLead = visibleEnd - revealed;
 
     revealedRef.current = nextRevealed;
     setText(buf.slice(0, nextRevealed));
