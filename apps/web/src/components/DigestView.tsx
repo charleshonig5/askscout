@@ -3,24 +3,55 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Copy, Check, Download, Mail, Sparkles, ClipboardList, Share2 } from "lucide-react";
 import { useCountUp } from "@/lib/use-count-up";
+import { calculateDelay, advanceBySurrogate } from "@/lib/typewriter-pace";
 
-/** Types out text character by character after an initial delay */
+/**
+ * Types out text one grapheme at a time with the same variable pacing as
+ * the main digest stream. Punctuation pauses, paragraph breaks, surrogate-safe.
+ */
 function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
   const [revealed, setRevealed] = useState(0);
   const [started, setStarted] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Initial delay before typing begins
   useEffect(() => {
     const timer = setTimeout(() => setStarted(true), delay);
     return () => clearTimeout(timer);
   }, [delay]);
 
+  // Variable-paced reveal loop
   useEffect(() => {
-    if (!started || revealed >= text.length) return;
-    const timer = setTimeout(() => {
-      setRevealed((r) => Math.min(r + 2, text.length));
-    }, 16);
-    return () => clearTimeout(timer);
-  }, [started, revealed, text.length]);
+    if (!started) return;
+
+    const tick = () => {
+      setRevealed((current) => {
+        if (current >= text.length) {
+          timerRef.current = null;
+          return current;
+        }
+
+        const advance = advanceBySurrogate(text, current);
+        const nextRevealed = current + advance;
+        const revealedChar = text.slice(current, nextRevealed);
+        const upcoming = text.slice(nextRevealed, nextRevealed + 6);
+
+        // Static text: no buffer lead, no streaming — just natural pacing
+        const nextDelay = calculateDelay(revealedChar, upcoming, 0, false);
+        timerRef.current = setTimeout(tick, nextDelay);
+        return nextRevealed;
+      });
+    };
+
+    timerRef.current = setTimeout(tick, 0);
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [started, text]);
 
   if (!started) return null;
 

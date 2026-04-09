@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import { calculateDelay, advanceBySurrogate } from "./typewriter-pace";
 
 export interface DigestStats {
   commits: number;
@@ -8,18 +9,6 @@ export interface DigestStats {
   linesAdded: number;
   linesRemoved: number;
 }
-
-// Variable pacing constants — designed for a premium, natural feel
-const BASE_CHAR_DELAY_MS = 14; // ~70 chars/sec baseline
-const SENTENCE_PAUSE_MS = 260;
-const CLAUSE_PAUSE_MS = 80;
-const LINE_BREAK_MS = 110;
-const PARAGRAPH_PAUSE_MS = 380;
-const SECTION_PAUSE_MS = 450;
-const MIN_DELAY_MS = 2;
-
-// Emojis that start a new digest section — trigger a longer pause before them
-const SECTION_EMOJI_PATTERN = /[\u{1F4AC}\u{1F680}\u{1F527}\u{1F501}\u{1F4CD}\u{1F415}]/u;
 
 // Closing Thoughts emoji — marks the end of the VISIBLE streaming narrative.
 // Content after this is rendered separately after Statistics, so we stop the
@@ -34,63 +23,6 @@ interface DigestStreamState {
   error: string | null;
   start: (owner: string, repo: string, mode?: string) => void;
   reset: () => void;
-}
-
-/**
- * Calculate delay to the next character reveal, based on the char that was
- * just revealed, upcoming content, buffer lead, and stream status.
- */
-function calculateDelay(
-  revealedChar: string,
-  upcoming: string,
-  bufferLead: number,
-  streamDone: boolean,
-): number {
-  let delay = BASE_CHAR_DELAY_MS;
-  const next = upcoming[0] ?? "";
-
-  // Punctuation pauses — only at real sentence/clause boundaries
-  if (revealedChar === "." || revealedChar === "!" || revealedChar === "?") {
-    if (next === " " || next === "\n" || next === "") {
-      delay = SENTENCE_PAUSE_MS;
-    }
-  } else if (revealedChar === "," || revealedChar === ";" || revealedChar === ":") {
-    delay = CLAUSE_PAUSE_MS;
-  } else if (revealedChar === "\n") {
-    delay = next === "\n" ? PARAGRAPH_PAUSE_MS : LINE_BREAK_MS;
-  }
-
-  // Section transition pause — if upcoming content starts with a section emoji,
-  // let the reader breathe before the new header appears
-  if (upcoming && SECTION_EMOJI_PATTERN.test(upcoming.slice(0, 3))) {
-    delay = Math.max(delay, SECTION_PAUSE_MS);
-  }
-
-  // Small random jitter (±10%) to avoid mechanical cadence
-  delay *= 0.9 + Math.random() * 0.2;
-
-  // Adaptive speed — if the LLM is streaming faster than we're revealing,
-  // gently speed up so we don't fall behind
-  if (bufferLead > 400) {
-    delay *= 0.35;
-  } else if (bufferLead > 200) {
-    delay *= 0.55;
-  } else if (bufferLead > 100) {
-    delay *= 0.75;
-  }
-
-  // Stream done — smoothly accelerate to finish, don't just dump
-  if (streamDone) {
-    // The larger the remaining buffer, the more we accelerate
-    const remaining = bufferLead;
-    if (remaining > 30) {
-      // Exponential ramp: from 0.5x at 30 remaining to 0.1x at 300+ remaining
-      const factor = Math.max(0.1, 0.5 - (remaining / 300) * 0.4);
-      delay *= factor;
-    }
-  }
-
-  return Math.max(MIN_DELAY_MS, delay);
 }
 
 export function useDigestStream(): DigestStreamState {
@@ -140,10 +72,7 @@ export function useDigestStream(): DigestStreamState {
     }
 
     // Handle surrogate pairs: emojis are 2 code units in UTF-16 strings.
-    // Advance by 2 if we're revealing a high surrogate so we never split an emoji.
-    const firstCode = buf.charCodeAt(revealed);
-    const isHighSurrogate = firstCode >= 0xd800 && firstCode <= 0xdbff;
-    const advance = isHighSurrogate ? 2 : 1;
+    const advance = advanceBySurrogate(buf, revealed);
     const nextRevealed = revealed + advance;
 
     // The "character" we just revealed (full emoji or single ASCII char)
