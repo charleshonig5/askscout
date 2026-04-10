@@ -274,9 +274,10 @@ export default function DashboardPage() {
     }
   }, [digestStream.isDone]);
 
-  // Handle "no commits" error by showing most recent digest
+  // Handle "no commits" error by showing most recent digest.
+  // Matches both "No commits found..." (first-run) and "No new commits..." (returning user).
   useEffect(() => {
-    if (!digestStream.error || !digestStream.error.toLowerCase().includes("no commits")) {
+    if (!digestStream.error || !/no (new )?commits/i.test(digestStream.error)) {
       return;
     }
 
@@ -517,7 +518,7 @@ export default function DashboardPage() {
                       >
                         Try again
                       </button>
-                      {digestStream.error.toLowerCase().includes("no commits") && (
+                      {/no (new )?commits/i.test(digestStream.error) && (
                         <button
                           className="btn btn-secondary"
                           onClick={() => void showLatestFromHistory()}
