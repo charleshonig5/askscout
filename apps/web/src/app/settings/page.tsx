@@ -13,8 +13,8 @@ const SECTION_OPTIONS = [
   { key: "leftOff", label: "Left Off", desc: "Where you stopped working" },
   {
     key: "oneTakeaway",
-    label: "One Takeaway",
-    desc: "One key insight to remember from your day",
+    label: "Key Takeaways",
+    desc: "Scout's sign-off with a specific observation and a nudge",
   },
   {
     key: "statistics",

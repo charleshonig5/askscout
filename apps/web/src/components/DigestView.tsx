@@ -255,7 +255,7 @@ const SECTION_MARKERS = [
   { key: "changed", emoji: "\ud83d\udd27", label: "Changed" },
   { key: "unstable", emoji: "\ud83d\udd01", label: "Still Shifting" },
   { key: "leftOff", emoji: "\ud83d\udccd", label: "Left Off" },
-  { key: "takeaway", emoji: "\ud83d\udd11", label: "One Takeaway" },
+  { key: "takeaway", emoji: "\ud83d\udd11", label: "Key Takeaways" },
   { key: "stats", emoji: "\ud83d\udcca", label: "Stats" },
 ] as const;
 
