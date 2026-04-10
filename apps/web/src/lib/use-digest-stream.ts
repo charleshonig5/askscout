@@ -10,10 +10,10 @@ export interface DigestStats {
   linesRemoved: number;
 }
 
-// Closing Thoughts emoji — marks the end of the VISIBLE streaming narrative.
+// One Takeaway emoji — marks the end of the VISIBLE streaming narrative.
 // Content after this is rendered separately after Statistics, so we stop the
-// drip here to avoid an invisible "hang" while revealing closing text off-screen.
-const CLOSING_MARKER = "\ud83d\udc15"; // 🐕
+// drip here to avoid an invisible "hang" while revealing takeaway text off-screen.
+const CLOSING_MARKER = "\ud83d\udd11"; // 🔑
 
 interface DigestStreamState {
   text: string;
@@ -50,7 +50,7 @@ export function useDigestStream(): DigestStreamState {
     const buf = bufferRef.current;
     const revealed = revealedRef.current;
 
-    // Determine the visible end of the stream. If the Closing Thoughts marker
+    // Determine the visible end of the stream. If the One Takeaway marker
     // is in the buffer, stop visible reveal there — everything after renders
     // separately after Statistics.
     const closingIdx = buf.indexOf(CLOSING_MARKER);

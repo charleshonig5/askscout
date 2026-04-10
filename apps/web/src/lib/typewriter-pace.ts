@@ -1,7 +1,7 @@
 "use client";
 
 // Shared variable-pacing logic for streaming text reveal.
-// Used by the digest stream drip and the Closing Thoughts typewriter so
+// Used by the digest stream drip and the One Takeaway typewriter so
 // both feel like the same hand writing.
 
 export const BASE_CHAR_DELAY_MS = 14; // ~70 chars/sec baseline
@@ -13,7 +13,7 @@ export const SECTION_PAUSE_MS = 450;
 export const MIN_DELAY_MS = 2;
 
 // Emojis that start a new digest section
-export const SECTION_EMOJI_PATTERN = /[\u{1F4AC}\u{1F680}\u{1F527}\u{1F501}\u{1F4CD}\u{1F415}]/u;
+export const SECTION_EMOJI_PATTERN = /[\u{1F4AC}\u{1F680}\u{1F527}\u{1F501}\u{1F4CD}\u{1F511}]/u;
 
 /**
  * Calculate delay to the next character reveal based on punctuation,

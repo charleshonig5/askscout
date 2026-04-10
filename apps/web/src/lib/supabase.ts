@@ -30,7 +30,7 @@ export interface DigestSections {
   changed: boolean;
   unstable: boolean;
   leftOff: boolean;
-  closingThoughts: boolean;
+  oneTakeaway: boolean;
   statistics: boolean;
   paceCheck: boolean;
   codebaseHealth: boolean;
@@ -42,7 +42,7 @@ export const DEFAULT_SECTIONS: DigestSections = {
   changed: true,
   unstable: true,
   leftOff: true,
-  closingThoughts: true,
+  oneTakeaway: true,
   statistics: true,
   paceCheck: true,
   codebaseHealth: true,

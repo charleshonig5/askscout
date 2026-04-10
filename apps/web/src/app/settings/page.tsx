@@ -12,9 +12,9 @@ const SECTION_OPTIONS = [
   { key: "unstable", label: "Still Shifting", desc: "Things that keep getting reworked" },
   { key: "leftOff", label: "Left Off", desc: "Where you stopped working" },
   {
-    key: "closingThoughts",
-    label: "Closing Thoughts",
-    desc: "Scout's sign-off with a nudge and a smile",
+    key: "oneTakeaway",
+    label: "One Takeaway",
+    desc: "One key insight to remember from your day",
   },
   {
     key: "statistics",

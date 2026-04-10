@@ -255,7 +255,7 @@ const SECTION_MARKERS = [
   { key: "changed", emoji: "\ud83d\udd27", label: "Changed" },
   { key: "unstable", emoji: "\ud83d\udd01", label: "Still Shifting" },
   { key: "leftOff", emoji: "\ud83d\udccd", label: "Left Off" },
-  { key: "closing", emoji: "\ud83d\udc15", label: "Closing Thoughts" },
+  { key: "takeaway", emoji: "\ud83d\udd11", label: "One Takeaway" },
   { key: "stats", emoji: "\ud83d\udcca", label: "Stats" },
 ] as const;
 
@@ -306,7 +306,7 @@ const sectionKeyMap: Record<string, string> = {
   changed: "changed",
   unstable: "unstable",
   leftOff: "leftOff",
-  closing: "closingThoughts",
+  takeaway: "oneTakeaway",
   stats: "statistics",
 };
 
@@ -389,7 +389,7 @@ function StreamingDigest({
           );
         }
 
-        if (section.key === "closing") {
+        if (section.key === "takeaway") {
           return (
             <div key={section.key} className="digest-section">
               <div className="digest-section-title">
@@ -648,7 +648,7 @@ export function DigestView({
         <StreamingDigest
           text={streamingText}
           isStreaming={isStreaming}
-          visibleSections={{ ...visibleSections, closingThoughts: false }}
+          visibleSections={{ ...visibleSections, oneTakeaway: false }}
           afterLeftOff={
             onResumeWithAI ? (
               <button className="resume-ai-btn" onClick={onResumeWithAI}>
@@ -658,7 +658,7 @@ export function DigestView({
           }
         />
 
-        {/* Statistics → Pace Check → Codebase Health → Closing Thoughts
+        {/* Statistics → Pace Check → Codebase Health → One Takeaway
             cascade in that order when streaming finishes */}
         {!isStreaming && vis("statistics") && stats && (
           <div className="digest-section stats-reveal">
@@ -716,27 +716,27 @@ export function DigestView({
           </div>
         )}
 
-        {/* Closing Thoughts — comes last, after all data sections */}
+        {/* One Takeaway — comes last, after all data sections */}
         {!isStreaming &&
-          vis("closingThoughts") &&
+          vis("oneTakeaway") &&
           (() => {
-            const closingSection = parseStreamingSections(streamingText).find(
-              (s) => s.key === "closing",
+            const takeawaySection = parseStreamingSections(streamingText).find(
+              (s) => s.key === "takeaway",
             );
-            if (!closingSection) return null;
+            if (!takeawaySection) return null;
             return (
               <div
                 className="digest-section stats-reveal-item"
                 style={{ animationDelay: "2200ms" }}
               >
                 <div className="digest-section-title">
-                  {closingSection.emoji} {closingSection.label}
+                  {takeawaySection.emoji} {takeawaySection.label}
                 </div>
                 <p className="formatted-paragraph">
                   {animate ? (
-                    <TypewriterText text={closingSection.content} delay={2400} />
+                    <TypewriterText text={takeawaySection.content} delay={2400} />
                   ) : (
-                    closingSection.content
+                    takeawaySection.content
                   )}
                 </p>
               </div>
