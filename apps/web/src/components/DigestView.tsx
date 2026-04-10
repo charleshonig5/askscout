@@ -511,6 +511,27 @@ function StatsCards({ stats, animate = true }: { stats: DigestViewStats; animate
   );
 }
 
+function PaceCard({
+  pace,
+  animate = true,
+}: {
+  pace: { multiplier: number; label: string; todayCommits: number; avgCommits: number };
+  animate?: boolean;
+}) {
+  const multiplier = useCountUp(pace.multiplier, 1000, animate, 1);
+  return (
+    <div className="pace-card stats-reveal-item" style={{ animationDelay: "1000ms" }}>
+      <div className="pace-multiplier">{multiplier.toFixed(1)}x</div>
+      <div className="pace-detail">
+        <div className="pace-label">{pace.label}</div>
+        <div className="pace-comparison">
+          {pace.todayCommits} commits today {"\u00b7"} {pace.avgCommits}-commit average
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function TopFiles({ files }: { files: TopFile[] }) {
   if (files.length === 0) return null;
   const fmt = (n: number) => n.toLocaleString("en-US");
@@ -688,16 +709,7 @@ export function DigestView({
             >
               {"\u26a1"} Pace Check
             </div>
-            <div className="pace-card stats-reveal-item" style={{ animationDelay: "1000ms" }}>
-              <div className="pace-multiplier">{stats.pace.multiplier}x</div>
-              <div className="pace-detail">
-                <div className="pace-label">{stats.pace.label}</div>
-                <div className="pace-comparison">
-                  {stats.pace.todayCommits} commits today {"\u00b7"} {stats.pace.avgCommits}-commit
-                  average
-                </div>
-              </div>
-            </div>
+            <PaceCard pace={stats.pace} animate={animate} />
           </div>
         )}
 
