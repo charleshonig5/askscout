@@ -6,6 +6,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { DigestView } from "@/components/DigestView";
 import { AIContextModal } from "@/components/AIContextModal";
 import { StandupModal } from "@/components/StandupModal";
+import { PlanModal } from "@/components/PlanModal";
 import { useDigestStream } from "@/lib/use-digest-stream";
 import { parseSections } from "@/lib/parse-sections";
 
@@ -41,6 +42,7 @@ export default function DashboardPage() {
   const digestStream = useDigestStream();
   const [aiContextOpen, setAiContextOpen] = useState(false);
   const [standupOpen, setStandupOpen] = useState(false);
+  const [planOpen, setPlanOpen] = useState(false);
   const lastRepoRef = useRef("");
   const [cachedDigests, setCachedDigests] = useState<
     Record<string, { content: string; stats: Record<string, unknown> | null }>
@@ -485,6 +487,7 @@ export default function DashboardPage() {
                   visibleSections={digestSectionPrefs ?? undefined}
                   onResumeWithAI={() => setAiContextOpen(true)}
                   onGenerateStandup={() => setStandupOpen(true)}
+                  onGeneratePlan={() => setPlanOpen(true)}
                 />
               </>
             ) : isViewingHistory ? (
@@ -504,6 +507,7 @@ export default function DashboardPage() {
                   visibleSections={digestSectionPrefs ?? undefined}
                   onResumeWithAI={() => setAiContextOpen(true)}
                   onGenerateStandup={() => setStandupOpen(true)}
+                  onGeneratePlan={() => setPlanOpen(true)}
                 />
               </>
             ) : (
@@ -544,6 +548,7 @@ export default function DashboardPage() {
                     }
                     onResumeWithAI={() => setAiContextOpen(true)}
                     onGenerateStandup={() => setStandupOpen(true)}
+                    onGeneratePlan={() => setPlanOpen(true)}
                   />
                 )}
               </>
@@ -562,6 +567,12 @@ export default function DashboardPage() {
         isOpen={standupOpen}
         onClose={() => setStandupOpen(false)}
         content={currentSections?.standup || null}
+      />
+
+      <PlanModal
+        isOpen={planOpen}
+        onClose={() => setPlanOpen(false)}
+        content={currentSections?.plan || null}
       />
     </div>
   );

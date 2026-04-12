@@ -1,7 +1,16 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { Copy, Check, Download, Mail, Sparkles, ClipboardList, Share2 } from "lucide-react";
+import {
+  Copy,
+  Check,
+  Download,
+  Mail,
+  Sparkles,
+  ClipboardList,
+  Share2,
+  ListChecks,
+} from "lucide-react";
 import { useCountUp } from "@/lib/use-count-up";
 import { calculateDelay, advanceBySurrogate } from "@/lib/typewriter-pace";
 
@@ -570,6 +579,7 @@ interface DigestViewProps {
   visibleSections?: Record<string, boolean>;
   onResumeWithAI?: () => void;
   onGenerateStandup?: () => void;
+  onGeneratePlan?: () => void;
 }
 
 function levelColor(level: string): string {
@@ -645,6 +655,7 @@ export function DigestView({
   visibleSections,
   onResumeWithAI,
   onGenerateStandup,
+  onGeneratePlan,
 }: DigestViewProps) {
   const vis = (key: string) => !visibleSections || visibleSections[key] !== false;
   if (isLoading) {
@@ -755,11 +766,20 @@ export function DigestView({
             );
           })()}
 
-        {/* Standup button at the bottom (hide while streaming) */}
-        {!isStreaming && onGenerateStandup && (
-          <button className="standup-btn" onClick={onGenerateStandup}>
-            <ClipboardList size={14} /> Generate Standup
-          </button>
+        {/* Action buttons at the bottom (hide while streaming) */}
+        {!isStreaming && (onGenerateStandup || onGeneratePlan) && (
+          <div className="digest-bottom-actions">
+            {onGenerateStandup && (
+              <button className="standup-btn" onClick={onGenerateStandup}>
+                <ClipboardList size={14} /> Generate Standup
+              </button>
+            )}
+            {onGeneratePlan && (
+              <button className="standup-btn" onClick={onGeneratePlan}>
+                <ListChecks size={14} /> Today&apos;s Plan
+              </button>
+            )}
+          </div>
         )}
       </div>
     );

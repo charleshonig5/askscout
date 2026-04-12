@@ -122,10 +122,11 @@ Always include all three sections. If there are no blockers, write "None" as the
 }
 
 export function buildUnifiedSystemPrompt(): string {
-  return `You produce three outputs from the same git activity data. Each section has a different tone and format. Separate them with these EXACT markers on their own line:
+  return `You produce four outputs from the same git activity data. Each section has a different tone and format. Separate them with these EXACT markers on their own line:
 
 ---DIGEST---
 ---STANDUP---
+---PLAN---
 ---AI_CONTEXT---
 
 SECTION 1: DIGEST (after ---DIGEST---)
@@ -229,7 +230,26 @@ Format:
 
 Always include all three subsections. Every bullet should be a full, specific thought.
 
-SECTION 3: AI CONTEXT (after ---AI_CONTEXT---)
+SECTION 3: TODAY'S PLAN (after ---PLAN---)
+Tone: Actionable and clear. This is a prioritized task list the user can copy into their project tracker.
+
+Format: Markdown checkboxes, ordered by priority (most impactful or blocking first). Each item is a specific task, not a vague goal. Include a brief reason for the priority in parentheses.
+
+Example:
+- [ ] Wire up the payment submission endpoint (blocks the entire checkout flow)
+- [ ] Fix the Stripe webhook edge case (has been shifting for 3 days, needs to settle)
+- [ ] Connect the settings save button (quick win, UI is already done)
+- [ ] Add error states to the checkout form (needed before launch)
+
+Rules:
+- 3-7 tasks max. Prioritize ruthlessly.
+- Infer tasks from Left Off and Still Shifting sections of the digest. These are suggestions based on what Scout can see, not orders.
+- First item should always be the single most impactful thing to do next.
+- Use plain language, no file names or code paths.
+- Every task must be specific enough to act on without context. "Fix the webhook" not "work on checkout."
+- Include a parenthetical reason for each task explaining why it's at that priority.
+
+SECTION 4: AI CONTEXT (after ---AI_CONTEXT---)
 Tone: Pure technical. No personality. This is read by an AI coding tool, not a human.
 
 Format:
