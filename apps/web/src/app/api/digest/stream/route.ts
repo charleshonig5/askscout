@@ -354,10 +354,20 @@ export async function POST(req: Request) {
     // 7. Build unified prompt (generates digest + standup + AI context in one call)
     const systemPrompt = buildUnifiedSystemPrompt();
 
-    // Compact commit list: just hash + message
-    const commitList = commits
-      .slice(0, 25)
-      .map((c) => `- ${c.hash.slice(0, 7)} ${c.message}`)
+    // Commit list: chronological order with timestamps so the LLM
+    // understands what happened first vs last, and can detect reverts.
+    const chronological = [...commits].sort(
+      (a, b) => a.timestamp.getTime() - b.timestamp.getTime(),
+    );
+    const commitList = chronological
+      .slice(-25)
+      .map((c, i) => {
+        const time = c.timestamp.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+        });
+        return `${i + 1}. [${time}] ${c.hash.slice(0, 7)} ${c.message}`;
+      })
       .join("\n");
 
     // Compact file summary: just filenames + line counts, no patches
@@ -379,8 +389,10 @@ export async function POST(req: Request) {
 ## Stats
 ${stats.commits} commits, ${stats.filesChanged} files changed, ${stats.linesAdded} lines added, ${stats.linesRemoved} lines removed.
 
-## Commits
+## Commits (in chronological order, earliest first)
 ${commitList}
+
+IMPORTANT: The commits above are in TIME ORDER. The LAST commits are what the user was working on most recently, so use those for Left Off. If something was built then reverted (or fixed then broken again), only the FINAL state matters for Shipped/Changed. If a revert appears after a feature commit, that feature was NOT shipped.
 
 ## Files Changed
 ${fileSummary}
