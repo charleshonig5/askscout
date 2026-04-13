@@ -370,11 +370,19 @@ export async function POST(req: Request) {
       })
       .join("\n");
 
-    // Compact file summary: just filenames + line counts, no patches
+    // File changes with actual diff content so the LLM can see WHAT changed,
+    // not just which files. Patches are already truncated to 12K chars total
+    // by fetchDiffs, so this is safe for the token budget.
     const fileSummary = diffs
-      .slice(0, 30)
-      .map((d) => `- ${d.file} (+${d.additions}/-${d.deletions})`)
-      .join("\n");
+      .slice(0, 20)
+      .map((d) => {
+        let entry = `### ${d.file} (+${d.additions}/-${d.deletions})`;
+        if (d.patch) {
+          entry += `\n\`\`\`\n${d.patch}\n\`\`\``;
+        }
+        return entry;
+      })
+      .join("\n\n");
 
     // Build churn data for the LLM
     const churnList = [...fileFrequency.entries()]
@@ -394,7 +402,9 @@ ${commitList}
 
 IMPORTANT: The commits above are in TIME ORDER. The LAST commits are what the user was working on most recently, so use those for Left Off. If something was built then reverted (or fixed then broken again), only the FINAL state matters for Shipped/Changed. If a revert appears after a feature commit, that feature was NOT shipped.
 
-## Files Changed
+## What Changed (file diffs)
+Use these diffs to understand WHAT was actually built, changed, or fixed. Don't just rely on commit messages. The code tells the real story.
+
 ${fileSummary}
 ${churnList ? `\n## Churn (files edited 3+ times — these are your Still Shifting candidates)\n${churnList}` : ""}
 
@@ -458,7 +468,7 @@ async function streamOpenAI(
     body: JSON.stringify({
       model: "gpt-5.4-nano",
       stream: true,
-      max_completion_tokens: 1024,
+      max_completion_tokens: 2048,
       temperature: 0.2,
       frequency_penalty: 0.8,
       presence_penalty: 0.3,
