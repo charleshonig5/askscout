@@ -1,8 +1,73 @@
 /**
- * Simple in-memory rate limiter.
- * For production at scale, swap this for Redis-based limiting.
- * This works fine for a single Vercel serverless instance.
+ * Rate limiting for askscout.
+ *
+ * Digest rate limits use Supabase (counting saved digests), so they
+ * persist across Vercel instances and cold starts.
+ *
+ * Repo listing uses a simple in-memory limiter (low-risk, fires often,
+ * doesn't need cross-instance persistence).
  */
+
+import { supabase } from "./supabase";
+
+// ============================================
+// Supabase-backed rate limiting (for digests)
+// ============================================
+
+interface DigestRateLimitResult {
+  allowed: boolean;
+  remaining: number;
+}
+
+/**
+ * Check digest rate limits by counting recent digests in Supabase.
+ * Shared across all Vercel instances — no cold-start reset.
+ */
+export async function checkDigestRateLimit(userId: string): Promise<{
+  hourly: DigestRateLimitResult;
+  daily: DigestRateLimitResult;
+}> {
+  if (!supabase) {
+    return {
+      hourly: { allowed: true, remaining: 10 },
+      daily: { allowed: true, remaining: 30 },
+    };
+  }
+
+  const hourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+  const [hourlyResult, dailyResult] = await Promise.all([
+    supabase
+      .from("digests")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .gte("created_at", hourAgo),
+    supabase
+      .from("digests")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .gte("created_at", dayAgo),
+  ]);
+
+  const hourlyCount = hourlyResult.count ?? 0;
+  const dailyCount = dailyResult.count ?? 0;
+
+  return {
+    hourly: {
+      allowed: hourlyCount < 10,
+      remaining: Math.max(0, 10 - hourlyCount),
+    },
+    daily: {
+      allowed: dailyCount < 30,
+      remaining: Math.max(0, 30 - dailyCount),
+    },
+  };
+}
+
+// ============================================
+// In-memory rate limiting (for repo listing)
+// ============================================
 
 interface RateLimitEntry {
   count: number;
@@ -23,9 +88,7 @@ setInterval(
 );
 
 interface RateLimitConfig {
-  /** Max requests allowed in the window */
   limit: number;
-  /** Window duration in milliseconds */
   windowMs: number;
 }
 
@@ -35,37 +98,24 @@ interface RateLimitResult {
   resetAt: number;
 }
 
-/**
- * Check if a request is within rate limits.
- * Returns whether the request is allowed and how many remain.
- */
 export function checkRateLimit(key: string, config: RateLimitConfig): RateLimitResult {
   const now = Date.now();
   const entry = store.get(key);
 
-  // No entry or expired window, start fresh
   if (!entry || entry.resetAt <= now) {
     const resetAt = now + config.windowMs;
     store.set(key, { count: 1, resetAt });
     return { allowed: true, remaining: config.limit - 1, resetAt };
   }
 
-  // Within window, check count
   if (entry.count >= config.limit) {
     return { allowed: false, remaining: 0, resetAt: entry.resetAt };
   }
 
-  // Increment and allow
   entry.count++;
   return { allowed: true, remaining: config.limit - entry.count, resetAt: entry.resetAt };
 }
 
-/** Rate limit presets */
 export const RATE_LIMITS = {
-  /** Digest generation: 10 per hour per user */
-  digestPerHour: { limit: 10, windowMs: 60 * 60 * 1000 },
-  /** Digest generation: 30 per day per user */
-  digestPerDay: { limit: 30, windowMs: 24 * 60 * 60 * 1000 },
-  /** Repo listing: 30 per minute per user */
   reposPerMinute: { limit: 30, windowMs: 60 * 1000 },
 } as const;

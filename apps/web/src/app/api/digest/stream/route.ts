@@ -1,6 +1,6 @@
 import { auth, getUserId } from "@/auth";
 import { fetchCommits, fetchDiffs } from "@/lib/github";
-import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
+import { checkDigestRateLimit } from "@/lib/rate-limit";
 import {
   saveDigest,
   getLastRunTime,
@@ -22,36 +22,21 @@ export async function POST(req: Request) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // 2. Rate limiting (per stable user ID)
+  // 2. Rate limiting — Supabase-backed (persists across instances)
   const rateLimitId = session.user?.id ?? session.user?.email ?? "anon";
-  const hourly = checkRateLimit(`digest:hour:${rateLimitId}`, RATE_LIMITS.digestPerHour);
-  const daily = checkRateLimit(`digest:day:${rateLimitId}`, RATE_LIMITS.digestPerDay);
+  const { hourly, daily } = await checkDigestRateLimit(rateLimitId);
 
   if (!hourly.allowed) {
     return Response.json(
       { error: "Rate limit exceeded. You can generate up to 10 digests per hour." },
-      {
-        status: 429,
-        headers: {
-          "Retry-After": String(Math.ceil((hourly.resetAt - Date.now()) / 1000)),
-          "X-RateLimit-Limit": "10",
-          "X-RateLimit-Remaining": "0",
-        },
-      },
+      { status: 429 },
     );
   }
 
   if (!daily.allowed) {
     return Response.json(
       { error: "Daily limit reached. You can generate up to 30 digests per day." },
-      {
-        status: 429,
-        headers: {
-          "Retry-After": String(Math.ceil((daily.resetAt - Date.now()) / 1000)),
-          "X-RateLimit-Limit": "30",
-          "X-RateLimit-Remaining": "0",
-        },
-      },
+      { status: 429 },
     );
   }
 
