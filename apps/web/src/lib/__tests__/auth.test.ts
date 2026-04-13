@@ -28,12 +28,7 @@ describe("getUserId", () => {
   });
 
   it("never returns 'unknown'", () => {
-    const cases = [
-      { user: {} },
-      { user: { email: null } },
-      {},
-      { user: undefined },
-    ];
+    const cases = [{ user: {} }, { user: { email: null } }, {}, { user: undefined }];
     for (const session of cases) {
       const result = getUserId(session);
       expect(result).not.toBe("unknown");
