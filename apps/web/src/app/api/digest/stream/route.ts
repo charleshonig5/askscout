@@ -370,15 +370,30 @@ export async function POST(req: Request) {
       })
       .join("\n");
 
-    // File changes with actual diff content so the LLM can see WHAT changed,
-    // not just which files. Patches are already truncated to 12K chars total
-    // by fetchDiffs, so this is safe for the token budget.
+    // File changes with actual diff patches so the LLM can see WHAT changed.
+    // Sanitize patches: strip non-printable chars, cap per-file size, limit total.
+    const MAX_PATCH_PER_FILE = 800;
+    const MAX_TOTAL_PATCH = 8000;
+    let totalPatchChars = 0;
+
     const fileSummary = diffs
-      .slice(0, 20)
+      .slice(0, 15)
       .map((d) => {
         let entry = `### ${d.file} (+${d.additions}/-${d.deletions})`;
-        if (d.patch) {
-          entry += `\n\`\`\`\n${d.patch}\n\`\`\``;
+        if (d.patch && totalPatchChars < MAX_TOTAL_PATCH) {
+          // Sanitize: strip non-printable chars except newlines/tabs
+          // eslint-disable-next-line no-control-regex
+          let clean = d.patch.replace(/[^\x09\x0A\x0D\x20-\x7E]/g, "");
+          // Cap per-file
+          if (clean.length > MAX_PATCH_PER_FILE) {
+            clean = clean.slice(0, MAX_PATCH_PER_FILE) + "\n... (truncated)";
+          }
+          // Cap total
+          if (totalPatchChars + clean.length > MAX_TOTAL_PATCH) {
+            clean = clean.slice(0, MAX_TOTAL_PATCH - totalPatchChars) + "\n... (truncated)";
+          }
+          totalPatchChars += clean.length;
+          entry += `\n${clean}`;
         }
         return entry;
       })
