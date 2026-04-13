@@ -41,7 +41,7 @@ The full product requirements document is at `~/Desktop/PRD.md`. Always refer to
 
 - AI models: Claude Haiku (Anthropic) or GPT-4o-mini (OpenAI) — cheapest that work
 - CLI: BYOK (bring your own key), auto-detect provider from key format
-- Web: GitHub OAuth, Firebase for storage, hosted API key
+- Web: GitHub OAuth, Supabase for storage, hosted API key
 - Three output modes: digest (default), resume prompt (--resume), standup (--standup)
 - Project state: `.askscout/state.json` per project, rewritten each run (not appended)
 
