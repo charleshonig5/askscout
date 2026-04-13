@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { auth, getUserId } from "@/auth";
 import { fetchUserRepos } from "@/lib/github";
 import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 
@@ -8,9 +8,13 @@ export async function GET() {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Rate limit
-  const userKey = session.accessToken.slice(-10);
-  const result = checkRateLimit(`repos:${userKey}`, RATE_LIMITS.reposPerMinute);
+  const userId = getUserId(session);
+  if (!userId) {
+    return Response.json({ error: "Unable to identify user" }, { status: 401 });
+  }
+
+  // Rate limit by stable user ID, not token fragment
+  const result = checkRateLimit(`repos:${userId}`, RATE_LIMITS.reposPerMinute);
   if (!result.allowed) {
     return Response.json({ error: "Too many requests" }, { status: 429 });
   }

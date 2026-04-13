@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { auth, getUserId } from "@/auth";
 import { fetchCommits, fetchDiffs } from "@/lib/github";
 import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 import {
@@ -22,10 +22,10 @@ export async function POST(req: Request) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // 2. Rate limiting (per user, by access token hash)
-  const userKey = session.accessToken.slice(-10); // last 10 chars as identifier
-  const hourly = checkRateLimit(`digest:hour:${userKey}`, RATE_LIMITS.digestPerHour);
-  const daily = checkRateLimit(`digest:day:${userKey}`, RATE_LIMITS.digestPerDay);
+  // 2. Rate limiting (per stable user ID)
+  const rateLimitId = session.user?.id ?? session.user?.email ?? "anon";
+  const hourly = checkRateLimit(`digest:hour:${rateLimitId}`, RATE_LIMITS.digestPerHour);
+  const daily = checkRateLimit(`digest:day:${rateLimitId}`, RATE_LIMITS.digestPerDay);
 
   if (!hourly.allowed) {
     return Response.json(
@@ -75,7 +75,10 @@ export async function POST(req: Request) {
 
   try {
     // 4. Determine time range: returning user vs first run
-    const userId = session.user?.id ?? session.user?.email ?? "unknown";
+    const userId = getUserId(session);
+    if (!userId) {
+      return Response.json({ error: "Unable to identify user" }, { status: 401 });
+    }
     const repoFullName = `${owner}/${repo}`;
     const [lastRun, projectContext] = await Promise.all([
       getLastRunTime(userId, repoFullName),

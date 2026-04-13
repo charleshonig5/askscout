@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { auth, getUserId } from "@/auth";
 import { getDigestHistory } from "@/lib/supabase";
 
 export async function GET(req: Request) {
@@ -13,7 +13,10 @@ export async function GET(req: Request) {
     return Response.json({ error: "Missing repo param" }, { status: 400 });
   }
 
-  const userId = session.user?.id ?? session.user?.email ?? "unknown";
+  const userId = getUserId(session);
+  if (!userId) {
+    return Response.json({ error: "Unable to identify user" }, { status: 401 });
+  }
 
   try {
     const history = await getDigestHistory(userId, repo);

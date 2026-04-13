@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { auth, getUserId } from "@/auth";
 import { deleteAllDigests, deleteRepoDigests, deleteUserAccount } from "@/lib/supabase";
 
 /** Delete history or account */
@@ -7,7 +7,10 @@ export async function DELETE(req: Request) {
   if (!session?.accessToken) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const userId = session.user?.id ?? session.user?.email ?? "unknown";
+  const userId = getUserId(session);
+  if (!userId) {
+    return Response.json({ error: "Unable to identify user" }, { status: 401 });
+  }
 
   const url = new URL(req.url);
   const action = url.searchParams.get("action");

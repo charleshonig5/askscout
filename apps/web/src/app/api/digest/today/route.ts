@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { auth, getUserId } from "@/auth";
 import { getTodaysDigest } from "@/lib/supabase";
 
 /** Check if today's digest already exists for a user+repo+mode */
@@ -17,7 +17,10 @@ export async function GET(req: Request) {
     return Response.json({ error: "Missing repo param" }, { status: 400 });
   }
 
-  const userId = session.user?.id ?? session.user?.email ?? "unknown";
+  const userId = getUserId(session);
+  if (!userId) {
+    return Response.json({ error: "Unable to identify user" }, { status: 401 });
+  }
 
   try {
     const existing = await getTodaysDigest(userId, repo, mode, tzOffset);
