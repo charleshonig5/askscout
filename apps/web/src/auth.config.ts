@@ -17,14 +17,21 @@ const authConfig: NextAuthConfig = {
       return token;
     },
     session({ session, token }) {
-      // Access token is available server-side via auth() but NOT sent to the browser
-      // The SessionProvider only gets user name/email/image
-      session.accessToken = token.accessToken as string;
+      // Make accessToken non-enumerable so it's available server-side via auth()
+      // but NOT serialized to JSON for the browser session endpoint.
+      // Server: auth() returns the object in memory — property is accessible.
+      // Client: /api/auth/session serializes to JSON — non-enumerable = stripped.
+      Object.defineProperty(session, "accessToken", {
+        value: token.accessToken as string,
+        enumerable: false,
+        writable: false,
+      });
       return session;
     },
     authorized({ auth: authSession, request }) {
       const isLoggedIn = !!authSession?.user;
-      const isProtected = request.nextUrl.pathname.startsWith("/dashboard");
+      const path = request.nextUrl.pathname;
+      const isProtected = path.startsWith("/dashboard") || path.startsWith("/settings");
       if (isProtected && !isLoggedIn) return false;
       return true;
     },
