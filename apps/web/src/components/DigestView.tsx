@@ -59,7 +59,6 @@ function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
         timerRef.current = null;
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [started, text]);
 
   if (!started) return null;
@@ -72,8 +71,7 @@ function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function buildFullMarkdown(text: string, stats?: any): string {
+function buildFullMarkdown(text: string, stats?: DigestViewStats | null): string {
   let md = text;
   if (!stats) return md;
 
@@ -83,10 +81,9 @@ function buildFullMarkdown(text: string, stats?: any): string {
     lines.push(
       `+${fmt(stats.linesAdded ?? 0)} lines · -${fmt(stats.linesRemoved ?? 0)} lines · ${fmt(stats.commits)} commits · ${fmt(stats.filesChanged ?? 0)} files`,
     );
-  if (stats.topFiles?.length > 0) {
+  if ((stats.topFiles?.length ?? 0) > 0) {
     lines.push("\n### Most Active Files\n");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    stats.topFiles.forEach((f: any, i: number) => {
+    stats.topFiles!.forEach((f, i) => {
       lines.push(
         `${i + 1}. ${f.file} (+${fmt(f.added ?? 0)} / -${fmt(f.removed ?? 0)}, ${f.commits} commits)`,
       );
@@ -108,8 +105,7 @@ function DownloadBtn({
   repoName,
 }: {
   text: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  stats?: any;
+  stats?: DigestViewStats | null;
   repoName?: string;
 }) {
   const handleDownload = useCallback(() => {
@@ -219,8 +215,7 @@ function DigestActions({
   repoName,
 }: {
   text: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  stats?: any;
+  stats?: DigestViewStats | null;
   repoName?: string;
 }) {
   return (
@@ -482,7 +477,7 @@ interface TopFile {
   removed?: number;
 }
 
-interface DigestViewStats {
+export interface DigestViewStats {
   commits: number;
   filesChanged: number;
   linesAdded: number;
@@ -573,8 +568,7 @@ interface DigestViewProps {
   isLoading?: boolean;
   animate?: boolean;
   streamingText: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  stats: any;
+  stats: DigestViewStats | null;
   repoName?: string;
   visibleSections?: Record<string, boolean>;
   onResumeWithAI?: () => void;

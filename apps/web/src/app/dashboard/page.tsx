@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
-import { DigestView } from "@/components/DigestView";
+import { DigestView, type DigestViewStats } from "@/components/DigestView";
 import { AIContextModal } from "@/components/AIContextModal";
 import { StandupModal } from "@/components/StandupModal";
 import { PlanModal } from "@/components/PlanModal";
@@ -45,7 +45,7 @@ export default function DashboardPage() {
   const [planOpen, setPlanOpen] = useState(false);
   const lastRepoRef = useRef("");
   const [cachedDigests, setCachedDigests] = useState<
-    Record<string, { content: string; stats: Record<string, unknown> | null }>
+    Record<string, { content: string; stats: DigestViewStats | null }>
   >({});
   const cachedDigestsRef = useRef(cachedDigests);
   cachedDigestsRef.current = cachedDigests;
@@ -186,7 +186,13 @@ export default function DashboardPage() {
       }
 
       if (cached) {
-        setCachedDigests((prev) => ({ ...prev, [cacheKey]: cached }));
+        setCachedDigests((prev) => ({
+          ...prev,
+          [cacheKey]: {
+            content: cached.content,
+            stats: cached.stats as DigestViewStats | null,
+          },
+        }));
         setIsCheckingCache(false);
         return;
       }
@@ -261,7 +267,7 @@ export default function DashboardPage() {
         ...prev,
         [`${selectedRepo}:digest`]: {
           content: digestStream.text,
-          stats: digestStream.stats as Record<string, unknown> | null,
+          stats: digestStream.stats as DigestViewStats | null,
         },
       }));
       void fetchHistory(selectedRepo);
@@ -482,7 +488,7 @@ export default function DashboardPage() {
                 <DigestView
                   isStreaming={false}
                   streamingText={currentSections?.digest ?? noNewCommits.content}
-                  stats={noNewCommits.stats}
+                  stats={noNewCommits.stats as DigestViewStats | null}
                   repoName={repoName}
                   visibleSections={digestSectionPrefs ?? undefined}
                   onResumeWithAI={() => setAiContextOpen(true)}
@@ -502,7 +508,7 @@ export default function DashboardPage() {
                 <DigestView
                   isStreaming={false}
                   streamingText={currentSections?.digest ?? viewingHistoryContent ?? ""}
-                  stats={viewingHistoryStats}
+                  stats={viewingHistoryStats as DigestViewStats | null}
                   repoName={repoName}
                   visibleSections={digestSectionPrefs ?? undefined}
                   onResumeWithAI={() => setAiContextOpen(true)}
@@ -544,7 +550,7 @@ export default function DashboardPage() {
                     stats={
                       (digestStream.stats ||
                         cachedDigests[`${selectedRepo}:digest`]?.stats ||
-                        null) as Record<string, unknown> | null
+                        null) as DigestViewStats | null
                     }
                     onResumeWithAI={() => setAiContextOpen(true)}
                     onGenerateStandup={() => setStandupOpen(true)}
