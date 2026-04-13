@@ -1,7 +1,13 @@
 import { auth } from "@/auth";
 import { fetchCommits, fetchDiffs } from "@/lib/github";
 import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
-import { saveDigest, getLastRunTime, getDigestHistory } from "@/lib/supabase";
+import {
+  saveDigest,
+  getLastRunTime,
+  getDigestHistory,
+  getProjectSummary,
+  saveProjectSummary,
+} from "@/lib/supabase";
 import { buildUnifiedSystemPrompt } from "@askscout/core";
 
 export const maxDuration = 60;
@@ -71,7 +77,10 @@ export async function POST(req: Request) {
     // 4. Determine time range: returning user vs first run
     const userId = session.user?.id ?? session.user?.email ?? "unknown";
     const repoFullName = `${owner}/${repo}`;
-    const lastRun = await getLastRunTime(userId, repoFullName);
+    const [lastRun, projectContext] = await Promise.all([
+      getLastRunTime(userId, repoFullName),
+      getProjectSummary(userId, repoFullName),
+    ]);
 
     let commits: Awaited<ReturnType<typeof fetchCommits>> = [];
 
@@ -407,7 +416,14 @@ export async function POST(req: Request) {
       .map(([file, count]) => `- ${file} (${count} commits)`)
       .join("\n");
 
+    const previousContext = projectContext?.summary
+      ? projectContext.summary
+      : "No previous context. This is the first run for this project.";
+
     const userPrompt = `Analyze the following git activity.
+
+## Previous Project Context
+${previousContext}
 
 ## Stats
 ${stats.commits} commits, ${stats.filesChanged} files changed, ${stats.linesAdded} lines added, ${stats.linesRemoved} lines removed.
@@ -430,9 +446,25 @@ Produce the digest now. Be concise. No em dashes, no semicolons.`;
     const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
     const onComplete = (fullText: string) => {
-      // Save full unified text (with section markers) as the digest record.
-      // This lets the client parse standup and AI context from any stored digest.
-      void saveDigest(userId, repoFullName, "digest", fullText, stats);
+      // Strip the ---SUMMARY--- section before saving the digest.
+      // The summary is internal context, not part of the user-visible digest.
+      const summaryMarker = "---SUMMARY---";
+      const summaryIdx = fullText.indexOf(summaryMarker);
+      let digestText = fullText;
+      let updatedSummary = "";
+
+      if (summaryIdx !== -1) {
+        digestText = fullText.slice(0, summaryIdx).trim();
+        updatedSummary = fullText.slice(summaryIdx + summaryMarker.length).trim();
+      }
+
+      // Save digest WITHOUT the summary (preserves existing parsing)
+      void saveDigest(userId, repoFullName, "digest", digestText, stats);
+
+      // Save the updated project summary for next run
+      if (updatedSummary) {
+        void saveProjectSummary(userId, repoFullName, updatedSummary);
+      }
     };
 
     let stream: ReadableStream;

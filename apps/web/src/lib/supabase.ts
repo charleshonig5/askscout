@@ -95,13 +95,59 @@ export async function deleteRepoDigests(userId: string, repo: string): Promise<v
   if (!supabase) return;
   const { error } = await supabase.from("digests").delete().eq("user_id", userId).eq("repo", repo);
   if (error) console.error("[askscout] Failed to delete repo digests:", error.message);
+  // Also clear the project summary for this repo
+  await supabase.from("project_summaries").delete().eq("user_id", userId).eq("repo", repo);
 }
 
-/** Delete user account entirely (settings + all digests) */
+/** Delete user account entirely (settings + all digests + summaries) */
 export async function deleteUserAccount(userId: string): Promise<void> {
   if (!supabase) return;
   await supabase.from("digests").delete().eq("user_id", userId);
+  await supabase.from("project_summaries").delete().eq("user_id", userId);
   await supabase.from("user_settings").delete().eq("user_id", userId);
+}
+
+// ============================================
+// Project Summaries (persistent context across sessions)
+// ============================================
+
+/** Get the persistent project summary for a user+repo */
+export async function getProjectSummary(
+  userId: string,
+  repo: string,
+): Promise<{ summary: string; runCount: number } | null> {
+  if (!supabase) return null;
+  const { data, error } = await supabase
+    .from("project_summaries")
+    .select("summary, run_count")
+    .eq("user_id", userId)
+    .eq("repo", repo)
+    .single();
+  if (error || !data) return null;
+  return { summary: data.summary as string, runCount: data.run_count as number };
+}
+
+/** Save or update the persistent project summary for a user+repo */
+export async function saveProjectSummary(
+  userId: string,
+  repo: string,
+  summary: string,
+): Promise<void> {
+  if (!supabase) return;
+  // Try to get existing run_count to increment it
+  const existing = await getProjectSummary(userId, repo);
+  const newRunCount = (existing?.runCount ?? 0) + 1;
+  const { error } = await supabase.from("project_summaries").upsert(
+    {
+      user_id: userId,
+      repo,
+      summary,
+      run_count: newRunCount,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id,repo" },
+  );
+  if (error) console.error("[askscout] Failed to save project summary:", error.message);
 }
 
 // ============================================

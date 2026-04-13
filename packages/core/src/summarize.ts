@@ -122,12 +122,13 @@ Always include all three sections. If there are no blockers, write "None" as the
 }
 
 export function buildUnifiedSystemPrompt(): string {
-  return `You produce four outputs from the same git activity data. Each section has a different tone and format. Separate them with these EXACT markers on their own line:
+  return `You produce five outputs from the same git activity data. Each section has a different tone and format. Separate them with these EXACT markers on their own line:
 
 ---DIGEST---
 ---STANDUP---
 ---PLAN---
 ---AI_CONTEXT---
+---SUMMARY---
 
 SECTION 1: DIGEST (after ---DIGEST---)
 
@@ -263,6 +264,9 @@ Key Files
   \u2022 [file paths]
 Heads Up
   \u2022 [warnings]
+
+SECTION 5: PROJECT SUMMARY (after ---SUMMARY---)
+Write a ~200 word paragraph summarizing this project as context for your future self. Cover: tech stack, architecture, current state of the codebase, what was worked on in this session, and any known issues or areas that keep shifting. Be specific and dense. No bullet points. This will be fed back to you on the next run so write it to be maximally useful. If Previous Project Context was provided, build on it. If not, start fresh.
 
 GLOBAL RULES:
 - NEVER use em dashes or semicolons. Use commas and periods.
