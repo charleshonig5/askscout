@@ -1,3 +1,14 @@
+/**
+ * Digest generation streaming endpoint.
+ *
+ * Uses buildUnifiedSystemPrompt() from @askscout/core for the system prompt
+ * (shared tone, format, and rules). The user prompt is built here because
+ * it uses web-specific data: Supabase project context, GitHub API commit
+ * format, sanitized patches, and churn data.
+ *
+ * See packages/core/src/summarize.ts for the architecture note on how the
+ * CLI and web AI paths relate.
+ */
 import { auth, getUserId } from "@/auth";
 import { fetchCommits, fetchDiffs } from "@/lib/github";
 import { checkDigestRateLimit } from "@/lib/rate-limit";

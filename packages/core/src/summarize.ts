@@ -1,3 +1,23 @@
+/**
+ * Summarization module for askscout.
+ *
+ * ARCHITECTURE NOTE: There are two AI code paths:
+ *
+ * 1. CLI path: Uses buildSystemPrompt() + buildUserPrompt() → JSON response.
+ *    The LLM returns structured JSON which is parsed into a Digest object.
+ *    Calls callAnthropic() or callOpenAI() directly (non-streaming).
+ *
+ * 2. Web path: Uses buildUnifiedSystemPrompt() → streaming SSE response.
+ *    The system prompt lives here in core (shared). The user prompt is built
+ *    inline in apps/web/src/app/api/digest/stream/route.ts because it uses
+ *    web-specific data (Supabase project context, GitHub API commit format,
+ *    sanitized patches). The web does its own streaming via OpenAI/Anthropic
+ *    streaming APIs.
+ *
+ * buildUnifiedSystemPrompt() is the single source of truth for digest tone,
+ * section format, examples, and rules. Both paths should reference it for
+ * any prompt changes that affect digest output quality.
+ */
 import type {
   AiConfig,
   Digest,
