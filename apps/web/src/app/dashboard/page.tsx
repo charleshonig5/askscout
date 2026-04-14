@@ -270,7 +270,11 @@ export default function DashboardPage() {
           stats: digestStream.stats as DigestViewStats | null,
         },
       }));
-      void fetchHistory(selectedRepo);
+      // Delay history refresh: the drip finalizes (isDone) when it hits the
+      // 🔑 marker, but the SSE stream is still running (AI Context + Summary
+      // sections). onComplete saves the digest to Supabase only when the full
+      // stream ends. A short delay ensures the save completes before we query.
+      const historyTimer = setTimeout(() => void fetchHistory(selectedRepo), 3000);
       // Mark this repo's reveal animation as complete after the full
       // cascade has played (~3 seconds covers all staggered reveals).
       const repo = selectedRepo;
@@ -278,7 +282,10 @@ export default function DashboardPage() {
         revealedReposRef.current.add(repo);
         forceUpdate({});
       }, 3000);
-      return () => clearTimeout(revealTimer);
+      return () => {
+        clearTimeout(historyTimer);
+        clearTimeout(revealTimer);
+      };
     }
   }, [digestStream.isDone]);
 
