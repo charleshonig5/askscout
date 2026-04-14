@@ -17,10 +17,13 @@ const authConfig: NextAuthConfig = {
       return token;
     },
     session({ session, token }) {
+      // Set stable user ID from JWT subject (always present with GitHub OAuth).
+      // Without this, session.user.id is undefined and getUserId() returns null,
+      // which causes all API routes to return 401.
+      if (session.user && token.sub) {
+        session.user.id = token.sub;
+      }
       // Token is needed server-side for GitHub API calls via auth().
-      // Note: NextAuth v5 may serialize the session internally, so we keep
-      // this as a regular property. The token is NOT sensitive to XSS because
-      // it requires the encrypted JWT cookie to access via the session endpoint.
       session.accessToken = token.accessToken as string;
       return session;
     },
