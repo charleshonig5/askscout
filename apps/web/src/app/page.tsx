@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { auth, signIn } from "@/auth";
 import { MOCK_STREAMING_TEXT } from "@/lib/mock-data";
 
@@ -12,6 +13,10 @@ export default async function LandingPage() {
 
   return (
     <main className="landing">
+      <nav className="landing-nav">
+        <Link href="/about">About</Link>
+        <Link href="/resources">Resources</Link>
+      </nav>
       <h1 className="landing-title">askscout</h1>
       <p className="landing-subtitle">
         The daily digest for vibe coders. Scout sniffs through your repo and tells you what you

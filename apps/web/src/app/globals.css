@@ -997,6 +997,26 @@ a:hover {
   justify-content: center;
   padding: var(--space-2xl);
   text-align: center;
+  position: relative;
+}
+
+.landing-nav {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-xl);
+  display: flex;
+  gap: var(--space-md);
+}
+
+.landing-nav a {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.landing-nav a:hover {
+  color: var(--color-text-primary);
 }
 
 .landing-title {
@@ -1034,6 +1054,202 @@ a:hover {
   padding: var(--space-lg);
   text-align: left;
   box-shadow: var(--shadow-md);
+}
+
+/* ============================================
+   Public Pages (About, Resources)
+   ============================================ */
+
+.public-page {
+  min-height: 100vh;
+  background: var(--color-bg-primary);
+}
+
+.public-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-xl);
+  border-bottom: 1px solid var(--color-border);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.public-nav-logo {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.public-nav-links {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.public-nav-links a {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.public-nav-links a:hover {
+  color: var(--color-text-primary);
+}
+
+.public-content {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--space-xl);
+}
+
+.public-title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-2xl);
+}
+
+.public-section {
+  margin-bottom: var(--space-2xl);
+}
+
+.public-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: var(--space-md);
+  letter-spacing: -0.01em;
+}
+
+.public-text {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.public-text:last-child {
+  margin-bottom: 0;
+}
+
+.public-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.public-card {
+  padding: var(--space-md);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.public-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+}
+
+.public-card-text {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.public-cta {
+  text-align: center;
+  padding: var(--space-2xl) 0;
+}
+
+.resource-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.resource-step {
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-start;
+}
+
+.resource-step-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--color-accent-text);
+  background: var(--color-accent);
+  border-radius: var(--radius-full);
+}
+
+.resource-step-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+}
+
+.resource-code-block {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-md);
+}
+
+.inline-code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--color-bg-tertiary);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.resource-commands {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+}
+
+.resource-command {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 13px;
+}
+
+.resource-command:last-child {
+  border-bottom: none;
+}
+
+.resource-command-desc {
+  color: var(--color-text-secondary);
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.faq-question {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
 }
 
 /* ============================================
