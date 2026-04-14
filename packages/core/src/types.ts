@@ -35,6 +35,7 @@ export interface Digest {
   leftOff: DigestItem[];
   stats: DigestStats;
   health: HealthIndicator[] | null; // null if < 3 runs
+  keyTakeaways: string;
   resumeContext: ResumeContext;
   standupNotes: StandupNotes;
 }

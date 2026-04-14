@@ -296,22 +296,36 @@ GLOBAL RULES:
 }
 
 export function buildSystemPrompt(): string {
-  return `You are Scout, a friendly code digest assistant. You analyze git diffs and commit history to produce structured project summaries.
+  return `You are Scout, a sharp, warm friend who actually looked at the code. Talk like a human, not a changelog. Every description should feel like someone explaining what happened over coffee. Use plain language a non-technical person could mostly follow. Have a point of view.
 
-IMPORTANT WRITING RULES:
-- NEVER use em dashes (\u2014 or --). Use commas, periods, or just start a new sentence instead.
-- NEVER use semicolons. Use periods or commas instead.
+BANNED PHRASES — never use any of these:
+- "great work", "keep it up", "crushing it", "nice job", "awesome", "solid progress", "you crushed it", "solid day"
+- "implemented", "utilized", "leveraged", "facilitated"
+- "various", "multiple things", "numerous", "several"
+- "in conclusion", "overall", "to summarize"
+- em dashes, semicolons
+
+WRITING RULES:
+- NEVER use em dashes or semicolons. Use commas and periods.
 - Write like a real human, not like AI. Keep it casual and natural.
+- Every bullet should be 1-2 full sentences of real context, not a label and a fragment.
+- NEVER use file names, function names, or code paths in summaries. Translate everything to features and behaviors.
 
 Respond ONLY with valid JSON matching the schema described in the user message. No markdown fences, no explanation, just raw JSON.`;
 }
 
 export function formatCommitsForPrompt(commits: GitCommit[]): string {
-  return commits
-    .map((c) => {
+  // Sort chronologically (earliest first) so the LLM understands
+  // what happened first vs last, and can detect reverts.
+  const chronological = [...commits].sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+  return chronological
+    .map((c, i) => {
       const short = c.hash.slice(0, 7);
-      const files = c.filesChanged.length;
-      return `- ${short} ${c.message} (${c.author}, ${files} file${files === 1 ? "" : "s"})`;
+      const time = c.timestamp.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+      });
+      return `${i + 1}. [${time}] ${short} ${c.message}`;
     })
     .join("\n");
 }
@@ -338,39 +352,54 @@ Provide the "health" array with three indicators: Momentum, Stability, and Focus
 Each has: label, level (Strong|Okay|Rough), score (0-10), and a brief detail string.`
       : 'Set "health" to null. Not enough history yet (need 3+ runs).';
 
+  // Build churn data
+  const fileFrequency = new Map<string, number>();
+  for (const c of commits) {
+    for (const f of c.filesChanged) {
+      fileFrequency.set(f, (fileFrequency.get(f) ?? 0) + 1);
+    }
+  }
+  const churnList = [...fileFrequency.entries()]
+    .filter(([, count]) => count >= 3)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([file, count]) => `- ${file} (${count} commits)`)
+    .join("\n");
+
   return `Analyze the following git activity and produce a structured digest.
 
 ## Previous Project Context
 ${context}
 
-## Recent Commits (${commits.length} total)
+## Commits (in chronological order, earliest first)
 ${formatCommitsForPrompt(commits)}
 
-## Diffs
+IMPORTANT: The commits above are in TIME ORDER. The LAST commits are what the user was working on most recently, so use those for leftOff. If something was built then reverted (or fixed then broken again), only the FINAL state matters for shipped/changed. If a revert appears after a feature commit, that feature was NOT shipped.
+
+## What Changed (file diffs)
+Use these diffs to understand WHAT was actually built, changed, or fixed. Don't just rely on commit messages. The code tells the real story.
+
 ${formatDiffsForPrompt(diffs)}
+${churnList ? `\n## Churn (files edited 3+ times — these are your unstable/still-shifting candidates)\n${churnList}` : ""}
 
-## Instructions
-Categorize changes into these sections:
-- **shipped**: New features or functionality that went from not existing to working.
-- **changed**: Existing things that were modified, updated, or refactored.
-- **unstable**: Files or features changed many times, reverted, or reworked. Include a changeCount (integer).
-- **leftOff**: What was being actively worked on at the end. Half-finished work. What needs attention next.
-
-Summarize at the **feature level**, not the file level. Use plain English.
-
-Also produce:
-- **vibeCheck**: 1-2 casual sentences capturing the overall vibe. Be warm, honest, slightly funny. Read the room. Are things going well? Is it a grind? Is something exciting coming together? Write like a friend, not a report.
-- **resumeContext**: Rich context for AI coding tools. Include:
-  - **techStack**: What the project is built with (languages, frameworks, key libraries). Be specific.
-  - **recentWork**: 2-3 sentences describing what was recently built and how it works. Reference specific directories or files from the diffs.
-  - **currentFocus**: What to work on next. Be specific about what's done and what's left.
-  - **keyFiles**: Array of 3-6 file paths most relevant to the current work. Pull these from the diffs.
-  - **warnings**: Array of things to avoid or be careful about ("don't touch auth, it's working", "webhook handler is fragile").
-- **standupNotes**: What a human would actually say in a standup meeting. Conversational, specific, with context:
-  - **yesterday**: What was accomplished. Include approach and outcome, not just "did X". e.g. "Got Google OAuth fully working. Users can sign in and sessions persist across refreshes"
-  - **today**: What's planned next. Be specific about the approach. e.g. "Finishing checkout flow. Need to wire the cart total to Stripe's PaymentIntent API"
-  - **blockers**: Only real blockers. Include what's wrong AND why it might be stuck. e.g. "Stripe webhook handler keeps breaking. Changed it 4 times, might need a different approach to signature verification"
-- **updatedSummary**: 1-paragraph (~200 word) project summary covering tech stack, architecture, current state, and what was last worked on. This replaces the previous summary entirely.
+## Section Definitions
+- **shipped**: Things that went from not existing to working. New features, new pages, new endpoints. What can the user do now that they couldn't before?
+- **changed**: Things that already existed but got modified. Redesigns, refactors, config changes. What is different and why?
+- **unstable**: Areas reworked 3+ times. Use the Churn data above. Describe as features, NEVER file names. Explain what keeps changing and why it hasn't settled. Include changeCount.
+- **leftOff**: Everything in progress when the session ended. Include ALL of them. Be concrete about what works vs what doesn't and what the next step is.
+- **vibeCheck**: 3-4 casual PRESENT-TENSE sentences about where the project stands RIGHT NOW. Not a recap. Have a point of view. Notice what they're avoiding or circling. Sneak in one genuinely witty observation.
+- **keyTakeaways**: 2-3 sentences. Scout's honest sign-off. Start with the sharpest observation about what actually happened. Then a nudge about the next meaningful move. End with a moment of warmth or wit. NO motivational filler, NO "keep it up" energy.
+- **resumeContext**: Rich context for AI coding tools:
+  - **techStack**: What the project is built with. Be specific.
+  - **recentWork**: 2-3 sentences about what was recently built, referencing files from the diffs.
+  - **currentFocus**: What to work on next. Specific about what's done and what's left.
+  - **keyFiles**: 3-6 file paths most relevant to current work.
+  - **warnings**: Things to avoid or be careful about.
+- **standupNotes**: For Slack. Casual but clear:
+  - **yesterday**: What shipped or changed. Be specific about what was accomplished.
+  - **today**: Clear next steps inferred from leftOff. "Wire up the payment form" not "continue working on checkout."
+  - **blockers**: Use churn data. If files keep getting reworked, that is a blocker. Only "None" if genuinely nothing is stuck.
+- **updatedSummary**: ~200 word project summary covering tech stack, architecture, current state, and what was last worked on. Replaces the previous summary entirely.
 
 ${healthInstructions}
 
@@ -381,6 +410,7 @@ Respond with this exact JSON schema:
   "changed": [{ "summary": "..." }],
   "unstable": [{ "summary": "...", "changeCount": 0 }],
   "leftOff": [{ "summary": "..." }],
+  "keyTakeaways": "...",
   "resumeContext": {
     "techStack": "...",
     "recentWork": "...",
@@ -519,6 +549,7 @@ export async function summarize(
   const unstable = Array.isArray(parsed.unstable) ? parsed.unstable : [];
   const leftOff = Array.isArray(parsed.leftOff) ? parsed.leftOff : [];
   const health = Array.isArray(parsed.health) ? (parsed.health as HealthIndicator[]) : null;
+  const keyTakeaways = typeof parsed.keyTakeaways === "string" ? parsed.keyTakeaways : "";
   const updatedSummary = typeof parsed.updatedSummary === "string" ? parsed.updatedSummary : "";
 
   // Parse resume context
@@ -563,6 +594,7 @@ export async function summarize(
     leftOff: leftOff as Digest["leftOff"],
     stats: computeStats(commits, diffs),
     health,
+    keyTakeaways,
     resumeContext,
     standupNotes,
   };

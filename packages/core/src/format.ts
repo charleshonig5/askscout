@@ -56,6 +56,11 @@ export function formatDigest(digest: Digest, options: FormatOptions): string {
     sections.push(`\ud83d\udccd Left Off  ${digest.leftOff.length}\n${items}`);
   }
 
+  // Key Takeaways
+  if (digest.keyTakeaways) {
+    sections.push(`\ud83d\udd11 Key Takeaways\n${digest.keyTakeaways}`);
+  }
+
   return sections.join("\n\n") + "\n";
 }
 

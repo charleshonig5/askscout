@@ -67,6 +67,8 @@ export const MOCK_DIGEST: Digest = {
       "Stripe webhook handler keeps breaking. Changed it 4 times yesterday and might need a different approach to verifying webhook signatures",
     ],
   },
+  keyTakeaways:
+    "The checkout flow is one good session away from done. Wire up the payment submission and you have a complete purchase loop. That Stripe handler owes you an apology though.",
   health: [
     {
       label: "Momentum",
