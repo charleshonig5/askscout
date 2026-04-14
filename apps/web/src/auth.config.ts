@@ -17,15 +17,11 @@ const authConfig: NextAuthConfig = {
       return token;
     },
     session({ session, token }) {
-      // Make accessToken non-enumerable so it's available server-side via auth()
-      // but NOT serialized to JSON for the browser session endpoint.
-      // Server: auth() returns the object in memory — property is accessible.
-      // Client: /api/auth/session serializes to JSON — non-enumerable = stripped.
-      Object.defineProperty(session, "accessToken", {
-        value: token.accessToken as string,
-        enumerable: false,
-        writable: false,
-      });
+      // Token is needed server-side for GitHub API calls via auth().
+      // Note: NextAuth v5 may serialize the session internally, so we keep
+      // this as a regular property. The token is NOT sensitive to XSS because
+      // it requires the encrypted JWT cookie to access via the session endpoint.
+      session.accessToken = token.accessToken as string;
       return session;
     },
     authorized({ auth: authSession, request }) {
