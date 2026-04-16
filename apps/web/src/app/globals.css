@@ -584,32 +584,43 @@ a:hover {
 
 .timeline-track {
   position: relative;
-  height: 24px;
+  height: 64px;
   margin-bottom: var(--space-sm);
 }
 
-.timeline-line {
+.timeline-baseline {
   position: absolute;
-  top: 50%;
+  bottom: 0;
   left: 0;
   right: 0;
   height: 1px;
   background: var(--color-border);
-  transform: translateY(-50%);
 }
 
-.timeline-dot {
+.timeline-column {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: var(--color-accent);
-  border-radius: 50%;
-  cursor: help;
-  transition: transform 0.15s ease;
+  bottom: 1px;
+  width: 3px;
+  margin-left: -1.5px;
+  height: 100%;
 }
 
-.timeline-dot:hover {
-  transform: translateY(-50%) scale(1.4);
+.timeline-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: var(--color-accent);
+  border-radius: 1px;
+  cursor: help;
+  transition: opacity 0.15s ease;
+}
+
+.timeline-column:hover .timeline-bar {
+  opacity: 0.7;
+}
+
+.timeline-bar:hover {
+  opacity: 1;
 }
 
 .timeline-labels {

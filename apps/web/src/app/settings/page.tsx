@@ -23,7 +23,7 @@ const SECTION_OPTIONS = [
   },
   {
     key: "whenYouCoded",
-    label: "When You Coded",
+    label: "Coding Timeline",
     desc: "Timeline of your commits across the day",
   },
   {

@@ -561,37 +561,56 @@ function WhenYouCoded({
   const fmtTime = (ms: number) =>
     new Date(ms).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).toLowerCase();
 
-  // Single commit edge case — startMs === endMs. Center the dot at 50%.
+  // Single commit edge case — startMs === endMs. Center the bar at 50%.
   const isSinglePoint = timeline.startMs === timeline.endMs;
   const span = isSinglePoint ? 1 : timeline.endMs - timeline.startMs;
 
-  // Scale dot size by lines changed: small commits = tiny dots, big commits = larger.
-  // Cap scaling so one giant commit doesn't dominate.
+  // Bar height scales with lines changed. Cap so one massive commit doesn't dominate.
   const maxLines = Math.max(...timeline.points.map((p) => p.lines), 1);
-  const dotSize = (lines: number) => {
+  const MAX_BAR_HEIGHT = 56; // px; track is 64 with 8px breathing room
+  const MIN_BAR_HEIGHT = 4;
+  const barHeight = (lines: number) => {
     const ratio = Math.min(lines / maxLines, 1);
-    return 6 + ratio * 6; // 6px to 12px
+    return Math.max(MIN_BAR_HEIGHT, ratio * MAX_BAR_HEIGHT);
   };
+
+  // Bucket commits that fall in the same visual column so they stack vertically.
+  // 1.5% buckets ≈ ~5min on a 6-hour span, ~12min on a 16-hour span — tight enough
+  // that adjacent columns stay distinct, loose enough that bursts visibly stack.
+  const BUCKET_PCT = 1.5;
+  const buckets = new Map<number, Array<{ timeMs: number; lines: number }>>();
+  for (const p of timeline.points) {
+    const left = isSinglePoint ? 50 : ((p.timeMs - timeline.startMs) / span) * 100;
+    const bucket = Math.round(left / BUCKET_PCT) * BUCKET_PCT;
+    const list = buckets.get(bucket) ?? [];
+    list.push(p);
+    buckets.set(bucket, list);
+  }
 
   return (
     <div className="when-you-coded">
       <div className="timeline-track">
-        <div className="timeline-line" />
-        {timeline.points.map((p, i) => {
-          const left = isSinglePoint ? 50 : ((p.timeMs - timeline.startMs) / span) * 100;
-          const size = dotSize(p.lines);
+        <div className="timeline-baseline" />
+        {Array.from(buckets.entries()).map(([leftPct, commits]) => {
+          // Stack biggest commits on the bottom so smaller ones perch on top.
+          const sorted = [...commits].sort((a, b) => b.lines - a.lines);
+          let cumulativeBottom = 0;
           return (
-            <div
-              key={i}
-              className="timeline-dot"
-              style={{
-                left: `${left}%`,
-                width: `${size}px`,
-                height: `${size}px`,
-                marginLeft: `-${size / 2}px`,
-              }}
-              title={`${fmtTime(p.timeMs)} — ${p.lines.toLocaleString()} lines`}
-            />
+            <div key={leftPct} className="timeline-column" style={{ left: `${leftPct}%` }}>
+              {sorted.map((c, i) => {
+                const h = barHeight(c.lines);
+                const segment = (
+                  <div
+                    key={i}
+                    className="timeline-bar"
+                    style={{ bottom: `${cumulativeBottom}px`, height: `${h}px` }}
+                    title={`${fmtTime(c.timeMs)} — ${c.lines.toLocaleString()} lines`}
+                  />
+                );
+                cumulativeBottom += h + 1; // 1px gap so each commit reads as its own piece
+                return segment;
+              })}
+            </div>
           );
         })}
       </div>
@@ -791,7 +810,7 @@ export function DigestView({
               className="digest-section-title stats-reveal-item"
               style={{ animationDelay: "700ms" }}
             >
-              {"\ud83d\udd50"} When You Coded
+              {"\ud83d\udd50"} Coding Timeline
             </div>
             <div className="stats-reveal-item" style={{ animationDelay: "900ms" }}>
               <WhenYouCoded timeline={stats.timeline} />
