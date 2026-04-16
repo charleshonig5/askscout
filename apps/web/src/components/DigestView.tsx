@@ -263,6 +263,10 @@ const SECTION_MARKERS = [
   { key: "stats", emoji: "\ud83d\udcca", label: "Stats" },
 ] as const;
 
+// Regex matching any line that begins with a section emoji — used defensively
+// to filter out LLM-repeated section headers from bullet lists.
+const SECTION_EMOJI_PREFIX = /^[\u{1F4AC}\u{1F680}\u{1F527}\u{1F501}\u{1F4CD}\u{1F511}\u{1F4CA}]/u;
+
 interface ParsedSection {
   key: string;
   emoji: string;
@@ -417,11 +421,15 @@ function StreamingDigest({
         }
 
         const lines = section.content.split("\n").filter((l: string) => l.length > 0);
-        // Filter out the subtitle line (starts with "Scout") and get only bullet items
+        // Only keep lines that explicitly start with a bullet character.
+        // Defensively strip any line that looks like a section header (starts
+        // with one of our section emojis) to handle LLMs that occasionally
+        // repeat the header text inside the section content.
         const items = lines
-          .filter((l: string) => /^\s*[\u2022\-*]/.test(l) || !l.startsWith("Scout"))
-          .map((l: string) => l.replace(/^\s*[\u2022\-*]\s*/, ""))
-          .filter((l: string) => l.length > 0);
+          .filter((l: string) => /^\s*[\u2022\-*]/.test(l))
+          .map((l: string) => l.replace(/^\s*[\u2022\-*]\s*/, "").trim())
+          .filter((l: string) => l.length > 0)
+          .filter((l: string) => !SECTION_EMOJI_PREFIX.test(l));
 
         return (
           <div key={section.key} className="digest-section">
