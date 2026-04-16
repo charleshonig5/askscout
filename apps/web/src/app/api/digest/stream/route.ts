@@ -564,7 +564,28 @@ async function streamOpenAI(
 
   return new ReadableStream({
     async start(controller) {
-      controller.enqueue(new TextEncoder().encode(sseEvent("stats", stats)));
+      // Track whether the client is still listening. When they disconnect
+      // (e.g., switch repos), enqueue throws and we set this to false.
+      // We KEEP reading from the LLM regardless so the digest still saves.
+      let clientConnected = true;
+      const safeEnqueue = (data: Uint8Array) => {
+        if (!clientConnected) return;
+        try {
+          controller.enqueue(data);
+        } catch {
+          clientConnected = false;
+        }
+      };
+      const safeClose = () => {
+        if (!clientConnected) return;
+        try {
+          controller.close();
+        } catch {
+          // Already closed
+        }
+      };
+
+      safeEnqueue(new TextEncoder().encode(sseEvent("stats", stats)));
 
       let buffer = "";
       let fullText = "";
@@ -590,10 +611,9 @@ async function streamOpenAI(
               const text = parsed.choices[0]?.delta?.content;
               if (text) {
                 fullText += text;
-                controller.enqueue(new TextEncoder().encode(sseEvent("text", { text })));
+                safeEnqueue(new TextEncoder().encode(sseEvent("text", { text })));
                 // Save the digest as soon as we see the SUMMARY marker — we have
-                // everything user-facing at this point. Protects against client
-                // aborts (repo switching) before the full stream finishes.
+                // everything user-facing at this point.
                 if (fullText.includes("---SUMMARY---")) {
                   onDigestReady?.(fullText);
                 }
@@ -604,15 +624,18 @@ async function streamOpenAI(
           }
         }
 
+        // Stream completed naturally — save full result
         onStreamEnd?.(fullText);
-        controller.enqueue(new TextEncoder().encode(sseEvent("done", {})));
+        safeEnqueue(new TextEncoder().encode(sseEvent("done", {})));
       } catch (err) {
         console.error("OpenAI stream error:", err);
-        controller.enqueue(
-          new TextEncoder().encode(sseEvent("error", { error: "Stream interrupted" })),
-        );
+        // LLM error or upstream issue — try to save whatever we have
+        if (fullText.length > 0) {
+          onStreamEnd?.(fullText);
+        }
+        safeEnqueue(new TextEncoder().encode(sseEvent("error", { error: "Stream interrupted" })));
       } finally {
-        controller.close();
+        safeClose();
       }
     },
   });
@@ -653,7 +676,28 @@ async function streamAnthropic(
 
   return new ReadableStream({
     async start(controller) {
-      controller.enqueue(new TextEncoder().encode(sseEvent("stats", stats)));
+      // Track whether the client is still listening. When they disconnect
+      // (e.g., switch repos), enqueue throws and we set this to false.
+      // We KEEP reading from the LLM regardless so the digest still saves.
+      let clientConnected = true;
+      const safeEnqueue = (data: Uint8Array) => {
+        if (!clientConnected) return;
+        try {
+          controller.enqueue(data);
+        } catch {
+          clientConnected = false;
+        }
+      };
+      const safeClose = () => {
+        if (!clientConnected) return;
+        try {
+          controller.close();
+        } catch {
+          // Already closed
+        }
+      };
+
+      safeEnqueue(new TextEncoder().encode(sseEvent("stats", stats)));
 
       let buffer = "";
       let fullText = "";
@@ -677,12 +721,11 @@ async function streamAnthropic(
               };
               if (parsed.type === "content_block_delta" && parsed.delta?.text) {
                 fullText += parsed.delta.text;
-                controller.enqueue(
+                safeEnqueue(
                   new TextEncoder().encode(sseEvent("text", { text: parsed.delta.text })),
                 );
                 // Save the digest as soon as we see the SUMMARY marker — we have
-                // everything user-facing at this point. Protects against client
-                // aborts (repo switching) before the full stream finishes.
+                // everything user-facing at this point.
                 if (fullText.includes("---SUMMARY---")) {
                   onDigestReady?.(fullText);
                 }
@@ -693,15 +736,18 @@ async function streamAnthropic(
           }
         }
 
+        // Stream completed naturally — save full result
         onStreamEnd?.(fullText);
-        controller.enqueue(new TextEncoder().encode(sseEvent("done", {})));
+        safeEnqueue(new TextEncoder().encode(sseEvent("done", {})));
       } catch (err) {
         console.error("Anthropic stream error:", err);
-        controller.enqueue(
-          new TextEncoder().encode(sseEvent("error", { error: "Stream interrupted" })),
-        );
+        // LLM error or upstream issue — try to save whatever we have
+        if (fullText.length > 0) {
+          onStreamEnd?.(fullText);
+        }
+        safeEnqueue(new TextEncoder().encode(sseEvent("error", { error: "Stream interrupted" })));
       } finally {
-        controller.close();
+        safeClose();
       }
     },
   });
