@@ -558,12 +558,37 @@ function WhenYouCoded({
 }) {
   if (timeline.points.length === 0) return null;
 
-  const fmtTime = (ms: number) =>
-    new Date(ms).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).toLowerCase();
-
   // Single commit edge case — startMs === endMs. Center the bar at 50%.
   const isSinglePoint = timeline.startMs === timeline.endMs;
   const span = isSinglePoint ? 1 : timeline.endMs - timeline.startMs;
+
+  // Find midnight boundaries within the span (in the user's local time).
+  // DST-safe: increment by calendar day, not 24h.
+  const breakPercents: number[] = [];
+  if (!isSinglePoint) {
+    const cursor = new Date(timeline.startMs);
+    cursor.setHours(0, 0, 0, 0);
+    cursor.setDate(cursor.getDate() + 1); // first midnight strictly after startMs's day-start
+    while (cursor.getTime() < timeline.endMs) {
+      if (cursor.getTime() > timeline.startMs) {
+        breakPercents.push(((cursor.getTime() - timeline.startMs) / span) * 100);
+      }
+      cursor.setDate(cursor.getDate() + 1);
+    }
+  }
+  const crossesDay = breakPercents.length > 0;
+
+  // Time formatter — adds short weekday prefix when the span crosses midnight,
+  // so "Wed 8pm · Thu 10am" reads correctly instead of looking like one weird day.
+  const fmtTime = (ms: number) => {
+    const d = new Date(ms);
+    const time = d
+      .toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })
+      .toLowerCase();
+    if (!crossesDay) return time;
+    const day = d.toLocaleDateString("en-US", { weekday: "short" });
+    return `${day} ${time}`;
+  };
 
   // Bar height scales with lines changed. Cap so one massive commit doesn't dominate.
   const maxLines = Math.max(...timeline.points.map((p) => p.lines), 1);
@@ -587,10 +612,28 @@ function WhenYouCoded({
     buckets.set(bucket, list);
   }
 
+  // Split the baseline at each midnight so day-changes show as a visible gap.
+  // 1% gap centered on each boundary (~3-6px on typical widths).
+  const GAP_PCT = 1;
+  const half = GAP_PCT / 2;
+  const baselineSegments: Array<{ left: number; right: number }> = [];
+  let prev = 0;
+  for (const bp of breakPercents) {
+    baselineSegments.push({ left: prev, right: bp - half });
+    prev = bp + half;
+  }
+  baselineSegments.push({ left: prev, right: 100 });
+
   return (
     <div className="when-you-coded">
       <div className="timeline-track">
-        <div className="timeline-baseline" />
+        {baselineSegments.map((seg, i) => (
+          <div
+            key={i}
+            className="timeline-baseline"
+            style={{ left: `${seg.left}%`, right: `${100 - seg.right}%` }}
+          />
+        ))}
         {Array.from(buckets.entries()).map(([leftPct, commits]) => {
           // Stack biggest commits on the bottom so smaller ones perch on top.
           const sorted = [...commits].sort((a, b) => b.lines - a.lines);
