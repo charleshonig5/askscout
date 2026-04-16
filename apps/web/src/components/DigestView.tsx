@@ -498,6 +498,11 @@ export interface DigestViewStats {
   sessions?: string[];
   activeDays?: string[];
   pace?: { multiplier: number; label: string; todayCommits: number; avgCommits: number } | null;
+  timeline?: {
+    startMs: number;
+    endMs: number;
+    points: Array<{ timeMs: number; lines: number }>;
+  } | null;
 }
 
 function StatsCards({ stats, animate = true }: { stats: DigestViewStats; animate?: boolean }) {
@@ -526,19 +531,78 @@ function StatsCards({ stats, animate = true }: { stats: DigestViewStats; animate
 function PaceCard({
   pace,
   animate = true,
+  animationDelay = "1000ms",
 }: {
   pace: { multiplier: number; label: string; todayCommits: number; avgCommits: number };
   animate?: boolean;
+  animationDelay?: string;
 }) {
   const multiplier = useCountUp(pace.multiplier, 1000, animate, 1);
   return (
-    <div className="pace-card stats-reveal-item" style={{ animationDelay: "1000ms" }}>
+    <div className="pace-card stats-reveal-item" style={{ animationDelay }}>
       <div className="pace-multiplier">{multiplier.toFixed(1)}x</div>
       <div className="pace-detail">
         <div className="pace-label">{pace.label}</div>
         <div className="pace-comparison">
           {pace.todayCommits} commits today {"\u00b7"} {pace.avgCommits}-commit average
         </div>
+      </div>
+    </div>
+  );
+}
+
+function WhenYouCoded({
+  timeline,
+}: {
+  timeline: { startMs: number; endMs: number; points: Array<{ timeMs: number; lines: number }> };
+}) {
+  if (timeline.points.length === 0) return null;
+
+  const fmtTime = (ms: number) =>
+    new Date(ms).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).toLowerCase();
+
+  // Single commit edge case — startMs === endMs. Center the dot at 50%.
+  const isSinglePoint = timeline.startMs === timeline.endMs;
+  const span = isSinglePoint ? 1 : timeline.endMs - timeline.startMs;
+
+  // Scale dot size by lines changed: small commits = tiny dots, big commits = larger.
+  // Cap scaling so one giant commit doesn't dominate.
+  const maxLines = Math.max(...timeline.points.map((p) => p.lines), 1);
+  const dotSize = (lines: number) => {
+    const ratio = Math.min(lines / maxLines, 1);
+    return 6 + ratio * 6; // 6px to 12px
+  };
+
+  return (
+    <div className="when-you-coded">
+      <div className="timeline-track">
+        <div className="timeline-line" />
+        {timeline.points.map((p, i) => {
+          const left = isSinglePoint ? 50 : ((p.timeMs - timeline.startMs) / span) * 100;
+          const size = dotSize(p.lines);
+          return (
+            <div
+              key={i}
+              className="timeline-dot"
+              style={{
+                left: `${left}%`,
+                width: `${size}px`,
+                height: `${size}px`,
+                marginLeft: `-${size / 2}px`,
+              }}
+              title={`${fmtTime(p.timeMs)} — ${p.lines.toLocaleString()} lines`}
+            />
+          );
+        })}
+      </div>
+      <div className="timeline-labels">
+        <span>{fmtTime(timeline.startMs)}</span>
+        {!isSinglePoint && (
+          <>
+            <span>{fmtTime((timeline.startMs + timeline.endMs) / 2)}</span>
+            <span>{fmtTime(timeline.endMs)}</span>
+          </>
+        )}
       </div>
     </div>
   );
@@ -719,16 +783,32 @@ export function DigestView({
           </div>
         )}
 
-        {/* Pace Check — appears after Statistics */}
+        {/* When You Coded — timeline of commits across the day.
+            Only shown for single-day digests (server returns null otherwise). */}
+        {!isStreaming && vis("whenYouCoded") && stats?.timeline && (
+          <div className="digest-section stats-reveal">
+            <div
+              className="digest-section-title stats-reveal-item"
+              style={{ animationDelay: "700ms" }}
+            >
+              {"\ud83d\udd50"} When You Coded
+            </div>
+            <div className="stats-reveal-item" style={{ animationDelay: "900ms" }}>
+              <WhenYouCoded timeline={stats.timeline} />
+            </div>
+          </div>
+        )}
+
+        {/* Pace Check — appears after When You Coded */}
         {!isStreaming && vis("paceCheck") && stats?.pace && (
           <div className="digest-section stats-reveal">
             <div
               className="digest-section-title stats-reveal-item"
-              style={{ animationDelay: "800ms" }}
+              style={{ animationDelay: "1150ms" }}
             >
               {"\u26a1"} Pace Check
             </div>
-            <PaceCard pace={stats.pace} animate={animate} />
+            <PaceCard pace={stats.pace} animate={animate} animationDelay="1350ms" />
           </div>
         )}
 
@@ -737,11 +817,11 @@ export function DigestView({
           <div className="digest-section stats-reveal">
             <div
               className="digest-section-title stats-reveal-item"
-              style={{ animationDelay: "1400ms" }}
+              style={{ animationDelay: "1700ms" }}
             >
               {"\ud83e\ude7a"} Codebase Health
             </div>
-            <div className="stats-reveal-item" style={{ animationDelay: "1600ms" }}>
+            <div className="stats-reveal-item" style={{ animationDelay: "1900ms" }}>
               <CodebaseHealth health={stats.health} />
             </div>
           </div>
@@ -758,14 +838,14 @@ export function DigestView({
             return (
               <div
                 className="digest-section stats-reveal-item"
-                style={{ animationDelay: "2200ms" }}
+                style={{ animationDelay: "2500ms" }}
               >
                 <div className="digest-section-title">
                   {takeawaySection.emoji} {takeawaySection.label}
                 </div>
                 <p className="formatted-paragraph">
                   {animate ? (
-                    <TypewriterText text={takeawaySection.content} delay={2400} />
+                    <TypewriterText text={takeawaySection.content} delay={2700} />
                   ) : (
                     takeawaySection.content
                   )}

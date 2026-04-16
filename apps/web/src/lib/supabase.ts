@@ -32,6 +32,7 @@ export interface DigestSections {
   leftOff: boolean;
   oneTakeaway: boolean;
   statistics: boolean;
+  whenYouCoded: boolean;
   paceCheck: boolean;
   codebaseHealth: boolean;
 }
@@ -44,6 +45,7 @@ export const DEFAULT_SECTIONS: DigestSections = {
   leftOff: true,
   oneTakeaway: true,
   statistics: true,
+  whenYouCoded: true,
   paceCheck: true,
   codebaseHealth: true,
 };

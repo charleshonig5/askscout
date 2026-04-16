@@ -22,6 +22,11 @@ const SECTION_OPTIONS = [
     desc: "Lines, commits, files, and most active files",
   },
   {
+    key: "whenYouCoded",
+    label: "When You Coded",
+    desc: "Timeline of your commits across the day",
+  },
+  {
     key: "paceCheck",
     label: "Pace Check",
     desc: "Compare today's output to your rolling average",

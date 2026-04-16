@@ -356,8 +356,37 @@ export async function POST(req: Request) {
       }
     }
 
+    // 6f. When You Coded — timeline of commits across the day.
+    // Mirrors Pace Check guards: only single-day digests (<= 36 hours).
+    // Handles single-commit case gracefully (startMs === endMs).
+    let timeline: {
+      startMs: number;
+      endMs: number;
+      points: Array<{ timeMs: number; lines: number }>;
+    } | null = null;
+    if (commits.length > 0 && commitSpanHours <= 36) {
+      const points = commits
+        .map((c) => ({
+          timeMs: c.timestamp.getTime(),
+          lines: c.additions + c.deletions,
+        }))
+        .sort((a, b) => a.timeMs - b.timeMs);
+      timeline = {
+        startMs: points[0]!.timeMs,
+        endMs: points[points.length - 1]!.timeMs,
+        points,
+      };
+    }
+
     // Include all computed data in stats event
-    Object.assign(stats, { health, topFiles, activity: activityBuckets, netImpact, pace });
+    Object.assign(stats, {
+      health,
+      topFiles,
+      activity: activityBuckets,
+      netImpact,
+      pace,
+      timeline,
+    });
 
     // 7. Build unified prompt (generates digest + standup + AI context in one call)
     const systemPrompt = buildUnifiedSystemPrompt();

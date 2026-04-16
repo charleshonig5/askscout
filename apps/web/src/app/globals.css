@@ -575,6 +575,52 @@ a:hover {
 }
 
 /* ============================================
+   When You Coded — timeline
+   ============================================ */
+
+.when-you-coded {
+  padding: var(--space-md) var(--space-sm);
+}
+
+.timeline-track {
+  position: relative;
+  height: 24px;
+  margin-bottom: var(--space-sm);
+}
+
+.timeline-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--color-border);
+  transform: translateY(-50%);
+}
+
+.timeline-dot {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--color-accent);
+  border-radius: 50%;
+  cursor: help;
+  transition: transform 0.15s ease;
+}
+
+.timeline-dot:hover {
+  transform: translateY(-50%) scale(1.4);
+}
+
+.timeline-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--color-text-tertiary);
+}
+
+/* ============================================
    Pace Check
    ============================================ */
 
@@ -729,7 +775,7 @@ a:hover {
   height: 100%;
   border-radius: 2px;
   opacity: 0.5;
-  animation: healthBarFill 1s ease-out 1.7s both;
+  animation: healthBarFill 1s ease-out 2s both;
 }
 
 @keyframes healthBarFill {
