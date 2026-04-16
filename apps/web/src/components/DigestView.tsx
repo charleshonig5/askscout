@@ -686,7 +686,13 @@ export function DigestView({
           afterLeftOff={
             onResumeWithAI ? (
               <button className="resume-ai-btn" onClick={onResumeWithAI}>
-                <Sparkles size={14} /> Resume with AI
+                <Sparkles size={14} />
+                <span className="resume-ai-btn-text">
+                  <span className="resume-ai-btn-title">Resume Prompt</span>
+                  <span className="resume-ai-btn-subtitle">
+                    Paste into your AI coding tool to pick up exactly where you left off
+                  </span>
+                </span>
               </button>
             ) : undefined
           }
