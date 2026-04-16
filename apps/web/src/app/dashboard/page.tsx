@@ -59,6 +59,8 @@ export default function DashboardPage() {
     stats: Record<string, unknown> | null;
     date: string;
   } | null>(null);
+  // When true, expand from the Quiet Day state to show yesterday's actual digest
+  const [showLatestFromQuietDay, setShowLatestFromQuietDay] = useState(false);
   const [digestSectionPrefs, setDigestSectionPrefs] = useState<Record<string, boolean> | null>(
     null,
   );
@@ -239,6 +241,7 @@ export default function DashboardPage() {
       setViewingHistoryStats(null);
       setActiveHistoryId(null);
       setNoNewCommits(null);
+      setShowLatestFromQuietDay(false);
       // Clear history so the no-commits effect can't use the previous repo's data
       setHistoryRecords([]);
       setHistory([]);
@@ -406,9 +409,12 @@ export default function DashboardPage() {
   let displayDate = todayStr;
   let pageTitle = "Today\u2019s Digest";
 
-  if (noNewCommits) {
+  if (noNewCommits && showLatestFromQuietDay) {
     displayDate = noNewCommits.date;
-    pageTitle = "Your Digest";
+    pageTitle = "Your Last Digest";
+  } else if (noNewCommits) {
+    // Quiet Day state — keep today's date and a clear title
+    pageTitle = "Quiet Day";
   } else if (isViewingHistory && activeHistoryEntry) {
     displayDate = new Date(activeHistoryEntry.created_at).toLocaleDateString("en-US", {
       weekday: "long",
@@ -489,9 +495,43 @@ export default function DashboardPage() {
               <p className="digest-page-subtitle">{repoName}</p>
             </div>
 
-            {noNewCommits ? (
+            {noNewCommits && !showLatestFromQuietDay ? (
+              <div className="quiet-day">
+                <div className="quiet-day-emoji">{"\ud83d\udca4"}</div>
+                <h2 className="quiet-day-title">No new commits today</h2>
+                <p className="quiet-day-subtitle">
+                  {repoName} hasn&apos;t seen any activity since your last digest on{" "}
+                  {noNewCommits.date}. Nothing new for Scout to dig through.
+                </p>
+                <div className="quiet-day-actions">
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => setShowLatestFromQuietDay(true)}
+                  >
+                    View your last digest
+                  </button>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      setNoNewCommits(null);
+                      setShowLatestFromQuietDay(false);
+                      forceGenerate(selectedRepo, "digest");
+                    }}
+                  >
+                    Try generating anyway
+                  </button>
+                </div>
+                <p className="quiet-day-hint">Or pick a different repo from the dropdown above.</p>
+              </div>
+            ) : noNewCommits && showLatestFromQuietDay ? (
               <>
-                <div className="digest-notice">No new commits since this digest.</div>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowLatestFromQuietDay(false)}
+                  style={{ marginBottom: "var(--space-lg)" }}
+                >
+                  ← Back to today
+                </button>
                 <DigestView
                   isStreaming={false}
                   streamingText={currentSections?.digest ?? noNewCommits.content}
