@@ -444,34 +444,56 @@ Produce the digest now. Be concise. No em dashes, no semicolons.`;
     const openaiKey = process.env.OPENAI_API_KEY;
     const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
-    const onComplete = (fullText: string) => {
-      // Strip the ---SUMMARY--- section before saving the digest.
-      // The summary is internal context, not part of the user-visible digest.
-      const summaryMarker = "---SUMMARY---";
-      const summaryIdx = fullText.indexOf(summaryMarker);
-      let digestText = fullText;
-      let updatedSummary = "";
-
-      if (summaryIdx !== -1) {
-        digestText = fullText.slice(0, summaryIdx).trim();
-        updatedSummary = fullText.slice(summaryIdx + summaryMarker.length).trim();
-      }
-
-      // Save digest WITHOUT the summary (preserves existing parsing)
+    // Two-phase save:
+    // 1. onDigestReady: fires as soon as ---SUMMARY--- marker is seen in the
+    //    buffer. At this point we have all user-facing sections (digest,
+    //    standup, plan, ai_context). Save the digest immediately so we don't
+    //    lose it if the client aborts the stream (e.g., switches repos before
+    //    the summary section finishes streaming).
+    // 2. onStreamEnd: fires only when the stream completes naturally. Saves
+    //    the updated project summary for next run.
+    let digestSaved = false;
+    const onDigestReady = (fullText: string) => {
+      if (digestSaved) return;
+      digestSaved = true;
+      const summaryIdx = fullText.indexOf("---SUMMARY---");
+      const digestText = summaryIdx !== -1 ? fullText.slice(0, summaryIdx).trim() : fullText;
       void saveDigest(userId, repoFullName, "digest", digestText, stats);
+    };
 
-      // Save the updated project summary for next run
-      if (updatedSummary) {
-        void saveProjectSummary(userId, repoFullName, updatedSummary);
+    const onStreamEnd = (fullText: string) => {
+      // Final save of the digest in case ---SUMMARY--- never appeared
+      onDigestReady(fullText);
+      // Save the project summary if the LLM produced it
+      const summaryIdx = fullText.indexOf("---SUMMARY---");
+      if (summaryIdx !== -1) {
+        const updatedSummary = fullText.slice(summaryIdx + "---SUMMARY---".length).trim();
+        if (updatedSummary) {
+          void saveProjectSummary(userId, repoFullName, updatedSummary);
+        }
       }
     };
 
     let stream: ReadableStream;
 
     if (openaiKey) {
-      stream = await streamOpenAI(systemPrompt, userPrompt, openaiKey, stats, onComplete);
+      stream = await streamOpenAI(
+        systemPrompt,
+        userPrompt,
+        openaiKey,
+        stats,
+        onDigestReady,
+        onStreamEnd,
+      );
     } else if (anthropicKey) {
-      stream = await streamAnthropic(systemPrompt, userPrompt, anthropicKey, stats, onComplete);
+      stream = await streamAnthropic(
+        systemPrompt,
+        userPrompt,
+        anthropicKey,
+        stats,
+        onDigestReady,
+        onStreamEnd,
+      );
     } else {
       return Response.json({ error: "Service unavailable" }, { status: 503 });
     }
@@ -503,7 +525,8 @@ async function streamOpenAI(
   userPrompt: string,
   apiKey: string,
   stats: Record<string, unknown>,
-  onComplete?: (fullText: string) => void,
+  onDigestReady?: (fullText: string) => void,
+  onStreamEnd?: (fullText: string) => void,
 ): Promise<ReadableStream> {
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -568,6 +591,12 @@ async function streamOpenAI(
               if (text) {
                 fullText += text;
                 controller.enqueue(new TextEncoder().encode(sseEvent("text", { text })));
+                // Save the digest as soon as we see the SUMMARY marker — we have
+                // everything user-facing at this point. Protects against client
+                // aborts (repo switching) before the full stream finishes.
+                if (fullText.includes("---SUMMARY---")) {
+                  onDigestReady?.(fullText);
+                }
               }
             } catch {
               // Skip malformed chunks
@@ -575,7 +604,7 @@ async function streamOpenAI(
           }
         }
 
-        onComplete?.(fullText);
+        onStreamEnd?.(fullText);
         controller.enqueue(new TextEncoder().encode(sseEvent("done", {})));
       } catch (err) {
         console.error("OpenAI stream error:", err);
@@ -594,7 +623,8 @@ async function streamAnthropic(
   userPrompt: string,
   apiKey: string,
   stats: Record<string, unknown>,
-  onComplete?: (fullText: string) => void,
+  onDigestReady?: (fullText: string) => void,
+  onStreamEnd?: (fullText: string) => void,
 ): Promise<ReadableStream> {
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -650,6 +680,12 @@ async function streamAnthropic(
                 controller.enqueue(
                   new TextEncoder().encode(sseEvent("text", { text: parsed.delta.text })),
                 );
+                // Save the digest as soon as we see the SUMMARY marker — we have
+                // everything user-facing at this point. Protects against client
+                // aborts (repo switching) before the full stream finishes.
+                if (fullText.includes("---SUMMARY---")) {
+                  onDigestReady?.(fullText);
+                }
               }
             } catch {
               // Skip malformed chunks
@@ -657,7 +693,7 @@ async function streamAnthropic(
           }
         }
 
-        onComplete?.(fullText);
+        onStreamEnd?.(fullText);
         controller.enqueue(new TextEncoder().encode(sseEvent("done", {})));
       } catch (err) {
         console.error("Anthropic stream error:", err);
