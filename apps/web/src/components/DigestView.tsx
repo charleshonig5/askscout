@@ -562,24 +562,55 @@ function WhenYouCoded({
   const isSinglePoint = timeline.startMs === timeline.endMs;
   const span = isSinglePoint ? 1 : timeline.endMs - timeline.startMs;
 
-  // Find midnight boundaries within the span (in the user's local time).
-  // DST-safe: increment by calendar day, not 24h.
-  const breakPercents: number[] = [];
-  if (!isSinglePoint) {
+  // Walk the span in calendar-day chunks. Produces one segment per local day
+  // touched by the timeline. DST-safe (uses setDate, not 24h math).
+  type DaySeg = {
+    dayName: string;
+    startMs: number;
+    endMs: number;
+    leftPct: number;
+    rightPct: number;
+  };
+  const daySegments: DaySeg[] = [];
+  if (isSinglePoint) {
+    daySegments.push({
+      dayName: new Date(timeline.startMs).toLocaleDateString("en-US", { weekday: "short" }),
+      startMs: timeline.startMs,
+      endMs: timeline.endMs,
+      leftPct: 0,
+      rightPct: 100,
+    });
+  } else {
+    let segStart = timeline.startMs;
     const cursor = new Date(timeline.startMs);
     cursor.setHours(0, 0, 0, 0);
-    cursor.setDate(cursor.getDate() + 1); // first midnight strictly after startMs's day-start
+    cursor.setDate(cursor.getDate() + 1); // first midnight after startMs's day-start
     while (cursor.getTime() < timeline.endMs) {
-      if (cursor.getTime() > timeline.startMs) {
-        breakPercents.push(((cursor.getTime() - timeline.startMs) / span) * 100);
+      const segEnd = cursor.getTime();
+      if (segEnd > segStart) {
+        daySegments.push({
+          dayName: new Date(segStart).toLocaleDateString("en-US", { weekday: "short" }),
+          startMs: segStart,
+          endMs: segEnd,
+          leftPct: ((segStart - timeline.startMs) / span) * 100,
+          rightPct: ((segEnd - timeline.startMs) / span) * 100,
+        });
+        segStart = segEnd;
       }
       cursor.setDate(cursor.getDate() + 1);
     }
+    daySegments.push({
+      dayName: new Date(segStart).toLocaleDateString("en-US", { weekday: "short" }),
+      startMs: segStart,
+      endMs: timeline.endMs,
+      leftPct: ((segStart - timeline.startMs) / span) * 100,
+      rightPct: 100,
+    });
   }
-  const crossesDay = breakPercents.length > 0;
+  const crossesDay = daySegments.length > 1;
+  const breakPercents = daySegments.slice(0, -1).map((s) => s.rightPct);
 
-  // Time formatter — adds short weekday prefix when the span crosses midnight,
-  // so "Wed 8pm · Thu 10am" reads correctly instead of looking like one weird day.
+  // Tooltip formatter — keeps minutes for precision on hover.
   const fmtTime = (ms: number) => {
     const d = new Date(ms);
     const time = d
@@ -588,6 +619,19 @@ function WhenYouCoded({
     if (!crossesDay) return time;
     const day = d.toLocaleDateString("en-US", { weekday: "short" });
     return `${day} ${time}`;
+  };
+
+  // Bottom-label formatter — rounds to the nearest hour. Keeps the axis uncluttered.
+  // 9:14am → 9am · 2:30pm → 3pm · 7:46pm → 8pm · midnight → 12am · noon → 12pm
+  const fmtHour = (ms: number) => {
+    const d = new Date(ms);
+    if (d.getMinutes() >= 30) d.setHours(d.getHours() + 1);
+    d.setMinutes(0, 0, 0);
+    let h = d.getHours();
+    const ampm = h < 12 ? "am" : "pm";
+    if (h === 0) h = 12;
+    else if (h > 12) h -= 12;
+    return `${h}${ampm}`;
   };
 
   // Bar height scales with lines changed. Cap so one massive commit doesn't dominate.
@@ -657,15 +701,36 @@ function WhenYouCoded({
           );
         })}
       </div>
-      <div className="timeline-labels">
-        <span>{fmtTime(timeline.startMs)}</span>
-        {!isSinglePoint && (
-          <>
-            <span>{fmtTime((timeline.startMs + timeline.endMs) / 2)}</span>
-            <span>{fmtTime(timeline.endMs)}</span>
-          </>
-        )}
-      </div>
+      {crossesDay ? (
+        <div className="timeline-multi-labels">
+          {daySegments.map((seg, i) => (
+            <div
+              key={i}
+              className="timeline-day-segment"
+              style={{
+                left: `${seg.leftPct}%`,
+                width: `${seg.rightPct - seg.leftPct}%`,
+              }}
+            >
+              <div className="timeline-segment-times">
+                <span>{fmtHour(seg.startMs)}</span>
+                <span>{fmtHour(seg.endMs)}</span>
+              </div>
+              <div className="timeline-day-name">{seg.dayName}</div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="timeline-labels">
+          <span>{fmtHour(timeline.startMs)}</span>
+          {!isSinglePoint && (
+            <>
+              <span>{fmtHour((timeline.startMs + timeline.endMs) / 2)}</span>
+              <span>{fmtHour(timeline.endMs)}</span>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }

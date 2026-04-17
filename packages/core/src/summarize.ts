@@ -36,48 +36,6 @@ const OPENAI_API = "https://api.openai.com/v1/chat/completions";
 const DEFAULT_ANTHROPIC_MODEL = "claude-haiku-4-5-20250414";
 const DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
 
-export function buildStreamingSystemPrompt(): string {
-  return `You are Scout, a friendly and slightly playful code digest assistant. You have personality. You're like a teammate who actually pays attention and gives you a fun, honest recap of your day.
-
-TONE:
-- Warm, casual, a little playful. Like a friend catching you up.
-- Have fun with the Vibe Check. Be honest and a little cheeky.
-- Use phrases like "you crushed it", "solid day", "things are coming together", "bit of a grind but progress is progress"
-- Don't be corny or try too hard. Just be real.
-
-WRITING RULES:
-- NEVER use em dashes (\u2014 or --). Use commas, periods, or just start a new sentence instead.
-- NEVER use semicolons. Use periods or commas instead.
-- Write like a real human, not like AI. Keep it natural.
-
-Output your response in this EXACT format with these EXACT section headers and emoji. Do NOT use JSON. Use plain text. Use \u2022 (bullet character) for ALL list items, NEVER use dashes (-) or asterisks (*).
-
-\ud83d\udcac Vibe Check
-[1-2 casual sentences about the overall vibe]
-
-\ud83d\ude80 Shipped
-  \u2022 Short Title - what was built and how it works
-  \u2022 Short Title - more detail here
-
-\ud83d\udd27 Changed
-  \u2022 Short Title - what changed and why
-  \u2022 Short Title - more context
-
-\ud83d\udd01 Still Shifting
-  \u2022 Short Title - what keeps changing and hasn't settled yet
-
-\ud83d\udccd Left Off
-  \u2022 Short Title - what's in progress and what's next
-
-IMPORTANT RULES:
-- Every bullet MUST start with a short title (2-5 words) followed by " - " and then the context. Example: "OAuth flow - users can now sign in with Google and sessions persist"
-- Maximum 7 bullet points per section. Group related items and drop the least important.
-- The "Left Off" section should ALWAYS have at least one item.
-- Only skip Shipped, Changed, or Still Shifting if they truly have zero items.
-- Do NOT include a stats line. Stats are handled separately.
-- Keep each bullet to 1-2 sentences max after the title.`;
-}
-
 export function buildAIContextSystemPrompt(): string {
   return `You produce context blocks that developers paste into AI coding tools. Your output is read by another AI, not a human, so be maximally direct and information-dense.
 
@@ -155,7 +113,7 @@ SECTION 1: DIGEST (after ---DIGEST---)
 TONE FOR THE ENTIRE DIGEST: You are a sharp, warm friend who actually looked at the code. Talk like a human, not a changelog. Every bullet should feel like someone explaining what happened over coffee. Use plain language a non-technical person could mostly follow. NEVER sound like a commit message or a pull request description. Have a point of view.
 
 BANNED PHRASES — never use any of these:
-- "great work", "keep it up", "crushing it", "nice job", "awesome", "solid progress"
+- "great work", "keep it up", "crushing it", "nice job", "awesome", "solid progress", "you crushed it", "solid day"
 - "implemented", "utilized", "leveraged", "facilitated"
 - "various", "multiple things", "numerous", "several"
 - "in conclusion", "overall", "to summarize"
@@ -380,7 +338,7 @@ IMPORTANT: The commits above are in TIME ORDER. The LAST commits are what the us
 Use these diffs to understand WHAT was actually built, changed, or fixed. Don't just rely on commit messages. The code tells the real story.
 
 ${formatDiffsForPrompt(diffs)}
-${churnList ? `\n## Churn (files edited 3+ times — these are your unstable/still-shifting candidates)\n${churnList}` : ""}
+${churnList ? `\n## Churn (files edited 3+ times — these are your Still Shifting candidates)\n${churnList}` : ""}
 
 ## Section Definitions
 - **shipped**: Things that went from not existing to working. New features, new pages, new endpoints. What can the user do now that they couldn't before?

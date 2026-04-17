@@ -2,7 +2,6 @@ export { getCommits, getDiffs, getRepoName } from "./git.js";
 export {
   summarize,
   buildSystemPrompt,
-  buildStreamingSystemPrompt,
   buildAIContextSystemPrompt,
   buildStandupSystemPrompt,
   buildUnifiedSystemPrompt,

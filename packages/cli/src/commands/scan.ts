@@ -13,6 +13,7 @@ import {
   summarize,
   writeState,
 } from "@askscout/core";
+import type { GitDiff } from "@askscout/core";
 import type { OutputMode, ProjectState } from "@askscout/core";
 import { loadConfig } from "../config.js";
 import { inlineSetup } from "../setup.js";
@@ -127,7 +128,7 @@ export async function scan(options: ScanOptions): Promise<void> {
       console.log(`[DRY RUN] ${repoName} \u00b7 ${commits.length} commits \u00b7 ${timeLabel}\n`);
       console.log(`Files changed: ${new Set(diffs.map((d) => d.file)).size}`);
       console.log(
-        `Lines: +${diffs.reduce((s, d) => s + d.additions, 0)} / -${diffs.reduce((s, d) => s + d.deletions, 0)}`,
+        `Lines: +${diffs.reduce((s: number, d: GitDiff) => s + d.additions, 0)} / -${diffs.reduce((s: number, d: GitDiff) => s + d.deletions, 0)}`,
       );
       console.log(
         `State: ${state ? `run #${state.runCount}, last run ${state.lastRunAt}` : "first run"}\n`,

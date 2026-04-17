@@ -12,11 +12,6 @@ const SECTION_OPTIONS = [
   { key: "unstable", label: "Still Shifting", desc: "Things that keep getting reworked" },
   { key: "leftOff", label: "Left Off", desc: "Where you stopped working" },
   {
-    key: "oneTakeaway",
-    label: "Key Takeaways",
-    desc: "Scout's sign-off with a specific observation and a nudge",
-  },
-  {
     key: "statistics",
     label: "Statistics",
     desc: "Lines, commits, files, and most active files",
@@ -35,6 +30,11 @@ const SECTION_OPTIONS = [
     key: "codebaseHealth",
     label: "Codebase Health",
     desc: "Growth, focus, and churn indicators",
+  },
+  {
+    key: "oneTakeaway",
+    label: "Key Takeaways",
+    desc: "Scout's sign-off with a specific observation and a nudge",
   },
 ] as const;
 
