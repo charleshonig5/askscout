@@ -703,22 +703,33 @@ function WhenYouCoded({
       </div>
       {crossesDay ? (
         <div className="timeline-multi-labels">
-          {daySegments.map((seg, i) => (
-            <div
-              key={i}
-              className="timeline-day-segment"
-              style={{
-                left: `${seg.leftPct}%`,
-                width: `${seg.rightPct - seg.leftPct}%`,
-              }}
-            >
-              <div className="timeline-segment-times">
-                <span>{fmtHour(seg.startMs)}</span>
-                <span>{fmtHour(seg.endMs)}</span>
+          {daySegments.map((seg, i) => {
+            const isFirst = i === 0;
+            const widthPct = seg.rightPct - seg.leftPct;
+            // Narrow segments (< 12% of timeline): skip time labels, just show day name.
+            const tooNarrow = widthPct < 12;
+            return (
+              <div
+                key={i}
+                className="timeline-day-segment"
+                style={{
+                  left: `${seg.leftPct}%`,
+                  width: `${widthPct}%`,
+                }}
+              >
+                {!tooNarrow && (
+                  <div className="timeline-segment-times">
+                    {/* First segment: start time on left. Others: skip start (it's the
+                        same midnight already shown as the previous segment's end). */}
+                    {isFirst ? <span>{fmtHour(seg.startMs)}</span> : <span />}
+                    {/* Last segment: end time on right. Others: show midnight at right edge. */}
+                    <span>{fmtHour(seg.endMs)}</span>
+                  </div>
+                )}
+                <div className="timeline-day-name">{seg.dayName}</div>
               </div>
-              <div className="timeline-day-name">{seg.dayName}</div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className="timeline-labels">
