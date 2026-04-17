@@ -584,7 +584,7 @@ a:hover {
 
 .timeline-track {
   position: relative;
-  height: 64px;
+  height: 80px;
   margin-bottom: var(--space-sm);
 }
 
@@ -593,15 +593,16 @@ a:hover {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 1px;
+  height: 2px;
   background: var(--color-border);
+  border-radius: 1px;
 }
 
 .timeline-column {
   position: absolute;
-  bottom: 1px;
-  width: 3px;
-  margin-left: -1.5px;
+  bottom: 2px;
+  width: 5px;
+  margin-left: -2.5px;
   height: 100%;
 }
 
@@ -609,14 +610,14 @@ a:hover {
   position: absolute;
   left: 0;
   right: 0;
-  background: var(--color-accent);
-  border-radius: 1px;
+  background: var(--color-text-primary);
+  border-radius: 3px;
   cursor: help;
   transition: opacity 0.15s ease;
 }
 
 .timeline-column:hover .timeline-bar {
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 .timeline-bar:hover {
@@ -633,7 +634,7 @@ a:hover {
 
 .timeline-multi-labels {
   position: relative;
-  height: 28px;
+  height: 34px;
   font-family: var(--font-mono);
   color: var(--color-text-tertiary);
 }
@@ -653,10 +654,10 @@ a:hover {
 
 .timeline-day-name {
   text-align: center;
-  font-size: 10px;
-  margin-top: 3px;
-  letter-spacing: 0.04em;
-  opacity: 0.75;
+  font-size: 11px;
+  margin-top: 4px;
+  letter-spacing: 0.02em;
+  opacity: 0.5;
 }
 
 /* ============================================

@@ -574,7 +574,7 @@ function WhenYouCoded({
   const daySegments: DaySeg[] = [];
   if (isSinglePoint) {
     daySegments.push({
-      dayName: new Date(timeline.startMs).toLocaleDateString("en-US", { weekday: "short" }),
+      dayName: new Date(timeline.startMs).toLocaleDateString("en-US", { weekday: "long" }),
       startMs: timeline.startMs,
       endMs: timeline.endMs,
       leftPct: 0,
@@ -589,7 +589,7 @@ function WhenYouCoded({
       const segEnd = cursor.getTime();
       if (segEnd > segStart) {
         daySegments.push({
-          dayName: new Date(segStart).toLocaleDateString("en-US", { weekday: "short" }),
+          dayName: new Date(segStart).toLocaleDateString("en-US", { weekday: "long" }),
           startMs: segStart,
           endMs: segEnd,
           leftPct: ((segStart - timeline.startMs) / span) * 100,
@@ -600,7 +600,7 @@ function WhenYouCoded({
       cursor.setDate(cursor.getDate() + 1);
     }
     daySegments.push({
-      dayName: new Date(segStart).toLocaleDateString("en-US", { weekday: "short" }),
+      dayName: new Date(segStart).toLocaleDateString("en-US", { weekday: "long" }),
       startMs: segStart,
       endMs: timeline.endMs,
       leftPct: ((segStart - timeline.startMs) / span) * 100,
@@ -617,7 +617,7 @@ function WhenYouCoded({
       .toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })
       .toLowerCase();
     if (!crossesDay) return time;
-    const day = d.toLocaleDateString("en-US", { weekday: "short" });
+    const day = d.toLocaleDateString("en-US", { weekday: "long" });
     return `${day} ${time}`;
   };
 
@@ -636,8 +636,8 @@ function WhenYouCoded({
 
   // Bar height scales with lines changed. Cap so one massive commit doesn't dominate.
   const maxLines = Math.max(...timeline.points.map((p) => p.lines), 1);
-  const MAX_BAR_HEIGHT = 56; // px; track is 64 with 8px breathing room
-  const MIN_BAR_HEIGHT = 4;
+  const MAX_BAR_HEIGHT = 68; // px; track is 80 with 12px breathing room
+  const MIN_BAR_HEIGHT = 6;
   const barHeight = (lines: number) => {
     const ratio = Math.min(lines / maxLines, 1);
     return Math.max(MIN_BAR_HEIGHT, ratio * MAX_BAR_HEIGHT);
@@ -657,8 +657,8 @@ function WhenYouCoded({
   }
 
   // Split the baseline at each midnight so day-changes show as a visible gap.
-  // 1% gap centered on each boundary (~3-6px on typical widths).
-  const GAP_PCT = 1;
+  // 2% gap centered on each boundary (~8-12px on typical widths).
+  const GAP_PCT = 2;
   const half = GAP_PCT / 2;
   const baselineSegments: Array<{ left: number; right: number }> = [];
   let prev = 0;
@@ -694,7 +694,7 @@ function WhenYouCoded({
                     title={`${fmtTime(c.timeMs)} — ${c.lines.toLocaleString()} lines`}
                   />
                 );
-                cumulativeBottom += h + 1; // 1px gap so each commit reads as its own piece
+                cumulativeBottom += h + 3; // 3px gap so each commit reads as its own piece
                 return segment;
               })}
             </div>
