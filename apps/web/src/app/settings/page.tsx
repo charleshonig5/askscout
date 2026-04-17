@@ -258,7 +258,7 @@ export default function SettingsPage() {
         <div className="settings-section">
           <h2 className="settings-section-title">Privacy &amp; Security</h2>
           <p className="settings-section-desc">
-            Scout is read-only. Here is exactly what we access and what we don&apos;t.
+            Scout is read-only. Here is exactly what we access, what we send, and what we store.
           </p>
           <div className="privacy-grid">
             <div className="privacy-card">
@@ -266,29 +266,55 @@ export default function SettingsPage() {
               <div className="privacy-card-items">
                 <div className="privacy-item privacy-item--safe">Commit messages and metadata</div>
                 <div className="privacy-item privacy-item--safe">
-                  File diffs (lines added and removed)
+                  Diff patches (the specific lines you added or removed)
                 </div>
                 <div className="privacy-item privacy-item--safe">File names and paths</div>
+              </div>
+            </div>
+            <div className="privacy-card">
+              <div className="privacy-card-title">What Scout sends to AI</div>
+              <div className="privacy-card-items">
+                <div className="privacy-item privacy-item--safe">
+                  Diff patches are sent to Anthropic or OpenAI to generate your digest
+                </div>
+                <div className="privacy-item privacy-item--safe">
+                  Patches are sanitized and capped (max 800 chars per file, 8,000 total)
+                </div>
+                <div className="privacy-item privacy-item--safe">
+                  No full source files are ever sent
+                </div>
+              </div>
+            </div>
+            <div className="privacy-card">
+              <div className="privacy-card-title">What Scout stores</div>
+              <div className="privacy-card-items">
+                <div className="privacy-item privacy-item--safe">
+                  Your plain-English digest (no raw code)
+                </div>
+                <div className="privacy-item privacy-item--safe">
+                  A short project summary for context across sessions
+                </div>
+                <div className="privacy-item privacy-item--safe">Your settings and preferences</div>
               </div>
             </div>
             <div className="privacy-card">
               <div className="privacy-card-title">What Scout never touches</div>
               <div className="privacy-card-items">
                 <div className="privacy-item privacy-item--never">
-                  Source code (files are never opened)
+                  Full source files (only diff patches, never entire files)
                 </div>
                 <div className="privacy-item privacy-item--never">
-                  Environment variables and secrets
+                  Environment variables, secrets, and API keys
                 </div>
                 <div className="privacy-item privacy-item--never">
-                  Dependencies and node_modules
+                  Dependencies, node_modules, and build artifacts
                 </div>
               </div>
             </div>
           </div>
           <p className="privacy-footer">
-            Diffs are processed in memory and discarded. Only the plain-English digest is stored.
-            Your code never leaves GitHub.
+            Raw diffs are processed in memory and discarded after your digest is generated. Scout
+            never writes to your repository.
           </p>
         </div>
 
