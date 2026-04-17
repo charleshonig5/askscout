@@ -272,20 +272,6 @@ export default function SettingsPage() {
               </div>
             </div>
             <div className="privacy-card">
-              <div className="privacy-card-title">What Scout sends to AI</div>
-              <div className="privacy-card-items">
-                <div className="privacy-item privacy-item--safe">
-                  Diff patches are sent to Anthropic or OpenAI to generate your digest
-                </div>
-                <div className="privacy-item privacy-item--safe">
-                  Patches are sanitized and capped (max 800 chars per file, 8,000 total)
-                </div>
-                <div className="privacy-item privacy-item--safe">
-                  No full source files are ever sent
-                </div>
-              </div>
-            </div>
-            <div className="privacy-card">
               <div className="privacy-card-title">What Scout stores</div>
               <div className="privacy-card-items">
                 <div className="privacy-item privacy-item--safe">
@@ -313,8 +299,8 @@ export default function SettingsPage() {
             </div>
           </div>
           <p className="privacy-footer">
-            Raw diffs are processed in memory and discarded after your digest is generated. Scout
-            never writes to your repository.
+            Diff patches are sent to Anthropic or OpenAI to generate your digest, then discarded. No
+            raw code is stored. Scout never writes to your repository.
           </p>
         </div>
 
