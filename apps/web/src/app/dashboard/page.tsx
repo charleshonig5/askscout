@@ -380,13 +380,38 @@ export default function DashboardPage() {
     // Optimistic local update so the streak pill updates instantly.
     setCheckinDates((prev) => (prev.includes(today) ? prev : [...prev, today]));
 
-    void fetch("/api/checkin", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ repo: selectedRepo, date: today }),
-    }).catch(() => {
-      // Check-in is best-effort; don't surface errors to the user.
+    // Fire the POST with a single silent retry after 2s. The retry catches
+    // transient network blips (WiFi drop, Supabase cold-start). Persistent
+    // failures (missing table, auth expired) will fail twice — that's fine,
+    // those are admin-side issues visible in server logs.
+    const body = JSON.stringify({ repo: selectedRepo, date: today });
+    const attempt = () =>
+      fetch("/api/checkin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body,
+      }).then((res) => {
+        if (!res.ok) throw new Error(`checkin failed: ${res.status}`);
+        return res;
+      });
+
+    let cancelled = false;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
+    attempt().catch(() => {
+      if (cancelled) return;
+      retryTimer = setTimeout(() => {
+        if (cancelled) return;
+        attempt().catch(() => {
+          // Both attempts failed; server-side log captured it, user sees
+          // preserved streak via the optimistic update until reload.
+        });
+      }, 2000);
     });
+
+    return () => {
+      cancelled = true;
+      if (retryTimer) clearTimeout(retryTimer);
+    };
   }, [noNewCommits, selectedRepo]);
 
   const handleRepoChange = useCallback((repo: string) => {
