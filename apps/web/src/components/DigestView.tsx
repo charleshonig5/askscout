@@ -722,10 +722,17 @@ function WhenYouCoded({
       {crossesDay ? (
         <div className="timeline-multi-labels">
           {daySegments.map((seg, i) => {
-            const isFirst = i === 0;
             const widthPct = seg.rightPct - seg.leftPct;
-            // Narrow segments (< 12% of timeline): skip time labels, just show day name.
-            const tooNarrow = widthPct < 12;
+            const tooNarrow = widthPct < 10;
+            // Labels reflect the ACTUAL first and last commits within this day
+            // segment, not the midnight segment boundary. That way Thursday shows
+            // "11am · 7pm" (when coding actually happened) instead of "12am · 7pm".
+            const segPoints = timeline.points.filter(
+              (p) => p.timeMs >= seg.startMs && p.timeMs <= seg.endMs,
+            );
+            const labelStartMs = segPoints.length > 0 ? segPoints[0]!.timeMs : seg.startMs;
+            const labelEndMs =
+              segPoints.length > 0 ? segPoints[segPoints.length - 1]!.timeMs : seg.endMs;
             return (
               <div
                 key={i}
@@ -737,11 +744,8 @@ function WhenYouCoded({
               >
                 {!tooNarrow && (
                   <div className="timeline-segment-times">
-                    {/* First segment: start time on left. Others: skip start (it's the
-                        same midnight already shown as the previous segment's end). */}
-                    {isFirst ? <span>{fmtHour(seg.startMs)}</span> : <span />}
-                    {/* Last segment: end time on right. Others: show midnight at right edge. */}
-                    <span>{fmtHour(seg.endMs)}</span>
+                    <span>{fmtHour(labelStartMs)}</span>
+                    <span>{fmtHour(labelEndMs)}</span>
                   </div>
                 )}
                 <div className="timeline-day-name">{seg.dayName}</div>
@@ -749,20 +753,27 @@ function WhenYouCoded({
             );
           })}
         </div>
-      ) : isSinglePoint ? (
-        <div className="timeline-labels timeline-labels--single">
-          <span>{fmtTimePrecise(timeline.startMs)}</span>
-        </div>
-      ) : useNarrowLabels ? (
-        <div className="timeline-labels">
-          <span>{fmtTimePrecise(timeline.startMs)}</span>
-          <span>{fmtTimePrecise(timeline.endMs)}</span>
-        </div>
       ) : (
-        <div className="timeline-labels">
-          <span>{fmtHour(timeline.startMs)}</span>
-          <span>{fmtHour((timeline.startMs + timeline.endMs) / 2)}</span>
-          <span>{fmtHour(timeline.endMs)}</span>
+        <div className="timeline-single-labels">
+          {isSinglePoint ? (
+            <div className="timeline-labels timeline-labels--single">
+              <span>{fmtTimePrecise(timeline.startMs)}</span>
+            </div>
+          ) : useNarrowLabels ? (
+            <div className="timeline-labels">
+              <span>{fmtTimePrecise(timeline.startMs)}</span>
+              <span>{fmtTimePrecise(timeline.endMs)}</span>
+            </div>
+          ) : (
+            <div className="timeline-labels">
+              <span>{fmtHour(timeline.startMs)}</span>
+              <span>{fmtHour((timeline.startMs + timeline.endMs) / 2)}</span>
+              <span>{fmtHour(timeline.endMs)}</span>
+            </div>
+          )}
+          <div className="timeline-day-name">
+            {new Date(timeline.startMs).toLocaleDateString("en-US", { weekday: "long" })}
+          </div>
         </div>
       )}
     </div>
