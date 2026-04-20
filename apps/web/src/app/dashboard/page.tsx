@@ -473,9 +473,9 @@ export default function DashboardPage() {
       return historyRecords[0]!.id;
     }
     if (noNewCommits) return null;
-    const todayStr = new Date().toDateString();
+    const todayKey = new Date().toDateString();
     const todayEntry = historyRecords.find(
-      (h) => new Date(h.created_at).toDateString() === todayStr,
+      (h) => new Date(h.created_at).toDateString() === todayKey,
     );
     return todayEntry?.id ?? null;
   })();
