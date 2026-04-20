@@ -632,6 +632,10 @@ a:hover {
   color: var(--color-text-tertiary);
 }
 
+.timeline-labels--single {
+  justify-content: center;
+}
+
 .timeline-multi-labels {
   position: relative;
   height: 34px;

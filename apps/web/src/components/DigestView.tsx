@@ -634,6 +634,24 @@ function WhenYouCoded({
     return `${h}${ampm}`;
   };
 
+  // Precise time formatter — used for narrow spans where hour-rounding would
+  // collapse every label to the same value (e.g. three "10am"s for a 15-min burst).
+  // 10:05am · 10:20am · 12:45pm
+  const fmtTimePrecise = (ms: number) => {
+    const d = new Date(ms);
+    const hour24 = d.getHours();
+    const minutes = d.getMinutes();
+    const ampm = hour24 < 12 ? "am" : "pm";
+    let hour = hour24 % 12;
+    if (hour === 0) hour = 12;
+    return `${hour}:${minutes.toString().padStart(2, "0")}${ampm}`;
+  };
+
+  // If the single-day span is narrow, hour-rounding would duplicate labels.
+  // Switch to precise times + drop the middle label once span < 3 hours.
+  const spanHours = span / (1000 * 60 * 60);
+  const useNarrowLabels = !crossesDay && spanHours < 3 && !isSinglePoint;
+
   // Bar height scales with lines changed. Cap so one massive commit doesn't dominate.
   const maxLines = Math.max(...timeline.points.map((p) => p.lines), 1);
   const MAX_BAR_HEIGHT = 68; // px; track is 80 with 12px breathing room
@@ -731,15 +749,20 @@ function WhenYouCoded({
             );
           })}
         </div>
+      ) : isSinglePoint ? (
+        <div className="timeline-labels timeline-labels--single">
+          <span>{fmtTimePrecise(timeline.startMs)}</span>
+        </div>
+      ) : useNarrowLabels ? (
+        <div className="timeline-labels">
+          <span>{fmtTimePrecise(timeline.startMs)}</span>
+          <span>{fmtTimePrecise(timeline.endMs)}</span>
+        </div>
       ) : (
         <div className="timeline-labels">
           <span>{fmtHour(timeline.startMs)}</span>
-          {!isSinglePoint && (
-            <>
-              <span>{fmtHour((timeline.startMs + timeline.endMs) / 2)}</span>
-              <span>{fmtHour(timeline.endMs)}</span>
-            </>
-          )}
+          <span>{fmtHour((timeline.startMs + timeline.endMs) / 2)}</span>
+          <span>{fmtHour(timeline.endMs)}</span>
         </div>
       )}
     </div>
