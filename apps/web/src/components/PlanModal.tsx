@@ -15,11 +15,22 @@ interface Task {
   reason: string | null;
 }
 
+/** Capitalize the first character so reason fragments render as proper sentences. */
+function sentenceCase(s: string): string {
+  if (!s) return s;
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 /**
  * Parse the LLM-produced plan into a structured task list. Supports:
  *  - New format: "- [ ] Task sentence. Reason sentence." (split on first ". ")
  *  - Old format (backward compat): "- [ ] Task (reason)" (trailing parens)
  *  - Bare: "- [ ] Task with no reason"
+ *
+ * Reasons always get forced into sentence case — the old parenthetical format
+ * produced lowercase fragments like "blocks the checkout flow" which render
+ * wrong on their own. New prompts already produce proper sentences, so the
+ * transform is a no-op there.
  */
 function parseTasks(text: string): Task[] {
   const tasks: Task[] = [];
@@ -34,7 +45,7 @@ function parseTasks(text: string): Task[] {
       const parenIdx = content.lastIndexOf("(");
       if (parenIdx > 0) {
         const task = content.slice(0, parenIdx).trim();
-        const reason = content.slice(parenIdx + 1, -1).trim();
+        const reason = sentenceCase(content.slice(parenIdx + 1, -1).trim());
         tasks.push({ id: task, task, reason });
         continue;
       }
@@ -44,7 +55,7 @@ function parseTasks(text: string): Task[] {
     const periodIdx = content.indexOf(". ");
     if (periodIdx > 0 && periodIdx < content.length - 2) {
       const task = content.slice(0, periodIdx + 1).trim();
-      const reason = content.slice(periodIdx + 2).trim();
+      const reason = sentenceCase(content.slice(periodIdx + 2).trim());
       tasks.push({ id: task, task, reason });
       continue;
     }
