@@ -846,25 +846,22 @@ function TopFiles({ files }: { files: TopFile[] }) {
   if (files.length === 0) return null;
   const fmt = (n: number) => n.toLocaleString("en-US");
   return (
-    <div className="digest-section">
-      <div className="digest-section-title">Most Active Files</div>
-      <div className="top-files">
-        {files.map((f, i) => (
-          <div key={f.file} className="top-file-row">
-            <span className="top-file-rank">{i + 1}.</span>
-            <span className="top-file-name">{f.file.split("/").slice(-2).join("/")}</span>
-            <span className="top-file-detail">
-              <span className="top-file-added">+{fmt(f.added ?? 0)}</span>
-              {" / "}
-              <span className="top-file-removed">-{fmt(f.removed ?? 0)}</span>
-              <span className="top-file-commits">
-                {" \u00b7 "}
-                {f.commits} {f.commits === 1 ? "commit" : "commits"}
-              </span>
+    <div className="top-files">
+      {files.map((f, i) => (
+        <div key={f.file} className="top-file-row">
+          <span className="top-file-rank">{i + 1}.</span>
+          <span className="top-file-name">{f.file.split("/").slice(-2).join("/")}</span>
+          <span className="top-file-detail">
+            <span className="top-file-added">+{fmt(f.added ?? 0)}</span>
+            {" / "}
+            <span className="top-file-removed">-{fmt(f.removed ?? 0)}</span>
+            <span className="top-file-commits">
+              {" \u00b7 "}
+              {f.commits} {f.commits === 1 ? "commit" : "commits"}
             </span>
-          </div>
-        ))}
-      </div>
+          </span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -1009,11 +1006,21 @@ export function DigestView({
             <div className="stats-reveal-item" style={{ animationDelay: "200ms" }}>
               <StatsCards stats={stats} animate={animate} />
             </div>
-            {stats.topFiles && (
-              <div className="stats-reveal-item" style={{ animationDelay: "450ms" }}>
-                <TopFiles files={stats.topFiles} />
-              </div>
-            )}
+          </div>
+        )}
+
+        {/* Most Active Files — its own section, toggleable independently */}
+        {!isStreaming && vis("mostActiveFiles") && stats?.topFiles && stats.topFiles.length > 0 && (
+          <div className="digest-section stats-reveal">
+            <div
+              className="digest-section-title stats-reveal-item"
+              style={{ animationDelay: "450ms" }}
+            >
+              {"\ud83d\udcc1"} Most Active Files
+            </div>
+            <div className="stats-reveal-item" style={{ animationDelay: "600ms" }}>
+              <TopFiles files={stats.topFiles} />
+            </div>
           </div>
         )}
 

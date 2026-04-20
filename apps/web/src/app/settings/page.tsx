@@ -14,7 +14,12 @@ const SECTION_OPTIONS = [
   {
     key: "statistics",
     label: "Statistics",
-    desc: "Lines, commits, files, and most active files",
+    desc: "Lines added and removed, commits, and files changed",
+  },
+  {
+    key: "mostActiveFiles",
+    label: "Most Active Files",
+    desc: "The files you touched most this session",
   },
   {
     key: "whenYouCoded",
