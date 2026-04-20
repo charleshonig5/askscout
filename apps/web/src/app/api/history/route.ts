@@ -1,5 +1,5 @@
 import { auth, getUserId } from "@/auth";
-import { getDigestHistory } from "@/lib/supabase";
+import { getCheckinDates, getDigestHistory } from "@/lib/supabase";
 
 export async function GET(req: Request) {
   const session = await auth();
@@ -19,8 +19,12 @@ export async function GET(req: Request) {
   }
 
   try {
-    const history = await getDigestHistory(userId, repo);
-    return Response.json({ history });
+    // Fetch history + check-in dates in parallel so the streak can count both.
+    const [history, checkinDates] = await Promise.all([
+      getDigestHistory(userId, repo),
+      getCheckinDates(userId, repo),
+    ]);
+    return Response.json({ history, checkinDates });
   } catch (err) {
     console.error("History fetch error:", err);
     return Response.json({ error: "Failed to fetch history" }, { status: 500 });

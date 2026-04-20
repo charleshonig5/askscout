@@ -38,6 +38,9 @@ export default function DashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [historyRecords, setHistoryRecords] = useState<HistoryRecord[]>([]);
+  // Check-in dates (YYYY-MM-DD) recorded for quiet-day visits — used by the
+  // streak computation so rest days don't break a consecutive-day streak.
+  const [checkinDates, setCheckinDates] = useState<string[]>([]);
 
   const digestStream = useDigestStream();
   const [aiContextOpen, setAiContextOpen] = useState(false);
@@ -109,8 +112,12 @@ export default function DashboardPage() {
     try {
       const res = await fetch(`/api/history?repo=${encodeURIComponent(repo)}`);
       if (res.ok) {
-        const data = (await res.json()) as { history: HistoryRecord[] };
+        const data = (await res.json()) as {
+          history: HistoryRecord[];
+          checkinDates?: string[];
+        };
         setHistoryRecords(data.history);
+        setCheckinDates(data.checkinDates ?? []);
         setHistory(
           data.history.map((h) => {
             // Count bullets in each section from the stored content
@@ -244,6 +251,7 @@ export default function DashboardPage() {
       setShowLatestFromQuietDay(false);
       // Clear history so the no-commits effect can't use the previous repo's data
       setHistoryRecords([]);
+      setCheckinDates([]);
       setHistory([]);
       void fetchHistory(selectedRepo);
       void loadOrGenerate(selectedRepo, "digest");
@@ -330,9 +338,13 @@ export default function DashboardPage() {
       try {
         const res = await fetch(`/api/history?repo=${encodeURIComponent(selectedRepo)}`);
         if (res.ok) {
-          const data = (await res.json()) as { history: HistoryRecord[] };
+          const data = (await res.json()) as {
+            history: HistoryRecord[];
+            checkinDates?: string[];
+          };
           records = data.history;
           setHistoryRecords(data.history);
+          setCheckinDates(data.checkinDates ?? []);
         }
       } catch {
         return;
@@ -352,6 +364,30 @@ export default function DashboardPage() {
     });
     digestStream.reset();
   }, [historyRecords, selectedRepo, digestStream]);
+
+  // Record a daily check-in when the user lands on the quiet-day empty state.
+  // Keeps their streak alive on rest days. Best-effort — silent on failure,
+  // and optimistically adds today to the local checkinDates so the streak
+  // number updates in the UI without waiting on a round trip.
+  useEffect(() => {
+    if (!noNewCommits || !selectedRepo) return;
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const dd = String(now.getDate()).padStart(2, "0");
+    const today = `${yyyy}-${mm}-${dd}`;
+
+    // Optimistic local update so the streak pill updates instantly.
+    setCheckinDates((prev) => (prev.includes(today) ? prev : [...prev, today]));
+
+    void fetch("/api/checkin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ repo: selectedRepo, date: today }),
+    }).catch(() => {
+      // Check-in is best-effort; don't surface errors to the user.
+    });
+  }, [noNewCommits, selectedRepo]);
 
   const handleRepoChange = useCallback((repo: string) => {
     setSelectedRepo(repo);
@@ -425,25 +461,34 @@ export default function DashboardPage() {
     pageTitle = "Digest";
   }
 
-  // Compute per-repo streak from history records (consecutive calendar days)
+  // Compute per-repo streak from history records AND daily check-ins.
+  // A day counts toward the streak if EITHER a digest was generated that day
+  // OR the user visited the quiet-day empty state and a check-in was recorded.
+  // This way a rest day doesn't break the streak as long as the user opened
+  // Scout. Today is skipped if neither marker exists yet (so it doesn't break
+  // mid-day before they've generated/visited).
   const streak = (() => {
-    if (historyRecords.length === 0) return 0;
-    const digestDays = new Set(
-      historyRecords.map((h) => {
-        const d = new Date(h.created_at);
-        return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-      }),
-    );
+    const pad = (n: number) => String(n).padStart(2, "0");
+    const fmtKey = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    const activeDays = new Set<string>();
+    for (const h of historyRecords) {
+      activeDays.add(fmtKey(new Date(h.created_at)));
+    }
+    for (const date of checkinDates) {
+      // checkinDates arrive as YYYY-MM-DD already; they match fmtKey's shape.
+      activeDays.add(date);
+    }
+    if (activeDays.size === 0) return 0;
     let count = 0;
     const now = new Date();
     for (let i = 0; i < 365; i++) {
       const d = new Date(now);
       d.setDate(d.getDate() - i);
-      const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-      if (digestDays.has(key)) {
+      const key = fmtKey(d);
+      if (activeDays.has(key)) {
         count++;
       } else if (i === 0) {
-        // Today might not have a digest yet, skip it
+        // Today might not have an entry yet, skip it
         continue;
       } else {
         break;
@@ -497,12 +542,17 @@ export default function DashboardPage() {
 
             {noNewCommits && !showLatestFromQuietDay ? (
               <div className="quiet-day">
-                <div className="quiet-day-emoji">{"\ud83d\udca4"}</div>
+                <div className="quiet-day-emoji">{"\u2615"}</div>
                 <h2 className="quiet-day-title">No new commits today</h2>
                 <p className="quiet-day-subtitle">
-                  {repoName} hasn&apos;t seen any activity since your last digest on{" "}
-                  {noNewCommits.date}. Nothing new for Scout to dig through.
+                  {repoName} hasn&apos;t seen activity since your digest on {noNewCommits.date}.
+                  Rest counts too — Scout will be here when you&apos;re back.
                 </p>
+                {streak >= 2 && (
+                  <div className="quiet-day-streak">
+                    {"\ud83d\udd25"} {streak}-day streak kept alive
+                  </div>
+                )}
                 <div className="quiet-day-actions">
                   <button
                     className="btn btn-primary"
@@ -510,18 +560,7 @@ export default function DashboardPage() {
                   >
                     View your last digest
                   </button>
-                  <button
-                    className="btn btn-secondary"
-                    onClick={() => {
-                      setNoNewCommits(null);
-                      setShowLatestFromQuietDay(false);
-                      forceGenerate(selectedRepo, "digest");
-                    }}
-                  >
-                    Try generating anyway
-                  </button>
                 </div>
-                <p className="quiet-day-hint">Or pick a different repo from the dropdown above.</p>
               </div>
             ) : noNewCommits && showLatestFromQuietDay ? (
               <>

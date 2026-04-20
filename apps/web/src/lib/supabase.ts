@@ -87,11 +87,13 @@ export async function saveUserSettings(
   if (error) console.error("[askscout] Failed to save settings:", error.message);
 }
 
-/** Delete all digests for a user (all repos) */
+/** Delete all digests for a user (all repos). Also clears daily check-ins. */
 export async function deleteAllDigests(userId: string): Promise<void> {
   if (!supabase) return;
   const { error } = await supabase.from("digests").delete().eq("user_id", userId);
   if (error) console.error("[askscout] Failed to delete digests:", error.message);
+  // Streak data lives in check-ins too; clear those so the streak truly resets.
+  await supabase.from("daily_checkins").delete().eq("user_id", userId);
 }
 
 /** Delete digests for a specific repo */
@@ -99,16 +101,57 @@ export async function deleteRepoDigests(userId: string, repo: string): Promise<v
   if (!supabase) return;
   const { error } = await supabase.from("digests").delete().eq("user_id", userId).eq("repo", repo);
   if (error) console.error("[askscout] Failed to delete repo digests:", error.message);
-  // Also clear the project summary for this repo
+  // Also clear the project summary and daily check-ins for this repo
   await supabase.from("project_summaries").delete().eq("user_id", userId).eq("repo", repo);
+  await supabase.from("daily_checkins").delete().eq("user_id", userId).eq("repo", repo);
 }
 
-/** Delete user account entirely (settings + all digests + summaries) */
+/** Delete user account entirely (settings + all digests + summaries + checkins) */
 export async function deleteUserAccount(userId: string): Promise<void> {
   if (!supabase) return;
   await supabase.from("digests").delete().eq("user_id", userId);
   await supabase.from("project_summaries").delete().eq("user_id", userId);
   await supabase.from("user_settings").delete().eq("user_id", userId);
+  await supabase.from("daily_checkins").delete().eq("user_id", userId);
+}
+
+// ============================================
+// Daily Check-ins (streak preservation on rest days)
+// ============================================
+
+/**
+ * Record a "quiet day check-in" for a user+repo+date. Upserts on conflict so
+ * repeated visits in the same day are idempotent. Date is the user's LOCAL
+ * calendar date in YYYY-MM-DD form — the client sends it so timezone math
+ * stays consistent with how the streak is displayed.
+ */
+export async function recordDailyCheckin(
+  userId: string,
+  repo: string,
+  checkinDate: string,
+): Promise<void> {
+  if (!supabase) return;
+  const { error } = await supabase
+    .from("daily_checkins")
+    .upsert(
+      { user_id: userId, repo, checkin_date: checkinDate },
+      { onConflict: "user_id,repo,checkin_date" },
+    );
+  if (error) console.error("[askscout] Failed to record check-in:", error.message);
+}
+
+/** Get all check-in dates (last 60 days) for a user+repo. Returns YYYY-MM-DD strings. */
+export async function getCheckinDates(userId: string, repo: string): Promise<string[]> {
+  if (!supabase) return [];
+  const sixtyDaysAgo = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  const { data, error } = await supabase
+    .from("daily_checkins")
+    .select("checkin_date")
+    .eq("user_id", userId)
+    .eq("repo", repo)
+    .gte("checkin_date", sixtyDaysAgo);
+  if (error || !data) return [];
+  return data.map((d) => d.checkin_date as string);
 }
 
 // ============================================
