@@ -460,6 +460,26 @@ export default function DashboardPage() {
   // Find the active history entry for the title
   const activeHistoryEntry = historyRecords.find((h) => h.id === activeHistoryId);
 
+  // The sidebar's selected state falls back to today's history entry when we're
+  // on the live view. Without this, nothing was selected on today's digest even
+  // though it existed in the history list. Order of precedence:
+  //   1. Explicitly viewing a past digest → that one
+  //   2. Quiet-day + showing last digest → the last entry we're previewing
+  //   3. Live view of today → today's entry (if it's been saved to history)
+  //   4. Otherwise → nothing selected
+  const sidebarActiveId = (() => {
+    if (activeHistoryId) return activeHistoryId;
+    if (noNewCommits && showLatestFromQuietDay && historyRecords.length > 0) {
+      return historyRecords[0]!.id;
+    }
+    if (noNewCommits) return null;
+    const todayStr = new Date().toDateString();
+    const todayEntry = historyRecords.find(
+      (h) => new Date(h.created_at).toDateString() === todayStr,
+    );
+    return todayEntry?.id ?? null;
+  })();
+
   const todayStr = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
@@ -544,7 +564,7 @@ export default function DashboardPage() {
       <div className="app-layout">
         <Sidebar
           entries={history}
-          activeId={activeHistoryId}
+          activeId={sidebarActiveId}
           onSelect={handleHistorySelect}
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
