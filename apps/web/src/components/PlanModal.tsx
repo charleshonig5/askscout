@@ -142,10 +142,7 @@ export function PlanModal({ isOpen, onClose, content }: PlanModalProps) {
             <X size={16} />
           </button>
         </div>
-        <p className="modal-desc">
-          Your to-do list for today, based on what Scout saw. Check off as you go, or copy it all to
-          wherever you keep tasks.
-        </p>
+        <p className="modal-desc">Your to-do list for today. Check off as you go.</p>
 
         <div className="modal-body">
           {!content ? (
