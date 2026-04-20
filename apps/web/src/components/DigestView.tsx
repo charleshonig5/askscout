@@ -501,7 +501,7 @@ export interface DigestViewStats {
   timeline?: {
     startMs: number;
     endMs: number;
-    points: Array<{ timeMs: number; lines: number }>;
+    points: Array<{ timeMs: number; lines: number; message?: string }>;
   } | null;
 }
 
@@ -551,10 +551,12 @@ function PaceCard({
   );
 }
 
+type TimelinePoint = { timeMs: number; lines: number; message?: string };
+
 function WhenYouCoded({
   timeline,
 }: {
-  timeline: { startMs: number; endMs: number; points: Array<{ timeMs: number; lines: number }> };
+  timeline: { startMs: number; endMs: number; points: Array<TimelinePoint> };
 }) {
   if (timeline.points.length === 0) return null;
 
@@ -665,7 +667,7 @@ function WhenYouCoded({
   // 1.5% buckets ≈ ~5min on a 6-hour span, ~12min on a 16-hour span — tight enough
   // that adjacent columns stay distinct, loose enough that bursts visibly stack.
   const BUCKET_PCT = 1.5;
-  const buckets = new Map<number, Array<{ timeMs: number; lines: number }>>();
+  const buckets = new Map<number, Array<TimelinePoint>>();
   for (const p of timeline.points) {
     const left = isSinglePoint ? 50 : ((p.timeMs - timeline.startMs) / span) * 100;
     const bucket = Math.round(left / BUCKET_PCT) * BUCKET_PCT;
@@ -700,20 +702,36 @@ function WhenYouCoded({
           // Stack biggest commits on the bottom so smaller ones perch on top.
           const sorted = [...commits].sort((a, b) => b.lines - a.lines);
           let cumulativeBottom = 0;
+          // Edge-aware tooltip anchoring: bars near the left/right edges anchor
+          // the tooltip to that edge instead of centering, so it doesn't clip.
+          const edgeClass =
+            leftPct < 15
+              ? " timeline-bar--edge-left"
+              : leftPct > 85
+                ? " timeline-bar--edge-right"
+                : "";
           return (
             <div key={leftPct} className="timeline-column" style={{ left: `${leftPct}%` }}>
               {sorted.map((c, i) => {
                 const h = barHeight(c.lines);
-                const segment = (
+                const bar = (
                   <div
                     key={i}
-                    className="timeline-bar"
+                    className={`timeline-bar${edgeClass}`}
                     style={{ bottom: `${cumulativeBottom}px`, height: `${h}px` }}
-                    title={`${fmtTime(c.timeMs)} — ${c.lines.toLocaleString()} lines`}
-                  />
+                  >
+                    <div className="timeline-tooltip" role="tooltip">
+                      {c.message && <div className="timeline-tooltip-message">{c.message}</div>}
+                      <div className="timeline-tooltip-meta">
+                        {c.lines.toLocaleString()} {c.lines === 1 ? "line" : "lines"}
+                        {" \u00b7 "}
+                        {fmtTime(c.timeMs)}
+                      </div>
+                    </div>
+                  </div>
                 );
                 cumulativeBottom += h + 3; // 3px gap so each commit reads as its own piece
-                return segment;
+                return bar;
               })}
             </div>
           );

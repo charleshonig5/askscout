@@ -362,13 +362,16 @@ export async function POST(req: Request) {
     let timeline: {
       startMs: number;
       endMs: number;
-      points: Array<{ timeMs: number; lines: number }>;
+      points: Array<{ timeMs: number; lines: number; message: string }>;
     } | null = null;
     if (commits.length > 0 && commitSpanHours <= 36) {
       const points = commits
         .map((c) => ({
           timeMs: c.timestamp.getTime(),
           lines: c.additions + c.deletions,
+          // First line of the commit message only — git messages can have long
+          // multi-paragraph bodies, but the tooltip just needs a title.
+          message: (c.message ?? "").split("\n")[0]!.trim(),
         }))
         .sort((a, b) => a.timeMs - b.timeMs);
       timeline = {
