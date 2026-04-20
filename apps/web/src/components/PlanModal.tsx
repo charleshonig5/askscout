@@ -156,7 +156,7 @@ export function PlanModal({ isOpen, onClose, content }: PlanModalProps) {
             <div className="digest-loading">No tasks yet.</div>
           ) : (
             <div className="plan-formatted">
-              {tasks.map((t, i) => {
+              {tasks.map((t) => {
                 const isChecked = !!checked[t.id];
                 return (
                   <div key={t.id} className={`plan-item${isChecked ? " plan-item--checked" : ""}`}>
@@ -170,7 +170,6 @@ export function PlanModal({ isOpen, onClose, content }: PlanModalProps) {
                       {isChecked && <Check size={12} strokeWidth={3} />}
                     </button>
                     <div className="plan-item-body">
-                      {i === 0 && !isChecked && <span className="plan-start-here">Start here</span>}
                       <span className="plan-task">{t.task}</span>
                       {t.reason && <span className="plan-reason">{t.reason}</span>}
                     </div>

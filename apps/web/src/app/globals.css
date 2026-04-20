@@ -1783,21 +1783,6 @@ a:hover {
   line-height: 1.5;
 }
 
-.plan-start-here {
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  height: 18px;
-  padding: 0 var(--space-sm);
-  border-radius: var(--radius-full);
-  background: color-mix(in srgb, var(--color-success) 10%, transparent);
-  color: var(--color-success);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  margin-bottom: 2px;
-}
-
 .plan-progress {
   margin-left: var(--space-sm);
   font-size: 11px;
