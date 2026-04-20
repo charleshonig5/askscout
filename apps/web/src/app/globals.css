@@ -612,18 +612,15 @@ a:hover {
   right: 0;
   background: var(--color-text-primary);
   border-radius: 3px;
-  cursor: help;
+  cursor: default;
   transition: opacity 0.15s ease;
 }
 
-.timeline-column:hover .timeline-bar {
+/* Dim the OTHER bars in a column when one is being hovered — but not the
+   directly-hovered bar itself. If we dimmed the hovered bar, its tooltip
+   (a child element) would inherit the reduced opacity and render transparent. */
+.timeline-column:hover .timeline-bar:not(:hover) {
   opacity: 0.6;
-}
-
-.timeline-bar:hover {
-  opacity: 1;
-  /* When a bar is hovered, its sibling bars in the same column shouldn't fade
-     relative to the hovered one — they still get the column's dim. */
 }
 
 /* ============================================
