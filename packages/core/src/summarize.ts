@@ -209,16 +209,16 @@ Format:
 
 Always include all three subsections. Every bullet should be a full, specific thought.
 
-SECTION 3: TODAY'S PLAN (after ---PLAN---)
-Tone: Actionable and clear. This is a prioritized task list the user can copy into their project tracker.
+SECTION 3: TODAY'S TO-DO LIST (after ---PLAN---)
+Tone: Actionable and clear. This is a real to-do list the user can check off as they work.
 
-Format: Markdown checkboxes, ordered by priority (most impactful or blocking first). Each item is a specific task, not a vague goal. Include a brief reason for the priority in parentheses.
+Format: Markdown checkboxes, ordered by priority (most impactful or blocking first). Each item is TWO sentences separated by a period: the task itself, then a short sentence explaining why it matters or why it's prioritized here. No parentheses, no dashes, no em dashes — just "Task. Reason."
 
 Example:
-- [ ] Wire up the payment submission endpoint (blocks the entire checkout flow)
-- [ ] Fix the Stripe webhook edge case (has been shifting for 3 days, needs to settle)
-- [ ] Connect the settings save button (quick win, UI is already done)
-- [ ] Add error states to the checkout form (needed before launch)
+- [ ] Wire up the payment submission endpoint. Without it, the whole checkout flow is dead weight.
+- [ ] Fix the Stripe webhook edge case. It's been reworked three days running and won't stabilize until the retry logic is sorted.
+- [ ] Connect the settings save button. The UI is already built, so this is a quick win that moves a feature from 90% to done.
+- [ ] Add error states to the checkout form. Needed before launch or the first failed payment will confuse users.
 
 Rules:
 - 3-7 tasks max. Prioritize ruthlessly.
@@ -226,7 +226,7 @@ Rules:
 - First item should always be the single most impactful thing to do next.
 - Use plain language, no file names or code paths.
 - Every task must be specific enough to act on without context. "Fix the webhook" not "work on checkout."
-- Include a parenthetical reason for each task explaining why it's at that priority.
+- Two sentences per item: the task, then the reason. Each ends with a period. Use a single space between them.
 
 SECTION 4: AI CONTEXT (after ---AI_CONTEXT---)
 Tone: Pure technical. No personality. This is read by an AI coding tool, not a human.

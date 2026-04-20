@@ -1118,7 +1118,7 @@ export function DigestView({
             )}
             {onGeneratePlan && (
               <button className="standup-btn" onClick={onGeneratePlan}>
-                <ListChecks size={14} /> Today&apos;s Plan
+                <ListChecks size={14} /> To-Do List
               </button>
             )}
           </div>

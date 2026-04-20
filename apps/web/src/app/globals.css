@@ -1712,40 +1712,98 @@ a:hover {
 .plan-item {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-sm);
-  padding: var(--space-sm) 0;
+  gap: var(--space-md);
+  padding: var(--space-md) 0;
   border-bottom: 1px solid var(--color-border);
   font-size: 14px;
   line-height: 1.5;
+  transition: opacity 0.15s ease;
 }
 
 .plan-item:last-child {
   border-bottom: none;
 }
 
+.plan-item--checked {
+  opacity: 0.55;
+}
+
+.plan-item--checked .plan-task,
+.plan-item--checked .plan-reason {
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
 .plan-checkbox {
-  width: 16px;
-  height: 16px;
-  min-width: 16px;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+  padding: 0;
   border: 1.5px solid var(--color-border-hover);
   border-radius: var(--radius-sm);
-  margin-top: 2px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.plan-checkbox:hover {
+  border-color: var(--color-success);
+}
+
+.plan-checkbox--checked,
+.plan-checkbox--checked:hover {
+  background: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.plan-item-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
 }
 
 .plan-task {
   color: var(--color-text-primary);
   font-weight: 500;
+  line-height: 1.4;
 }
 
 .plan-reason {
   color: var(--color-text-tertiary);
   font-size: 13px;
+  line-height: 1.5;
 }
 
-.plan-text {
-  font-size: 14px;
-  color: var(--color-text-secondary);
-  padding: var(--space-xs) 0;
+.plan-start-here {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 var(--space-sm);
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--color-success) 10%, transparent);
+  color: var(--color-success);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 2px;
+}
+
+.plan-progress {
+  margin-left: var(--space-sm);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  font-family: var(--font-mono);
 }
 
 .copy-block-btn {
