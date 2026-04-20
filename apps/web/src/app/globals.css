@@ -649,6 +649,7 @@ a:hover {
 .timeline-day-segment {
   position: absolute;
   top: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
 }
@@ -659,10 +660,15 @@ a:hover {
   font-size: 12px;
 }
 
+.timeline-segment-times--single {
+  justify-content: center;
+}
+
 .timeline-day-name {
   text-align: center;
   font-size: 12px;
-  margin-top: 6px;
+  margin-top: auto;
+  padding-top: 6px;
   color: var(--color-text-tertiary);
 }
 
