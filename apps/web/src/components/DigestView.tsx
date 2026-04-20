@@ -274,6 +274,16 @@ interface ParsedSection {
   content: string;
 }
 
+/** Tiny pulsing pill shown on the section currently being streamed. */
+function LiveBadge() {
+  return (
+    <span className="live-badge" aria-label="Currently streaming">
+      <span className="live-badge-dot" />
+      <span className="live-badge-text">Live</span>
+    </span>
+  );
+}
+
 function parseStreamingSections(text: string): ParsedSection[] {
   const sections: ParsedSection[] = [];
 
@@ -388,6 +398,7 @@ function StreamingDigest({
               <div className="digest-vibe">
                 <strong>
                   {section.emoji} {section.label}
+                  {showCursor && <LiveBadge />}
                 </strong>
                 <br />
                 {section.content}
@@ -402,6 +413,7 @@ function StreamingDigest({
             <div key={section.key} className="digest-section">
               <div className="digest-section-title">
                 {section.emoji} {section.label}
+                {showCursor && <LiveBadge />}
               </div>
               <p className="formatted-paragraph">
                 {section.content}
@@ -436,6 +448,7 @@ function StreamingDigest({
             <div className="digest-section-title">
               {section.emoji} {section.label}
               {items.length > 0 && <span className="digest-count-badge">{items.length}</span>}
+              {showCursor && <LiveBadge />}
             </div>
             {items.map((item: string, i: number) => {
               const dashIdx = item.indexOf(" - ");

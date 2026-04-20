@@ -499,6 +499,50 @@ a:hover {
   color: var(--color-text-secondary);
 }
 
+/* Live pill — sits next to a section title while that section is being
+   streamed. Green dot pulses; text is steady. */
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: var(--space-sm);
+  padding: 2px 8px 2px 7px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--color-success) 14%, transparent);
+  color: var(--color-success);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  user-select: none;
+}
+
+.live-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-success);
+  animation: live-dot-pulse 1.4s ease-in-out infinite;
+}
+
+.live-badge-text {
+  line-height: 1;
+}
+
+@keyframes live-dot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+}
+
 .digest-section-subtitle {
   font-size: 13px;
   color: var(--color-text-secondary);
