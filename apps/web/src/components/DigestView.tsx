@@ -914,6 +914,36 @@ function levelColor(level: string): string {
   return "rough";
 }
 
+/**
+ * Plain-language descriptions for every (category, level) combination.
+ * Hover the level badge on a Codebase Health card to see what the rating means.
+ * Tone: observational, not preachy. Describes what's happening, not what's wrong.
+ */
+const HEALTH_DESCRIPTIONS: Record<string, Record<string, string>> = {
+  Growth: {
+    Lean: "Tight and balanced. About 3\u00d7 additions to removals. Small footprint with steady cleanup.",
+    Steady: "Healthy growth. New code paired with real cleanup. A balanced mix.",
+    Growing:
+      "Mostly building. Additions lead, with some cleanup mixed in. Typical feature-push rhythm.",
+    Heavy: "Lots of additions, light on deletions. In a build-heavy phase.",
+    Ballooning: "Almost entirely additions. Greenfield work or a focused build sprint.",
+  },
+  Focus: {
+    Tight: "Focused commits. Each one touches a single area. Easy to review and easy to revert.",
+    Sharp: "Small, coherent changes across related files. Still quite focused.",
+    Moderate: "Commits touching a handful of files. Moderate spread.",
+    Wide: "Broader commits reaching across multiple areas.",
+    Scattered: "Wide-ranging commits covering many areas in each push.",
+  },
+  Churn: {
+    Clean: "Nothing getting reworked. Features are landing and staying put.",
+    Minimal: "A few files returning for revisions. Normal iteration.",
+    Moderate: "Several files getting repeat visits. Active rework.",
+    Noisy: "A lot of files in rotation for rework. Active iteration phase.",
+    High: "Many files being reworked repeatedly. Heavy iteration phase.",
+  },
+};
+
 function CodebaseHealth({ health }: { health: HealthData }) {
   const fmt = (n: number) => n.toLocaleString("en-US");
 
@@ -947,11 +977,19 @@ function CodebaseHealth({ health }: { health: HealthData }) {
       <div className="health-grid">
         {indicators.map((h) => {
           const color = levelColor(h.level);
+          const description = HEALTH_DESCRIPTIONS[h.label]?.[h.level];
           return (
             <div key={h.label} className="health-card">
               <div className="health-card-header">
                 <span className="health-card-label">{h.label}</span>
-                <span className={`health-card-level health-card-level--${color}`}>{h.level}</span>
+                <span className={`health-card-level health-card-level--${color}`}>
+                  {h.level}
+                  {description && (
+                    <span className="health-tooltip" role="tooltip">
+                      {description}
+                    </span>
+                  )}
+                </span>
               </div>
               <div className="health-card-bar">
                 <div

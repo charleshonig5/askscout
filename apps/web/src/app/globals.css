@@ -1034,10 +1034,73 @@ a:hover {
 }
 
 .health-card-level {
+  position: relative;
   font-size: 12px;
   font-weight: 600;
   padding: 2px var(--space-sm);
   border-radius: var(--radius-full);
+  cursor: default;
+}
+
+/* Hover tooltip on the level pill — explains what the rating means in plain
+   language. Same elevated-card pattern as streak/timeline tooltips so the
+   hover vocabulary stays consistent across the app. */
+.health-tooltip {
+  position: absolute;
+  top: calc(100% + var(--space-sm));
+  right: 0;
+  width: max-content;
+  max-width: 280px;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  text-align: left;
+  white-space: normal;
+  letter-spacing: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.12s ease,
+    visibility 0s linear 0.12s;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.health-card-level:hover .health-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.12s ease,
+    visibility 0s linear 0s;
+}
+
+/* Arrow pointing up from tooltip to the badge above it. Anchored near the
+   right edge since the tooltip itself is right-anchored to keep it on screen. */
+.health-tooltip::before,
+.health-tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  right: 12px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+
+.health-tooltip::before {
+  border-bottom: 5px solid var(--color-border);
+}
+
+.health-tooltip::after {
+  transform: translateY(1px);
+  border-bottom: 5px solid var(--color-bg-elevated);
 }
 
 .health-card-level--strong {
