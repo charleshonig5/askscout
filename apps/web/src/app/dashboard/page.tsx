@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
-import { DigestView, type DigestViewStats } from "@/components/DigestView";
+import { DigestView, DigestActions, type DigestViewStats } from "@/components/DigestView";
 import { AIContextModal } from "@/components/AIContextModal";
 import { StandupModal } from "@/components/StandupModal";
 import { PlanModal } from "@/components/PlanModal";
@@ -584,6 +584,25 @@ export default function DashboardPage() {
   // Parse sections from whatever content source is active
   const currentSections = currentRawContent ? parseSections(currentRawContent) : null;
 
+  // Stats for the currently-displayed digest (streaming, cached, history, or
+  // quiet-day preview). Mirrors the stats prop passed into DigestView so the
+  // header's copy/download/email sees the same numbers the page is rendering.
+  const currentStats = noNewCommits
+    ? (noNewCommits.stats as DigestViewStats | null)
+    : isViewingHistory
+      ? (viewingHistoryStats as DigestViewStats | null)
+      : (digestStream.stats as DigestViewStats | null) ||
+        (cachedDigests[`${selectedRepo}:digest`]?.stats as DigestViewStats | null) ||
+        null;
+
+  // Show Copy/Download/Email in the header only when there's something to act
+  // on: we have content, we're not mid-stream, and we're not sitting on the
+  // quiet-day empty state (which has no digest to copy).
+  const showHeaderActions =
+    currentRawContent !== "" &&
+    !digestStream.isStreaming &&
+    !(noNewCommits && !showLatestFromQuietDay);
+
   return (
     <div>
       <Header
@@ -605,27 +624,39 @@ export default function DashboardPage() {
 
         <div className="app-main">
           <div className="digest-container">
-            <div className="digest-page-title">
-              <h1 className="digest-page-name">
-                {pageTitle}
-                {!noNewCommits && !isViewingHistory && streak >= 2 && (
-                  <span
-                    ref={streakTap.ref}
-                    className={`digest-streak${streakTap.open ? " tap-open" : ""}`}
-                    onClick={streakTap.toggle}
-                  >
-                    {"\ud83d\udd25"} {streak}-day streak
-                    <span className="streak-tooltip" role="tooltip">
-                      <span className="streak-tooltip-label">Personal best</span>
-                      <span className="streak-tooltip-value">
-                        {personalBest} {personalBest === 1 ? "day" : "days"}
+            <div className="digest-page-header">
+              <div className="digest-page-header-left">
+                <h1 className="digest-page-name">
+                  {pageTitle}
+                  {repoName && <span className="digest-repo-chip">{repoName}</span>}
+                  {!noNewCommits && !isViewingHistory && streak >= 2 && (
+                    <span
+                      ref={streakTap.ref}
+                      className={`digest-streak${streakTap.open ? " tap-open" : ""}`}
+                      onClick={streakTap.toggle}
+                    >
+                      {"\ud83d\udd25"} {streak}-day streak
+                      <span className="streak-tooltip" role="tooltip">
+                        <span className="streak-tooltip-label">Personal best</span>
+                        <span className="streak-tooltip-value">
+                          {personalBest} {personalBest === 1 ? "day" : "days"}
+                        </span>
                       </span>
                     </span>
-                  </span>
-                )}
-              </h1>
-              <p className="digest-page-date">{displayDate}</p>
-              <p className="digest-page-subtitle">{repoName}</p>
+                  )}
+                </h1>
+                <p className="digest-page-date">{displayDate}</p>
+              </div>
+              {showHeaderActions && (
+                <div className="digest-page-header-right">
+                  <DigestActions
+                    text={currentRawContent}
+                    stats={currentStats}
+                    repoName={repoName}
+                    visibleSections={digestSectionPrefs ?? undefined}
+                  />
+                </div>
+              )}
             </div>
 
             {noNewCommits && !showLatestFromQuietDay ? (

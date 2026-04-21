@@ -31,11 +31,10 @@ export interface SkeletonShape {
 }
 
 /**
- * Order + shape of the skeletons. Reflects the rendered order of the digest:
- * five LLM-streamed narrative sections, then Key Takeaways (also LLM-streamed),
- * then Statistics (computed — the skeleton holds space until the cascade
- * renders after streaming ends). The "stats" key matches SECTION_MARKERS so
- * the visibleSections toggle for Statistics also hides this skeleton.
+ * Main column skeletons: the six LLM-streamed narrative sections. Rendered
+ * in StreamingDigest for any section whose marker hasn't been parsed out of
+ * the stream yet. Each one is replaced in place by the real typing section
+ * when its marker arrives.
  */
 export const SECTION_SKELETONS: SkeletonShape[] = [
   { key: "vibe", emoji: "\u{1F4AC}", label: "Vibe Check", lines: 3 },
@@ -44,7 +43,20 @@ export const SECTION_SKELETONS: SkeletonShape[] = [
   { key: "unstable", emoji: "\u{1F501}", label: "Still Shifting", bullets: 2 },
   { key: "leftOff", emoji: "\u{1F4CD}", label: "Left Off", bullets: 1 },
   { key: "takeaway", emoji: "\u{1F511}", label: "Key Takeaways", lines: 2 },
-  { key: "stats", emoji: "\u{1F4CA}", label: "Statistics", lines: 2 },
+];
+
+/**
+ * Right-column skeletons: the five computed stat sections. Rendered by
+ * DigestStatsSidebar during streaming (since real stats wait for the stream
+ * to finish before cascading in). All five show up at once during the entire
+ * streaming phase, then get replaced by the cascade-animated real content.
+ */
+export const SIDEBAR_SKELETONS: SkeletonShape[] = [
+  { key: "statistics", emoji: "\u{1F4CA}", label: "Statistics", lines: 2 },
+  { key: "mostActiveFiles", emoji: "\u{1F4C1}", label: "Most Active Files", bullets: 3 },
+  { key: "whenYouCoded", emoji: "\u{1F550}", label: "Coding Timeline", lines: 2 },
+  { key: "paceCheck", emoji: "\u26A1", label: "Pace Check", lines: 2 },
+  { key: "codebaseHealth", emoji: "\u{1FA7A}", label: "Codebase Health", bullets: 3 },
 ];
 
 const PHASE_MESSAGES = [

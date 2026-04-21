@@ -556,11 +556,64 @@ a:hover {
    ============================================ */
 
 .digest-container {
-  max-width: var(--max-width);
+  /* Expanded max-width accommodates the two-column layout on wide screens:
+     ~720px narrative + 48px gutter + 360px sidebar + 48px outer padding each
+     side ≈ 1200px. On single-column displays the inner grid collapses and the
+     centered max-width still reads well. */
+  max-width: 1200px;
   margin: 0 auto;
   padding: var(--space-2xl) var(--space-lg);
 }
 
+/* ============================================
+   Page header (title + repo chip + streak · Copy/Download/Email)
+   ============================================ */
+
+.digest-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.digest-page-header-left {
+  min-width: 0;
+  flex: 1;
+}
+
+.digest-page-header-right {
+  flex-shrink: 0;
+}
+
+/* Stack header on narrow viewports — actions drop below title */
+@media (max-width: 640px) {
+  .digest-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Repo chip sits inline with the page title. Muted mono style so the title
+   reads as the primary label and the repo name as supporting metadata. */
+.digest-repo-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 var(--space-sm);
+  margin-left: var(--space-sm);
+  border-radius: var(--radius-full);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-tertiary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+/* Legacy class kept for any historical references; new layout uses
+   .digest-page-header instead. Zero-override so existing layouts in other
+   states (quiet day, error) still render title + date. */
 .digest-page-title {
   margin-bottom: var(--space-lg);
 }
@@ -2844,15 +2897,13 @@ a:hover {
   background: var(--color-bg-secondary);
 }
 
-.digest-actions-top {
-  margin-bottom: var(--space-lg);
-}
-
-.digest-actions-top .digest-actions-row {
+/* Header-positioned Copy/Download/Email actions. Smaller padding + font than
+   the default action-btn since they sit in the page header, next to the title. */
+.digest-page-header-right .digest-actions-row {
   margin-top: 0;
 }
 
-.digest-actions-top .action-btn {
+.digest-page-header-right .action-btn {
   padding: var(--space-xs) var(--space-sm);
   font-size: 12px;
 }
@@ -2861,6 +2912,52 @@ a:hover {
   display: flex;
   gap: var(--space-sm);
   margin-top: var(--space-xl);
+}
+
+/* ============================================
+   Two-column digest layout
+   ============================================ */
+
+/* Default: single column. Main content flows top-to-bottom, sidebar (if
+   rendered at all) stacks beneath it. This is the mobile/narrow-viewport
+   layout and the fallback when the user has hidden every stat section. */
+.digest-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  min-width: 0;
+}
+
+.digest-main {
+  min-width: 0;
+}
+
+.digest-stats-sidebar {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* Two-column layout on wide screens: narrative on the left, stats sidebar
+   on the right. A subtle 1px vertical rule divides them, with matching
+   padding on both sides of the rule so the two columns breathe. */
+@media (min-width: 1080px) {
+  .digest-layout--two-col {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 0;
+    align-items: start;
+  }
+
+  .digest-layout--two-col .digest-main {
+    padding-right: var(--space-2xl);
+  }
+
+  .digest-layout--two-col .digest-stats-sidebar {
+    padding-left: var(--space-2xl);
+    border-left: 1px solid var(--color-border);
+  }
 }
 
 .standup-btn {

@@ -18,6 +18,7 @@ import {
   PhaseTracker,
   SectionSkeleton,
   SECTION_SKELETONS,
+  SIDEBAR_SKELETONS,
 } from "@/components/PreGeneration";
 
 /**
@@ -243,7 +244,7 @@ function EmailBtn() {
   );
 }
 
-function DigestActions({
+export function DigestActions({
   text,
   stats,
   repoName,
@@ -1140,20 +1141,140 @@ function CodebaseHealth({ health }: { health: HealthData }) {
   );
 }
 
+/**
+ * Right-column sidebar: all five computed stat sections with cascade timing,
+ * or skeleton placeholders while streaming is still in progress.
+ *
+ * Streaming behavior: stats SSE event arrives almost immediately but we hold
+ * the skeletons up through the entire streaming phase so the sidebar doesn't
+ * compete for attention with the typing narrative on the left. When streaming
+ * ends, skeletons unmount and the cascade-animated real cards appear.
+ *
+ * Empty behavior: if the user has toggled off every stat section OR if stats
+ * is null, the sidebar is effectively empty — the parent decides whether to
+ * render it at all (collapsing the layout to single column).
+ */
+function DigestStatsSidebar({
+  stats,
+  isStreaming,
+  animate,
+  visibleSections,
+  repoFullName,
+}: {
+  stats: DigestViewStats | null;
+  isStreaming: boolean;
+  animate: boolean;
+  visibleSections?: Record<string, boolean>;
+  repoFullName?: string;
+}) {
+  const vis = (key: string) => !visibleSections || visibleSections[key] !== false;
+
+  // Streaming (or no stats yet): show skeletons for every section the user
+  // hasn't hidden. Once streaming ends with real stats in hand, the skeletons
+  // unmount and the cascade section takes over.
+  if (isStreaming || !stats) {
+    const visibleSkeletons = SIDEBAR_SKELETONS.filter((s) => vis(s.key));
+    return (
+      <aside className="digest-stats-sidebar">
+        {visibleSkeletons.map((shape, i) => (
+          <SectionSkeleton key={shape.key} shape={shape} animationDelay={i * 60} />
+        ))}
+      </aside>
+    );
+  }
+
+  return (
+    <aside className="digest-stats-sidebar">
+      {vis("statistics") && stats.commits != null && (
+        <div className="digest-section stats-reveal">
+          <div
+            className="digest-section-title stats-reveal-item"
+            style={{ animationDelay: "0ms" }}
+          >
+            {"\u{1F4CA}"} Statistics
+          </div>
+          <div className="stats-reveal-item" style={{ animationDelay: "200ms" }}>
+            <StatsCards stats={stats} animate={animate} />
+          </div>
+        </div>
+      )}
+
+      {vis("mostActiveFiles") && stats.topFiles && stats.topFiles.length > 0 && (
+        <div className="digest-section stats-reveal">
+          <div
+            className="digest-section-title stats-reveal-item"
+            style={{ animationDelay: "450ms" }}
+          >
+            {"\u{1F4C1}"} Most Active Files
+          </div>
+          <div className="stats-reveal-item" style={{ animationDelay: "600ms" }}>
+            <TopFiles files={stats.topFiles} repoFullName={repoFullName} />
+          </div>
+        </div>
+      )}
+
+      {vis("whenYouCoded") && stats.timeline && (
+        <div className="digest-section stats-reveal">
+          <div
+            className="digest-section-title stats-reveal-item"
+            style={{ animationDelay: "700ms" }}
+          >
+            {"\u{1F550}"} Coding Timeline
+          </div>
+          <div className="stats-reveal-item" style={{ animationDelay: "900ms" }}>
+            <WhenYouCoded timeline={stats.timeline} />
+          </div>
+        </div>
+      )}
+
+      {vis("paceCheck") && stats.pace && (
+        <div className="digest-section stats-reveal">
+          <div
+            className="digest-section-title stats-reveal-item"
+            style={{ animationDelay: "1150ms" }}
+          >
+            {"\u26A1"} Pace Check
+          </div>
+          <PaceCard pace={stats.pace} animate={animate} animationDelay="1350ms" />
+        </div>
+      )}
+
+      {vis("codebaseHealth") && stats.health && (
+        <div className="digest-section stats-reveal">
+          <div
+            className="digest-section-title stats-reveal-item"
+            style={{ animationDelay: "1700ms" }}
+          >
+            {"\u{1FA7A}"} Codebase Health
+          </div>
+          <div className="stats-reveal-item" style={{ animationDelay: "1900ms" }}>
+            <CodebaseHealth health={stats.health} />
+          </div>
+        </div>
+      )}
+    </aside>
+  );
+}
+
+/** True when at least one sidebar section is visible per user settings. If
+ *  every stat section is toggled off, the layout collapses to single column. */
+function sidebarHasContent(visibleSections?: Record<string, boolean>): boolean {
+  const vis = (key: string) => !visibleSections || visibleSections[key] !== false;
+  return SIDEBAR_SKELETONS.some((s) => vis(s.key));
+}
+
 export function DigestView({
   isStreaming,
   isLoading,
   animate = false,
   streamingText,
   stats,
-  repoName,
   repoFullName,
   visibleSections,
   onResumeWithAI,
   onGenerateStandup,
   onGeneratePlan,
 }: DigestViewProps) {
-  const vis = (key: string) => !visibleSections || visibleSections[key] !== false;
   if (isLoading) {
     return <div className="digest-loading">Checking for today&apos;s digest...</div>;
   }
@@ -1171,130 +1292,67 @@ export function DigestView({
         {/* Phase tracker: only shown during pre-text streaming (no characters
             revealed yet). Fades cleanly out the instant the first character
             lands via React unmount. */}
-        {isStreaming && !streamingText && <PhaseTracker />}
+        {/* Two-column layout: narrative on the left, stats sidebar on the
+            right. Below 1080px the media query flattens this to a single
+            column (main first, sidebar below). If the user has hidden every
+            stat section, we skip rendering the sidebar entirely so the
+            layout stays single-column even on wide screens. */}
+        <div
+          className={`digest-layout${
+            sidebarHasContent(visibleSections) ? " digest-layout--two-col" : ""
+          }`}
+        >
+          <div className="digest-main">
+            {/* Phase tracker: only shown during pre-text streaming (no
+                characters revealed yet). Unmounts cleanly once typing begins. */}
+            {isStreaming && !streamingText && <PhaseTracker />}
 
-        {/* Actions at the top (hide while streaming) */}
-        {!isStreaming && (
-          <div className="digest-actions-top">
-            <DigestActions
+            <StreamingDigest
               text={streamingText}
-              stats={stats}
-              repoName={repoName}
+              isStreaming={isStreaming}
               visibleSections={visibleSections}
+              afterLeftOff={
+                onResumeWithAI ? (
+                  <button className="resume-ai-btn" onClick={onResumeWithAI}>
+                    <Sparkles size={14} />
+                    <span className="resume-ai-btn-text">
+                      <span className="resume-ai-btn-title">Resume Prompt</span>
+                      <span className="resume-ai-btn-subtitle">
+                        Paste into your AI coding tool to pick up exactly where you left off
+                      </span>
+                    </span>
+                  </button>
+                ) : undefined
+              }
             />
-          </div>
-        )}
 
-        {/* Digest content — same component for streaming and complete */}
-        <StreamingDigest
-          text={streamingText}
-          isStreaming={isStreaming}
-          visibleSections={visibleSections}
-          afterLeftOff={
-            onResumeWithAI ? (
-              <button className="resume-ai-btn" onClick={onResumeWithAI}>
-                <Sparkles size={14} />
-                <span className="resume-ai-btn-text">
-                  <span className="resume-ai-btn-title">Resume Prompt</span>
-                  <span className="resume-ai-btn-subtitle">
-                    Paste into your AI coding tool to pick up exactly where you left off
-                  </span>
-                </span>
-              </button>
-            ) : undefined
-          }
-        />
-
-        {/* Statistics → Pace Check → Codebase Health → One Takeaway
-            cascade in that order when streaming finishes */}
-        {!isStreaming && vis("statistics") && stats && (
-          <div className="digest-section stats-reveal">
-            <div
-              className="digest-section-title stats-reveal-item"
-              style={{ animationDelay: "0ms" }}
-            >
-              {"\ud83d\udcca"} Statistics
-            </div>
-            <div className="stats-reveal-item" style={{ animationDelay: "200ms" }}>
-              <StatsCards stats={stats} animate={animate} />
-            </div>
-          </div>
-        )}
-
-        {/* Most Active Files — its own section, toggleable independently */}
-        {!isStreaming && vis("mostActiveFiles") && stats?.topFiles && stats.topFiles.length > 0 && (
-          <div className="digest-section stats-reveal">
-            <div
-              className="digest-section-title stats-reveal-item"
-              style={{ animationDelay: "450ms" }}
-            >
-              {"\ud83d\udcc1"} Most Active Files
-            </div>
-            <div className="stats-reveal-item" style={{ animationDelay: "600ms" }}>
-              <TopFiles files={stats.topFiles} repoFullName={repoFullName} />
-            </div>
-          </div>
-        )}
-
-        {/* When You Coded — timeline of commits across the day.
-            Only shown for single-day digests (server returns null otherwise). */}
-        {!isStreaming && vis("whenYouCoded") && stats?.timeline && (
-          <div className="digest-section stats-reveal">
-            <div
-              className="digest-section-title stats-reveal-item"
-              style={{ animationDelay: "700ms" }}
-            >
-              {"\ud83d\udd50"} Coding Timeline
-            </div>
-            <div className="stats-reveal-item" style={{ animationDelay: "900ms" }}>
-              <WhenYouCoded timeline={stats.timeline} />
-            </div>
-          </div>
-        )}
-
-        {/* Pace Check — appears after When You Coded */}
-        {!isStreaming && vis("paceCheck") && stats?.pace && (
-          <div className="digest-section stats-reveal">
-            <div
-              className="digest-section-title stats-reveal-item"
-              style={{ animationDelay: "1150ms" }}
-            >
-              {"\u26a1"} Pace Check
-            </div>
-            <PaceCard pace={stats.pace} animate={animate} animationDelay="1350ms" />
-          </div>
-        )}
-
-        {/* Codebase Health — appears after Pace Check */}
-        {!isStreaming && vis("codebaseHealth") && stats?.health && (
-          <div className="digest-section stats-reveal">
-            <div
-              className="digest-section-title stats-reveal-item"
-              style={{ animationDelay: "1700ms" }}
-            >
-              {"\ud83e\ude7a"} Codebase Health
-            </div>
-            <div className="stats-reveal-item" style={{ animationDelay: "1900ms" }}>
-              <CodebaseHealth health={stats.health} />
-            </div>
-          </div>
-        )}
-
-        {/* Action buttons at the bottom (hide while streaming) */}
-        {!isStreaming && (onGenerateStandup || onGeneratePlan) && (
-          <div className="digest-bottom-actions">
-            {onGenerateStandup && (
-              <button className="standup-btn" onClick={onGenerateStandup}>
-                <ClipboardList size={14} /> Generate Standup
-              </button>
-            )}
-            {onGeneratePlan && (
-              <button className="standup-btn" onClick={onGeneratePlan}>
-                <ListChecks size={14} /> To-Do List
-              </button>
+            {/* Action buttons (Standup, To-Do) at the bottom of the main column */}
+            {!isStreaming && (onGenerateStandup || onGeneratePlan) && (
+              <div className="digest-bottom-actions">
+                {onGenerateStandup && (
+                  <button className="standup-btn" onClick={onGenerateStandup}>
+                    <ClipboardList size={14} /> Generate Standup
+                  </button>
+                )}
+                {onGeneratePlan && (
+                  <button className="standup-btn" onClick={onGeneratePlan}>
+                    <ListChecks size={14} /> To-Do List
+                  </button>
+                )}
+              </div>
             )}
           </div>
-        )}
+
+          {sidebarHasContent(visibleSections) && (
+            <DigestStatsSidebar
+              stats={stats}
+              isStreaming={isStreaming}
+              animate={animate}
+              visibleSections={visibleSections}
+              repoFullName={repoFullName}
+            />
+          )}
+        </div>
       </div>
     );
   }
