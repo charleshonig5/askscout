@@ -600,7 +600,7 @@ export default function DashboardPage() {
                   <span className="digest-streak">
                     {"\ud83d\udd25"} {streak}-day streak
                     <span className="streak-tooltip" role="tooltip">
-                      <span className="streak-tooltip-label">Best</span>
+                      <span className="streak-tooltip-label">Personal best</span>
                       <span className="streak-tooltip-value">
                         {personalBest} {personalBest === 1 ? "day" : "days"}
                       </span>
