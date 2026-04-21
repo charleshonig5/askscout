@@ -48,7 +48,8 @@ export function Sidebar({
   const profileRef = useRef<HTMLDivElement>(null);
 
   const avatarUrl = session?.user?.image;
-  const userName = session?.user?.name ?? "User";
+  // Prefer the GitHub @handle. Fall back to display name, then generic "User".
+  const userHandle = session?.user?.login ?? session?.user?.name ?? "User";
 
   // Close the profile popover when clicking outside it.
   useEffect(() => {
@@ -158,7 +159,7 @@ export function Sidebar({
             {avatarUrl ? (
               <Image
                 src={avatarUrl}
-                alt={userName}
+                alt={userHandle}
                 width={28}
                 height={28}
                 className="sidebar-profile-avatar"
@@ -166,7 +167,10 @@ export function Sidebar({
             ) : (
               <div className="sidebar-profile-avatar sidebar-profile-avatar--placeholder" />
             )}
-            <span className="sidebar-profile-name">{userName}</span>
+            <span className="sidebar-profile-text">
+              <span className="sidebar-profile-name">{userHandle}</span>
+              <span className="sidebar-profile-provider">GitHub</span>
+            </span>
             <ChevronUp
               size={14}
               className={`sidebar-profile-chevron${profileOpen ? " is-open" : ""}`}

@@ -1564,14 +1564,27 @@ a:hover {
   background: var(--color-bg-tertiary);
 }
 
-.sidebar-profile-name {
-  flex: 1;
+.sidebar-profile-text {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
+  flex: 1;
+  line-height: 1.2;
+}
+
+.sidebar-profile-name {
   font-size: 13px;
   font-weight: 500;
+  color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.sidebar-profile-provider {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  margin-top: 1px;
 }
 
 .sidebar-profile-chevron {

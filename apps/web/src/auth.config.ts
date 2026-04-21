@@ -10,9 +10,16 @@ const authConfig: NextAuthConfig = {
     }),
   ],
   callbacks: {
-    jwt({ token, account }) {
+    jwt({ token, account, profile }) {
       if (account?.access_token) {
         token.accessToken = account.access_token;
+      }
+      // Capture the GitHub username (login) on first sign-in. GitHub's profile
+      // payload includes `login` alongside name/email/avatar. Persist it on
+      // the JWT so the UI can show the @handle even on subsequent requests
+      // when `profile` is undefined.
+      if (profile && typeof (profile as { login?: unknown }).login === "string") {
+        token.login = (profile as { login: string }).login;
       }
       return token;
     },
@@ -22,6 +29,10 @@ const authConfig: NextAuthConfig = {
       // which causes all API routes to return 401.
       if (session.user && token.sub) {
         session.user.id = token.sub;
+      }
+      // Expose GitHub login so the sidebar profile row can show @username.
+      if (session.user && typeof token.login === "string") {
+        session.user.login = token.login;
       }
       // Token is needed server-side for GitHub API calls via auth().
       session.accessToken = token.accessToken as string;

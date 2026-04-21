@@ -156,9 +156,23 @@ export function RepoSelector({ repos, activeRepos = [], selected, onChange }: Re
 
   const activeSet = useMemo(() => new Set(activeRepos), [activeRepos]);
 
-  // Trigger label: real selection wins; otherwise show a loading or empty
-  // hint depending on whether repos have arrived yet.
-  const triggerLabel = selected || (isLoading ? "Loading repositories..." : "Select a repo");
+  // Display only the repo name part (everything after the last "/"). The
+  // combobox sits in a narrow sidebar — showing the full "owner/repo" ate
+  // all the horizontal space and hid the part that actually identifies the
+  // project. Internally we still use the full "owner/repo" slug for state,
+  // URLs, API calls, etc. This is purely a display transform.
+  const displayName = (slug: string): string => {
+    const slash = slug.lastIndexOf("/");
+    return slash === -1 ? slug : slug.slice(slash + 1);
+  };
+
+  // Trigger label: show the repo name of the current selection. Loading /
+  // empty fallbacks stay as full phrases since there's no slug to strip.
+  const triggerLabel = selected
+    ? displayName(selected)
+    : isLoading
+      ? "Loading repositories..."
+      : "Select a repo";
 
   return (
     <div className="repo-combobox" ref={rootRef} onBlur={onRootBlur}>
@@ -224,7 +238,9 @@ export function RepoSelector({ repos, activeRepos = [], selected, onChange }: Re
                     onMouseEnter={() => setActiveIdx(i)}
                     onClick={() => commit(repo)}
                   >
-                    <span className="repo-combobox-item-name">{repo}</span>
+                    <span className="repo-combobox-item-name" title={repo}>
+                      {displayName(repo)}
+                    </span>
                     {hasActivity && !isSelected && (
                       <span className="repo-combobox-item-badge" aria-label="Scout activity">
                         {"\u2022"}
