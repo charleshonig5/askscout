@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useCountUp } from "@/lib/use-count-up";
 import { calculateDelay, advanceBySurrogate } from "@/lib/typewriter-pace";
+import { parseSections } from "@/lib/parse-sections";
 
 /**
  * Types out text one grapheme at a time with the same variable pacing as
@@ -71,48 +72,127 @@ function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
   );
 }
 
-function buildFullMarkdown(text: string, stats?: DigestViewStats | null): string {
-  let md = text;
-  if (!stats) return md;
+/**
+ * Build the text that goes into the clipboard / downloaded markdown file.
+ *
+ * Goals:
+ *   1. Match the on-screen rendered order exactly so paste == what you saw.
+ *   2. Strip private sections (Standup, Plan, AI Context, Summary) — those are
+ *      accessed via their own modals, never via "Copy digest".
+ *   3. Use emoji + plain-text section headers everywhere (matches the UI and
+ *      renders well in Slack/Notion/email/plain-text targets).
+ *   4. Respect the user's section toggles from settings.
+ */
+function buildFullMarkdown(
+  text: string,
+  stats?: DigestViewStats | null,
+  visibleSections?: Record<string, boolean>,
+): string {
+  const isVisible = (key: string) => !visibleSections || visibleSections[key] !== false;
+
+  // 1. Take only the digest portion. parseSections strips ---STANDUP---,
+  //    ---PLAN---, ---AI_CONTEXT---, ---SUMMARY--- and everything after.
+  const digestOnly = parseSections(text).digest;
+
+  // 2. Split digest at Key Takeaways so we can move it to the end (it renders
+  //    LAST in the UI, after all computed sections).
+  const takeawayHeader = "\u{1F511} Key Takeaways";
+  let mainDigest = digestOnly;
+  let keyTakeaways = "";
+  const tIdx = digestOnly.indexOf(takeawayHeader);
+  if (tIdx !== -1) {
+    mainDigest = digestOnly.slice(0, tIdx).trimEnd();
+    keyTakeaways = digestOnly.slice(tIdx).trim();
+  }
+
+  if (!stats) {
+    // No computed stats to append. Still put Key Takeaways at the end.
+    return keyTakeaways && isVisible("oneTakeaway")
+      ? `${mainDigest}\n\n${keyTakeaways}`
+      : mainDigest;
+  }
 
   const fmt = (n: number) => n.toLocaleString("en-US");
-  const lines: string[] = ["\n\n---\n\n## Statistics\n"];
-  if (stats.commits != null)
-    lines.push(
-      `+${fmt(stats.linesAdded ?? 0)} lines · -${fmt(stats.linesRemoved ?? 0)} lines · ${fmt(stats.commits)} commits · ${fmt(stats.filesChanged ?? 0)} files`,
-    );
-  if ((stats.topFiles?.length ?? 0) > 0) {
-    lines.push("\n### Most Active Files\n");
-    stats.topFiles!.forEach((f, i) => {
-      lines.push(
-        `${i + 1}. ${f.file} (+${fmt(f.added ?? 0)} / -${fmt(f.removed ?? 0)}, ${f.commits} commits)`,
-      );
-    });
-  }
-  if (stats.pace) {
-    lines.push(`\n### Pace Check\n`);
-    lines.push(
-      `${stats.pace.multiplier}x — ${stats.pace.label} (${stats.pace.todayCommits} commits today, ${stats.pace.avgCommits}-commit average)`,
+  const blocks: string[] = [];
+
+  if (isVisible("statistics") && stats.commits != null) {
+    blocks.push(
+      [
+        "\u{1F4CA} Statistics",
+        `+${fmt(stats.linesAdded ?? 0)} lines \u00b7 -${fmt(stats.linesRemoved ?? 0)} lines \u00b7 ${fmt(stats.commits)} commits \u00b7 ${fmt(stats.filesChanged ?? 0)} files`,
+      ].join("\n"),
     );
   }
-  md += lines.join("\n");
-  return md;
+
+  if (isVisible("mostActiveFiles") && (stats.topFiles?.length ?? 0) > 0) {
+    const rows = stats.topFiles!.map(
+      (f, i) =>
+        `${i + 1}. ${f.file} (+${fmt(f.added ?? 0)} / -${fmt(f.removed ?? 0)}, ${f.commits} ${f.commits === 1 ? "commit" : "commits"})`,
+    );
+    blocks.push(["\u{1F4C1} Most Active Files", ...rows].join("\n"));
+  }
+
+  if (isVisible("whenYouCoded") && stats.timeline && stats.timeline.points.length > 0) {
+    const fmtT = (ms: number) =>
+      new Date(ms)
+        .toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })
+        .toLowerCase();
+    const count = stats.timeline.points.length;
+    const commitsLabel = `${count} ${count === 1 ? "commit" : "commits"}`;
+    const timeRange =
+      stats.timeline.startMs === stats.timeline.endMs
+        ? fmtT(stats.timeline.startMs)
+        : `${fmtT(stats.timeline.startMs)} to ${fmtT(stats.timeline.endMs)}`;
+    blocks.push(["\u{1F550} Coding Timeline", `${timeRange} \u00b7 ${commitsLabel}`].join("\n"));
+  }
+
+  if (isVisible("paceCheck") && stats.pace) {
+    blocks.push(
+      [
+        "\u26A1 Pace Check",
+        `${stats.pace.multiplier}x \u00b7 ${stats.pace.label}`,
+        `${stats.pace.todayCommits} commits today \u00b7 ${stats.pace.avgCommits}-commit average`,
+      ].join("\n"),
+    );
+  }
+
+  if (isVisible("codebaseHealth") && stats.health) {
+    const h = stats.health;
+    blocks.push(
+      [
+        "\u{1FA7A} Codebase Health",
+        `Growth: ${h.growth.level} (+${fmt(h.growth.added)} / -${fmt(h.growth.removed)})`,
+        `Focus: ${h.focus.level} (${h.focus.filesPerCommit} files per commit)`,
+        `Churn: ${h.churn.level} (${h.churn.files} ${h.churn.files === 1 ? "file" : "files"} reworked)`,
+      ].join("\n"),
+    );
+  }
+
+  // 3. Final assembly. Main digest first, computed blocks in render order,
+  //    Key Takeaways last to match the UI.
+  const parts: string[] = [mainDigest];
+  if (blocks.length > 0) parts.push(blocks.join("\n\n"));
+  if (keyTakeaways && isVisible("oneTakeaway")) parts.push(keyTakeaways);
+
+  return parts.join("\n\n").trim();
 }
 
 function DownloadBtn({
   text,
   stats,
   repoName,
+  visibleSections,
 }: {
   text: string;
   stats?: DigestViewStats | null;
   repoName?: string;
+  visibleSections?: Record<string, boolean>;
 }) {
   const handleDownload = useCallback(() => {
     const name = repoName ?? "digest";
     const date = new Date().toISOString().slice(0, 10);
     const filename = `${name}-${date}.md`;
-    const md = buildFullMarkdown(text, stats);
+    const md = buildFullMarkdown(text, stats, visibleSections);
 
     const blob = new Blob([md], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
@@ -121,7 +201,7 @@ function DownloadBtn({
     a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
-  }, [text, stats, repoName]);
+  }, [text, stats, repoName, visibleSections]);
 
   return (
     <button className="action-btn" onClick={handleDownload}>
@@ -219,15 +299,17 @@ function DigestActions({
   text,
   stats,
   repoName,
+  visibleSections,
 }: {
   text: string;
   stats?: DigestViewStats | null;
   repoName?: string;
+  visibleSections?: Record<string, boolean>;
 }) {
   return (
     <div className="digest-actions-row">
-      <CopyBtn text={buildFullMarkdown(text, stats)} label="Copy" />
-      <DownloadBtn text={text} stats={stats} repoName={repoName} />
+      <CopyBtn text={buildFullMarkdown(text, stats, visibleSections)} label="Copy" />
+      <DownloadBtn text={text} stats={stats} repoName={repoName} visibleSections={visibleSections} />
       <EmailBtn />
     </div>
   );
@@ -1087,7 +1169,12 @@ export function DigestView({
         {/* Actions at the top (hide while streaming) */}
         {!isStreaming && (
           <div className="digest-actions-top">
-            <DigestActions text={streamingText} stats={stats} repoName={repoName} />
+            <DigestActions
+              text={streamingText}
+              stats={stats}
+              repoName={repoName}
+              visibleSections={visibleSections}
+            />
           </div>
         )}
 
