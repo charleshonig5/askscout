@@ -10,10 +10,12 @@ export interface DigestStats {
   linesRemoved: number;
 }
 
-// One Takeaway emoji — marks the end of the VISIBLE streaming narrative.
-// Content after this is rendered separately after Statistics, so we stop the
-// drip here to avoid an invisible "hang" while revealing takeaway text off-screen.
-const CLOSING_MARKER = "\ud83d\udd11"; // 🔑
+// Marks the end of the user-visible digest content. Everything after
+// "---STANDUP---" is internal (Standup notes, To-Do plan, AI context, project
+// summary) and lives in modals or invisible storage — the drip stops here so
+// those internal sections don't accidentally type in. Key Takeaways content
+// (between 🔑 and this marker) types in normally as the last visible section.
+const CLOSING_MARKER = "---STANDUP---";
 
 interface DigestStreamState {
   text: string;

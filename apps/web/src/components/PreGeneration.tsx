@@ -30,13 +30,21 @@ export interface SkeletonShape {
   bullets?: number;
 }
 
-/** Order + shape of the skeletons. Mirrors SECTION_MARKERS (minus takeaway + stats). */
+/**
+ * Order + shape of the skeletons. Reflects the rendered order of the digest:
+ * five LLM-streamed narrative sections, then Key Takeaways (also LLM-streamed),
+ * then Statistics (computed — the skeleton holds space until the cascade
+ * renders after streaming ends). The "stats" key matches SECTION_MARKERS so
+ * the visibleSections toggle for Statistics also hides this skeleton.
+ */
 export const SECTION_SKELETONS: SkeletonShape[] = [
   { key: "vibe", emoji: "\u{1F4AC}", label: "Vibe Check", lines: 3 },
   { key: "shipped", emoji: "\u{1F680}", label: "Shipped", bullets: 3 },
   { key: "changed", emoji: "\u{1F527}", label: "Changed", bullets: 2 },
   { key: "unstable", emoji: "\u{1F501}", label: "Still Shifting", bullets: 2 },
   { key: "leftOff", emoji: "\u{1F4CD}", label: "Left Off", bullets: 1 },
+  { key: "takeaway", emoji: "\u{1F511}", label: "Key Takeaways", lines: 2 },
+  { key: "stats", emoji: "\u{1F4CA}", label: "Statistics", lines: 2 },
 ];
 
 const PHASE_MESSAGES = [

@@ -13,70 +13,12 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { useCountUp } from "@/lib/use-count-up";
-import { calculateDelay, advanceBySurrogate } from "@/lib/typewriter-pace";
 import { parseSections } from "@/lib/parse-sections";
 import {
   PhaseTracker,
   SectionSkeleton,
   SECTION_SKELETONS,
 } from "@/components/PreGeneration";
-
-/**
- * Types out text one grapheme at a time with the same variable pacing as
- * the main digest stream. Punctuation pauses, paragraph breaks, surrogate-safe.
- */
-function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
-  const [revealed, setRevealed] = useState(0);
-  const [started, setStarted] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Initial delay before typing begins
-  useEffect(() => {
-    const timer = setTimeout(() => setStarted(true), delay);
-    return () => clearTimeout(timer);
-  }, [delay]);
-
-  // Variable-paced reveal loop
-  useEffect(() => {
-    if (!started) return;
-
-    const tick = () => {
-      setRevealed((current) => {
-        if (current >= text.length) {
-          timerRef.current = null;
-          return current;
-        }
-
-        const advance = advanceBySurrogate(text, current);
-        const nextRevealed = current + advance;
-        const revealedChar = text.slice(current, nextRevealed);
-        const upcoming = text.slice(nextRevealed, nextRevealed + 6);
-
-        // Static text: no buffer lead, no streaming — just natural pacing
-        const nextDelay = calculateDelay(revealedChar, upcoming, 0, false);
-        timerRef.current = setTimeout(tick, nextDelay);
-        return nextRevealed;
-      });
-    };
-
-    timerRef.current = setTimeout(tick, 0);
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
-    };
-  }, [started, text]);
-
-  if (!started) return null;
-
-  return (
-    <>
-      {text.slice(0, revealed)}
-      {revealed < text.length && <span className="streaming-cursor" />}
-    </>
-  );
-}
 
 /**
  * Build the text that goes into the clipboard / downloaded markdown file.
@@ -1247,7 +1189,7 @@ export function DigestView({
         <StreamingDigest
           text={streamingText}
           isStreaming={isStreaming}
-          visibleSections={{ ...visibleSections, oneTakeaway: false }}
+          visibleSections={visibleSections}
           afterLeftOff={
             onResumeWithAI ? (
               <button className="resume-ai-btn" onClick={onResumeWithAI}>
@@ -1337,33 +1279,6 @@ export function DigestView({
             </div>
           </div>
         )}
-
-        {/* One Takeaway — comes last, after all data sections */}
-        {!isStreaming &&
-          vis("oneTakeaway") &&
-          (() => {
-            const takeawaySection = parseStreamingSections(streamingText).find(
-              (s) => s.key === "takeaway",
-            );
-            if (!takeawaySection) return null;
-            return (
-              <div
-                className="digest-section stats-reveal-item"
-                style={{ animationDelay: "2500ms" }}
-              >
-                <div className="digest-section-title">
-                  {takeawaySection.emoji} {takeawaySection.label}
-                </div>
-                <p className="formatted-paragraph">
-                  {animate ? (
-                    <TypewriterText text={takeawaySection.content} delay={2700} />
-                  ) : (
-                    takeawaySection.content
-                  )}
-                </p>
-              </div>
-            );
-          })()}
 
         {/* Action buttons at the bottom (hide while streaming) */}
         {!isStreaming && (onGenerateStandup || onGeneratePlan) && (
