@@ -2408,29 +2408,6 @@ a:hover {
   margin-top: var(--space-xl);
 }
 
-.action-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-sm);
-  padding: var(--space-md);
-  font-size: 13px;
-  font-weight: 500;
-  font-family: var(--font-sans);
-  color: var(--color-text-primary);
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.15s ease;
-}
-
-.action-btn:hover {
-  background: var(--color-bg-tertiary);
-  border-color: var(--color-border-hover);
-}
-
 .action-btn.copied {
   color: var(--color-success);
   border-color: var(--color-success);
@@ -2623,17 +2600,22 @@ a:hover {
   margin-top: var(--space-lg);
 }
 
-.action-btn {
+/* Shared action button — used by the top-row Copy/Download/Email buttons and
+   the bottom-row Generate Standup / To-Do List buttons. Same style, same
+   height. The top-row buttons size to content; the bottom-row buttons get
+   `flex: 1` from .standup-btn so they stretch edge-to-edge. */
+.action-btn,
+.standup-btn {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-xs);
   justify-content: center;
-  padding: var(--space-sm) var(--space-md);
+  gap: var(--space-sm);
+  padding: 10px var(--space-md);
   font-size: 13px;
   font-weight: 500;
   font-family: var(--font-sans);
   color: var(--color-text-secondary);
-  background: var(--color-bg-primary);
+  background: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   cursor: pointer;
@@ -2641,8 +2623,9 @@ a:hover {
   transition: all 0.15s ease;
 }
 
-.action-btn:hover {
-  background: var(--color-bg-secondary);
+.action-btn:hover,
+.standup-btn:hover {
+  background: var(--color-bg-tertiary);
   color: var(--color-text-primary);
   border-color: var(--color-border-hover);
 }
@@ -3119,10 +3102,8 @@ a:hover {
   margin-top: 0;
 }
 
-.digest-page-header-right .action-btn {
-  padding: var(--space-xs) var(--space-sm);
-  font-size: 12px;
-}
+/* Top-row action buttons inherit the shared .action-btn style — no
+   size override here so they match the bottom-row generate buttons. */
 
 .digest-bottom-actions {
   display: flex;
@@ -3191,26 +3172,9 @@ a:hover {
   }
 }
 
+/* Bottom-row variant of the shared action button: stretches to fill the
+   row so the two buttons split the card width evenly. Visual style comes
+   from the shared .action-btn, .standup-btn base rule above. */
 .standup-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-sm);
   flex: 1;
-  padding: var(--space-md);
-  font-size: 14px;
-  font-weight: 500;
-  font-family: var(--font-sans);
-  color: var(--color-text-secondary);
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.standup-btn:hover {
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-primary);
-  border-color: var(--color-border-hover);
 }
