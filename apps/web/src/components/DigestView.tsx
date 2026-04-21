@@ -1256,11 +1256,38 @@ function DigestStatsSidebar({
   );
 }
 
-/** True when at least one sidebar section is visible per user settings. If
- *  every stat section is toggled off, the layout collapses to single column. */
-function sidebarHasContent(visibleSections?: Record<string, boolean>): boolean {
+/**
+ * Determine whether the sidebar should render at all. Returns false in any
+ * case where the sidebar would be empty or useless — the layout then
+ * collapses cleanly to single column.
+ *
+ *   - During streaming: render skeletons if user has ANY section visible.
+ *     Even if stats haven't arrived yet, skeletons fill the space.
+ *   - After streaming: render only if at least one visible section has
+ *     real data. Prevents an empty 360px column for digests that lack a
+ *     field (old cached digests, history missing newer stat types).
+ */
+function sidebarHasContent(
+  stats: DigestViewStats | null,
+  isStreaming: boolean,
+  visibleSections?: Record<string, boolean>,
+): boolean {
   const vis = (key: string) => !visibleSections || visibleSections[key] !== false;
-  return SIDEBAR_SKELETONS.some((s) => vis(s.key));
+
+  // Pre-streaming / streaming: skeletons just need at least one toggle on.
+  if (isStreaming) {
+    return SIDEBAR_SKELETONS.some((s) => vis(s.key));
+  }
+
+  // Post-streaming: need actual data in at least one visible section.
+  if (!stats) return false;
+  return (
+    (vis("statistics") && stats.commits != null) ||
+    (vis("mostActiveFiles") && (stats.topFiles?.length ?? 0) > 0) ||
+    (vis("whenYouCoded") && stats.timeline != null) ||
+    (vis("paceCheck") && stats.pace != null) ||
+    (vis("codebaseHealth") && stats.health != null)
+  );
 }
 
 export function DigestView({
@@ -1287,20 +1314,20 @@ export function DigestView({
   // Keeping these in ONE render branch lets StreamingDigest stay mounted
   // across the transition from pre-text → streaming. No remount, no flash.
   if (isStreaming || streamingText) {
+    // Decide whether the two-column layout kicks in. Single gate used for
+    // both the layout class and whether to render the sidebar at all, so
+    // they always stay in sync. Returns false if every stat section is
+    // toggled off OR if post-streaming stats are missing entirely.
+    const renderSidebar = sidebarHasContent(stats, isStreaming, visibleSections);
     return (
       <div className={animate ? "" : "no-animation"}>
-        {/* Phase tracker: only shown during pre-text streaming (no characters
-            revealed yet). Fades cleanly out the instant the first character
-            lands via React unmount. */}
         {/* Two-column layout: narrative on the left, stats sidebar on the
             right. Below 1080px the media query flattens this to a single
-            column (main first, sidebar below). If the user has hidden every
-            stat section, we skip rendering the sidebar entirely so the
-            layout stays single-column even on wide screens. */}
+            column (main first, sidebar below). If renderSidebar is false
+            (all sections hidden OR no stats post-streaming) we skip the
+            sidebar entirely so the layout stays single-column. */}
         <div
-          className={`digest-layout${
-            sidebarHasContent(visibleSections) ? " digest-layout--two-col" : ""
-          }`}
+          className={`digest-layout${renderSidebar ? " digest-layout--two-col" : ""}`}
         >
           <div className="digest-main">
             {/* Phase tracker: only shown during pre-text streaming (no
@@ -1343,7 +1370,7 @@ export function DigestView({
             )}
           </div>
 
-          {sidebarHasContent(visibleSections) && (
+          {renderSidebar && (
             <DigestStatsSidebar
               stats={stats}
               isStreaming={isStreaming}
