@@ -410,10 +410,90 @@ a:hover {
 }
 
 .digest-streak {
+  position: relative;
+  display: inline-block;
   font-size: 13px;
   font-weight: 500;
   color: var(--color-warning);
   letter-spacing: 0;
+  cursor: default;
+}
+
+/* Hover pill — shows current streak + personal best side by side. Uses the
+   same elevated-card pattern as the timeline tooltip (bg-elevated, border,
+   radius-md, shadow-md) for a consistent hover vocabulary across the app. */
+.streak-tooltip {
+  position: absolute;
+  top: calc(100% + var(--space-sm));
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.12s ease,
+    visibility 0s linear 0.12s;
+  pointer-events: none;
+  z-index: 20;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.digest-streak:hover .streak-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.12s ease,
+    visibility 0s linear 0s;
+}
+
+.streak-tooltip {
+  /* one-line layout: inline-flex overrides the default block */
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+}
+
+.streak-tooltip-label {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.streak-tooltip-value {
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--color-text-primary);
+}
+
+/* Arrow pointing up from tooltip to the streak pill */
+.streak-tooltip::before,
+.streak-tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+
+.streak-tooltip::before {
+  transform: translateX(-50%);
+  border-bottom: 5px solid var(--color-border);
+}
+
+.streak-tooltip::after {
+  transform: translateX(-50%) translateY(1px);
+  border-bottom: 5px solid var(--color-bg-elevated);
 }
 
 .digest-page-date {

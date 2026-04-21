@@ -506,13 +506,11 @@ export default function DashboardPage() {
     pageTitle = "Digest";
   }
 
-  // Compute per-repo streak from history records AND daily check-ins.
-  // A day counts toward the streak if EITHER a digest was generated that day
-  // OR the user visited the quiet-day empty state and a check-in was recorded.
-  // This way a rest day doesn't break the streak as long as the user opened
-  // Scout. Today is skipped if neither marker exists yet (so it doesn't break
-  // mid-day before they've generated/visited).
-  const streak = (() => {
+  // Compute per-repo streak AND personal best from history records + check-ins.
+  // A day counts as "active" if a digest was generated OR a check-in recorded.
+  // Personal best is the longest consecutive-days run found anywhere in the
+  // active set (always >= current streak, since current is part of that set).
+  const { streak, personalBest } = (() => {
     const pad = (n: number) => String(n).padStart(2, "0");
     const fmtKey = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
     const activeDays = new Set<string>();
@@ -523,23 +521,46 @@ export default function DashboardPage() {
       // checkinDates arrive as YYYY-MM-DD already; they match fmtKey's shape.
       activeDays.add(date);
     }
-    if (activeDays.size === 0) return 0;
-    let count = 0;
+    if (activeDays.size === 0) return { streak: 0, personalBest: 0 };
+
+    // Current streak: count back from today, skipping today if it has no entry.
+    let current = 0;
     const now = new Date();
     for (let i = 0; i < 365; i++) {
       const d = new Date(now);
       d.setDate(d.getDate() - i);
       const key = fmtKey(d);
       if (activeDays.has(key)) {
-        count++;
+        current++;
       } else if (i === 0) {
-        // Today might not have an entry yet, skip it
         continue;
       } else {
         break;
       }
     }
-    return count;
+
+    // Personal best: iterate sorted active days, track longest consecutive run.
+    // Sort lexically — YYYY-MM-DD is naturally date-ordered. DST-safe via
+    // Math.round on the day diff (23h → 1, 25h → 1).
+    const sortedDays = [...activeDays].sort();
+    const DAY_MS = 24 * 60 * 60 * 1000;
+    let longest = 1;
+    let run = 1;
+    for (let i = 1; i < sortedDays.length; i++) {
+      const prev = new Date(sortedDays[i - 1] + "T00:00:00");
+      const curr = new Date(sortedDays[i] + "T00:00:00");
+      const diffDays = Math.round((curr.getTime() - prev.getTime()) / DAY_MS);
+      if (diffDays === 1) {
+        run++;
+        if (run > longest) longest = run;
+      } else {
+        run = 1;
+      }
+    }
+
+    // Best should never be less than current (current is part of activeDays
+    // and contiguous by definition). Clamp defensively in case of any drift.
+    return { streak: current, personalBest: Math.max(longest, current) };
   })();
 
   // Determine the raw content for the current view (unified text with section markers)
@@ -578,6 +599,12 @@ export default function DashboardPage() {
                 {!noNewCommits && !isViewingHistory && streak >= 2 && (
                   <span className="digest-streak">
                     {"\ud83d\udd25"} {streak}-day streak
+                    <span className="streak-tooltip" role="tooltip">
+                      <span className="streak-tooltip-label">Best</span>
+                      <span className="streak-tooltip-value">
+                        {personalBest} {personalBest === 1 ? "day" : "days"}
+                      </span>
+                    </span>
                   </span>
                 )}
               </h1>
