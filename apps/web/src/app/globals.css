@@ -712,11 +712,21 @@ a:hover {
   transform: translateX(0);
 }
 
-.timeline-tooltip-meta {
+.timeline-tooltip-lines {
   font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  font-family: var(--font-mono);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.timeline-tooltip-time {
+  font-size: 11px;
   line-height: 1.4;
   color: var(--color-text-tertiary);
   font-family: var(--font-mono);
+  margin-top: 2px;
   white-space: nowrap;
 }
 

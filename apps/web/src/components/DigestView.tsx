@@ -735,7 +735,7 @@ function WhenYouCoded({
                     style={{ bottom: `${cumulativeBottom}px`, height: `${h}px` }}
                   >
                     <div className="timeline-tooltip" role="tooltip">
-                      <div className="timeline-tooltip-meta">
+                      <div className="timeline-tooltip-lines">
                         {c.added !== undefined && c.removed !== undefined ? (
                           <>
                             <span className="timeline-tooltip-added">
@@ -752,9 +752,8 @@ function WhenYouCoded({
                             {c.lines.toLocaleString()} {c.lines === 1 ? "line" : "lines"}
                           </>
                         )}
-                        {" \u00b7 "}
-                        {fmtTime(c.timeMs)}
                       </div>
+                      <div className="timeline-tooltip-time">{fmtTime(c.timeMs)}</div>
                     </div>
                   </div>
                 );
