@@ -102,9 +102,7 @@ export function Sidebar({
 
           <div className="sidebar-list">
             {entries.length === 0 && (
-              <div className="sidebar-empty">
-                History will appear here as you generate digests.
-              </div>
+              <div className="sidebar-empty">History will appear here as you generate digests.</div>
             )}
             {entries.map((entry) => (
               <button

@@ -2282,6 +2282,16 @@ a:hover {
 
 .pregen-skeleton-emoji {
   opacity: 0.4;
+  display: inline-flex;
+  align-items: center;
+}
+
+.emoji {
+  display: inline-block;
+  vertical-align: -0.15em;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .pregen-skeleton-label {

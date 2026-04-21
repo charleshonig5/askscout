@@ -57,9 +57,7 @@ export function RepoSelector({ repos, activeRepos = [], selected, onChange }: Re
     }
     const activeSet = new Set(activeRepos);
     const selectedArr = selected && repos.includes(selected) ? [selected] : [];
-    const activeOrdered = activeRepos.filter(
-      (r) => r !== selected && repos.includes(r),
-    );
+    const activeOrdered = activeRepos.filter((r) => r !== selected && repos.includes(r));
     const rest = repos.filter((r) => r !== selected && !activeSet.has(r));
     return [...selectedArr, ...activeOrdered, ...rest];
   }, [repos, activeRepos, selected, query]);
@@ -210,12 +208,7 @@ export function RepoSelector({ repos, activeRepos = [], selected, onChange }: Re
             />
           </div>
 
-          <div
-            id="repo-combobox-list"
-            role="listbox"
-            className="repo-combobox-list"
-            ref={listRef}
-          >
+          <div id="repo-combobox-list" role="listbox" className="repo-combobox-list" ref={listRef}>
             {ordered.length === 0 ? (
               <div className="repo-combobox-empty">
                 {query.trim() ? `No repos match "${query.trim()}"` : "No repos available"}

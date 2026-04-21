@@ -10,6 +10,7 @@ import { PlanModal } from "@/components/PlanModal";
 import { useDigestStream } from "@/lib/use-digest-stream";
 import { parseSections } from "@/lib/parse-sections";
 import { useTapTooltip } from "@/lib/use-tap-tooltip";
+import { Emoji } from "@/components/Emoji";
 
 import type { HistoryEntry } from "@/lib/mock-data";
 
@@ -633,7 +634,7 @@ export default function DashboardPage() {
                       className={`digest-streak${streakTap.open ? " tap-open" : ""}`}
                       onClick={streakTap.toggle}
                     >
-                      {"\ud83d\udd25"} {streak}-day streak
+                      <Emoji name="streak" size={14} /> {streak}-day streak
                       <span className="streak-tooltip" role="tooltip">
                         <span className="streak-tooltip-label">Personal best</span>
                         <span className="streak-tooltip-value">
@@ -659,7 +660,9 @@ export default function DashboardPage() {
 
             {noNewCommits && !showLatestFromQuietDay ? (
               <div className="quiet-day">
-                <div className="quiet-day-emoji">{"\u2615"}</div>
+                <div className="quiet-day-emoji">
+                  <Emoji name="quietDay" size={56} />
+                </div>
                 <h2 className="quiet-day-title">No new commits today</h2>
                 <p className="quiet-day-subtitle">
                   {repoName} hasn&apos;t seen activity since your digest on {noNewCommits.date}.
@@ -667,7 +670,7 @@ export default function DashboardPage() {
                 </p>
                 {streak >= 2 && (
                   <div className="quiet-day-streak">
-                    {"\ud83d\udd25"} {streak}-day streak kept alive
+                    <Emoji name="streak" size={16} /> {streak}-day streak kept alive
                   </div>
                 )}
                 <div className="quiet-day-actions">

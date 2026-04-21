@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Emoji } from "@/components/Emoji";
 
 /**
  * Pre-generation UI pieces. Exposed as two small components so the parent
@@ -110,7 +111,9 @@ export function SectionSkeleton({
       aria-hidden
     >
       <div className="pregen-skeleton-title">
-        <span className="pregen-skeleton-emoji">{shape.emoji}</span>
+        <span className="pregen-skeleton-emoji">
+          <Emoji name={shape.key} size={18} />
+        </span>
         <span className="pregen-skeleton-label">{shape.label}</span>
       </div>
       {shape.lines ? (
@@ -128,10 +131,7 @@ export function SectionSkeleton({
           {Array.from({ length: shape.bullets ?? 0 }).map((_, bi) => (
             <div key={bi} className="pregen-skeleton-bullet">
               <span className="pregen-skeleton-bullet-dot" />
-              <span
-                className="pregen-skeleton-line"
-                style={{ width: `${75 - bi * 10}%` }}
-              />
+              <span className="pregen-skeleton-line" style={{ width: `${75 - bi * 10}%` }} />
             </div>
           ))}
         </div>

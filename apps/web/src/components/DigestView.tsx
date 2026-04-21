@@ -20,6 +20,7 @@ import {
   SECTION_SKELETONS,
   SIDEBAR_SKELETONS,
 } from "@/components/PreGeneration";
+import { Emoji } from "@/components/Emoji";
 
 /**
  * Build the text that goes into the clipboard / downloaded markdown file.
@@ -258,7 +259,12 @@ export function DigestActions({
   return (
     <div className="digest-actions-row">
       <CopyBtn text={buildFullMarkdown(text, stats, visibleSections)} label="Copy" />
-      <DownloadBtn text={text} stats={stats} repoName={repoName} visibleSections={visibleSections} />
+      <DownloadBtn
+        text={text}
+        stats={stats}
+        repoName={repoName}
+        visibleSections={visibleSections}
+      />
       <EmailBtn />
     </div>
   );
@@ -434,7 +440,7 @@ function StreamingDigest({
             <div key={section.key}>
               <div className="digest-vibe">
                 <strong>
-                  {section.emoji} {section.label}
+                  <Emoji name={section.key} size={18} /> {section.label}
                   {showCursor && <LiveBadge />}
                 </strong>
                 <br />
@@ -449,7 +455,7 @@ function StreamingDigest({
           return (
             <div key={section.key} className="digest-section">
               <div className="digest-section-title">
-                {section.emoji} {section.label}
+                <Emoji name={section.key} size={18} /> {section.label}
                 {showCursor && <LiveBadge />}
               </div>
               <p className="formatted-paragraph">
@@ -483,7 +489,7 @@ function StreamingDigest({
         return (
           <div key={section.key} className="digest-section">
             <div className="digest-section-title">
-              {section.emoji} {section.label}
+              <Emoji name={section.key} size={18} /> {section.label}
               {items.length > 0 && <span className="digest-count-badge">{items.length}</span>}
               {showCursor && <LiveBadge />}
             </div>
@@ -1187,11 +1193,8 @@ function DigestStatsSidebar({
     <aside className="digest-stats-sidebar">
       {vis("statistics") && stats.commits != null && (
         <div className="digest-section stats-reveal">
-          <div
-            className="digest-section-title stats-reveal-item"
-            style={{ animationDelay: "0ms" }}
-          >
-            {"\u{1F4CA}"} Statistics
+          <div className="digest-section-title stats-reveal-item" style={{ animationDelay: "0ms" }}>
+            <Emoji name="statistics" size={18} /> Statistics
           </div>
           <div className="stats-reveal-item" style={{ animationDelay: "200ms" }}>
             <StatsCards stats={stats} animate={animate} />
@@ -1205,7 +1208,7 @@ function DigestStatsSidebar({
             className="digest-section-title stats-reveal-item"
             style={{ animationDelay: "450ms" }}
           >
-            {"\u{1F4C1}"} Most Active Files
+            <Emoji name="mostActiveFiles" size={18} /> Most Active Files
           </div>
           <div className="stats-reveal-item" style={{ animationDelay: "600ms" }}>
             <TopFiles files={stats.topFiles} repoFullName={repoFullName} />
@@ -1219,7 +1222,7 @@ function DigestStatsSidebar({
             className="digest-section-title stats-reveal-item"
             style={{ animationDelay: "700ms" }}
           >
-            {"\u{1F550}"} Coding Timeline
+            <Emoji name="whenYouCoded" size={18} /> Coding Timeline
           </div>
           <div className="stats-reveal-item" style={{ animationDelay: "900ms" }}>
             <WhenYouCoded timeline={stats.timeline} />
@@ -1233,7 +1236,7 @@ function DigestStatsSidebar({
             className="digest-section-title stats-reveal-item"
             style={{ animationDelay: "1150ms" }}
           >
-            {"\u26A1"} Pace Check
+            <Emoji name="paceCheck" size={18} /> Pace Check
           </div>
           <PaceCard pace={stats.pace} animate={animate} animationDelay="1350ms" />
         </div>
@@ -1245,7 +1248,7 @@ function DigestStatsSidebar({
             className="digest-section-title stats-reveal-item"
             style={{ animationDelay: "1700ms" }}
           >
-            {"\u{1FA7A}"} Codebase Health
+            <Emoji name="codebaseHealth" size={18} /> Codebase Health
           </div>
           <div className="stats-reveal-item" style={{ animationDelay: "1900ms" }}>
             <CodebaseHealth health={stats.health} />
@@ -1326,9 +1329,7 @@ export function DigestView({
             column (main first, sidebar below). If renderSidebar is false
             (all sections hidden OR no stats post-streaming) we skip the
             sidebar entirely so the layout stays single-column. */}
-        <div
-          className={`digest-layout${renderSidebar ? " digest-layout--two-col" : ""}`}
-        >
+        <div className={`digest-layout${renderSidebar ? " digest-layout--two-col" : ""}`}>
           <div className="digest-main">
             {/* Phase tracker: only shown during pre-text streaming (no
                 characters revealed yet). Unmounts cleanly once typing begins. */}
