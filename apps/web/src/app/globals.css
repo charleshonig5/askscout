@@ -2371,8 +2371,7 @@ a:hover {
 }
 
 .action-btn {
-  flex: 1;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
@@ -2385,6 +2384,7 @@ a:hover {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   cursor: pointer;
+  white-space: nowrap;
   transition: all 0.15s ease;
 }
 
@@ -2585,15 +2585,10 @@ a:hover {
   margin-top: var(--space-lg);
 }
 
-.digest-actions-row .action-btn {
-  flex: 1;
-}
-
 .action-btn {
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  flex: 1;
   justify-content: center;
   padding: var(--space-sm) var(--space-md);
   font-size: 13px;
@@ -2604,6 +2599,7 @@ a:hover {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   cursor: pointer;
+  white-space: nowrap;
   transition: all 0.15s ease;
 }
 
