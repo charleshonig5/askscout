@@ -1,6 +1,7 @@
 "use client";
 
 import type { HistoryEntry } from "@/lib/mock-data";
+import { Emoji } from "@/components/Emoji";
 
 interface HistoryListProps {
   entries: HistoryEntry[];
@@ -32,7 +33,7 @@ export function HistoryList({ entries, activeId, onSelect }: HistoryListProps) {
           <div className="history-vibe">{entry.vibeCheck}</div>
           {entry.shippedCount > 0 && (
             <div className="history-shipped">
-              {"\ud83d\ude80"} {entry.shippedCount} shipped
+              <Emoji name="shipped" size={12} /> {entry.shippedCount} shipped
             </div>
           )}
         </button>
