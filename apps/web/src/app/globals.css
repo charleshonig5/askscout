@@ -672,12 +672,12 @@ a:hover {
 
 .timeline-tooltip {
   position: absolute;
-  bottom: calc(100% + 10px);
+  bottom: calc(100% + var(--space-sm));
   left: 50%;
   transform: translateX(-50%);
   width: max-content;
   max-width: 260px;
-  padding: 8px 12px;
+  padding: var(--space-sm) var(--space-md);
   background: var(--color-bg-elevated);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -729,7 +729,7 @@ a:hover {
   line-height: 1.4;
   color: var(--color-text-tertiary);
   font-family: var(--font-mono);
-  margin-top: 4px;
+  margin-top: var(--space-xs);
 }
 
 /* When there's only a meta line (no message), drop the top margin so the
