@@ -15,7 +15,11 @@ import {
 import { useCountUp } from "@/lib/use-count-up";
 import { calculateDelay, advanceBySurrogate } from "@/lib/typewriter-pace";
 import { parseSections } from "@/lib/parse-sections";
-import { PreGeneration } from "@/components/PreGeneration";
+import {
+  PhaseTracker,
+  SectionSkeleton,
+  SECTION_SKELETONS,
+} from "@/components/PreGeneration";
 
 /**
  * Types out text one grapheme at a time with the same variable pacing as
@@ -566,6 +570,23 @@ function StreamingDigest({
           </div>
         );
       })}
+
+      {/* Progressive skeletons: while streaming, render a skeleton for every
+          SECTION_SKELETONS entry that hasn't arrived in the parsed sections
+          yet. This prevents the page from collapsing when typing starts —
+          skeletons hold space for upcoming sections and get replaced in
+          order as their markers appear in the stream. Skip sections the
+          user has toggled off in settings. */}
+      {isStreaming &&
+        SECTION_SKELETONS.filter((shape) => {
+          const settingsKey = sectionKeyMap[shape.key];
+          if (settingsKey && visibleSections && visibleSections[settingsKey] === false) {
+            return false;
+          }
+          return !sections.some((s) => s.key === shape.key);
+        }).map((shape, i) => (
+          <SectionSkeleton key={shape.key} shape={shape} animationDelay={i * 60} />
+        ))}
     </div>
   );
 }
@@ -1195,13 +1216,21 @@ export function DigestView({
     return <div className="digest-loading">Checking for today&apos;s digest...</div>;
   }
 
-  if (isStreaming && !streamingText) {
-    return <PreGeneration />;
-  }
-
-  if (streamingText) {
+  // Unified streaming branch. Entering this branch covers:
+  //   - pre-text (isStreaming && !streamingText) → PhaseTracker + skeleton sections
+  //   - streaming (isStreaming && streamingText) → sections type in, remaining skeletons stay
+  //   - streaming done (!isStreaming && streamingText) → actions + full digest + cascade
+  //
+  // Keeping these in ONE render branch lets StreamingDigest stay mounted
+  // across the transition from pre-text → streaming. No remount, no flash.
+  if (isStreaming || streamingText) {
     return (
       <div className={animate ? "" : "no-animation"}>
+        {/* Phase tracker: only shown during pre-text streaming (no characters
+            revealed yet). Fades cleanly out the instant the first character
+            lands via React unmount. */}
+        {isStreaming && !streamingText && <PhaseTracker />}
+
         {/* Actions at the top (hide while streaming) */}
         {!isStreaming && (
           <div className="digest-actions-top">
