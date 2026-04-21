@@ -570,13 +570,13 @@ a:hover {
    ============================================ */
 
 .digest-container {
-  /* Uniform 34px inner padding on all four sides of the card. The divider
-     between narrative and stats columns also sits 34px from each side's
-     content (see the two-col padding rules below) so every edge-to-content
-     gap in the card reads the same. */
+  /* No padding at this level. Each inner region (.digest-page-header,
+     .digest-main, .digest-stats-sidebar) carries its own 34px padding so
+     the horizontal divider below the header and the vertical divider
+     between narrative and stats can run edge-to-edge of the card. */
   max-width: 1280px;
   margin: 0 auto;
-  padding: 34px;
+  padding: 0;
 }
 
 /* ============================================
@@ -588,7 +588,11 @@ a:hover {
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-lg);
-  margin-bottom: var(--space-lg);
+  /* 34px interior padding + a full-width bottom border. The divider line
+     meets both outer card borders and matches the top of the vertical
+     divider between narrative and stats. */
+  padding: 34px;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .digest-page-header-left {
@@ -2124,6 +2128,9 @@ a:hover {
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
+  /* .digest-container no longer contributes padding — inset the quiet-day
+     inner card from the outer card's edges. */
+  margin: 34px;
 }
 
 .quiet-day-emoji {
@@ -2169,7 +2176,7 @@ a:hover {
 
 .digest-loading {
   text-align: center;
-  padding: var(--space-2xl) var(--space-lg);
+  padding: 34px;
   color: var(--color-text-tertiary);
   font-size: 14px;
 }
@@ -3139,6 +3146,10 @@ a:hover {
 
 .digest-main {
   min-width: 0;
+  /* 34px on all sides: matches header padding above and fills to the card's
+     left and bottom edges. In two-col mode the right padding doubles as the
+     gap from narrative content to the vertical divider. */
+  padding: 34px;
 }
 
 .digest-stats-sidebar {
@@ -3146,6 +3157,10 @@ a:hover {
   display: flex;
   flex-direction: column;
   gap: var(--space-xl);
+  /* 34px on all sides. In two-col mode the left padding is the gap from
+     the vertical divider (border-left below) to the stats content, and
+     the bottom padding carries the column to the card's bottom edge. */
+  padding: 34px;
 }
 
 /* Two-column layout on wide screens: narrative on the left, stats sidebar
@@ -3169,12 +3184,9 @@ a:hover {
     align-items: stretch;
   }
 
-  .digest-layout--two-col .digest-main {
-    padding-right: 34px;
-  }
-
+  /* Base .digest-main / .digest-stats-sidebar already carry 34px padding on
+     all sides; the only two-col-specific addition is the vertical divider. */
   .digest-layout--two-col .digest-stats-sidebar {
-    padding-left: 34px;
     border-left: 1px solid var(--color-border);
   }
 }
