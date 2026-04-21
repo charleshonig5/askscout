@@ -411,12 +411,18 @@ a:hover {
   transition: border-color 0.12s ease;
 }
 
-.repo-combobox-trigger:hover {
+.repo-combobox-trigger:hover:not(:disabled) {
   border-color: var(--color-border-hover);
 }
 
 .repo-combobox-trigger[aria-expanded="true"] {
   border-color: var(--color-border-hover);
+}
+
+.repo-combobox-trigger:disabled {
+  cursor: default;
+  color: var(--color-text-tertiary);
+  background: var(--color-bg-secondary);
 }
 
 .repo-combobox-trigger-label {

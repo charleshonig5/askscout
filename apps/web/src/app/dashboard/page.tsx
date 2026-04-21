@@ -587,9 +587,9 @@ export default function DashboardPage() {
   return (
     <div>
       <Header
-        repos={repos.length > 0 ? repos : [selectedRepo || "Loading..."]}
+        repos={repos}
         activeRepos={activeRepos}
-        selectedRepo={selectedRepo || "Loading..."}
+        selectedRepo={selectedRepo}
         onRepoChange={handleRepoChange}
         onMenuToggle={() => setSidebarOpen((v) => !v)}
       />

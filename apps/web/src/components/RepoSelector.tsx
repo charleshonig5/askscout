@@ -24,8 +24,13 @@ export function RepoSelector({ repos, activeRepos = [], selected, onChange }: Re
   const [activeIdx, setActiveIdx] = useState(0);
 
   const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+
+  // The combobox is disabled until repos arrive. Prevents the user from
+  // selecting a placeholder while the GitHub fetch is still in flight.
+  const isLoading = repos.length === 0;
 
   // When no search: sort selected → active (by recency) → others (GitHub order).
   // When searching: pure substring-match score across all repos.
@@ -99,9 +104,19 @@ export function RepoSelector({ repos, activeRepos = [], selected, onChange }: Re
     if (activeIdx >= ordered.length) setActiveIdx(Math.max(0, ordered.length - 1));
   }, [ordered, activeIdx]);
 
+  // Close the popover AND return focus to the trigger button. Used for any
+  // intentional close (Esc, Enter-select, click-select). For unintentional
+  // closes (outside click, tab-away), we just close — the user moved focus
+  // somewhere themselves and we shouldn't yank it back.
+  const closeAndFocusTrigger = () => {
+    setOpen(false);
+    // Defer to next frame so the close-render finishes before we focus.
+    requestAnimationFrame(() => triggerRef.current?.focus());
+  };
+
   const commit = (repo: string) => {
     if (repo && repo !== selected) onChange(repo);
-    setOpen(false);
+    closeAndFocusTrigger();
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
@@ -124,26 +139,43 @@ export function RepoSelector({ repos, activeRepos = [], selected, onChange }: Re
       if (choice) commit(choice);
     } else if (e.key === "Escape") {
       e.preventDefault();
-      setOpen(false);
+      closeAndFocusTrigger();
     }
+  };
+
+  // Close when keyboard focus leaves the popover entirely (Tab away). This
+  // uses React's onBlur which bubbles for non-input descendants. The
+  // relatedTarget check ensures we don't close just because focus moved
+  // BETWEEN children of the popover.
+  const onRootBlur = (e: React.FocusEvent) => {
+    if (!open) return;
+    const next = e.relatedTarget as Node | null;
+    if (next && rootRef.current?.contains(next)) return;
+    setOpen(false);
   };
 
   const activeSet = useMemo(() => new Set(activeRepos), [activeRepos]);
 
+  // Trigger label: real selection wins; otherwise show a loading or empty
+  // hint depending on whether repos have arrived yet.
+  const triggerLabel = selected || (isLoading ? "Loading repositories..." : "Select a repo");
+
   return (
-    <div className="repo-combobox" ref={rootRef}>
+    <div className="repo-combobox" ref={rootRef} onBlur={onRootBlur}>
       <button
+        ref={triggerRef}
         type="button"
         className="repo-combobox-trigger"
         aria-haspopup="listbox"
         aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
+        disabled={isLoading}
+        onClick={() => !isLoading && setOpen((v) => !v)}
       >
-        <span className="repo-combobox-trigger-label">{selected || "Select a repo"}</span>
+        <span className="repo-combobox-trigger-label">{triggerLabel}</span>
         <ChevronDown size={14} className="repo-combobox-chevron" aria-hidden />
       </button>
 
-      {open && (
+      {open && !isLoading && (
         <div className="repo-combobox-popover" role="dialog" onKeyDown={onKeyDown}>
           <div className="repo-combobox-search">
             <Search size={14} className="repo-combobox-search-icon" aria-hidden />
