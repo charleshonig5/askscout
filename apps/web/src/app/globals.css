@@ -570,12 +570,14 @@ a:hover {
    ============================================ */
 
 .digest-container {
-  /* No padding at this level. Each inner region (.digest-page-header,
-     .digest-main, .digest-stats-sidebar) carries its own 34px padding so
-     the horizontal divider below the header and the vertical divider
-     between narrative and stats can run edge-to-edge of the card. */
-  max-width: 1280px;
-  margin: 0 auto;
+  /* Fill the card edge-to-edge. No max-width cap and no auto margins — the
+     only gap between the card border and content is the 34px padding on
+     each inner region (.digest-page-header, .digest-main,
+     .digest-stats-sidebar). A max-width here would center the box on wide
+     viewports and leave empty gutters, causing the header's border-bottom
+     to stop short of the card's left/right borders. */
+  width: 100%;
+  margin: 0;
   padding: 0;
 }
 
