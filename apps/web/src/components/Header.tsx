@@ -10,12 +10,19 @@ import { ThemeToggle } from "./ThemeToggle";
 
 interface HeaderProps {
   repos: string[];
+  activeRepos?: string[];
   selectedRepo: string;
   onRepoChange: (repo: string) => void;
   onMenuToggle: () => void;
 }
 
-export function Header({ repos, selectedRepo, onRepoChange, onMenuToggle }: HeaderProps) {
+export function Header({
+  repos,
+  activeRepos,
+  selectedRepo,
+  onRepoChange,
+  onMenuToggle,
+}: HeaderProps) {
   const { data: session } = useSession();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -43,7 +50,12 @@ export function Header({ repos, selectedRepo, onRepoChange, onMenuToggle }: Head
           <Menu size={16} />
         </button>
         <span className="logo">askscout</span>
-        <RepoSelector repos={repos} selected={selectedRepo} onChange={onRepoChange} />
+        <RepoSelector
+          repos={repos}
+          activeRepos={activeRepos}
+          selected={selectedRepo}
+          onChange={onRepoChange}
+        />
       </div>
       <div className="header-right">
         <ThemeToggle />

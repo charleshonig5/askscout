@@ -1,6 +1,7 @@
 import { auth, getUserId } from "@/auth";
 import { fetchUserRepos } from "@/lib/github";
 import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
+import { getActiveRepos } from "@/lib/supabase";
 
 export async function GET() {
   const session = await auth();
@@ -20,8 +21,13 @@ export async function GET() {
   }
 
   try {
-    const repos = await fetchUserRepos(session.accessToken);
-    return Response.json({ repos });
+    // Fetch GitHub repos + Scout-active repos in parallel. `activeRepos` is
+    // used by the repo selector to float repos-with-activity to the top.
+    const [repos, activeRepos] = await Promise.all([
+      fetchUserRepos(session.accessToken),
+      getActiveRepos(userId),
+    ]);
+    return Response.json({ repos, activeRepos });
   } catch (err) {
     console.error("Repos fetch error:", err);
     return Response.json({ error: "Failed to fetch repos" }, { status: 500 });

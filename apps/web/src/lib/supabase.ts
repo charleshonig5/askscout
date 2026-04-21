@@ -140,6 +140,52 @@ export async function recordDailyCheckin(
   if (error) console.error("[askscout] Failed to record check-in:", error.message);
 }
 
+/**
+ * Return the user's repos that have Scout activity (a digest or a check-in),
+ * sorted by most-recent activity descending. Used to float active repos to
+ * the top of the repo picker.
+ */
+export async function getActiveRepos(userId: string): Promise<string[]> {
+  if (!supabase) return [];
+  // Only look at activity in the last 90 days — older repos don't need to
+  // float above everything for no reason.
+  const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+
+  const [digestsRes, checkinsRes] = await Promise.all([
+    supabase
+      .from("digests")
+      .select("repo, created_at")
+      .eq("user_id", userId)
+      .gte("created_at", ninetyDaysAgo)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("daily_checkins")
+      .select("repo, checkin_date")
+      .eq("user_id", userId)
+      .gte("checkin_date", ninetyDaysAgo.slice(0, 10))
+      .order("checkin_date", { ascending: false }),
+  ]);
+
+  // Merge both sources, keeping the most recent timestamp per repo.
+  const lastActivity = new Map<string, number>();
+  if (digestsRes.data) {
+    for (const row of digestsRes.data) {
+      const r = row.repo as string;
+      const t = new Date(row.created_at as string).getTime();
+      if (!lastActivity.has(r) || lastActivity.get(r)! < t) lastActivity.set(r, t);
+    }
+  }
+  if (checkinsRes.data) {
+    for (const row of checkinsRes.data) {
+      const r = row.repo as string;
+      const t = new Date((row.checkin_date as string) + "T00:00:00").getTime();
+      if (!lastActivity.has(r) || lastActivity.get(r)! < t) lastActivity.set(r, t);
+    }
+  }
+  // Sort repos by most-recent activity descending.
+  return [...lastActivity.entries()].sort((a, b) => b[1] - a[1]).map(([r]) => r);
+}
+
 /** Get all check-in dates (last 60 days) for a user+repo. Returns YYYY-MM-DD strings. */
 export async function getCheckinDates(userId: string, repo: string): Promise<string[]> {
   if (!supabase) return [];

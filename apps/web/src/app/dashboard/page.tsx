@@ -34,6 +34,9 @@ function formatHistoryDate(dateStr: string): string {
 
 export default function DashboardPage() {
   const [repos, setRepos] = useState<string[]>([]);
+  // Repos with Scout activity (digests or check-ins), sorted most-recent first.
+  // Used by the repo selector to float active repos to the top.
+  const [activeRepos, setActiveRepos] = useState<string[]>([]);
   const [selectedRepo, setSelectedRepo] = useState("");
   const [activeHistoryId, setActiveHistoryId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -94,8 +97,12 @@ export default function DashboardPage() {
         }
 
         if (reposRes.ok) {
-          const data = (await reposRes.json()) as { repos: string[] };
+          const data = (await reposRes.json()) as {
+            repos: string[];
+            activeRepos?: string[];
+          };
           setRepos(data.repos);
+          setActiveRepos(data.activeRepos ?? []);
           if (data.repos.length > 0 && !selectedRepo) {
             // Use saved default repo if it exists and is in the list
             const preferred =
@@ -581,6 +588,7 @@ export default function DashboardPage() {
     <div>
       <Header
         repos={repos.length > 0 ? repos : [selectedRepo || "Loading..."]}
+        activeRepos={activeRepos}
         selectedRepo={selectedRepo || "Loading..."}
         onRepoChange={handleRepoChange}
         onMenuToggle={() => setSidebarOpen((v) => !v)}
