@@ -133,17 +133,26 @@ a:hover {
    Header
    ============================================ */
 
+/* Minimal top bar. Mobile only — shows the hamburger to open the sidebar.
+   Hidden on desktop since the sidebar owns all navigation (logo, settings,
+   theme, profile). The desktop layout uses the full viewport height. */
 .header {
-  height: var(--header-height);
-  border-bottom: 1px solid var(--color-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 var(--space-lg);
-  background: var(--color-bg-primary);
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    height: var(--header-height);
+    padding: 0 var(--space-lg);
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg-primary);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
 }
 
 .header-left {
@@ -1450,7 +1459,15 @@ a:hover {
 
 .app-layout {
   display: flex;
-  min-height: calc(100vh - var(--header-height));
+  min-height: 100vh;
+}
+
+/* On mobile the top header reappears, so the layout height needs to
+   account for it (prevents double-scrollbar situations). */
+@media (max-width: 768px) {
+  .app-layout {
+    min-height: calc(100vh - var(--header-height));
+  }
 }
 
 .app-main {
@@ -1466,10 +1483,10 @@ a:hover {
 
 .sidebar {
   position: fixed;
-  top: var(--header-height);
+  top: 0;
   left: 0;
   width: var(--sidebar-width);
-  height: calc(100vh - var(--header-height));
+  height: 100vh;
   background: var(--color-bg-secondary);
   border-right: 1px solid var(--color-border);
   display: flex;
@@ -1477,10 +1494,128 @@ a:hover {
   z-index: 5;
 }
 
+/* TOP: logo + theme toggle + settings. Fixed at top, doesn't scroll. */
+.sidebar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.sidebar-logo {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+
+.sidebar-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* MIDDLE: scrollable content between top and bottom */
 .sidebar-content {
   flex: 1;
   overflow-y: auto;
   padding: var(--space-md);
+}
+
+/* BOTTOM: profile row. Fixed at bottom, doesn't scroll. */
+.sidebar-bottom {
+  position: relative;
+  padding: var(--space-sm) var(--space-sm);
+  border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.sidebar-profile-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-sm);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  color: var(--color-text-primary);
+  text-align: left;
+  transition: background 0.12s ease;
+}
+
+.sidebar-profile-btn:hover,
+.sidebar-profile-btn.is-open {
+  background: var(--color-bg-tertiary);
+}
+
+.sidebar-profile-avatar {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.sidebar-profile-avatar--placeholder {
+  background: var(--color-bg-tertiary);
+}
+
+.sidebar-profile-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-profile-chevron {
+  flex-shrink: 0;
+  color: var(--color-text-tertiary);
+  transition: transform 0.15s ease;
+}
+
+.sidebar-profile-chevron.is-open {
+  transform: rotate(180deg);
+}
+
+/* Popover menu that appears above the profile row when clicked. */
+.sidebar-profile-menu {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: var(--space-sm);
+  right: var(--space-sm);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-xs);
+  z-index: 20;
+}
+
+.sidebar-profile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-sm);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--color-text-primary);
+  text-align: left;
+  transition: background 0.12s ease;
+}
+
+.sidebar-profile-menu-item:hover {
+  background: var(--color-bg-tertiary);
 }
 
 .sidebar-title {

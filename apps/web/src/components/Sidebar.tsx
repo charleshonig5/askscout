@@ -1,8 +1,23 @@
 "use client";
 
-import { GitCommit, FileText, Rocket, Wrench, AlertTriangle, Clock } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import {
+  GitCommit,
+  FileText,
+  Rocket,
+  Wrench,
+  AlertTriangle,
+  Clock,
+  Settings,
+  LogOut,
+  ChevronUp,
+} from "lucide-react";
 import type { HistoryEntry } from "@/lib/mock-data";
 import { RepoSelector } from "./RepoSelector";
+import { ThemeToggle } from "./ThemeToggle";
 
 interface SidebarProps {
   entries: HistoryEntry[];
@@ -10,9 +25,6 @@ interface SidebarProps {
   onSelect: (id: string) => void;
   isOpen: boolean;
   onClose: () => void;
-  /** Repo picker lives at the top of the sidebar. Dashboard owns the list +
-   *  selection and passes them through so history + repo context live
-   *  together. */
   repos: string[];
   activeRepos?: string[];
   selectedRepo: string;
@@ -30,11 +42,47 @@ export function Sidebar({
   selectedRepo,
   onRepoChange,
 }: SidebarProps) {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  const avatarUrl = session?.user?.image;
+  const userName = session?.user?.name ?? "User";
+
+  // Close the profile popover when clicking outside it.
+  useEffect(() => {
+    if (!profileOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [profileOpen]);
+
   return (
     <>
       {isOpen && <div className="sidebar-overlay" onClick={onClose} />}
 
       <aside className={`sidebar ${isOpen ? "open" : ""}`}>
+        {/* TOP: logo + theme + settings */}
+        <div className="sidebar-top">
+          <span className="sidebar-logo">askscout</span>
+          <div className="sidebar-top-actions">
+            <ThemeToggle />
+            <button
+              className="header-icon-btn"
+              onClick={() => router.push("/settings")}
+              aria-label="Settings"
+            >
+              <Settings size={16} />
+            </button>
+          </div>
+        </div>
+
+        {/* MIDDLE: scrollable content (repo + history) */}
         <div className="sidebar-content">
           <div className="sidebar-section sidebar-section--repo">
             <div className="sidebar-title">Repo</div>
@@ -53,7 +101,9 @@ export function Sidebar({
 
           <div className="sidebar-list">
             {entries.length === 0 && (
-              <div className="sidebar-empty">History will appear here as you generate digests.</div>
+              <div className="sidebar-empty">
+                History will appear here as you generate digests.
+              </div>
             )}
             {entries.map((entry) => (
               <button
@@ -95,6 +145,44 @@ export function Sidebar({
               </button>
             ))}
           </div>
+        </div>
+
+        {/* BOTTOM: profile row; click to open sign-out popover */}
+        <div className="sidebar-bottom" ref={profileRef}>
+          <button
+            className={`sidebar-profile-btn${profileOpen ? " is-open" : ""}`}
+            onClick={() => setProfileOpen((v) => !v)}
+            aria-haspopup="menu"
+            aria-expanded={profileOpen}
+          >
+            {avatarUrl ? (
+              <Image
+                src={avatarUrl}
+                alt={userName}
+                width={28}
+                height={28}
+                className="sidebar-profile-avatar"
+              />
+            ) : (
+              <div className="sidebar-profile-avatar sidebar-profile-avatar--placeholder" />
+            )}
+            <span className="sidebar-profile-name">{userName}</span>
+            <ChevronUp
+              size={14}
+              className={`sidebar-profile-chevron${profileOpen ? " is-open" : ""}`}
+              aria-hidden
+            />
+          </button>
+          {profileOpen && (
+            <div className="sidebar-profile-menu" role="menu">
+              <button
+                className="sidebar-profile-menu-item"
+                onClick={() => void signOut({ callbackUrl: "/" })}
+              >
+                <LogOut size={14} /> Sign out
+              </button>
+            </div>
+          )}
         </div>
       </aside>
     </>
