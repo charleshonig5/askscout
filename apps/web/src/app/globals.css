@@ -557,10 +557,10 @@ a:hover {
 
 .digest-container {
   /* Expanded max-width accommodates the two-column layout on wide screens:
-     ~720px narrative + 48px gutter + 360px sidebar + 48px outer padding each
-     side ≈ 1200px. On single-column displays the inner grid collapses and the
+     ~720px narrative + 48px gutter + 460px sidebar + 48px outer padding each
+     side ≈ 1280px. On single-column displays the inner grid collapses and the
      centered max-width still reads well. */
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: var(--space-2xl) var(--space-lg);
 }
@@ -1248,16 +1248,14 @@ a:hover {
    Health Cards
    ============================================ */
 
+/* Codebase Health cards stack vertically in the sidebar context. Side-by-side
+   (3-col) gets cramped in the 460px sidebar track — Growth/Focus/Churn each
+   need enough horizontal space for the level pill and metric numbers without
+   wrapping. Single column gives each card its own breathing room. */
 .health-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr;
   gap: var(--space-sm);
-}
-
-@media (max-width: 768px) {
-  .health-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 .health-card {
@@ -2941,13 +2939,16 @@ a:hover {
 
 /* Two-column layout on wide screens: narrative on the left, stats sidebar
    on the right. A subtle 1px vertical rule divides them, with matching
-   padding on both sides of the rule so the two columns breathe. */
+   padding on both sides of the rule so the two columns breathe.
+   align-items: stretch makes the sidebar cell fill the row height so its
+   border-left extends all the way to the bottom of the digest, even when
+   the narrative (left column) is taller than the sidebar content. */
 @media (min-width: 1080px) {
   .digest-layout--two-col {
     display: grid;
-    grid-template-columns: 1fr 360px;
+    grid-template-columns: 1fr 460px;
     gap: 0;
-    align-items: start;
+    align-items: stretch;
   }
 
   .digest-layout--two-col .digest-main {
