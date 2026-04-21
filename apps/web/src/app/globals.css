@@ -53,7 +53,7 @@
 
   /* Sizing */
   --header-height: 56px;
-  --sidebar-width: 208px;
+  --sidebar-width: 280px;
   --max-width: 720px;
 }
 
@@ -570,13 +570,13 @@ a:hover {
    ============================================ */
 
 .digest-container {
-  /* Expanded max-width accommodates the two-column layout on wide screens:
-     ~720px narrative + 48px gutter + 460px sidebar + 48px outer padding each
-     side ≈ 1280px. On single-column displays the inner grid collapses and the
-     centered max-width still reads well. */
+  /* Uniform 34px inner padding on all four sides of the card. The divider
+     between narrative and stats columns also sits 34px from each side's
+     content (see the two-col padding rules below) so every edge-to-content
+     gap in the card reads the same. */
   max-width: 1280px;
   margin: 0 auto;
-  padding: var(--space-2xl) var(--space-lg);
+  padding: 34px;
 }
 
 /* ============================================
@@ -3170,11 +3170,11 @@ a:hover {
   }
 
   .digest-layout--two-col .digest-main {
-    padding-right: var(--space-2xl);
+    padding-right: 34px;
   }
 
   .digest-layout--two-col .digest-stats-sidebar {
-    padding-left: var(--space-2xl);
+    padding-left: 34px;
     border-left: 1px solid var(--color-border);
   }
 }
