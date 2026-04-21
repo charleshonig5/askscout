@@ -100,7 +100,9 @@ body {
   font-size: 14px;
   line-height: 1.6;
   color: var(--color-text-primary);
-  background: var(--color-bg-primary);
+  /* Body is the outer "chrome" tone; the main content panel uses the darker
+     --color-bg-primary and sits on top as a card. */
+  background: var(--color-bg-secondary);
   min-height: 100vh;
 }
 
@@ -1481,7 +1483,7 @@ a:hover {
      subtle border visually lifts the content panel off the body, so the
      sidebar column reads as outer chrome rather than competing surface. */
   margin: 24px 24px 24px calc(var(--sidebar-width) + 24px);
-  background: var(--color-bg-elevated);
+  background: var(--color-bg-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
 }
@@ -1496,7 +1498,7 @@ a:hover {
   left: 0;
   width: var(--sidebar-width);
   height: 100vh;
-  background: var(--color-bg-primary);
+  background: var(--color-bg-secondary);
   display: flex;
   flex-direction: column;
   z-index: 5;

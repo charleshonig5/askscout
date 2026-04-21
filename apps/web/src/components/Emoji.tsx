@@ -42,7 +42,7 @@ const EMOJI_MAP: Record<string, EmojiAsset> = {
   // Computed stat section headers
   statistics: { folder: "Bar chart", file: "bar_chart_3d.png" },
   mostActiveFiles: { folder: "File folder", file: "file_folder_3d.png" },
-  whenYouCoded: { folder: "One o’clock", file: "one_oclock_3d.png" },
+  whenYouCoded: { folder: "One oclock", file: "one_oclock_3d.png" },
   paceCheck: { folder: "High voltage", file: "high_voltage_3d.png" },
   codebaseHealth: { folder: "Stethoscope", file: "stethoscope_3d.png" },
   // Misc UI
