@@ -2946,7 +2946,14 @@ a:hover {
 @media (min-width: 1080px) {
   .digest-layout--two-col {
     display: grid;
-    grid-template-columns: 1fr 460px;
+    /* minmax(0, 1fr) tells the narrative column it can shrink freely (below
+       its content's natural min-width if needed) while the sidebar track
+       stays locked at exactly 460px. Without the minmax(0, ...) wrapper the
+       narrative column's implicit min-width would be its min-content size —
+       and when the viewport gets tight, grid would compensate by squeezing
+       the sidebar. This way only the narrative compresses until we hit the
+       1080px breakpoint, at which point the layout flips to single column. */
+    grid-template-columns: minmax(0, 1fr) 460px;
     gap: 0;
     align-items: stretch;
   }
