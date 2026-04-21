@@ -1482,7 +1482,10 @@ a:hover {
      offset from the fixed sidebar on the left. The elevated background +
      subtle border visually lifts the content panel off the body, so the
      sidebar column reads as outer chrome rather than competing surface. */
-  margin: 24px 24px 24px calc(var(--sidebar-width) + 24px);
+  /* Sidebar provides its own 24px right-edge padding, so the card's left
+     edge sits flush against the sidebar's visual right boundary. Keeps the
+     gap between sidebar content and card equal to the gap on the far left. */
+  margin: 24px 24px 24px var(--sidebar-width);
   background: var(--color-bg-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -1499,6 +1502,10 @@ a:hover {
   width: var(--sidebar-width);
   height: 100vh;
   background: var(--color-bg-secondary);
+  /* 24px padding on both sides keeps internal content inset from the
+     browser's left edge and produces a symmetric gap between sidebar
+     content and the floating card on the right. */
+  padding: 0 var(--space-lg);
   display: flex;
   flex-direction: column;
   z-index: 5;
@@ -1509,7 +1516,9 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-md) var(--space-md);
+  /* Horizontal padding lives on .sidebar so the divider below is inset
+     symmetrically from both edges. */
+  padding: var(--space-md) 0;
   border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
 }
@@ -1531,13 +1540,13 @@ a:hover {
 .sidebar-content {
   flex: 1;
   overflow-y: auto;
-  padding: var(--space-md);
+  padding: var(--space-md) 0;
 }
 
 /* BOTTOM: profile row. Fixed at bottom, doesn't scroll. */
 .sidebar-bottom {
   position: relative;
-  padding: var(--space-sm) var(--space-sm);
+  padding: var(--space-sm) 0;
   border-top: 1px solid var(--color-border);
   flex-shrink: 0;
 }
