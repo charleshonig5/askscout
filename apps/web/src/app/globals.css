@@ -675,9 +675,9 @@ a:hover {
   bottom: calc(100% + 10px);
   left: 50%;
   transform: translateX(-50%);
-  min-width: 140px;
-  max-width: 240px;
-  padding: var(--space-sm) var(--space-md);
+  width: max-content;
+  max-width: 260px;
+  padding: 8px 12px;
   background: var(--color-bg-elevated);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -689,7 +689,6 @@ a:hover {
     visibility 0s linear 0.12s;
   pointer-events: none;
   z-index: 20;
-  white-space: normal;
 }
 
 .timeline-bar:hover .timeline-tooltip {
@@ -716,8 +715,8 @@ a:hover {
 .timeline-tooltip-message {
   font-size: 12px;
   font-weight: 500;
+  line-height: 1.4;
   color: var(--color-text-primary);
-  line-height: 1.3;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -726,10 +725,17 @@ a:hover {
 }
 
 .timeline-tooltip-meta {
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.4;
   color: var(--color-text-tertiary);
-  margin-top: 4px;
   font-family: var(--font-mono);
+  margin-top: 4px;
+}
+
+/* When there's only a meta line (no message), drop the top margin so the
+   single line is centered nicely in the padding. */
+.timeline-tooltip-meta:first-child {
+  margin-top: 0;
 }
 
 /* Arrow pointing down from tooltip to bar — double border for cleaner edge */
