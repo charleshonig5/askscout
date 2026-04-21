@@ -27,3 +27,4 @@ dist/
 # debug
 npm-debug.log*
 pnpm-debug.log*
+PLATFORM_HARDENING_PLAN.md
