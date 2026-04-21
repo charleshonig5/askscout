@@ -514,7 +514,7 @@ export interface DigestViewStats {
   timeline?: {
     startMs: number;
     endMs: number;
-    points: Array<{ timeMs: number; lines: number; message?: string }>;
+    points: Array<{ timeMs: number; lines: number; added?: number; removed?: number }>;
   } | null;
 }
 
@@ -564,7 +564,7 @@ function PaceCard({
   );
 }
 
-type TimelinePoint = { timeMs: number; lines: number; message?: string };
+type TimelinePoint = { timeMs: number; lines: number; added?: number; removed?: number };
 
 function WhenYouCoded({
   timeline,
@@ -734,9 +734,23 @@ function WhenYouCoded({
                     style={{ bottom: `${cumulativeBottom}px`, height: `${h}px` }}
                   >
                     <div className="timeline-tooltip" role="tooltip">
-                      {c.message && <div className="timeline-tooltip-message">{c.message}</div>}
                       <div className="timeline-tooltip-meta">
-                        {c.lines.toLocaleString()} {c.lines === 1 ? "line" : "lines"}
+                        {c.added !== undefined && c.removed !== undefined ? (
+                          <>
+                            <span className="timeline-tooltip-added">
+                              +{c.added.toLocaleString()}
+                            </span>
+                            {" / "}
+                            <span className="timeline-tooltip-removed">
+                              -{c.removed.toLocaleString()}
+                            </span>
+                          </>
+                        ) : (
+                          // Older stored digests only have the total; fall back gracefully.
+                          <>
+                            {c.lines.toLocaleString()} {c.lines === 1 ? "line" : "lines"}
+                          </>
+                        )}
                         {" \u00b7 "}
                         {fmtTime(c.timeMs)}
                       </div>

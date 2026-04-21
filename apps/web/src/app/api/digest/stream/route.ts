@@ -362,16 +362,18 @@ export async function POST(req: Request) {
     let timeline: {
       startMs: number;
       endMs: number;
-      points: Array<{ timeMs: number; lines: number; message: string }>;
+      points: Array<{ timeMs: number; lines: number; added: number; removed: number }>;
     } | null = null;
     if (commits.length > 0 && commitSpanHours <= 36) {
       const points = commits
         .map((c) => ({
           timeMs: c.timestamp.getTime(),
+          // `lines` = total change, used for bar-height scaling. `added` and
+          // `removed` are kept separately for the tooltip so users see the
+          // same +X / -Y split that TopFiles and StatsCards use everywhere else.
           lines: c.additions + c.deletions,
-          // First line of the commit message only — git messages can have long
-          // multi-paragraph bodies, but the tooltip just needs a title.
-          message: (c.message ?? "").split("\n")[0]!.trim(),
+          added: c.additions,
+          removed: c.deletions,
         }))
         .sort((a, b) => a.timeMs - b.timeMs);
       timeline = {
