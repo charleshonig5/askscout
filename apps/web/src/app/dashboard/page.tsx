@@ -605,13 +605,7 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <Header
-        repos={repos}
-        activeRepos={activeRepos}
-        selectedRepo={selectedRepo}
-        onRepoChange={handleRepoChange}
-        onMenuToggle={() => setSidebarOpen((v) => !v)}
-      />
+      <Header onMenuToggle={() => setSidebarOpen((v) => !v)} />
 
       <div className="app-layout">
         <Sidebar
@@ -620,6 +614,10 @@ export default function DashboardPage() {
           onSelect={handleHistorySelect}
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
+          repos={repos}
+          activeRepos={activeRepos}
+          selectedRepo={selectedRepo}
+          onRepoChange={handleRepoChange}
         />
 
         <div className="app-main">

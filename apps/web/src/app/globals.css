@@ -1500,6 +1500,39 @@ a:hover {
   margin-bottom: var(--space-md);
 }
 
+/* Repo picker section at the top of the sidebar. A small heading + the
+   combobox trigger stretched full width. Bottom border separates it from
+   the History section below. */
+.sidebar-section--repo {
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sidebar-section--repo .sidebar-title {
+  margin-bottom: var(--space-xs);
+}
+
+/* RepoSelector inside sidebar: full-width trigger, popover opens below */
+.sidebar-section--repo .repo-combobox,
+.sidebar-section--repo .repo-combobox-trigger {
+  display: flex;
+  width: 100%;
+  max-width: none;
+}
+
+/* Popover width constrained to sidebar width so it doesn't bleed across
+   the content area. */
+.sidebar-section--repo .repo-combobox-popover {
+  width: 100%;
+}
+
+/* Slightly reduce top margin on the History title since the repo
+   section above provides its own visual separation. */
+.sidebar-title--history {
+  padding-top: 0;
+}
+
 .sidebar-empty {
   font-size: 12px;
   color: var(--color-text-tertiary);

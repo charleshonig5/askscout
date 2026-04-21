@@ -5,24 +5,13 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Menu, Settings, LogOut } from "lucide-react";
-import { RepoSelector } from "./RepoSelector";
 import { ThemeToggle } from "./ThemeToggle";
 
 interface HeaderProps {
-  repos: string[];
-  activeRepos?: string[];
-  selectedRepo: string;
-  onRepoChange: (repo: string) => void;
   onMenuToggle: () => void;
 }
 
-export function Header({
-  repos,
-  activeRepos,
-  selectedRepo,
-  onRepoChange,
-  onMenuToggle,
-}: HeaderProps) {
+export function Header({ onMenuToggle }: HeaderProps) {
   const { data: session } = useSession();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -50,12 +39,6 @@ export function Header({
           <Menu size={16} />
         </button>
         <span className="logo">askscout</span>
-        <RepoSelector
-          repos={repos}
-          activeRepos={activeRepos}
-          selected={selectedRepo}
-          onChange={onRepoChange}
-        />
       </div>
       <div className="header-right">
         <ThemeToggle />

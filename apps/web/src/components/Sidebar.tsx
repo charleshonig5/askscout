@@ -2,6 +2,7 @@
 
 import { GitCommit, FileText, Rocket, Wrench, AlertTriangle, Clock } from "lucide-react";
 import type { HistoryEntry } from "@/lib/mock-data";
+import { RepoSelector } from "./RepoSelector";
 
 interface SidebarProps {
   entries: HistoryEntry[];
@@ -9,16 +10,43 @@ interface SidebarProps {
   onSelect: (id: string) => void;
   isOpen: boolean;
   onClose: () => void;
+  /** Repo picker lives at the top of the sidebar. Dashboard owns the list +
+   *  selection and passes them through so history + repo context live
+   *  together. */
+  repos: string[];
+  activeRepos?: string[];
+  selectedRepo: string;
+  onRepoChange: (repo: string) => void;
 }
 
-export function Sidebar({ entries, activeId, onSelect, isOpen, onClose }: SidebarProps) {
+export function Sidebar({
+  entries,
+  activeId,
+  onSelect,
+  isOpen,
+  onClose,
+  repos,
+  activeRepos,
+  selectedRepo,
+  onRepoChange,
+}: SidebarProps) {
   return (
     <>
       {isOpen && <div className="sidebar-overlay" onClick={onClose} />}
 
       <aside className={`sidebar ${isOpen ? "open" : ""}`}>
         <div className="sidebar-content">
-          <div className="sidebar-title">
+          <div className="sidebar-section sidebar-section--repo">
+            <div className="sidebar-title">Repo</div>
+            <RepoSelector
+              repos={repos}
+              activeRepos={activeRepos}
+              selected={selectedRepo}
+              onChange={onRepoChange}
+            />
+          </div>
+
+          <div className="sidebar-title sidebar-title--history">
             <Clock size={14} /> History
           </div>
           <div className="sidebar-subtitle">Last 30 days</div>
