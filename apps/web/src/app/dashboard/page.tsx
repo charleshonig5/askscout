@@ -656,6 +656,7 @@ export default function DashboardPage() {
                   streamingText={currentSections?.digest ?? noNewCommits.content}
                   stats={noNewCommits.stats as DigestViewStats | null}
                   repoName={repoName}
+                  repoFullName={selectedRepo}
                   visibleSections={digestSectionPrefs ?? undefined}
                   onResumeWithAI={() => setAiContextOpen(true)}
                   onGenerateStandup={() => setStandupOpen(true)}
@@ -676,6 +677,7 @@ export default function DashboardPage() {
                   streamingText={currentSections?.digest ?? viewingHistoryContent ?? ""}
                   stats={viewingHistoryStats as DigestViewStats | null}
                   repoName={repoName}
+                  repoFullName={selectedRepo}
                   visibleSections={digestSectionPrefs ?? undefined}
                   onResumeWithAI={() => setAiContextOpen(true)}
                   onGenerateStandup={() => setStandupOpen(true)}
@@ -718,6 +720,9 @@ export default function DashboardPage() {
                         cachedDigests[`${selectedRepo}:digest`]?.stats ||
                         null) as DigestViewStats | null
                     }
+                    repoName={repoName}
+                    repoFullName={selectedRepo}
+                    visibleSections={digestSectionPrefs ?? undefined}
                     onResumeWithAI={() => setAiContextOpen(true)}
                     onGenerateStandup={() => setStandupOpen(true)}
                     onGeneratePlan={() => setPlanOpen(true)}

@@ -979,6 +979,32 @@ a:hover {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  min-width: 0;
+}
+
+/* Clickable filename variant — opens the file on GitHub in a new tab. */
+.top-file-name--link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: color 0.12s ease;
+}
+
+.top-file-name--link:hover {
+  color: var(--color-accent);
+}
+
+.top-file-name--link:hover .top-file-link-icon {
+  opacity: 1;
+}
+
+.top-file-link-icon {
+  flex-shrink: 0;
+  opacity: 0.4;
+  transition: opacity 0.12s ease;
 }
 
 .top-file-detail {

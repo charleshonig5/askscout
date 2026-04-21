@@ -10,6 +10,7 @@ import {
   ClipboardList,
   Share2,
   ListChecks,
+  ExternalLink,
 } from "lucide-react";
 import { useCountUp } from "@/lib/use-count-up";
 import { calculateDelay, advanceBySurrogate } from "@/lib/typewriter-pace";
@@ -979,26 +980,56 @@ function WhenYouCoded({
   );
 }
 
-function TopFiles({ files }: { files: TopFile[] }) {
+function TopFiles({ files, repoFullName }: { files: TopFile[]; repoFullName?: string }) {
   if (files.length === 0) return null;
   const fmt = (n: number) => n.toLocaleString("en-US");
+
+  // Build a GitHub deep-link for a given file path. Use HEAD instead of a
+  // specific branch name so this works regardless of whether the repo's
+  // default branch is main, master, develop, etc. Encode each path segment
+  // individually so spaces/special chars are handled but "/" stays literal.
+  const buildGitHubUrl = (file: string): string | null => {
+    if (!repoFullName || !/^[^/]+\/[^/]+$/.test(repoFullName)) return null;
+    const encodedPath = file.split("/").map(encodeURIComponent).join("/");
+    return `https://github.com/${repoFullName}/blob/HEAD/${encodedPath}`;
+  };
+
   return (
     <div className="top-files">
-      {files.map((f, i) => (
-        <div key={f.file} className="top-file-row">
-          <span className="top-file-rank">{i + 1}.</span>
-          <span className="top-file-name">{f.file.split("/").slice(-2).join("/")}</span>
-          <span className="top-file-detail">
-            <span className="top-file-added">+{fmt(f.added ?? 0)}</span>
-            {" / "}
-            <span className="top-file-removed">-{fmt(f.removed ?? 0)}</span>
-            <span className="top-file-commits">
-              {" \u00b7 "}
-              {f.commits} {f.commits === 1 ? "commit" : "commits"}
+      {files.map((f, i) => {
+        const shortName = f.file.split("/").slice(-2).join("/");
+        const url = buildGitHubUrl(f.file);
+        return (
+          <div key={f.file} className="top-file-row">
+            <span className="top-file-rank">{i + 1}.</span>
+            {url ? (
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="top-file-name top-file-name--link"
+                title={f.file}
+              >
+                {shortName}
+                <ExternalLink size={11} className="top-file-link-icon" aria-hidden />
+              </a>
+            ) : (
+              <span className="top-file-name" title={f.file}>
+                {shortName}
+              </span>
+            )}
+            <span className="top-file-detail">
+              <span className="top-file-added">+{fmt(f.added ?? 0)}</span>
+              {" / "}
+              <span className="top-file-removed">-{fmt(f.removed ?? 0)}</span>
+              <span className="top-file-commits">
+                {" \u00b7 "}
+                {f.commits} {f.commits === 1 ? "commit" : "commits"}
+              </span>
             </span>
-          </span>
-        </div>
-      ))}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -1010,6 +1041,9 @@ interface DigestViewProps {
   streamingText: string;
   stats: DigestViewStats | null;
   repoName?: string;
+  // Full "owner/repo" slug — used to build GitHub deep-links on clickable
+  // filenames in the Most Active Files section.
+  repoFullName?: string;
   visibleSections?: Record<string, boolean>;
   onResumeWithAI?: () => void;
   onGenerateStandup?: () => void;
@@ -1149,6 +1183,7 @@ export function DigestView({
   streamingText,
   stats,
   repoName,
+  repoFullName,
   visibleSections,
   onResumeWithAI,
   onGenerateStandup,
@@ -1224,7 +1259,7 @@ export function DigestView({
               {"\ud83d\udcc1"} Most Active Files
             </div>
             <div className="stats-reveal-item" style={{ animationDelay: "600ms" }}>
-              <TopFiles files={stats.topFiles} />
+              <TopFiles files={stats.topFiles} repoFullName={repoFullName} />
             </div>
           </div>
         )}
