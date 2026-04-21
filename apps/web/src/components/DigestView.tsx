@@ -134,38 +134,44 @@ function buildTweet(items: string[]): string {
   const MAX_CHARS = 280;
   const suffix = "\n\n#buildinpublic";
 
-  // Build short descriptions: "Title - brief context" trimmed to fit
-  const descriptions = items.map((item) => {
-    const dashIdx = item.indexOf(" - ");
-    if (dashIdx > 0 && dashIdx < 60) {
-      const title = item.slice(0, dashIdx);
-      // Take first sentence of context
-      const context =
-        item
-          .slice(dashIdx + 3)
-          .split(/[.!]/)[0]
-          ?.trim() ?? "";
-      return context ? `${title}: ${context}` : title;
-    }
-    return item.split(/[.!]/)[0]?.trim() ?? item;
-  });
+  // Use TITLES only (part before " - ") so all shipped items fit in a tweet.
+  // The old version included the full context which pushed us over 280 chars
+  // fast and the trim loop dropped items until often only one remained.
+  const titles = items
+    .map((item) => {
+      const dashIdx = item.indexOf(" - ");
+      if (dashIdx > 0 && dashIdx < 60) {
+        return item.slice(0, dashIdx).trim();
+      }
+      // No " - " separator: take the first sentence, hard-cap at 60 chars.
+      const first = item.split(/[.!]/)[0]?.trim() ?? item.trim();
+      return first.length > 60 ? first.slice(0, 57) + "..." : first;
+    })
+    .filter((t) => t.length > 0);
 
-  let tweet: string;
-  if (descriptions.length === 1) {
-    tweet = `Just shipped: ${descriptions[0]} \ud83d\ude80`;
-  } else {
-    tweet = `Just shipped ${descriptions.length} things \ud83d\ude80\n${descriptions.map((d) => `\u2022 ${d}`).join("\n")}`;
+  if (titles.length === 0) return "";
+
+  if (titles.length === 1) {
+    return `Just shipped: ${titles[0]} \ud83d\ude80${suffix}`;
   }
 
-  tweet += suffix;
+  const buildList = (list: string[], totalCount: number, moreCount: number) => {
+    const bullets = list.map((t) => `\u2022 ${t}`).join("\n");
+    const tail = moreCount > 0 ? `\n\u2022 +${moreCount} more` : "";
+    return `Just shipped ${totalCount} things \ud83d\ude80\n${bullets}${tail}${suffix}`;
+  };
 
-  // Trim items from the bottom if over limit
-  while (tweet.length > MAX_CHARS && descriptions.length > 1) {
-    descriptions.pop();
-    tweet = `Just shipped ${descriptions.length}+ things \ud83d\ude80\n${descriptions.map((d) => `\u2022 ${d}`).join("\n")}${suffix}`;
+  let kept = titles.length;
+  let tweet = buildList(titles, titles.length, 0);
+
+  // If we're over the cap (e.g., many long titles), trim from the bottom and
+  // note how many were dropped so the reader knows there's more.
+  while (tweet.length > MAX_CHARS && kept > 1) {
+    kept--;
+    tweet = buildList(titles.slice(0, kept), titles.length, titles.length - kept);
   }
 
-  // If still over, truncate the description
+  // Ultimate fallback: even one title + "+N more" is too long. Hard truncate.
   if (tweet.length > MAX_CHARS) {
     tweet = tweet.slice(0, MAX_CHARS - 3) + "...";
   }
