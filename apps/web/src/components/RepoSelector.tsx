@@ -171,7 +171,9 @@ export function RepoSelector({ repos, activeRepos = [], selected, onChange }: Re
             ref={listRef}
           >
             {ordered.length === 0 ? (
-              <div className="repo-combobox-empty">No repos match &quot;{query}&quot;</div>
+              <div className="repo-combobox-empty">
+                {query.trim() ? `No repos match "${query.trim()}"` : "No repos available"}
+              </div>
             ) : (
               ordered.map((repo, i) => {
                 const isSelected = repo === selected;
