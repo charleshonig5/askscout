@@ -15,6 +15,7 @@ import {
 import { useCountUp } from "@/lib/use-count-up";
 import { calculateDelay, advanceBySurrogate } from "@/lib/typewriter-pace";
 import { parseSections } from "@/lib/parse-sections";
+import { PreGeneration } from "@/components/PreGeneration";
 
 /**
  * Types out text one grapheme at a time with the same variable pacing as
@@ -1191,11 +1192,11 @@ export function DigestView({
 }: DigestViewProps) {
   const vis = (key: string) => !visibleSections || visibleSections[key] !== false;
   if (isLoading) {
-    return <div className="digest-loading">Loading...</div>;
+    return <div className="digest-loading">Checking for today&apos;s digest...</div>;
   }
 
   if (isStreaming && !streamingText) {
-    return <div className="digest-loading">Scout is sniffing through your commits...</div>;
+    return <PreGeneration />;
   }
 
   if (streamingText) {
