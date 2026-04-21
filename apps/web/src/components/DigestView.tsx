@@ -625,14 +625,15 @@ function WhenYouCoded({
   const crossesDay = daySegments.length > 1;
   const breakPercents = daySegments.slice(0, -1).map((s) => s.rightPct);
 
-  // Tooltip formatter — keeps minutes for precision on hover.
+  // Tooltip formatter — keeps minutes for precision on hover. Day prefix is
+  // abbreviated ("Wed" not "Wednesday") so the tooltip stays compact.
   const fmtTime = (ms: number) => {
     const d = new Date(ms);
     const time = d
       .toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })
       .toLowerCase();
     if (!crossesDay) return time;
-    const day = d.toLocaleDateString("en-US", { weekday: "long" });
+    const day = d.toLocaleDateString("en-US", { weekday: "short" });
     return `${day} ${time}`;
   };
 
