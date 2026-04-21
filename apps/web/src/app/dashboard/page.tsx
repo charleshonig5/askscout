@@ -9,6 +9,7 @@ import { StandupModal } from "@/components/StandupModal";
 import { PlanModal } from "@/components/PlanModal";
 import { useDigestStream } from "@/lib/use-digest-stream";
 import { parseSections } from "@/lib/parse-sections";
+import { useTapTooltip } from "@/lib/use-tap-tooltip";
 
 import type { HistoryEntry } from "@/lib/mock-data";
 
@@ -67,6 +68,9 @@ export default function DashboardPage() {
   const [digestSectionPrefs, setDigestSectionPrefs] = useState<Record<string, boolean> | null>(
     null,
   );
+
+  // Tap-to-pin support for the streak tooltip on touch devices.
+  const streakTap = useTapTooltip<HTMLSpanElement>();
 
   // Fetch repos and user settings on mount
   useEffect(() => {
@@ -597,7 +601,11 @@ export default function DashboardPage() {
               <h1 className="digest-page-name">
                 {pageTitle}
                 {!noNewCommits && !isViewingHistory && streak >= 2 && (
-                  <span className="digest-streak">
+                  <span
+                    ref={streakTap.ref}
+                    className={`digest-streak${streakTap.open ? " tap-open" : ""}`}
+                    onClick={streakTap.toggle}
+                  >
                     {"\ud83d\udd25"} {streak}-day streak
                     <span className="streak-tooltip" role="tooltip">
                       <span className="streak-tooltip-label">Personal best</span>

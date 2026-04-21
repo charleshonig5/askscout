@@ -444,7 +444,8 @@ a:hover {
   letter-spacing: 0;
 }
 
-.digest-streak:hover .streak-tooltip {
+.digest-streak:hover .streak-tooltip,
+.digest-streak.tap-open .streak-tooltip {
   opacity: 1;
   visibility: visible;
   transition:
@@ -771,7 +772,8 @@ a:hover {
   z-index: 20;
 }
 
-.timeline-bar:hover .timeline-tooltip {
+.timeline-bar:hover .timeline-tooltip,
+.timeline-bar.tap-open .timeline-tooltip {
   opacity: 1;
   visibility: visible;
   transition:
@@ -1072,7 +1074,8 @@ a:hover {
   z-index: 20;
 }
 
-.health-card-level:hover .health-tooltip {
+.health-card-level:hover .health-tooltip,
+.health-card-level.tap-open .health-tooltip {
   opacity: 1;
   visibility: visible;
   transition:

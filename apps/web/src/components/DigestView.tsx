@@ -571,6 +571,22 @@ function WhenYouCoded({
 }: {
   timeline: { startMs: number; endMs: number; points: Array<TimelinePoint> };
 }) {
+  // Touch-device tap-to-pin for the bar tooltips. Single string tracks which
+  // bar (if any) is pinned open; tapping anywhere else or the same bar closes.
+  const [openBarKey, setOpenBarKey] = useState<string | null>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!openBarKey) return;
+    const handler = (e: Event) => {
+      const target = e.target as Node | null;
+      if (target && trackRef.current && !trackRef.current.contains(target)) {
+        setOpenBarKey(null);
+      }
+    };
+    document.addEventListener("click", handler, true);
+    return () => document.removeEventListener("click", handler, true);
+  }, [openBarKey]);
+
   if (timeline.points.length === 0) return null;
 
   // Single commit edge case — startMs === endMs. Center the bar at 50%.
@@ -704,7 +720,7 @@ function WhenYouCoded({
 
   return (
     <div className="when-you-coded">
-      <div className="timeline-track">
+      <div className="timeline-track" ref={trackRef}>
         {baselineSegments.map((seg, i) => (
           <div
             key={i}
@@ -728,11 +744,17 @@ function WhenYouCoded({
             <div key={leftPct} className="timeline-column" style={{ left: `${leftPct}%` }}>
               {sorted.map((c, i) => {
                 const h = barHeight(c.lines);
+                const barKey = `${leftPct}-${i}`;
+                const isTapOpen = openBarKey === barKey;
                 const bar = (
                   <div
                     key={i}
-                    className={`timeline-bar${edgeClass}`}
+                    className={`timeline-bar${edgeClass}${isTapOpen ? " tap-open" : ""}`}
                     style={{ bottom: `${cumulativeBottom}px`, height: `${h}px` }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenBarKey((prev) => (prev === barKey ? null : barKey));
+                    }}
                   >
                     <div className="timeline-tooltip" role="tooltip">
                       <div className="timeline-tooltip-lines">
@@ -947,6 +969,22 @@ const HEALTH_DESCRIPTIONS: Record<string, Record<string, string>> = {
 function CodebaseHealth({ health }: { health: HealthData }) {
   const fmt = (n: number) => n.toLocaleString("en-US");
 
+  // Touch-device tap-to-pin for the level-description tooltips. A single key
+  // tracks which card's tooltip is pinned (at most one at a time).
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!openCategory) return;
+    const handler = (e: Event) => {
+      const target = e.target as Node | null;
+      if (target && gridRef.current && !gridRef.current.contains(target)) {
+        setOpenCategory(null);
+      }
+    };
+    document.addEventListener("click", handler, true);
+    return () => document.removeEventListener("click", handler, true);
+  }, [openCategory]);
+
   const indicators = [
     {
       label: "Growth",
@@ -974,15 +1012,24 @@ function CodebaseHealth({ health }: { health: HealthData }) {
 
   return (
     <div>
-      <div className="health-grid">
+      <div className="health-grid" ref={gridRef}>
         {indicators.map((h) => {
           const color = levelColor(h.level);
           const description = HEALTH_DESCRIPTIONS[h.label]?.[h.level];
+          const isTapOpen = openCategory === h.label;
           return (
             <div key={h.label} className="health-card">
               <div className="health-card-header">
                 <span className="health-card-label">{h.label}</span>
-                <span className={`health-card-level health-card-level--${color}`}>
+                <span
+                  className={`health-card-level health-card-level--${color}${
+                    isTapOpen ? " tap-open" : ""
+                  }`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenCategory((prev) => (prev === h.label ? null : h.label));
+                  }}
+                >
                   {h.level}
                   {description && (
                     <span className="health-tooltip" role="tooltip">
