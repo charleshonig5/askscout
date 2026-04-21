@@ -1933,6 +1933,7 @@ a:hover {
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-md) 0;
+  margin-bottom: var(--space-lg);
   color: var(--color-text-secondary);
   font-size: 14px;
 }
@@ -2011,16 +2012,17 @@ a:hover {
 }
 
 /* Skeleton sections mirroring the digest structure. Each section fades in
-   on a staggered delay so the page feels like it's composing itself. */
-.pregen-skeletons {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xl);
-}
-
+   on a staggered delay so the page feels like it's composing itself.
+   Margin matches .digest-section so layout stays stable when a real
+   section replaces a skeleton in place. */
 .pregen-skeleton-section {
   opacity: 0;
   animation: pregen-section-in 0.4s ease-out forwards;
+  margin-bottom: var(--space-xl);
+}
+
+.pregen-skeleton-section:last-child {
+  margin-bottom: 0;
 }
 
 @keyframes pregen-section-in {
@@ -2038,7 +2040,7 @@ a:hover {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-md);
   font-size: 14px;
   font-weight: 600;
 }
@@ -2055,13 +2057,13 @@ a:hover {
 .pregen-skeleton-lines {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .pregen-skeleton-bullets {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
 }
 
 .pregen-skeleton-bullet {
