@@ -2280,6 +2280,63 @@ a:hover {
    on a staggered delay so the page feels like it's composing itself.
    Margin matches .digest-section so layout stays stable when a real
    section replaces a skeleton in place. */
+/* ============================================
+   Digest opener (editorial pre-stream line)
+   ============================================ */
+
+/* Single italic serif line that types itself out using the user's real
+   stats during the pre-text streaming phase. Quiet, restrained — meant
+   to feel narrated rather than loaded. Cross-fades into the skeletons
+   when its parent flips `fadingOut` (see DigestOpener.tsx). */
+.digest-opener {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  /* Match the digest-section-title cadence so this sits naturally where
+     the first skeleton would be — minimizes layout movement on hand-off. */
+  margin-bottom: var(--space-md);
+  opacity: 1;
+  transition: opacity 320ms ease;
+  display: inline-flex;
+  align-items: baseline;
+  /* Letter-spacing nudges this away from typical "loading" copy and
+     toward a more editorial cadence. */
+  letter-spacing: 0.005em;
+}
+
+.digest-opener.is-fading {
+  opacity: 0;
+}
+
+.digest-opener-text {
+  white-space: pre;
+}
+
+/* Thin blinking caret at the end of the line. Stays pinned to the end of
+   the typed text so the line reads as in-progress narration. */
+.digest-opener-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 0.95em;
+  margin-left: 4px;
+  background: var(--color-text-secondary);
+  vertical-align: -0.12em;
+  animation: digest-opener-caret 0.9s step-end infinite;
+}
+
+@keyframes digest-opener-caret {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
 .pregen-skeleton-section {
   opacity: 0;
   animation: pregen-section-in 0.4s ease-out forwards;

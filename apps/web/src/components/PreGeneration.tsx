@@ -1,26 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Emoji } from "@/components/Emoji";
 
 /**
- * Pre-generation UI pieces. Exposed as two small components so the parent
- * can compose them with the real streaming digest:
- *
- *   - PhaseTracker: pulsing-dot + rotating Scout-voiced message. Shown ONLY
- *     while we're waiting for the first text chunk. Fades out when real
- *     content starts streaming.
+ * Pre-generation UI pieces.
  *
  *   - SectionSkeleton: one skeleton section (emoji header + shimmer lines/
- *     bullets). Used both by StreamingDigest (to hold space for sections
- *     that haven't streamed in yet) and during the initial pre-text phase
- *     (to show the full shape of the incoming digest).
+ *     bullets). Used by StreamingDigest to hold space for sections that
+ *     haven't streamed in yet, and by DigestStatsSidebar to fill the right
+ *     column while stats wait for the stream to finish cascading in.
  *
  * The progressive-replacement pattern: during streaming, parsed sections
  * render as real content, and SECTION_MARKERS that haven't arrived yet
  * render as skeletons. As each new section marker appears in the stream,
  * its skeleton gets replaced by the real typing content. Layout stays
  * stable, transitions feel smooth — no big collapse when typing begins.
+ *
+ * The pre-stream "voice" of Scout (single editorial typed line) lives in
+ * DigestOpener.tsx and runs BEFORE skeletons appear. The old PhaseTracker
+ * (rotating "Sniffing through your commits…" messages) was removed when
+ * the opener replaced it.
  */
 
 export interface SkeletonShape {
@@ -59,43 +58,6 @@ export const SIDEBAR_SKELETONS: SkeletonShape[] = [
   { key: "paceCheck", emoji: "\u26A1", label: "Pace Check", lines: 2 },
   { key: "codebaseHealth", emoji: "\u{1FA7A}", label: "Codebase Health", bullets: 3 },
 ];
-
-const PHASE_MESSAGES = [
-  "Sniffing through your commits",
-  "Looking at what changed",
-  "Following the diffs",
-  "Measuring the churn",
-  "Piecing it together",
-  "Writing the vibe check",
-  "Almost ready",
-];
-
-export function PhaseTracker() {
-  const [msgIdx, setMsgIdx] = useState(0);
-
-  // Cycle messages every 2.2s. Stop at the last one so slow generations
-  // don't loop back to "Sniffing through your commits" awkwardly.
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setMsgIdx((i) => Math.min(i + 1, PHASE_MESSAGES.length - 1));
-    }, 2200);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <div className="pregen-status">
-      <span className="pregen-status-dot" aria-hidden />
-      <span className="pregen-status-text" key={msgIdx}>
-        {PHASE_MESSAGES[msgIdx]}
-        <span className="pregen-status-dots">
-          <span />
-          <span />
-          <span />
-        </span>
-      </span>
-    </div>
-  );
-}
 
 export function SectionSkeleton({
   shape,

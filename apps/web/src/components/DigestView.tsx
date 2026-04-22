@@ -15,12 +15,12 @@ import {
 import { useCountUp } from "@/lib/use-count-up";
 import { parseSections } from "@/lib/parse-sections";
 import {
-  PhaseTracker,
   SectionSkeleton,
   SECTION_SKELETONS,
   SIDEBAR_SKELETONS,
 } from "@/components/PreGeneration";
 import { Emoji } from "@/components/Emoji";
+import { DigestOpener } from "@/components/DigestOpener";
 
 /**
  * Build the text that goes into the clipboard / downloaded markdown file.
@@ -1265,6 +1265,18 @@ function sidebarHasContent(
   );
 }
 
+/**
+ * Opener phase machine — drives the cross-fade between the editorial opener
+ * line ("Reading 12 commits across 3 files…") and the skeleton layout.
+ *
+ *   "active"  → opener typing/dwelling, skeletons + sidebar suppressed
+ *   "fading"  → opener has fired onComplete; running its 320ms opacity fade
+ *               while skeletons mount and run their own fade-in animation
+ *   "done"    → opener unmounted, normal streaming flow takes over
+ */
+type OpenerPhase = "active" | "fading" | "done";
+const OPENER_FADE_MS = 350;
+
 export function DigestView({
   isStreaming,
   isLoading,
@@ -1277,54 +1289,127 @@ export function DigestView({
   onGenerateStandup,
   onGeneratePlan,
 }: DigestViewProps) {
+  // Opener state. Starts at "done" so cached/loaded digests don't replay
+  // the opener — only fresh streams trigger it (see effect below).
+  const [openerPhase, setOpenerPhase] = useState<OpenerPhase>("done");
+  const wasStreamingRef = useRef(false);
+  const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // When a fresh stream kicks off (isStreaming flips false → true with no
+  // text yet), arm the opener. We deliberately don't watch streamingText
+  // here — if the user re-runs immediately and text has not yet been reset,
+  // the wasStreamingRef gate still ensures we only re-arm on a real
+  // start-of-stream transition.
+  useEffect(() => {
+    if (isStreaming && !wasStreamingRef.current) {
+      // Cancel any in-flight fade timer from a previous stream.
+      if (fadeTimerRef.current) {
+        clearTimeout(fadeTimerRef.current);
+        fadeTimerRef.current = null;
+      }
+      setOpenerPhase("active");
+    }
+    wasStreamingRef.current = isStreaming;
+  }, [isStreaming]);
+
+  // Cleanup the fade timer if the component unmounts mid-fade.
+  useEffect(
+    () => () => {
+      if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
+    },
+    [],
+  );
+
+  // Called by the opener when it has finished typing + dwelling. We trip
+  // the fade and schedule the unmount one fade duration later. During
+  // that window, skeletons mount underneath and run their own fade-in,
+  // producing a clean cross-fade.
+  const handleOpenerComplete = useCallback(() => {
+    setOpenerPhase("fading");
+    fadeTimerRef.current = setTimeout(() => {
+      setOpenerPhase("done");
+      fadeTimerRef.current = null;
+    }, OPENER_FADE_MS);
+  }, []);
+
   if (isLoading) {
     return <div className="digest-loading">Checking for today&apos;s digest...</div>;
   }
 
-  // Unified streaming branch. Entering this branch covers:
-  //   - pre-text (isStreaming && !streamingText) → PhaseTracker + skeleton sections
-  //   - streaming (isStreaming && streamingText) → sections type in, remaining skeletons stay
-  //   - streaming done (!isStreaming && streamingText) → actions + full digest + cascade
+  // Unified streaming branch. Three sub-phases live inside it:
+  //   1. opener         (isStreaming, !streamingText, openerPhase !== "done")
+  //                     → DigestOpener types its line; skeletons + sidebar
+  //                       are suppressed so the opener owns the moment.
+  //   2. skeletons      (isStreaming, !streamingText, openerPhase === "done")
+  //                     → opener has unmounted; SectionSkeleton placeholders
+  //                       fade in via their own keyframe; sidebar skeletons
+  //                       reveal too.
+  //   3. streaming      (isStreaming, streamingText) → sections type in;
+  //                       remaining skeletons hold their slots.
+  //   4. done           (!isStreaming, streamingText) → final layout with
+  //                       cascade-animated sidebar + bottom action buttons.
   //
-  // Keeping these in ONE render branch lets StreamingDigest stay mounted
-  // across the transition from pre-text → streaming. No remount, no flash.
+  // Keeping all phases in ONE render branch lets StreamingDigest stay
+  // mounted across phase transitions, avoiding remount flashes.
   if (isStreaming || streamingText) {
-    // Decide whether the two-column layout kicks in. Single gate used for
-    // both the layout class and whether to render the sidebar at all, so
-    // they always stay in sync. Returns false if every stat section is
-    // toggled off OR if post-streaming stats are missing entirely.
-    const renderSidebar = sidebarHasContent(stats, isStreaming, visibleSections);
+    // True ONLY during the editorial opener phase: opener typing or fading.
+    // Used to suppress skeletons + sidebar so the opener owns the moment.
+    const openerVisible = openerPhase !== "done";
+
+    // Decide whether the two-column layout + sidebar render. Suppress them
+    // entirely while the opener is on screen — they reveal as the opener
+    // fades. Once the opener is done, fall back to the normal data-driven
+    // gate (which also handles "all sections hidden" / missing stats).
+    const renderSidebar =
+      !openerVisible && sidebarHasContent(stats, isStreaming, visibleSections);
+
     return (
       <div className={animate ? "" : "no-animation"}>
         {/* Two-column layout: narrative on the left, stats sidebar on the
             right. Below 1080px the media query flattens this to a single
             column (main first, sidebar below). If renderSidebar is false
-            (all sections hidden OR no stats post-streaming) we skip the
-            sidebar entirely so the layout stays single-column. */}
+            (opener active OR all sections hidden OR no stats post-streaming)
+            we skip the sidebar entirely so the layout stays single-column. */}
         <div className={`digest-layout${renderSidebar ? " digest-layout--two-col" : ""}`}>
           <div className="digest-main">
-            {/* Phase tracker: only shown during pre-text streaming (no
-                characters revealed yet). Unmounts cleanly once typing begins. */}
-            {isStreaming && !streamingText && <PhaseTracker />}
+            {/* Editorial opener: types a single line using real stats from
+                the SSE stats event. Owns the pre-text moment alone — no
+                skeletons, no sidebar — then cross-fades to the streaming
+                layout. Unmounts after its fade completes. */}
+            {isStreaming && openerVisible && (
+              <DigestOpener
+                commits={stats?.commits}
+                filesChanged={stats?.filesChanged}
+                onComplete={handleOpenerComplete}
+                fadingOut={openerPhase === "fading"}
+              />
+            )}
 
-            <StreamingDigest
-              text={streamingText}
-              isStreaming={isStreaming}
-              visibleSections={visibleSections}
-              afterLeftOff={
-                onResumeWithAI ? (
-                  <button className="resume-ai-btn" onClick={onResumeWithAI}>
-                    <Sparkles size={14} />
-                    <span className="resume-ai-btn-text">
-                      <span className="resume-ai-btn-title">Resume Prompt</span>
-                      <span className="resume-ai-btn-subtitle">
-                        Paste into your AI coding tool to pick up exactly where you left off
+            {/* StreamingDigest is suppressed during the opener phase so
+                skeletons don't render alongside the editorial line. As
+                soon as the opener finishes (phase: "done"), this mounts
+                and either shows skeletons (still pre-text) or the live
+                streaming sections. */}
+            {!openerVisible && (
+              <StreamingDigest
+                text={streamingText}
+                isStreaming={isStreaming}
+                visibleSections={visibleSections}
+                afterLeftOff={
+                  onResumeWithAI ? (
+                    <button className="resume-ai-btn" onClick={onResumeWithAI}>
+                      <Sparkles size={14} />
+                      <span className="resume-ai-btn-text">
+                        <span className="resume-ai-btn-title">Resume Prompt</span>
+                        <span className="resume-ai-btn-subtitle">
+                          Paste into your AI coding tool to pick up exactly where you left off
+                        </span>
                       </span>
-                    </span>
-                  </button>
-                ) : undefined
-              }
-            />
+                    </button>
+                  ) : undefined
+                }
+              />
+            )}
 
             {/* Action buttons (Standup, To-Do) at the bottom of the main column */}
             {!isStreaming && (onGenerateStandup || onGeneratePlan) && (
