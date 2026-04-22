@@ -51,9 +51,16 @@ interface DigestOpenerProps {
   fadingOut?: boolean;
 }
 
-const START_DELAY_MS = 400;
-const PER_CHAR_MS = 30;
-const DWELL_MS = 600;
+// Timing tuned for an editorial, unhurried moment. Total visible duration:
+//   short line  ("Reading your repo…", 18 chars):        ~3.1s
+//   full line   ("Reading N commits across N files…"):   ~4.0s
+// The dwell in particular is generous on purpose — the line has to survive
+// long enough to actually be read, not flash past. If it feels too slow in
+// practice, dial DWELL_MS back first (typing pace reads as deliberate here,
+// a faster cadence makes it look like a loading spinner).
+const START_DELAY_MS = 450;
+const PER_CHAR_MS = 40;
+const DWELL_MS = 2000;
 
 function buildSentence(commits?: number, filesChanged?: number): string {
   // Fallback: stats unavailable or zero. Generic but still in voice.
