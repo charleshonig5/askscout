@@ -14,11 +14,7 @@ import {
 } from "lucide-react";
 import { useCountUp } from "@/lib/use-count-up";
 import { parseSections } from "@/lib/parse-sections";
-import {
-  SectionSkeleton,
-  SECTION_SKELETONS,
-  SIDEBAR_SKELETONS,
-} from "@/components/PreGeneration";
+import { SectionSkeleton, SECTION_SKELETONS, SIDEBAR_SKELETONS } from "@/components/PreGeneration";
 import { Emoji } from "@/components/Emoji";
 import { DigestOpener } from "@/components/DigestOpener";
 
@@ -1360,8 +1356,7 @@ export function DigestView({
     // entirely while the opener is on screen — they reveal as the opener
     // fades. Once the opener is done, fall back to the normal data-driven
     // gate (which also handles "all sections hidden" / missing stats).
-    const renderSidebar =
-      !openerVisible && sidebarHasContent(stats, isStreaming, visibleSections);
+    const renderSidebar = !openerVisible && sidebarHasContent(stats, isStreaming, visibleSections);
 
     return (
       <div className={animate ? "" : "no-animation"}>

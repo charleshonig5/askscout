@@ -127,10 +127,7 @@ export function DigestOpener({
   }, []);
 
   return (
-    <div
-      className={`digest-opener${fadingOut ? " is-fading" : ""}`}
-      aria-live="polite"
-    >
+    <div className={`digest-opener${fadingOut ? " is-fading" : ""}`} aria-live="polite">
       <span className="digest-opener-text">{displayed}</span>
       <span className="digest-opener-cursor" aria-hidden />
     </div>
