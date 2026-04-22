@@ -24,10 +24,12 @@
   --color-accent-hover: #4e5bc2;
   --color-accent-text: #ffffff;
 
-  /* Status (muted, Linear-style) */
-  --color-success: #4da676;
-  --color-warning: #d4a038;
-  --color-danger: #d45050;
+  /* Status — Scout brand signal palette. Used for Codebase Health
+     ratings (success = strong, warning = moderate, danger = rough),
+     +/- line counts, the live-streaming badge, and other state signals. */
+  --color-success: #57d32e;
+  --color-warning: #f7c80b;
+  --color-danger: #dd1d1d;
 
   /* Typography */
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
