@@ -2297,15 +2297,34 @@ a:hover {
   /* Match the digest-section-title cadence so this sits naturally where
      the first skeleton would be — minimizes layout movement on hand-off. */
   margin-bottom: var(--space-md);
-  opacity: 1;
-  transition: opacity 320ms ease;
   display: inline-flex;
   align-items: baseline;
   /* Letter-spacing nudges this away from typical "loading" copy and
      toward a more editorial cadence. */
   letter-spacing: 0.005em;
+
+  /* Initial state: the lens hasn't resolved yet. Blurred + faded. React
+     flips `is-focused` on the next frame, triggering the focus-pull. */
+  filter: blur(4px);
+  opacity: 0.4;
+  /* Two different durations on purpose: the focus-pull (filter + opacity
+     fade-in) takes ~550ms — long enough to feel like a deliberate lens
+     focus, not a flicker. The final fade-out (opacity 1 → 0 when
+     is-fading is applied) runs at 320ms, so the exit is snappier than
+     the entry. */
+  transition:
+    filter 550ms ease-out,
+    opacity 320ms ease;
 }
 
+.digest-opener.is-focused {
+  filter: blur(0);
+  opacity: 1;
+}
+
+/* Applied AFTER is-focused when the parent wants to cross-fade out. Only
+   opacity changes; filter stays at 0 (defined on is-focused above, which
+   still applies via cascade since both classes are on the element). */
 .digest-opener.is-fading {
   opacity: 0;
 }
