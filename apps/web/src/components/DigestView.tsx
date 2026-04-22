@@ -1373,8 +1373,6 @@ export function DigestView({
                 layout. Unmounts after its fade completes. */}
             {isStreaming && openerVisible && (
               <DigestOpener
-                commits={stats?.commits}
-                filesChanged={stats?.filesChanged}
                 onComplete={handleOpenerComplete}
                 fadingOut={openerPhase === "fading"}
               />
