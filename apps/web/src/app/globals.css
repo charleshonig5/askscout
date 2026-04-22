@@ -961,29 +961,15 @@ a:hover {
   border-radius: 1px;
 }
 
-.timeline-column {
-  position: absolute;
-  bottom: 2px;
-  width: 5px;
-  margin-left: -2.5px;
-  height: 100%;
-}
-
+/* One bar per histogram bin. Bar position and width are set inline via
+   JSX style (left/width as percentages of the track); bottom + height are
+   also inline. Keep this rule minimal so the inline positioning wins. */
 .timeline-bar {
   position: absolute;
-  left: 0;
-  right: 0;
   background: var(--color-text-primary);
   border-radius: 3px;
   cursor: default;
   transition: opacity 0.15s ease;
-}
-
-/* Dim the OTHER bars in a column when one is being hovered — but not the
-   directly-hovered bar itself. If we dimmed the hovered bar, its tooltip
-   (a child element) would inherit the reduced opacity and render transparent. */
-.timeline-column:hover .timeline-bar:not(:hover) {
-  opacity: 0.6;
 }
 
 /* ============================================

@@ -712,27 +712,80 @@ function WhenYouCoded({
   const spanHours = span / (1000 * 60 * 60);
   const useNarrowLabels = !crossesDay && spanHours < 3 && !isSinglePoint;
 
-  // Bar height scales with lines changed. Cap so one massive commit doesn't dominate.
-  const maxLines = Math.max(...timeline.points.map((p) => p.lines), 1);
+  // ── Histogram binning ──────────────────────────────────────────────────
+  // Time range is divided into NUM_BINS equal-width bins and every commit is
+  // placed into its bin by timestamp. Each bin renders as ONE bar sized by
+  // total lines changed in that window. This scales cleanly from a handful
+  // of commits to hundreds without the column-crowding problem the old
+  // per-commit layout had (adjacent 5px columns collapsing into dots).
+  //
+  // NUM_BINS of 20 gives ~5% of width per bin. At a typical ~400px track,
+  // each bin is ~20px wide — plenty of room for a ~15px bar plus a 25% gap.
+  const NUM_BINS = 20;
+  const BIN_GAP_RATIO = 0.25; // 25% of each bin's width reserved for gap
+
+  type Bin = {
+    idx: number;
+    startMs: number;
+    endMs: number;
+    commitCount: number;
+    totalAdded: number;
+    totalRemoved: number;
+    totalLines: number;
+  };
+
+  const bins: Bin[] = [];
+  if (isSinglePoint) {
+    // Degenerate case: one bar centered at 50%. All commits belong to it.
+    const added = timeline.points.reduce((s, p) => s + (p.added ?? 0), 0);
+    const removed = timeline.points.reduce((s, p) => s + (p.removed ?? 0), 0);
+    const lines = timeline.points.reduce((s, p) => s + p.lines, 0);
+    bins.push({
+      idx: 0,
+      startMs: timeline.startMs,
+      endMs: timeline.endMs,
+      commitCount: timeline.points.length,
+      totalAdded: added,
+      totalRemoved: removed,
+      totalLines: lines,
+    });
+  } else {
+    const binMs = span / NUM_BINS;
+    for (let i = 0; i < NUM_BINS; i++) {
+      bins.push({
+        idx: i,
+        startMs: timeline.startMs + i * binMs,
+        endMs: timeline.startMs + (i + 1) * binMs,
+        commitCount: 0,
+        totalAdded: 0,
+        totalRemoved: 0,
+        totalLines: 0,
+      });
+    }
+    for (const p of timeline.points) {
+      // Clamp at NUM_BINS - 1 so a commit at exactly endMs lands in the last
+      // bin rather than an out-of-range index.
+      const idx = Math.min(NUM_BINS - 1, Math.floor((p.timeMs - timeline.startMs) / binMs));
+      const bin = bins[idx]!;
+      bin.commitCount += 1;
+      bin.totalAdded += p.added ?? 0;
+      bin.totalRemoved += p.removed ?? 0;
+      bin.totalLines += p.lines;
+    }
+  }
+
+  // Only render bins that actually have commits.
+  const activeBins = bins.filter((b) => b.commitCount > 0);
+
+  // Bar height scales by the biggest ACTIVE bin so the tallest bar always
+  // hits the ceiling. Cap against one massive bin dominating the chart.
+  const maxBinLines = Math.max(...activeBins.map((b) => b.totalLines), 1);
   const MAX_BAR_HEIGHT = 68; // px; track is 80 with 12px breathing room
   const MIN_BAR_HEIGHT = 6;
   const barHeight = (lines: number) => {
-    const ratio = Math.min(lines / maxLines, 1);
+    const ratio = Math.min(lines / maxBinLines, 1);
     return Math.max(MIN_BAR_HEIGHT, ratio * MAX_BAR_HEIGHT);
   };
-
-  // Bucket commits that fall in the same visual column so they stack vertically.
-  // 1.5% buckets ≈ ~5min on a 6-hour span, ~12min on a 16-hour span — tight enough
-  // that adjacent columns stay distinct, loose enough that bursts visibly stack.
-  const BUCKET_PCT = 1.5;
-  const buckets = new Map<number, Array<TimelinePoint>>();
-  for (const p of timeline.points) {
-    const left = isSinglePoint ? 50 : ((p.timeMs - timeline.startMs) / span) * 100;
-    const bucket = Math.round(left / BUCKET_PCT) * BUCKET_PCT;
-    const list = buckets.get(bucket) ?? [];
-    list.push(p);
-    buckets.set(bucket, list);
-  }
 
   // Split the baseline at each midnight so day-changes show as a visible gap.
   // 2% gap centered on each boundary (~8-12px on typical widths).
@@ -756,60 +809,65 @@ function WhenYouCoded({
             style={{ left: `${seg.left}%`, right: `${100 - seg.right}%` }}
           />
         ))}
-        {Array.from(buckets.entries()).map(([leftPct, commits]) => {
-          // Stack biggest commits on the bottom so smaller ones perch on top.
-          const sorted = [...commits].sort((a, b) => b.lines - a.lines);
-          let cumulativeBottom = 0;
-          // Edge-aware tooltip anchoring: bars near the left/right edges anchor
-          // the tooltip to that edge instead of centering, so it doesn't clip.
+        {activeBins.map((bin) => {
+          // One bar per non-empty bin. Bar width = (100 / NUM_BINS)% shrunk
+          // by BIN_GAP_RATIO so adjacent bins visually separate. For the
+          // single-commit edge case, the bar keeps that same narrow width
+          // and just centers at 50% (a single moment, not a wall).
+          const binWidthPct = 100 / NUM_BINS;
+          const barWidthPct = binWidthPct * (1 - BIN_GAP_RATIO);
+          const centerPct = isSinglePoint ? 50 : bin.idx * binWidthPct + binWidthPct / 2;
+          const barLeftPct = centerPct - barWidthPct / 2;
+          const h = barHeight(bin.totalLines);
+          const barKey = `bin-${bin.idx}`;
+          const isTapOpen = openBarKey === barKey;
+          // Edge-aware tooltip anchoring: bars near the start/end of the
+          // track anchor their tooltip to that edge so it doesn't clip.
           const edgeClass =
-            leftPct < 15
+            centerPct < 15
               ? " timeline-bar--edge-left"
-              : leftPct > 85
+              : centerPct > 85
                 ? " timeline-bar--edge-right"
                 : "";
+          const hasDetailedStats = bin.totalAdded > 0 || bin.totalRemoved > 0;
+          const sameTime = bin.startMs === bin.endMs;
           return (
-            <div key={leftPct} className="timeline-column" style={{ left: `${leftPct}%` }}>
-              {sorted.map((c, i) => {
-                const h = barHeight(c.lines);
-                const barKey = `${leftPct}-${i}`;
-                const isTapOpen = openBarKey === barKey;
-                const bar = (
-                  <div
-                    key={i}
-                    className={`timeline-bar${edgeClass}${isTapOpen ? " tap-open" : ""}`}
-                    style={{ bottom: `${cumulativeBottom}px`, height: `${h}px` }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setOpenBarKey((prev) => (prev === barKey ? null : barKey));
-                    }}
-                  >
-                    <div className="timeline-tooltip" role="tooltip">
-                      <div className="timeline-tooltip-lines">
-                        {c.added !== undefined && c.removed !== undefined ? (
-                          <>
-                            <span className="timeline-tooltip-added">
-                              +{c.added.toLocaleString()}
-                            </span>
-                            {" / "}
-                            <span className="timeline-tooltip-removed">
-                              -{c.removed.toLocaleString()}
-                            </span>
-                          </>
-                        ) : (
-                          // Older stored digests only have the total; fall back gracefully.
-                          <>
-                            {c.lines.toLocaleString()} {c.lines === 1 ? "line" : "lines"}
-                          </>
-                        )}
-                      </div>
-                      <div className="timeline-tooltip-time">{fmtTime(c.timeMs)}</div>
-                    </div>
-                  </div>
-                );
-                cumulativeBottom += h + 3; // 3px gap so each commit reads as its own piece
-                return bar;
-              })}
+            <div
+              key={barKey}
+              className={`timeline-bar${edgeClass}${isTapOpen ? " tap-open" : ""}`}
+              style={{
+                left: `${barLeftPct}%`,
+                width: `${barWidthPct}%`,
+                bottom: "2px",
+                height: `${h}px`,
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpenBarKey((prev) => (prev === barKey ? null : barKey));
+              }}
+            >
+              <div className="timeline-tooltip" role="tooltip">
+                <div className="timeline-tooltip-lines">
+                  {bin.commitCount} {bin.commitCount === 1 ? "commit" : "commits"}
+                  {hasDetailedStats && (
+                    <>
+                      {" \u00b7 "}
+                      <span className="timeline-tooltip-added">
+                        +{bin.totalAdded.toLocaleString()}
+                      </span>
+                      {" / "}
+                      <span className="timeline-tooltip-removed">
+                        -{bin.totalRemoved.toLocaleString()}
+                      </span>
+                    </>
+                  )}
+                </div>
+                <div className="timeline-tooltip-time">
+                  {sameTime
+                    ? fmtTime(bin.startMs)
+                    : `${fmtTime(bin.startMs)} \u2013 ${fmtTime(bin.endMs)}`}
+                </div>
+              </div>
             </div>
           );
         })}
