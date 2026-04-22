@@ -3,25 +3,34 @@
    No hardcoded colors. All values via custom properties.
    ============================================ */
 
+/* ─────────────────────────────────────────────────────────────────────────
+   LIGHT MODE — the lighter mirror of dark mode.
+   Dark mode (below) is the source of truth for the brand palette; light
+   mode inverts each token to its lighter counterpart while preserving the
+   same semantic role (bg-primary = main content surface, etc.).
+   ───────────────────────────────────────────────────────────────────── */
 :root {
-  /* Backgrounds */
+  /* Backgrounds — mirror of dark's #070707 / #121212 / #1e1e1e / #141414 */
   --color-bg-primary: #ffffff;
   --color-bg-secondary: #f7f7f8;
   --color-bg-tertiary: #efefef;
   --color-bg-elevated: #ffffff;
 
-  /* Text */
-  --color-text-primary: #0f0f0f;
-  --color-text-secondary: #6b6b6b;
+  /* Text — primary aligned to palette Primary Black; secondary to Light Grey */
+  --color-text-primary: #070707;
+  --color-text-secondary: #616161;
   --color-text-tertiary: #a0a0a0;
 
-  /* Borders */
+  /* Borders — mirror of dark's #222222 / #333333 */
   --color-border: #e8e8e8;
   --color-border-hover: #d0d0d0;
 
-  /* Accent */
-  --color-accent: #5e6ad2;
-  --color-accent-hover: #4e5bc2;
+  /* Accent — Scout has no dedicated accent color; we use Primary Black
+     in light mode (and pure white in dark mode) so accent buttons,
+     links, and emphasis sit at maximum contrast against the surface
+     and stay strictly inside the palette. */
+  --color-accent: #070707;
+  --color-accent-hover: #1e1e1e;
   --color-accent-text: #ffffff;
 
   /* Status — Scout brand signal palette. Used for Codebase Health
@@ -59,6 +68,13 @@
   --max-width: 720px;
 }
 
+/* ─────────────────────────────────────────────────────────────────────────
+   DARK MODE — the source of truth for the Scout brand palette.
+   Surface tokens map directly to: Primary Black / Secondary Black /
+   Dark Grey. Text and border greys are functional neutral-scale infill
+   beyond the named palette (the palette has only one mid-grey #616161,
+   not enough granularity for three text tiers and two border tiers).
+   ───────────────────────────────────────────────────────────────────── */
 [data-theme="dark"] {
   --color-bg-primary: #070707;
   --color-bg-secondary: #121212;
@@ -72,9 +88,12 @@
   --color-border: #222222;
   --color-border-hover: #333333;
 
-  --color-accent: #6e79d6;
-  --color-accent-hover: #5e6ad2;
-  --color-accent-text: #0a0a0a;
+  /* Accent = pure White from the palette. Buttons and links use this for
+     maximum contrast against the dark surfaces. accent-text inverts to
+     Primary Black so text on accent buttons reads cleanly. */
+  --color-accent: #ffffff;
+  --color-accent-hover: #ededed;
+  --color-accent-text: #070707;
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
   --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -2621,7 +2640,8 @@ a:hover {
   border: 1.5px solid var(--color-border-hover);
   border-radius: var(--radius-sm);
   background: transparent;
-  color: #fff;
+  /* Theme-aware: white in dark mode, near-black in light mode */
+  color: var(--color-text-primary);
   cursor: pointer;
   transition:
     background 0.15s ease,
@@ -2998,6 +3018,9 @@ a:hover {
   font-size: 13px;
   font-weight: 500;
   font-family: var(--font-sans);
+  /* Always white on the saturated red surface — intentionally not
+     theme-aware. Both light and dark mode read white-on-red cleanly,
+     and accent-text would flip to black in dark mode (unreadable). */
   color: #ffffff;
   background: var(--color-danger);
   border: 1px solid var(--color-danger);
@@ -3015,6 +3038,7 @@ a:hover {
   font-size: 12px;
   font-weight: 500;
   font-family: var(--font-sans);
+  /* Same as .btn-danger — see comment above for the hardcoded white. */
   color: #ffffff;
   background: var(--color-danger);
   border: 1px solid var(--color-danger);
