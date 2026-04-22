@@ -713,21 +713,26 @@ function WhenYouCoded({
   const useNarrowLabels = !crossesDay && spanHours < 3 && !isSinglePoint;
 
   // ── Histogram binning ──────────────────────────────────────────────────
-  // Time range is divided into NUM_BINS equal-width bins and every commit is
-  // placed into its bin by timestamp. Each bin renders as ONE bar sized by
-  // total lines changed in that window. This scales cleanly from a handful
-  // of commits to hundreds without the column-crowding problem the old
-  // per-commit layout had (adjacent 5px columns collapsing into dots).
+  // Visually identical to the old Coding Timeline: black vertical bars on
+  // a horizontal baseline, midnight gaps for multi-day, same tooltip feel.
+  // What changed is the data model underneath — instead of one column per
+  // commit (which bunched into overlapping dots on busy days), we render
+  // one bar per time bin and scale its HEIGHT by total lines changed in
+  // that bin. Bar WIDTH is fixed at 14px in CSS so every bar is visually
+  // identical in thickness across every digest and viewport.
   //
-  // NUM_BINS of 20 gives ~5% of width per bin. At a typical ~400px track,
-  // each bin is ~20px wide — plenty of room for a ~15px bar plus a 25% gap.
-  const NUM_BINS = 20;
-  const BIN_GAP_RATIO = 0.25; // 25% of each bin's width reserved for gap
+  // Multi-day rule: bins NEVER cross midnight. Each day segment gets its
+  // own set of bins allocated proportional to the segment's share of the
+  // total span (min 2 bins per segment so a short day isn't collapsed).
+  // Bin positions are expressed as a `centerPct` on the full track, using
+  // each segment's leftPct/rightPct so bins stay inside their day's visual
+  // range — and the midnight gap between segments stays visually clean.
+  const TOTAL_BINS = 20;
 
   type Bin = {
-    idx: number;
     startMs: number;
     endMs: number;
+    centerPct: number;
     commitCount: number;
     totalAdded: number;
     totalRemoved: number;
@@ -735,42 +740,79 @@ function WhenYouCoded({
   };
 
   const bins: Bin[] = [];
+
   if (isSinglePoint) {
-    // Degenerate case: one bar centered at 50%. All commits belong to it.
+    // Degenerate case: one narrow bar centered at 50% (a single moment, not
+    // a wall). All commits share that single bucket.
     const added = timeline.points.reduce((s, p) => s + (p.added ?? 0), 0);
     const removed = timeline.points.reduce((s, p) => s + (p.removed ?? 0), 0);
     const lines = timeline.points.reduce((s, p) => s + p.lines, 0);
     bins.push({
-      idx: 0,
       startMs: timeline.startMs,
       endMs: timeline.endMs,
+      centerPct: 50,
       commitCount: timeline.points.length,
       totalAdded: added,
       totalRemoved: removed,
       totalLines: lines,
     });
   } else {
-    const binMs = span / NUM_BINS;
-    for (let i = 0; i < NUM_BINS; i++) {
-      bins.push({
-        idx: i,
-        startMs: timeline.startMs + i * binMs,
-        endMs: timeline.startMs + (i + 1) * binMs,
-        commitCount: 0,
-        totalAdded: 0,
-        totalRemoved: 0,
-        totalLines: 0,
-      });
-    }
+    // Allocate bins to each day segment proportional to its span share.
+    // Run this allocation loop explicitly so rounding leftovers always go
+    // to the last segment — prevents total drift from TOTAL_BINS.
+    const segmentBinCounts: number[] = [];
+    let allocated = 0;
+    daySegments.forEach((seg, i) => {
+      const isLast = i === daySegments.length - 1;
+      if (isLast) {
+        segmentBinCounts.push(Math.max(2, TOTAL_BINS - allocated));
+      } else {
+        const segSpan = seg.endMs - seg.startMs;
+        const count = Math.max(2, Math.round((segSpan / span) * TOTAL_BINS));
+        segmentBinCounts.push(count);
+        allocated += count;
+      }
+    });
+
+    // Build bins within each segment. centerPct uses the segment's own
+    // leftPct/rightPct range so each bin's visual position respects the
+    // midnight gap rather than crossing it.
+    daySegments.forEach((seg, segIdx) => {
+      const count = segmentBinCounts[segIdx]!;
+      const segSpanMs = seg.endMs - seg.startMs;
+      const segWidthPct = seg.rightPct - seg.leftPct;
+      const binMs = segSpanMs / count;
+      const binWidthPct = segWidthPct / count;
+      for (let i = 0; i < count; i++) {
+        bins.push({
+          startMs: seg.startMs + i * binMs,
+          endMs: seg.startMs + (i + 1) * binMs,
+          centerPct: seg.leftPct + (i + 0.5) * binWidthPct,
+          commitCount: 0,
+          totalAdded: 0,
+          totalRemoved: 0,
+          totalLines: 0,
+        });
+      }
+    });
+
+    // Place commits. Walk bins in order; inclusive start, exclusive end
+    // except for the final bin which captures a commit at exactly endMs.
     for (const p of timeline.points) {
-      // Clamp at NUM_BINS - 1 so a commit at exactly endMs lands in the last
-      // bin rather than an out-of-range index.
-      const idx = Math.min(NUM_BINS - 1, Math.floor((p.timeMs - timeline.startMs) / binMs));
-      const bin = bins[idx]!;
-      bin.commitCount += 1;
-      bin.totalAdded += p.added ?? 0;
-      bin.totalRemoved += p.removed ?? 0;
-      bin.totalLines += p.lines;
+      for (let i = 0; i < bins.length; i++) {
+        const bin = bins[i]!;
+        const isFinalBin = i === bins.length - 1;
+        const inRange = isFinalBin
+          ? p.timeMs >= bin.startMs && p.timeMs <= bin.endMs
+          : p.timeMs >= bin.startMs && p.timeMs < bin.endMs;
+        if (inRange) {
+          bin.commitCount += 1;
+          bin.totalAdded += p.added ?? 0;
+          bin.totalRemoved += p.removed ?? 0;
+          bin.totalLines += p.lines;
+          break;
+        }
+      }
     }
   }
 
@@ -809,24 +851,19 @@ function WhenYouCoded({
             style={{ left: `${seg.left}%`, right: `${100 - seg.right}%` }}
           />
         ))}
-        {activeBins.map((bin) => {
-          // One bar per non-empty bin. Bar width = (100 / NUM_BINS)% shrunk
-          // by BIN_GAP_RATIO so adjacent bins visually separate. For the
-          // single-commit edge case, the bar keeps that same narrow width
-          // and just centers at 50% (a single moment, not a wall).
-          const binWidthPct = 100 / NUM_BINS;
-          const barWidthPct = binWidthPct * (1 - BIN_GAP_RATIO);
-          const centerPct = isSinglePoint ? 50 : bin.idx * binWidthPct + binWidthPct / 2;
-          const barLeftPct = centerPct - barWidthPct / 2;
+        {activeBins.map((bin, i) => {
+          // Bar is positioned at bin.centerPct (its slot center within the
+          // track). Width is locked at 14px by CSS (.timeline-bar) so all
+          // bars have identical thickness — only height encodes data.
           const h = barHeight(bin.totalLines);
-          const barKey = `bin-${bin.idx}`;
+          const barKey = `bin-${i}-${bin.startMs}`;
           const isTapOpen = openBarKey === barKey;
           // Edge-aware tooltip anchoring: bars near the start/end of the
           // track anchor their tooltip to that edge so it doesn't clip.
           const edgeClass =
-            centerPct < 15
+            bin.centerPct < 15
               ? " timeline-bar--edge-left"
-              : centerPct > 85
+              : bin.centerPct > 85
                 ? " timeline-bar--edge-right"
                 : "";
           const hasDetailedStats = bin.totalAdded > 0 || bin.totalRemoved > 0;
@@ -836,8 +873,7 @@ function WhenYouCoded({
               key={barKey}
               className={`timeline-bar${edgeClass}${isTapOpen ? " tap-open" : ""}`}
               style={{
-                left: `${barLeftPct}%`,
-                width: `${barWidthPct}%`,
+                left: `${bin.centerPct}%`,
                 bottom: "2px",
                 height: `${h}px`,
               }}
