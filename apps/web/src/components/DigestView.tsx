@@ -727,7 +727,13 @@ function WhenYouCoded({
   // Bin positions are expressed as a `centerPct` on the full track, using
   // each segment's leftPct/rightPct so bins stay inside their day's visual
   // range — and the midnight gap between segments stays visually clean.
-  const TOTAL_BINS = 20;
+  //
+  // TOTAL_BINS is tuned so that even when every bin is populated, adjacent
+  // 14px bars have a clear visible gap. On a typical ~390px track:
+  //   16 bins → ~24.5px per slot → ~10.5px gap between bars
+  // Bumping this number trades resolution for crowding. 16 is the
+  // comfortable middle ground for a workday view.
+  const TOTAL_BINS = 16;
 
   type Bin = {
     startMs: number;
