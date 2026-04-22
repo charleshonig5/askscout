@@ -891,7 +891,7 @@ function WhenYouCoded({
               <div className="timeline-tooltip" role="tooltip">
                 <div className="timeline-tooltip-lines">
                   {bin.commitCount} {bin.commitCount === 1 ? "commit" : "commits"}
-                  {hasDetailedStats && (
+                  {hasDetailedStats ? (
                     <>
                       {" \u00b7 "}
                       <span className="timeline-tooltip-added">
@@ -902,7 +902,14 @@ function WhenYouCoded({
                         -{bin.totalRemoved.toLocaleString()}
                       </span>
                     </>
-                  )}
+                  ) : bin.totalLines > 0 ? (
+                    // Old stored digests carry only `lines` (no +/- split).
+                    // Fall back to the total so the tooltip is never empty.
+                    <>
+                      {" \u00b7 "}
+                      {bin.totalLines.toLocaleString()} {bin.totalLines === 1 ? "line" : "lines"}
+                    </>
+                  ) : null}
                 </div>
                 <div className="timeline-tooltip-time">
                   {sameTime
