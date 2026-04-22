@@ -55,17 +55,6 @@ const DWELL_MS = 2000;
 export function DigestOpener({ onComplete, fadingOut = false }: DigestOpenerProps) {
   const [displayed, setDisplayed] = useState("");
 
-  // Focus-pull effect. Mount in a blurred + faded state (lens hasn't
-  // resolved yet), then flip `focused = true` on the next frame so CSS
-  // transitions the blur away. Without the requestAnimationFrame hop,
-  // React would commit both states in a single paint and the browser
-  // would skip the transition entirely.
-  const [focused, setFocused] = useState(false);
-  useEffect(() => {
-    const raf = requestAnimationFrame(() => setFocused(true));
-    return () => cancelAnimationFrame(raf);
-  }, []);
-
   // Ref so the typing loop reads the latest callback without re-running its
   // effect (which would restart typing mid-sentence).
   const onCompleteRef = useRef(onComplete);
@@ -106,12 +95,8 @@ export function DigestOpener({ onComplete, fadingOut = false }: DigestOpenerProp
     };
   }, []);
 
-  const classes = ["digest-opener"];
-  if (focused) classes.push("is-focused");
-  if (fadingOut) classes.push("is-fading");
-
   return (
-    <div className={classes.join(" ")} aria-live="polite">
+    <div className={`digest-opener${fadingOut ? " is-fading" : ""}`} aria-live="polite">
       <span className="digest-opener-text">{displayed}</span>
       <span className="digest-opener-cursor" aria-hidden />
     </div>
