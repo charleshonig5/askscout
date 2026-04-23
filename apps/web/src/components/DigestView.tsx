@@ -5,7 +5,7 @@ import {
   Copy,
   Check,
   Download,
-  Mail,
+  Send,
   Sparkles,
   ClipboardList,
   Share2,
@@ -151,7 +151,7 @@ function DownloadBtn({
 
   return (
     <button className="action-btn" onClick={handleDownload}>
-      <Download size={16} /> Download
+      <Download size={20} strokeWidth={1} /> Download
     </button>
   );
 }
@@ -230,11 +230,11 @@ function EmailBtn() {
     <button className={`action-btn ${sent ? "copied" : ""}`} onClick={handleEmail}>
       {sent ? (
         <>
-          <Check size={16} /> Sent
+          <Check size={20} strokeWidth={1} /> Sent
         </>
       ) : (
         <>
-          <Mail size={16} /> Send to myself
+          <Send size={20} strokeWidth={1} /> Email
         </>
       )}
     </button>
@@ -280,11 +280,11 @@ function CopyBtn({ text, label }: { text: string; label?: string }) {
     <button className={`action-btn ${copied ? "copied" : ""}`} onClick={handleCopy}>
       {copied ? (
         <>
-          <Check size={16} /> Copied
+          <Check size={20} strokeWidth={1} /> Copied
         </>
       ) : (
         <>
-          <Copy size={16} /> {label ?? "Copy"}
+          <Copy size={20} strokeWidth={1} /> {label ?? "Copy"}
         </>
       )}
     </button>

@@ -653,21 +653,25 @@ export default function DashboardPage() {
             <div className="digest-page-header">
               <div className="digest-page-header-left">
                 <h1 className="digest-page-name">
-                  {pageTitle}
-                  {repoName && <span className="digest-repo-chip">{repoName}</span>}
-                  {!noNewCommits && !isViewingHistory && streak >= 2 && (
-                    <span
-                      ref={streakTap.ref}
-                      className={`digest-streak${streakTap.open ? " tap-open" : ""}`}
-                      onClick={streakTap.toggle}
-                    >
-                      <Emoji name="streak" size={14} /> {streak}-day streak
-                      <span className="streak-tooltip" role="tooltip">
-                        <span className="streak-tooltip-label">Personal best</span>
-                        <span className="streak-tooltip-value">
-                          {personalBest} {personalBest === 1 ? "day" : "days"}
+                  <span className="digest-page-title-text">{pageTitle}</span>
+                  {(repoName || (!noNewCommits && !isViewingHistory && streak >= 2)) && (
+                    <span className="digest-page-pills">
+                      {repoName && <span className="digest-repo-chip">{repoName}</span>}
+                      {!noNewCommits && !isViewingHistory && streak >= 2 && (
+                        <span
+                          ref={streakTap.ref}
+                          className={`digest-streak${streakTap.open ? " tap-open" : ""}`}
+                          onClick={streakTap.toggle}
+                        >
+                          <Emoji name="streak" size={14} /> {streak} Day Streak
+                          <span className="streak-tooltip" role="tooltip">
+                            <span className="streak-tooltip-label">Personal best</span>
+                            <span className="streak-tooltip-value">
+                              {personalBest} {personalBest === 1 ? "day" : "days"}
+                            </span>
+                          </span>
                         </span>
-                      </span>
+                      )}
                     </span>
                   )}
                 </h1>

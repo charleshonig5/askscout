@@ -716,20 +716,29 @@ a:hover {
   }
 }
 
-/* Repo chip sits inline with the page title. Muted mono style so the title
-   reads as the primary label and the repo name as supporting metadata. */
+/* Pills cluster sits next to the title, 14px off the title baseline,
+   pills spaced 8px apart. Matches the Figma header frame (node 52:1495). */
+.digest-page-pills {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Repo chip — solid tertiary fill with a subtle top inner-glow, pill
+   shape, small Work Sans Light label. Reads as quiet metadata next to
+   the serif title. */
 .digest-repo-chip {
   display: inline-flex;
   align-items: center;
-  height: 22px;
-  padding: 0 var(--space-sm);
-  margin-left: var(--space-sm);
-  border-radius: var(--radius-full);
-  background: var(--color-bg-secondary);
-  color: var(--color-text-tertiary);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 90px;
+  background: var(--color-bg-tertiary);
+  box-shadow: inset 0 8px 20px 0 rgba(255, 255, 255, 0.04);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 1;
   letter-spacing: 0;
 }
 
@@ -744,21 +753,36 @@ a:hover {
   /* Pridi (serif display) is reserved for digest titles — one of the
      two brand-voice moments the face carries (the other is the logo). */
   font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: normal;
   color: var(--color-text-primary);
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: 14px;
 }
 
+.digest-page-title-text {
+  white-space: nowrap;
+}
+
+/* Streak pill — matching shape to the repo chip, plus the Fluent 3D
+   fire emoji on the left. Hover target for the personal-best tooltip. */
 .digest-streak {
   position: relative;
-  display: inline-block;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--color-warning);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 90px;
+  background: var(--color-bg-tertiary);
+  box-shadow: inset 0 8px 20px 0 rgba(255, 255, 255, 0.04);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 1;
   letter-spacing: 0;
   cursor: default;
 }
@@ -842,9 +866,12 @@ a:hover {
 }
 
 .digest-page-date {
-  font-size: 14px;
-  color: var(--color-text-tertiary);
-  margin-top: 2px;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: normal;
+  color: var(--color-text-primary);
+  margin-top: 4px;
 }
 
 .digest-page-subtitle {
@@ -3441,14 +3468,41 @@ a:hover {
   background: var(--color-bg-secondary);
 }
 
-/* Header-positioned Copy/Download/Email actions. Smaller padding + font than
-   the default action-btn since they sit in the page header, next to the title. */
+/* Header-positioned Copy/Download/Email actions. Scoped override of
+   .action-btn that matches the Figma header frame (node 52:1495):
+   14×10 padding, 8px radius, 1px tertiary-grey border, body surface,
+   subtle inner-glow. Bottom-row generate buttons keep the original
+   shared style — they'll get their own pass when the bottom row is
+   redesigned. */
 .digest-page-header-right .digest-actions-row {
   margin-top: 0;
+  gap: 14px;
 }
 
-/* Top-row action buttons inherit the shared .action-btn style — no
-   size override here so they match the bottom-row generate buttons. */
+.digest-page-header-right .action-btn {
+  gap: 8px;
+  padding: 10px 14px;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-bg-tertiary);
+  border-radius: 8px;
+  box-shadow: inset 0 0 20px 0 rgba(255, 255, 255, 0.04);
+}
+
+.digest-page-header-right .action-btn:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+.digest-page-header-right .action-btn.copied {
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
 
 .digest-bottom-actions {
   display: flex;
