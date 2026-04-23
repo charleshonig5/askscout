@@ -1018,15 +1018,39 @@ a:hover {
   color: var(--color-text-primary);
 }
 
+/* Vibe Check card — bordered surface with a subtle inner-glow, per the
+   Figma frame (node 50:992). Heading row on top, body paragraph below
+   with 8px gap. Card stacks against other narrative sections via the
+   shared margin-bottom. */
 .digest-vibe {
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--color-text-secondary);
-  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 13px;
   background: var(--color-bg-secondary);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-bg-tertiary);
+  border-radius: 8px;
+  box-shadow: inset 0 0 40px 0 rgba(255, 255, 255, 0.04);
   margin-bottom: var(--space-xl);
+}
+
+.digest-vibe-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: normal;
+  color: var(--color-text-primary);
+}
+
+.digest-vibe-body {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-text-primary);
 }
 
 .digest-stats {

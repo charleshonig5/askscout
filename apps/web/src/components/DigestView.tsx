@@ -405,16 +405,16 @@ function StreamingDigest({
 
         if (section.key === "vibe") {
           return (
-            <div key={section.key}>
-              <div className="digest-vibe">
-                <strong>
-                  <Emoji name={section.key} size={18} /> {section.label}
-                  {showCursor && <LiveBadge />}
-                </strong>
-                <br />
+            <div key={section.key} className="digest-vibe">
+              <div className="digest-vibe-title">
+                <Emoji name={section.key} size={20} />
+                <span>{section.label}</span>
+                {showCursor && <LiveBadge />}
+              </div>
+              <p className="digest-vibe-body">
                 {section.content}
                 {showCursor && cursor}
-              </div>
+              </p>
             </div>
           );
         }
