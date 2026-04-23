@@ -13,7 +13,7 @@
   /* Backgrounds — mirror of dark's #070707 / #121212 / #1e1e1e / #141414 */
   --color-bg-primary: #ffffff;
   --color-bg-secondary: #f7f7f8;
-  --color-bg-tertiary: #ececec;
+  --color-bg-tertiary: #efefef;
   --color-bg-elevated: #ffffff;
 
   /* Text — primary aligned to palette Primary Black; secondary to Light Grey */
@@ -22,7 +22,7 @@
   --color-text-tertiary: #a0a0a0;
 
   /* Borders — mirror of dark's #222222 / #333333 */
-  --color-border: #e8e8e8;
+  --color-border: #ececec;
   --color-border-hover: #d0d0d0;
 
   /* Accent — Scout has no dedicated accent color; we use Primary Black
