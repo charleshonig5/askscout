@@ -4,7 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { ArrowUpRight, FileText, GitCommit, HelpCircle, LogOut, Settings } from "lucide-react";
+import {
+  FileText,
+  GitCommitHorizontal,
+  HelpCircle,
+  LogOut,
+  SlidersHorizontal,
+  SquareArrowOutUpRight,
+} from "lucide-react";
 import type { HistoryEntry } from "@/lib/mock-data";
 import { RepoSelector } from "./RepoSelector";
 import { ThemeToggle } from "./ThemeToggle";
@@ -95,7 +102,7 @@ export function Sidebar({
                 onClick={() => router.push("/settings")}
                 aria-label="Settings"
               >
-                <Settings size={20} strokeWidth={1.75} />
+                <SlidersHorizontal size={20} strokeWidth={1.75} />
               </button>
             </div>
           </div>
@@ -161,7 +168,7 @@ export function Sidebar({
                           </span>
                           <span className="sidebar-item-stat">
                             {entry.commits}
-                            <GitCommit size={16} strokeWidth={1.75} aria-hidden />
+                            <GitCommitHorizontal size={16} strokeWidth={1.75} aria-hidden />
                           </span>
                           <span className="sidebar-item-stat">
                             {entry.filesChanged}
@@ -170,7 +177,7 @@ export function Sidebar({
                         </div>
                       </div>
                       <span className="sidebar-item-open" aria-hidden>
-                        <ArrowUpRight size={20} strokeWidth={1.75} />
+                        <SquareArrowOutUpRight size={20} strokeWidth={1.75} />
                       </span>
                     </button>
                   );

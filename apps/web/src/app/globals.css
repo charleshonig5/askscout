@@ -1834,13 +1834,15 @@ a:hover {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  line-height: 1;
+  /* Match Figma: stacked text uses natural line-height, no extra gap. */
+  line-height: normal;
 }
 
 .sidebar-profile-name {
   font-family: var(--font-sans);
   font-weight: 400;
   font-size: 16px;
+  line-height: normal;
   color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
@@ -1851,8 +1853,8 @@ a:hover {
   font-family: var(--font-sans);
   font-weight: 400;
   font-size: 16px;
+  line-height: normal;
   color: var(--color-text-tertiary);
-  margin-top: 4px;
 }
 
 /* Sign-out trigger in the footer. 20×20 icon only, no box. */
