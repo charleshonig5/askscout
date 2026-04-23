@@ -722,6 +722,12 @@ a:hover {
 
 .digest-page-header-right {
   flex-shrink: 0;
+  /* Header parent keeps align-items: flex-start so the title + date
+     column on the left anchors to the top. Right-side action buttons
+     override that to sit vertically centered against the full header
+     height — matches the Figma where Copy / Download / Email sit on
+     the mid-line between the title baseline and the date baseline. */
+  align-self: center;
 }
 
 /* Stack header on narrow viewports — actions drop below title */
