@@ -742,13 +742,6 @@ a:hover {
   letter-spacing: 0;
 }
 
-/* Legacy class kept for any historical references; new layout uses
-   .digest-page-header instead. Zero-override so existing layouts in other
-   states (quiet day, error) still render title + date. */
-.digest-page-title {
-  margin-bottom: var(--space-lg);
-}
-
 .digest-page-name {
   /* Pridi (serif display) is reserved for digest titles — one of the
      two brand-voice moments the face carries (the other is the logo). */
