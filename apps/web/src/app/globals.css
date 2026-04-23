@@ -48,18 +48,14 @@
      --font-sans    → Work Sans. Body, UI, code, data, everything.
      --font-display → Pridi. RESERVED for digest page titles and the
                       askscout logo wordmark.
-     --font-mono    → aliased to --font-sans. Kept as a token so the
-                      30+ legacy var(--font-mono) references in this
-                      file keep resolving — but they all render in
-                      Work Sans now. (No JetBrains/SF Mono/etc.)
      Both fonts are loaded via next/font/google in layout.tsx and
      exposed as --font-pridi / --font-work-sans. The system fallbacks
      in --font-sans are load-failure fallbacks only — not intentional
-     additional font families. */
+     additional font families. No monospace token is defined — Scout
+     has no monospace rendering anywhere on the site. */
   --font-sans:
     var(--font-work-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-display: var(--font-pridi), Georgia, "Times New Roman", serif;
-  --font-mono: var(--font-sans);
 
   /* Spacing */
   --space-xs: 4px;
@@ -166,7 +162,7 @@ a:hover {
    ============================================ */
 
 .mono {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
 }
 
 .text-secondary {
@@ -430,7 +426,7 @@ a:hover {
    ============================================ */
 
 .repo-selector {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 13px;
   padding: var(--space-xs) var(--space-sm);
   border: 1px solid var(--color-border);
@@ -462,7 +458,7 @@ a:hover {
   border-radius: var(--radius-sm);
   background: var(--color-bg-primary);
   color: var(--color-text-primary);
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 13px;
   cursor: pointer;
   max-width: 280px;
@@ -836,7 +832,7 @@ a:hover {
 .streak-tooltip-value {
   font-size: 13px;
   font-weight: 600;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   color: var(--color-text-primary);
 }
 
@@ -883,7 +879,7 @@ a:hover {
   align-items: center;
   gap: var(--space-sm);
   font-size: 12px;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   color: var(--color-text-tertiary);
   margin-bottom: var(--space-xs);
 }
@@ -1056,7 +1052,7 @@ a:hover {
 .digest-stats {
   font-size: 13px;
   color: var(--color-text-secondary);
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   padding-top: var(--space-md);
   border-top: 1px solid var(--color-border);
 }
@@ -1070,7 +1066,7 @@ a:hover {
   align-items: center;
   gap: var(--space-sm);
   font-size: 13px;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   color: var(--color-text-secondary);
   margin: var(--space-md) 0;
 }
@@ -1181,7 +1177,7 @@ a:hover {
   font-size: 12px;
   font-weight: 500;
   line-height: 1.4;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   color: var(--color-text-primary);
   white-space: nowrap;
 }
@@ -1190,7 +1186,7 @@ a:hover {
   font-size: 11px;
   line-height: 1.4;
   color: var(--color-text-tertiary);
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   margin-top: 2px;
   white-space: nowrap;
 }
@@ -1310,7 +1306,7 @@ a:hover {
 .pace-multiplier {
   font-size: 28px;
   font-weight: 700;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   color: var(--color-text-primary);
   letter-spacing: -0.02em;
   min-width: 56px;
@@ -1330,7 +1326,7 @@ a:hover {
 
 .pace-comparison {
   font-size: 12px;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   color: var(--color-text-tertiary);
 }
 
@@ -1349,7 +1345,7 @@ a:hover {
   align-items: center;
   gap: var(--space-sm);
   font-size: 12px;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
 }
 
 .top-file-rank {
@@ -1565,7 +1561,7 @@ a:hover {
   font-size: 13px;
   font-weight: 500;
   color: var(--color-text-primary);
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   margin-bottom: 2px;
 }
 
@@ -1580,7 +1576,7 @@ a:hover {
    ============================================ */
 
 .streaming-text {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 13px;
   line-height: 1.7;
   white-space: pre-wrap;
@@ -2163,7 +2159,7 @@ a:hover {
 }
 
 .landing-title {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 32px;
   font-weight: 700;
   letter-spacing: -0.03em;
@@ -2328,7 +2324,7 @@ a:hover {
   height: 28px;
   font-size: 13px;
   font-weight: 600;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   color: var(--color-accent-text);
   background: var(--color-accent);
   border-radius: var(--radius-full);
@@ -2345,14 +2341,14 @@ a:hover {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: var(--space-md);
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 14px;
   color: var(--color-text-primary);
   margin-bottom: var(--space-md);
 }
 
 .inline-code {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 13px;
   background: var(--color-bg-tertiary);
   padding: 2px 6px;
@@ -2958,7 +2954,7 @@ a:hover {
   font-size: 11px;
   font-weight: 600;
   color: var(--color-text-tertiary);
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
 }
 
 .copy-block-btn {
@@ -3199,7 +3195,7 @@ a:hover {
 
 .settings-repo-name {
   font-size: 13px;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   color: var(--color-text-primary);
 }
 

@@ -141,7 +141,7 @@ Aliased in globals.css:
 
 - `--font-sans` → Work Sans
 - `--font-display` → Pridi
-- `--font-mono` → aliased to `--font-sans` (legacy token; everything resolves to Work Sans, no monospace anywhere)
+- No `--font-mono` token exists. Scout renders no monospace anywhere; use `var(--font-sans)` if you need a font-family.
 
 Editorial opener line ("Scanning the horizon…") uses `--font-sans` italic — **not** Pridi. Pridi reserved strictly for titles + logo.
 
