@@ -173,15 +173,6 @@ export default function DashboardPage() {
         setCheckinDates(data.checkinDates ?? []);
         setHistory(
           data.history.map((h) => {
-            // Count bullets in each section from the stored content
-            const countBullets = (sectionEmoji: string, nextEmoji: string) => {
-              const start = h.content.indexOf(sectionEmoji);
-              if (start === -1) return 0;
-              const end = nextEmoji ? h.content.indexOf(nextEmoji, start + 1) : h.content.length;
-              const section = h.content.slice(start, end === -1 ? undefined : end);
-              return (section.match(/\u2022/g) ?? []).length;
-            };
-
             const stats = h.stats as Record<string, number> | null;
             return {
               id: h.id,
@@ -191,9 +182,6 @@ export default function DashboardPage() {
               filesChanged: stats?.filesChanged ?? 0,
               linesAdded: stats?.linesAdded ?? 0,
               linesRemoved: stats?.linesRemoved ?? 0,
-              shippedCount: countBullets("\ud83d\ude80", "\ud83d\udd27"),
-              changedCount: countBullets("\ud83d\udd27", "\ud83d\udd01"),
-              unstableCount: countBullets("\ud83d\udd01", "\ud83d\udccd"),
             };
           }),
         );

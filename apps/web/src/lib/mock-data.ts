@@ -1,129 +1,14 @@
-import type { Digest } from "@askscout/core";
-
-export const MOCK_REPOS = [
-  "charleshonig5/askscout",
-  "charleshonig5/portfolio",
-  "charleshonig5/weather-app",
-];
-
-export const MOCK_DIGEST: Digest = {
-  vibeCheck:
-    "You're building fast. Shipped OAuth and a settings page in one session, and the checkout flow is almost there. Just that Stripe handler needs some love.",
-  shipped: [
-    { summary: "Google OAuth login flow, users can now sign in with Google" },
-    { summary: "Settings page with dark mode toggle" },
-  ],
-  changed: [
-    { summary: "Pricing page got a new layout with better copy" },
-    { summary: "Nav bar now links to settings" },
-    { summary: "API rate limiting logic was tightened" },
-  ],
-  unstable: [
-    {
-      summary: "Stripe webhook handler",
-      changeCount: 4,
-    },
-  ],
-  leftOff: [{ summary: "Checkout flow. Cart works but payment submission isn't wired up yet" }],
-  stats: {
-    commits: 34,
-    filesChanged: 47,
-    linesAdded: 1204,
-    linesRemoved: 389,
-    timeSpan: {
-      from: new Date(Date.now() - 8 * 60 * 60 * 1000),
-      to: new Date(),
-    },
-  },
-  resumeContext: {
-    techStack:
-      "Next.js e-commerce app using Stripe for payments and Google OAuth for auth, with a React frontend and API routes for the backend.",
-    recentWork:
-      "Shipped the full Google OAuth flow in src/auth/ and a settings page with dark mode toggle in src/components/Settings.tsx.",
-    currentFocus:
-      "Finishing the checkout flow. Cart logic is complete in src/cart/ but payment submission needs to be wired to Stripe's PaymentIntent API in src/api/checkout.ts.",
-    keyFiles: [
-      "src/api/checkout.ts",
-      "src/api/webhooks/stripe.ts",
-      "src/cart/CartProvider.tsx",
-      "src/components/Settings.tsx",
-    ],
-    warnings: [
-      "Don't touch the auth flow, it's working and tested",
-      "Stripe webhook handler at src/api/webhooks/stripe.ts is fragile. It's been rewritten 4 times",
-    ],
-  },
-  standupNotes: {
-    yesterday: [
-      "Got Google OAuth fully working. Users can sign in and sessions persist across refreshes",
-      "Built out the settings page with dark mode toggle that saves to localStorage",
-      "Tightened API rate limiting, it was letting too many requests through",
-    ],
-    today: [
-      "Finishing the checkout flow. Need to wire cart total to Stripe's PaymentIntent API",
-      "Might need to rethink the Stripe webhook handler, it's been rewritten too many times",
-    ],
-    blockers: [
-      "Stripe webhook handler keeps breaking. Changed it 4 times yesterday and might need a different approach to verifying webhook signatures",
-    ],
-  },
-  keyTakeaways:
-    "The checkout flow is one good session away from done. Wire up the payment submission and you have a complete purchase loop. That Stripe handler owes you an apology though.",
-  health: [
-    {
-      label: "Momentum",
-      level: "Strong",
-      score: 8,
-      detail: "3 new features this week",
-    },
-    {
-      label: "Stability",
-      level: "Okay",
-      score: 6,
-      detail: "Stripe handler still churning",
-    },
-    {
-      label: "Focus",
-      level: "Strong",
-      score: 9,
-      detail: "mostly checkout flow work",
-    },
-  ],
-};
-
-export const MOCK_RESUME = `Tech Stack
-Next.js e-commerce app using Stripe for payments and Google OAuth for auth, with a React frontend and API routes for the backend.
-
-Recent Work
-Shipped the full Google OAuth flow in src/auth/ and a settings page with dark mode toggle in src/components/Settings.tsx.
-
-Current Focus
-Finishing the checkout flow. Cart logic is complete in src/cart/ but payment submission needs to be wired to Stripe's PaymentIntent API in src/api/checkout.ts.
-
-Key Files
-src/api/checkout.ts
-src/api/webhooks/stripe.ts
-src/cart/CartProvider.tsx
-src/components/Settings.tsx
-
-\u26a0\ufe0f Heads Up
-Don't touch the auth flow, it's working and tested.
-Stripe webhook handler at src/api/webhooks/stripe.ts is fragile. It's been rewritten 4 times and may need a simpler approach.`;
-
-export const MOCK_STANDUP = {
-  yesterday: [
-    "Got Google OAuth fully working. Users can sign in and sessions persist across refreshes",
-    "Built out the settings page with dark mode toggle that saves to localStorage",
-    "Tightened API rate limiting, it was letting too many requests through",
-  ],
-  today: [
-    "Finishing the checkout flow. Need to wire cart total to Stripe's PaymentIntent API",
-    "Might need to rethink the Stripe webhook handler, it's been rewritten too many times",
-  ],
-  blockers: [
-    "Stripe webhook handler keeps breaking. Changed it 4 times yesterday and might need a different approach to verifying webhook signatures",
-  ],
-};
+/**
+ * Small mock surface kept ONLY for the marketing landing page demo.
+ *
+ * Production paths (dashboard, history, repo picker) read from
+ * `/api/digest/stream`, `/api/history`, and `/api/repos` respectively —
+ * nothing in this file drives live product behavior.
+ *
+ * `HistoryEntry` also lives here because the Sidebar + dashboard share it
+ * as the render-time row shape for history items. Consider moving it to
+ * `@/types` on a future pass.
+ */
 
 export interface HistoryEntry {
   id: string;
@@ -135,88 +20,9 @@ export interface HistoryEntry {
   linesAdded: number;
   /** Total lines removed across the day. Rendered as "-N" in the sidebar. */
   linesRemoved: number;
-  shippedCount: number;
-  changedCount: number;
-  unstableCount: number;
 }
 
-export const MOCK_HISTORY: HistoryEntry[] = [
-  {
-    id: "today",
-    date: "Today",
-    vibeCheck: "You're building fast. Shipped OAuth and a settings page in one session.",
-    commits: 34,
-    filesChanged: 47,
-    linesAdded: 1204,
-    linesRemoved: 389,
-    shippedCount: 2,
-    changedCount: 3,
-    unstableCount: 1,
-  },
-  {
-    id: "yesterday",
-    date: "Yesterday",
-    vibeCheck: "Solid grind day, mostly wiring up the pricing page and cleaning up nav.",
-    commits: 18,
-    filesChanged: 12,
-    linesAdded: 612,
-    linesRemoved: 208,
-    shippedCount: 1,
-    changedCount: 2,
-    unstableCount: 0,
-  },
-  {
-    id: "mar-30",
-    date: "Mar 30",
-    vibeCheck: "Database day. Migrated from SQLite to Postgres and didn't break anything. Rare W.",
-    commits: 22,
-    filesChanged: 31,
-    linesAdded: 984,
-    linesRemoved: 421,
-    shippedCount: 0,
-    changedCount: 4,
-    unstableCount: 0,
-  },
-  {
-    id: "mar-29",
-    date: "Mar 29",
-    vibeCheck:
-      "You went deep on the Stripe integration. It's half-wired but the foundation is there.",
-    commits: 41,
-    filesChanged: 19,
-    linesAdded: 1478,
-    linesRemoved: 512,
-    shippedCount: 1,
-    changedCount: 2,
-    unstableCount: 2,
-  },
-  {
-    id: "mar-28",
-    date: "Mar 28",
-    vibeCheck: "Slow day, a few bug fixes and some CSS tweaking. Sometimes that's the vibe.",
-    commits: 7,
-    filesChanged: 5,
-    linesAdded: 96,
-    linesRemoved: 42,
-    shippedCount: 0,
-    changedCount: 1,
-    unstableCount: 0,
-  },
-  {
-    id: "mar-27",
-    date: "Mar 27",
-    vibeCheck: "Auth day! Set up the whole login/signup flow from scratch. Big foundation piece.",
-    commits: 28,
-    filesChanged: 22,
-    linesAdded: 1103,
-    linesRemoved: 147,
-    shippedCount: 3,
-    changedCount: 1,
-    unstableCount: 0,
-  },
-];
-
-/** Simulates what a streaming digest looks like as raw text before parsing */
+/** Raw streaming-text sample used by the landing page to demo a digest. */
 export const MOCK_STREAMING_TEXT = `\ud83d\udcac Vibe Check
 You're building fast. Shipped OAuth and a settings page in one session, and the checkout flow is almost there. Just that Stripe handler needs some love.
 
