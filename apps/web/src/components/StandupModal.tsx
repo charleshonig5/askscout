@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { X, Copy, Check, ClipboardList } from "lucide-react";
+import { X, Copy, Check } from "lucide-react";
+import { Emoji } from "@/components/Emoji";
 
 interface StandupModalProps {
   isOpen: boolean;
@@ -9,6 +10,13 @@ interface StandupModalProps {
   content: string | null;
 }
 
+/**
+ * Parses the standup text into sections + bullets. Sections:
+ *   - "Done" / "Up Next" / "Heads Up"  (modern)
+ *   - "Yesterday" / "Today" / "Blockers"  (legacy — still supported for
+ *     stored digests that used the older markers)
+ * Slack-bold `*Header*` wrapping is tolerated.
+ */
 function FormattedStandup({ text }: { text: string }) {
   const lines = text.split("\n");
   const elements: React.ReactNode[] = [];
@@ -17,8 +25,6 @@ function FormattedStandup({ text }: { text: string }) {
     const trimmed = lines[i]!.trim();
     if (!trimmed) continue;
 
-    // Section header (Done, Up Next, Heads Up — or legacy Yesterday, Today, Blockers)
-    // Also match Slack bold format *Done*, *Up Next*, etc.
     const cleanHeader = trimmed.replace(/^\*|\*$/g, "");
     if (/^(Done|Up Next|Heads Up|Yesterday|Today|Blockers)$/i.test(cleanHeader)) {
       elements.push(
@@ -26,18 +32,15 @@ function FormattedStandup({ text }: { text: string }) {
           {cleanHeader}
         </div>,
       );
-    }
-    // Bullet item
-    else if (/^[\u2022\-*]/.test(trimmed)) {
+    } else if (/^[\u2022\-*]/.test(trimmed)) {
       const content = trimmed.replace(/^[\u2022\-*]\s*/, "");
       elements.push(
         <div key={i} className="standup-item">
-          {content}
+          <span className="standup-item-bullet" aria-hidden />
+          <p className="standup-item-text">{content}</p>
         </div>,
       );
-    }
-    // Regular text
-    else {
+    } else {
       elements.push(
         <div key={i} className="standup-text">
           {trimmed}
@@ -65,22 +68,27 @@ export function StandupModal({ isOpen, onClose, content }: StandupModalProps) {
   return (
     <>
       <div className="modal-overlay" onClick={onClose} />
-      <div className="modal">
-        <div className="modal-header">
-          <div className="modal-title">
-            <ClipboardList size={16} /> Standup
+      <div className="modal modal--standup">
+        <div className="modal-top">
+          <div className="modal-identity">
+            <div className="modal-title-row">
+              <Emoji name="standup" size={24} />
+              <h2 className="modal-title">Generate Standup</h2>
+            </div>
+            <p className="modal-subtitle">Formatted for Slack and Teams. Just copy and paste.</p>
           </div>
-          <button className="header-icon-btn" onClick={onClose} aria-label="Close">
-            <X size={16} />
+          <button type="button" className="modal-close-btn" onClick={onClose} aria-label="Close">
+            <X size={20} strokeWidth={1} aria-hidden />
           </button>
         </div>
-        <p className="modal-desc">Formatted for Slack. Copy and paste.</p>
+
+        <div className="modal-divider" aria-hidden />
 
         <div className="modal-body">
           {content ? (
             <FormattedStandup text={content} />
           ) : (
-            <div className="digest-loading">
+            <div className="modal-empty">
               Standup will be ready when the digest finishes generating.
             </div>
           )}
@@ -89,16 +97,19 @@ export function StandupModal({ isOpen, onClose, content }: StandupModalProps) {
         {content && (
           <div className="modal-footer">
             <button
-              className={`action-btn modal-copy-btn ${copied ? "copied" : ""}`}
+              type="button"
+              className={`modal-copy-btn${copied ? " is-copied" : ""}`}
               onClick={handleCopy}
             >
               {copied ? (
                 <>
-                  <Check size={16} /> Copied
+                  <Check size={20} strokeWidth={1} aria-hidden />
+                  Copied
                 </>
               ) : (
                 <>
-                  <Copy size={16} /> Copy to clipboard
+                  <Copy size={20} strokeWidth={1} aria-hidden />
+                  Copy to Clipboard
                 </>
               )}
             </button>

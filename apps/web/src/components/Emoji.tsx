@@ -48,6 +48,8 @@ const EMOJI_MAP: Record<string, EmojiAsset> = {
   // Misc UI
   streak: { folder: "Fire", file: "fire_3d.png" },
   quietDay: { folder: "Hot beverage", file: "hot_beverage_3d.png" },
+  // Modal headers
+  standup: { folder: "Scroll", file: "scroll_3d.png" },
 };
 
 export type EmojiName = keyof typeof EMOJI_MAP;
