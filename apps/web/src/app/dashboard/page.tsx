@@ -506,8 +506,9 @@ export default function DashboardPage() {
     displayDate = noNewCommits.date;
     pageTitle = "Your Last Digest";
   } else if (noNewCommits) {
-    // Quiet Day state — keep today's date and a clear title
-    pageTitle = "Quiet Day";
+    // No-commits state — title echoes the streaming opener line
+    // ("Scanning the horizon for commits…"). Scout scans, finds nothing.
+    pageTitle = "Nothing on the Horizon";
   } else if (isViewingHistory && activeHistoryEntry) {
     displayDate = new Date(activeHistoryEntry.created_at).toLocaleDateString("en-US", {
       weekday: "long",
