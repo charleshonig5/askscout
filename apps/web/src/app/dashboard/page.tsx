@@ -33,6 +33,44 @@ function formatHistoryDate(dateStr: string): string {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
+/**
+ * Page-title formatter for any digest the user is viewing.
+ *   today       → "Today's Digest"
+ *   yesterday   → "Yesterday's Digest"
+ *   anything    → "April 12th's Digest" (full month, ordinal day suffix)
+ *
+ * Used by the dashboard header for both history-entry views and the
+ * "view your last digest" path off the quiet-day state, so every past
+ * digest carries a clear, readable title.
+ */
+function formatDigestTitle(dateStr: string): string {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const entryDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const diffDays = Math.round((today.getTime() - entryDay.getTime()) / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return "Today\u2019s Digest";
+  if (diffDays === 1) return "Yesterday\u2019s Digest";
+  const month = date.toLocaleDateString("en-US", { month: "long" });
+  const day = date.getDate();
+  return `${month} ${day}${ordinalSuffix(day)}\u2019s Digest`;
+}
+
+/** Returns the English ordinal suffix for a given day-of-month (1 → "st"). */
+function ordinalSuffix(n: number): string {
+  if (n >= 11 && n <= 13) return "th";
+  switch (n % 10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
+}
+
 export default function DashboardPage() {
   const [repos, setRepos] = useState<string[]>([]);
   // Repos with Scout activity (digests or check-ins), sorted most-recent first.
@@ -504,7 +542,7 @@ export default function DashboardPage() {
 
   if (noNewCommits && showLatestFromQuietDay) {
     displayDate = noNewCommits.date;
-    pageTitle = "Your Last Digest";
+    pageTitle = formatDigestTitle(noNewCommits.date);
   } else if (noNewCommits) {
     // No-commits state — title echoes the streaming opener line
     // ("Scanning the horizon for commits…"). Scout scans, finds nothing.
@@ -516,7 +554,7 @@ export default function DashboardPage() {
       day: "numeric",
       year: "numeric",
     });
-    pageTitle = "Digest";
+    pageTitle = formatDigestTitle(activeHistoryEntry.created_at);
   }
 
   // Compute per-repo streak AND personal best from history records + check-ins.
