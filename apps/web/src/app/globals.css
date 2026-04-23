@@ -1494,11 +1494,14 @@ a:hover {
 .timeline-day-name {
   /* Left-align to match the Figma (node 52:1485): day name sits under
      the leftmost time label of its segment, not centered under the
-     whole segment block. */
+     whole segment block. Stacks immediately below the time label —
+     Figma shows a tight 14px top-to-top rhythm (≈ natural line-height
+     of the 12px time label). Previous margin-top:auto + padding-top:6px
+     pushed the day label all the way to the bottom of the 38px label
+     container, leaving too much vertical daylight. */
   text-align: left;
   font-size: 12px;
-  margin-top: auto;
-  padding-top: 6px;
+  line-height: normal;
   color: var(--color-text-tertiary);
 }
 
