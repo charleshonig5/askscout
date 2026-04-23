@@ -1148,6 +1148,39 @@ function levelColor(level: string): string {
 }
 
 /**
+ * Discrete 5-step scale per indicator, ordered best → worst.
+ * The bar fill width is driven by the level's position on this scale
+ * (lower position = lower fill = green; higher position = higher fill
+ * = red) so the bar visually tracks severity instead of "goodness".
+ */
+const LEVEL_ORDER: Record<"Growth" | "Focus" | "Churn", readonly string[]> = {
+  Growth: ["Lean", "Steady", "Growing", "Heavy", "Ballooning"],
+  Focus: ["Tight", "Sharp", "Moderate", "Wide", "Scattered"],
+  Churn: ["Clean", "Minimal", "Moderate", "Noisy", "High"],
+};
+
+function levelFillPercent(indicator: "Growth" | "Focus" | "Churn", level: string): number {
+  const idx = LEVEL_ORDER[indicator].indexOf(level);
+  if (idx < 0) return 20;
+  // 5 levels → 20 / 40 / 60 / 80 / 100. Matches the Figma's rough
+  // Low / Low-mid / Mid / Mid-high / High progression across states.
+  return (idx + 1) * 20;
+}
+
+/**
+ * Per-level subtitle copy for the card's tertiary-grey second line.
+ * Keeps the card's story tight at every state instead of the old
+ * binary "Adding and cleaning up" / "Building new code" split.
+ */
+const GROWTH_DETAIL: Record<string, string> = {
+  Lean: "Balanced adds and cleanup",
+  Steady: "Building with steady cleanup",
+  Growing: "Mostly adding, light cleanup",
+  Heavy: "Build-heavy phase",
+  Ballooning: "All build, no cleanup",
+};
+
+/**
  * Plain-language descriptions for every (category, level) combination.
  * Hover the level badge on a Codebase Health card to see what the rating means.
  * Tone: observational, not preachy. Describes what's happening, not what's wrong.
@@ -1198,24 +1231,21 @@ function CodebaseHealth({ health }: { health: HealthData }) {
 
   const indicators = [
     {
-      label: "Growth",
+      label: "Growth" as const,
       level: health.growth.level,
-      score: health.growth.score,
       stat: `+${fmt(health.growth.added)} / -${fmt(health.growth.removed)}`,
-      detail: health.growth.removed > 0 ? "Adding and cleaning up" : "Building new code",
+      detail: GROWTH_DETAIL[health.growth.level] ?? "",
     },
     {
-      label: "Focus",
+      label: "Focus" as const,
       level: health.focus.level,
-      score: health.focus.score,
       stat: `${health.focus.filesPerCommit} files per commit`,
       detail:
         health.focus.filesPerCommit <= 3 ? "Changes are concentrated" : "Changes are spread out",
     },
     {
-      label: "Churn",
+      label: "Churn" as const,
       level: health.churn.level,
-      score: health.churn.score,
       stat: `${health.churn.files} ${health.churn.files === 1 ? "file" : "files"} reworked`,
       detail: health.churn.files === 0 ? "No repeated edits" : "Same files edited 3+ times",
     },
@@ -1255,7 +1285,7 @@ function CodebaseHealth({ health }: { health: HealthData }) {
               <div className="health-card-bar">
                 <div
                   className={`health-card-fill health-card-fill--${color}`}
-                  style={{ width: `${Math.max(0, Math.min(100, h.score * 10))}%` }}
+                  style={{ width: `${levelFillPercent(h.label, h.level)}%` }}
                 />
               </div>
               <div className={`health-card-stat health-card-stat--${h.label.toLowerCase()}`}>
