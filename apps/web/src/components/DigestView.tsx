@@ -7,9 +7,9 @@ import {
   Download,
   Send,
   Sparkles,
-  ClipboardList,
+  BookText,
   ArrowUpRight,
-  ListChecks,
+  ScrollText,
   ExternalLink,
 } from "lucide-react";
 import { useCountUp } from "@/lib/use-count-up";
@@ -1535,13 +1535,13 @@ export function DigestView({
               <div className="digest-bottom-actions">
                 {onGenerateStandup && (
                   <button className="standup-btn" onClick={onGenerateStandup}>
-                    <ClipboardList size={20} strokeWidth={1} aria-hidden />
+                    <BookText size={20} strokeWidth={1} aria-hidden />
                     Generate Standup
                   </button>
                 )}
                 {onGeneratePlan && (
                   <button className="standup-btn" onClick={onGeneratePlan}>
-                    <ListChecks size={20} strokeWidth={1} aria-hidden />
+                    <ScrollText size={20} strokeWidth={1} aria-hidden />
                     Generate Todo List
                   </button>
                 )}
