@@ -611,18 +611,6 @@ a:hover {
   width: 100%;
   margin: 0;
   padding: 0;
-  /* Internal scroll region — the .app-main card has overflow: hidden so
-     its frame stays fixed in the viewport; this container takes the
-     scroll instead. Scrollbars are hidden across all browsers; the
-     scroll behavior still works (mouse wheel, trackpad, keyboard). */
-  height: 100%;
-  overflow-y: auto;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE / legacy Edge */
-}
-
-.digest-container::-webkit-scrollbar {
-  display: none; /* Chrome / Safari / WebKit */
 }
 
 /* ============================================
@@ -1529,12 +1517,6 @@ a:hover {
   background: var(--color-bg-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  /* Lock the card to the viewport so its border (top, right, bottom) stays
-     framed at all times. Content scrolls internally inside .digest-container
-     rather than pushing the card past the viewport edge. 48px = 24px top +
-     24px bottom card margins. */
-  height: calc(100vh - 48px);
-  overflow: hidden;
 }
 
 /* ============================================
@@ -1850,20 +1832,11 @@ a:hover {
 @media (max-width: 768px) {
   .app-main {
     /* Drop the floating-card treatment on mobile — full-bleed reads better
-       when the sidebar is off-canvas. Also drop the locked viewport height
-       and internal scroll: with no card frame to preserve, let the page
-       scroll naturally. */
+       when the sidebar is off-canvas. */
     margin: 0;
     background: var(--color-bg-primary);
     border: none;
     border-radius: 0;
-    height: auto;
-    overflow: visible;
-  }
-
-  .digest-container {
-    height: auto;
-    overflow: visible;
   }
 
   .sidebar {
