@@ -819,20 +819,33 @@ a:hover {
   cursor: default;
 }
 
-/* Hover pill — shows current streak + personal best side by side. Uses the
-   same elevated-card pattern as the timeline tooltip (bg-elevated, border,
-   radius-md, shadow-md) for a consistent hover vocabulary across the app. */
+/* Hover tooltip — streak pill's "Personal Best: N days" detail.
+   Uses the shared glass tooltip treatment (see Figma node 134:50):
+   modal-surface glass with 5px backdrop blur, 4px radius, Work Sans
+   Light 10 by default, 4×6 padding, no arrow. */
 .streak-tooltip {
   position: absolute;
-  top: calc(100% + var(--space-sm));
+  top: calc(100% + 6px);
   left: 50%;
   transform: translateX(-50%);
   width: max-content;
-  padding: var(--space-sm) var(--space-md);
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 4px 6px;
+  background: var(--color-modal-surface);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  border-radius: 4px;
+  box-shadow: inset 0 8px 20px 0 var(--color-inner-glow);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 10px;
+  line-height: normal;
+  letter-spacing: 0;
+  color: var(--color-text-primary);
+  text-align: center;
+  white-space: nowrap;
   opacity: 0;
   visibility: hidden;
   transition:
@@ -840,8 +853,6 @@ a:hover {
     visibility 0s linear 0.12s;
   pointer-events: none;
   z-index: 20;
-  font-weight: 400;
-  letter-spacing: 0;
 }
 
 .digest-streak:hover .streak-tooltip,
@@ -853,48 +864,12 @@ a:hover {
     visibility 0s linear 0s;
 }
 
-.streak-tooltip {
-  /* one-line layout: inline-flex overrides the default block */
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--space-xs);
-}
-
 .streak-tooltip-label {
-  font-size: 11px;
-  color: var(--color-text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-weight: 300;
 }
 
 .streak-tooltip-value {
-  font-size: 13px;
-  font-weight: 600;
-  font-family: var(--font-sans);
-  color: var(--color-text-primary);
-}
-
-/* Arrow pointing up from tooltip to the streak pill */
-.streak-tooltip::before,
-.streak-tooltip::after {
-  content: "";
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-}
-
-.streak-tooltip::before {
-  transform: translateX(-50%);
-  border-bottom: 5px solid var(--color-border);
-}
-
-.streak-tooltip::after {
-  transform: translateX(-50%) translateY(1px);
-  border-bottom: 5px solid var(--color-bg-elevated);
+  font-weight: 500;
 }
 
 .digest-page-date {
@@ -1353,18 +1328,24 @@ a:hover {
    Timeline Bar Tooltip
    ============================================ */
 
+/* Hover tooltip — timeline bar's "+N / -N" and time range detail.
+   Shared glass treatment per Figma node 134:50. */
 .timeline-tooltip {
   position: absolute;
-  bottom: calc(100% + var(--space-sm));
+  bottom: calc(100% + 6px);
   left: 50%;
   transform: translateX(-50%);
   width: max-content;
   max-width: 260px;
-  padding: var(--space-sm) var(--space-md);
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
+  padding: 4px 6px;
+  background: var(--color-modal-surface);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  border-radius: 4px;
+  box-shadow: inset 0 8px 20px 0 var(--color-inner-glow);
+  font-family: var(--font-sans);
+  color: var(--color-text-primary);
+  text-align: center;
   opacity: 0;
   visibility: hidden;
   transition:
@@ -1397,19 +1378,20 @@ a:hover {
 }
 
 .timeline-tooltip-lines {
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.4;
   font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 10px;
+  line-height: normal;
   color: var(--color-text-primary);
   white-space: nowrap;
 }
 
 .timeline-tooltip-time {
-  font-size: 11px;
-  line-height: 1.4;
-  color: var(--color-text-tertiary);
   font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 10px;
+  line-height: normal;
+  color: var(--color-text-primary);
   margin-top: 2px;
   white-space: nowrap;
 }
@@ -1419,53 +1401,7 @@ a:hover {
 }
 
 .timeline-tooltip-removed {
-  color: var(--color-accent);
-}
-
-/* Arrow pointing down from tooltip to bar — double border for cleaner edge */
-.timeline-tooltip::before,
-.timeline-tooltip::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-}
-
-.timeline-tooltip::before {
-  left: 50%;
-  transform: translateX(-50%);
-  border-top: 5px solid var(--color-border);
-}
-
-.timeline-tooltip::after {
-  left: 50%;
-  transform: translateX(-50%) translateY(-1px);
-  border-top: 5px solid var(--color-bg-elevated);
-}
-
-/* Edge arrows stay centered on the bar, not the tooltip */
-.timeline-bar--edge-left .timeline-tooltip::before,
-.timeline-bar--edge-left .timeline-tooltip::after {
-  left: 2px;
-  transform: translateX(0);
-}
-
-.timeline-bar--edge-left .timeline-tooltip::after {
-  transform: translateX(0) translateY(-1px);
-}
-
-.timeline-bar--edge-right .timeline-tooltip::before,
-.timeline-bar--edge-right .timeline-tooltip::after {
-  left: auto;
-  right: 2px;
-  transform: translateX(0);
-}
-
-.timeline-bar--edge-right .timeline-tooltip::after {
-  transform: translateX(0) translateY(-1px);
+  color: var(--color-danger);
 }
 
 .timeline-labels {
@@ -1756,25 +1692,27 @@ a:hover {
   flex-shrink: 0;
 }
 
-/* Hover tooltip on the level pill — explains what the rating means in plain
-   language. Same elevated-card pattern as streak/timeline tooltips so the
-   hover vocabulary stays consistent across the app. */
+/* Hover tooltip — health severity pill's plain-language description.
+   Shared glass treatment per Figma node 134:50. Wraps to multiple
+   lines for longer descriptions; max-width keeps the pill compact. */
 .health-tooltip {
   position: absolute;
-  top: calc(100% + var(--space-sm));
+  top: calc(100% + 6px);
   right: 0;
   width: max-content;
-  max-width: 280px;
-  padding: var(--space-sm) var(--space-md);
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--color-text-secondary);
-  text-align: left;
+  max-width: 160px;
+  padding: 4px 6px;
+  background: var(--color-modal-surface);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  border-radius: 4px;
+  box-shadow: inset 0 8px 20px 0 var(--color-inner-glow);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 10px;
+  line-height: normal;
+  color: var(--color-text-primary);
+  text-align: center;
   white-space: normal;
   letter-spacing: 0;
   opacity: 0;
@@ -1793,29 +1731,6 @@ a:hover {
   transition:
     opacity 0.12s ease,
     visibility 0s linear 0s;
-}
-
-/* Arrow pointing up from tooltip to the badge above it. Anchored near the
-   right edge since the tooltip itself is right-anchored to keep it on screen. */
-.health-tooltip::before,
-.health-tooltip::after {
-  content: "";
-  position: absolute;
-  bottom: 100%;
-  right: 12px;
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-}
-
-.health-tooltip::before {
-  border-bottom: 5px solid var(--color-border);
-}
-
-.health-tooltip::after {
-  transform: translateY(1px);
-  border-bottom: 5px solid var(--color-bg-elevated);
 }
 
 /* Severity pill — status-color text on a 10% color tint over the
