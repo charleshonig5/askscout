@@ -3268,11 +3268,21 @@ a:hover {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
+  /* No `gap` — each .digest-section already carries margin-bottom:
+     var(--space-xl), matching the narrative column's block-flow
+     spacing. A gap here would double the space between sections. */
   /* 34px on all sides. In two-col mode the left padding is the gap from
      the vertical divider (border-left below) to the stats content, and
      the bottom padding carries the column to the card's bottom edge. */
   padding: 34px;
+}
+
+/* Collapse the trailing margin on the last .digest-section in either
+   column so the final section sits flush against the 34px bottom
+   padding without an extra 32px of whitespace below it. */
+.digest-main > .digest-section:last-child,
+.digest-stats-sidebar > .digest-section:last-child {
+  margin-bottom: 0;
 }
 
 /* Two-column layout on wide screens: narrative on the left, stats sidebar
