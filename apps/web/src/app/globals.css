@@ -2937,13 +2937,6 @@ a:hover {
    Resume / Standup Views
    ============================================ */
 
-.formatted-paragraph {
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-sm);
-}
-
 .ai-context-card {
   padding: var(--space-lg);
   background: var(--color-bg-secondary);
