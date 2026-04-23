@@ -393,16 +393,17 @@ export default function DashboardPage() {
       }),
     };
 
-    // Total visible duration of the DigestOpener:
-    //   START_DELAY_MS (450) + ~33 chars * PER_CHAR_MS (40) + DWELL_MS (2000)
-    //   + fade-out (~350) ≈ 4100ms
-    // Hold the transition until the opener has had at least that long on
-    // screen since the stream first started. If the error arrived later
-    // than that (e.g., slow API), transition immediately.
-    const OPENER_TOTAL_MS = 4100;
+    // Wait just long enough for the typewriter to finish the sentence —
+    // no dwell, no fade. The moment the last character lands we cut to
+    // the quiet-day view.
+    //   START_DELAY_MS (450) + 33 chars * PER_CHAR_MS (40) ≈ 1770ms
+    // Add a tiny 130ms buffer so the final character registers on screen
+    // before the cut. If the error arrives later than that (slow API),
+    // transition immediately.
+    const OPENER_TYPED_MS = 1900;
     const elapsed =
-      streamStartRef.current > 0 ? performance.now() - streamStartRef.current : OPENER_TOTAL_MS;
-    const delay = Math.max(0, OPENER_TOTAL_MS - elapsed);
+      streamStartRef.current > 0 ? performance.now() - streamStartRef.current : OPENER_TYPED_MS;
+    const delay = Math.max(0, OPENER_TYPED_MS - elapsed);
 
     const timer = setTimeout(() => {
       setNoNewCommits(latestNoCommits);
