@@ -1581,15 +1581,18 @@ a:hover {
   min-width: 0;
 }
 
-/* 18×? bordered launch box — opens the file on GitHub. Small arrow
-   glyph inside. Matches the "Share on X" / "Resume Prompt" pill
-   treatment at a tighter scale. */
+/* Square bordered launch box — opens the file on GitHub. 20×20 so the
+   outer dimensions match the height of the "Share on X" / "Resume
+   Prompt" pills in the main digest column (4+10+4 + 2px borders). The
+   10px arrow glyph sits centered. */
 .top-file-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  padding: 4px 6px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
   border: 1px solid var(--color-bg-tertiary);
   border-radius: 4px;
   color: var(--color-text-primary);
