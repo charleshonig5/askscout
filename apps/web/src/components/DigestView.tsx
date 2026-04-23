@@ -878,9 +878,14 @@ function WhenYouCoded({
     return Math.max(MIN_BAR_HEIGHT, ratio * MAX_BAR_HEIGHT);
   };
 
-  // Split the baseline at each midnight so day-changes show as a visible gap.
-  // 2% gap centered on each boundary (~8-12px on typical widths).
-  const GAP_PCT = 2;
+  // Split the baseline at each midnight so day-changes show as a visible
+  // gap. Time labels anchor to the edges of their segment (flex
+  // space-between), so this gap also sets the minimum distance between
+  // the end-of-day-N label and the start-of-day-(N+1) label. Previous
+  // 2% read as ~6px on the stats-column width — tight enough that
+  // labels like "12am" and "11am" almost touched. 5% gives ~16px of
+  // visible breathing room between them.
+  const GAP_PCT = 5;
   const half = GAP_PCT / 2;
   const baselineSegments: Array<{ left: number; right: number }> = [];
   let prev = 0;
