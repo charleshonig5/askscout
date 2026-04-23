@@ -708,10 +708,10 @@ a:hover {
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-lg);
-  /* 34px interior padding + a full-width bottom border. The divider line
-     meets both outer card borders and matches the top of the vertical
-     divider between narrative and stats. */
-  padding: 34px;
+  /* Figma (node 50:938) spec: 24px top/bottom, 34px left/right. Header
+     row is tighter vertically than the 34px interior padding used in
+     the body columns below. */
+  padding: 24px 34px;
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -1931,7 +1931,8 @@ a:hover {
   margin: 24px 24px 24px var(--sidebar-width);
   background: var(--color-bg-primary);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  /* Figma (node 50:938) spec: 20px corner radius on the card. */
+  border-radius: 20px;
 }
 
 /* ============================================
