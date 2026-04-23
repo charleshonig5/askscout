@@ -593,7 +593,7 @@ function StatsCards({ stats, animate = true }: { stats: DigestViewStats; animate
         {fmt(commits)} commits
       </span>
       <span className="stats-quick-item">
-        <FileText size={16} strokeWidth={1} aria-hidden />
+        <FileText size={12} strokeWidth={1} className="file-icon" aria-hidden />
         {fmt(files)} Files
       </span>
     </div>
@@ -1314,7 +1314,7 @@ function CodebaseHealth({ health }: { health: HealthData }) {
                   </>
                 ) : (
                   <>
-                    <FileText size={16} strokeWidth={1} aria-hidden />
+                    <FileText size={12} strokeWidth={1} className="file-icon" aria-hidden />
                     <span>{h.stat}</span>
                   </>
                 )}

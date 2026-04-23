@@ -173,6 +173,14 @@ a:hover {
   color: var(--color-text-tertiary);
 }
 
+/* Shared utility: renders the file-count glyph in secondary grey across
+   every surface that shows it (sidebar history rows, stats quick strip,
+   Focus / Churn health-card bottom rows). Keeps weight consistent with
+   the commit-graph glyph even though the file icon sizes down to 12. */
+.file-icon {
+  color: var(--color-text-secondary) !important;
+}
+
 /* ============================================
    Header
    ============================================ */
