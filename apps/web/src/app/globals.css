@@ -75,6 +75,14 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
 
+  /* Theme-aware glass treatments (light defaults). All modal / card
+     inner-glows and overlay surfaces use these tokens so themes flip
+     cleanly. Dark mode overrides live in the [data-theme="dark"]
+     block below. */
+  --color-inner-glow: rgba(0, 0, 0, 0.04);
+  --color-modal-surface: rgba(255, 255, 255, 0.85);
+  --color-modal-backdrop: rgba(17, 17, 17, 0.4);
+
   /* Sizing */
   --header-height: 56px;
   /* Matches Figma left-nav frame: 324px content + 24px padding each side. */
@@ -115,6 +123,13 @@
   --color-success: #57d32e;
   --color-warning: #f7c80b;
   --color-danger: #dd1d1d;
+
+  /* Glass treatment overrides: inner glow flips to a subtle white
+     wash (visible against dark surfaces), modal surface goes
+     translucent-dark, backdrop hits near-opaque deep black. */
+  --color-inner-glow: var(--color-inner-glow);
+  --color-modal-surface: rgba(18, 18, 18, 0.7);
+  --color-modal-backdrop: rgba(7, 7, 7, 0.72);
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
   --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -618,7 +633,7 @@ a:hover {
   /* Selected row — solid tertiary fill with a subtle top inner glow for
      depth, mirroring the active history row in the sidebar. */
   background: var(--color-bg-tertiary);
-  box-shadow: inset 0 0 40px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
   font-weight: 500;
   color: var(--color-text-primary);
 }
@@ -755,7 +770,7 @@ a:hover {
   padding: 4px 8px;
   border-radius: 90px;
   background: var(--color-bg-tertiary);
-  box-shadow: inset 0 8px 20px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 8px 20px 0 var(--color-inner-glow);
   color: var(--color-text-primary);
   font-family: var(--font-sans);
   font-weight: 300;
@@ -792,7 +807,7 @@ a:hover {
   padding: 4px 8px;
   border-radius: 90px;
   background: var(--color-bg-tertiary);
-  box-shadow: inset 0 8px 20px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 8px 20px 0 var(--color-inner-glow);
   color: var(--color-text-primary);
   font-family: var(--font-sans);
   font-weight: 300;
@@ -1046,7 +1061,7 @@ a:hover {
   padding: 3px 6px;
   border-radius: 60px;
   background: var(--color-bg-tertiary);
-  box-shadow: inset 0 8px 20px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 8px 20px 0 var(--color-inner-glow);
   font-family: var(--font-sans);
   font-weight: 300;
   font-size: 12px;
@@ -1181,7 +1196,7 @@ a:hover {
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-bg-tertiary);
   border-radius: 8px;
-  box-shadow: inset 0 0 40px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
   margin-bottom: var(--space-xl);
 }
 
@@ -1689,7 +1704,7 @@ a:hover {
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-bg-tertiary);
   border-radius: 8px;
-  box-shadow: inset 0 0 40px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -2142,8 +2157,8 @@ a:hover {
 .sidebar-item.active {
   background: var(--color-bg-tertiary);
   /* Subtle top-inner glow matching the Figma shadow:
-     inset 0 8px 20px rgba(255, 255, 255, 0.04). */
-  box-shadow: inset 0 8px 20px 0 rgba(255, 255, 255, 0.04);
+     inset 0 8px 20px var(--color-inner-glow). */
+  box-shadow: inset 0 8px 20px 0 var(--color-inner-glow);
 }
 
 .sidebar-item-body {
@@ -2311,10 +2326,10 @@ a:hover {
   left: 0;
   right: 0;
   bottom: calc(100% + 8px);
-  background: rgba(18, 18, 18, 0.7);
+  background: var(--color-modal-surface);
   border: 1px solid var(--color-bg-tertiary);
   border-radius: 8px;
-  box-shadow: inset 0 0 40px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
   z-index: 20;
   display: flex;
   flex-direction: column;
@@ -3312,7 +3327,7 @@ a:hover {
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-bg-tertiary);
   border-radius: 4px;
-  box-shadow: inset 0 0 20px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
   color: var(--color-text-primary);
   cursor: pointer;
   transition:
@@ -3384,7 +3399,7 @@ a:hover {
   padding: 3px 6px;
   border-radius: 60px;
   background: var(--color-bg-tertiary);
-  box-shadow: inset 0 8px 20px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 8px 20px 0 var(--color-inner-glow);
   font-family: var(--font-sans);
   font-weight: 300;
   font-size: 12px;
@@ -3792,7 +3807,7 @@ a:hover {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(7, 7, 7, 0.72);
+  background: var(--color-modal-backdrop);
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
   z-index: 100;
@@ -3817,10 +3832,10 @@ a:hover {
      which leaves the panel almost invisible. Bumped to 0.7 so the
      modal reads as a solid glass panel (still translucent enough to
      show some of the blur behind it, but clearly an inset surface). */
-  background: rgba(18, 18, 18, 0.7);
+  background: var(--color-modal-surface);
   border: 1px solid var(--color-bg-tertiary);
   border-radius: 8px;
-  box-shadow: inset 0 0 40px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
   z-index: 101;
   display: flex;
   flex-direction: column;
@@ -3883,7 +3898,7 @@ a:hover {
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-bg-tertiary);
   border-radius: 8px;
-  box-shadow: inset 0 0 20px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
   color: var(--color-text-primary);
   cursor: pointer;
   transition: background 0.12s ease;
@@ -3920,7 +3935,7 @@ a:hover {
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-bg-tertiary);
   border-radius: 8px;
-  box-shadow: inset 0 0 20px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
   font-family: var(--font-sans);
   font-weight: 300;
   font-size: 16px;
@@ -3976,7 +3991,7 @@ a:hover {
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-bg-tertiary);
   border-radius: 8px;
-  box-shadow: inset 0 0 20px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
   font-family: var(--font-sans);
   font-weight: 300;
   font-size: 16px;
@@ -4024,7 +4039,7 @@ a:hover {
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-bg-tertiary);
   border-radius: 8px;
-  box-shadow: inset 0 0 20px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
 }
 
 .digest-page-header-right .action-btn:hover {
@@ -4062,7 +4077,7 @@ a:hover {
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-bg-tertiary);
   border-radius: 8px;
-  box-shadow: inset 0 0 20px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
 }
 
 .digest-bottom-actions .standup-btn:hover {
