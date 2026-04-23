@@ -168,7 +168,12 @@ export function Sidebar({
                           </span>
                           <span className="sidebar-item-stat">
                             {entry.commits}
-                            <GitCommitHorizontal size={16} strokeWidth={1} aria-hidden />
+                            <GitCommitHorizontal
+                              size={16}
+                              strokeWidth={1}
+                              className="commit-icon"
+                              aria-hidden
+                            />
                           </span>
                           <span className="sidebar-item-stat">
                             {entry.filesChanged}

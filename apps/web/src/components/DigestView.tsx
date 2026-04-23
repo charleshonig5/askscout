@@ -589,7 +589,7 @@ function StatsCards({ stats, animate = true }: { stats: DigestViewStats; animate
       <span className="stats-quick-added">+{fmt(added)} lines</span>
       {stats.linesRemoved > 0 && <span className="stats-quick-removed">-{fmt(removed)} lines</span>}
       <span className="stats-quick-item">
-        <GitCommitHorizontal size={16} strokeWidth={1} aria-hidden />
+        <GitCommitHorizontal size={16} strokeWidth={1} className="commit-icon" aria-hidden />
         {fmt(commits)} commits
       </span>
       <span className="stats-quick-item">
@@ -623,7 +623,7 @@ function PaceCard({
       </div>
       <div className="pace-stats">
         <span className="pace-stat">
-          <GitCommitHorizontal size={16} strokeWidth={1} aria-hidden />
+          <GitCommitHorizontal size={16} strokeWidth={1} className="commit-icon" aria-hidden />
           {pace.todayCommits} commits today
         </span>
         <span className="pace-stat">
@@ -1111,7 +1111,12 @@ function TopFiles({ files, repoFullName }: { files: TopFile[]; repoFullName?: st
               <span className="top-file-added">+{fmt(f.added ?? 0)}</span>
               <span className="top-file-removed">-{fmt(f.removed ?? 0)}</span>
               <span className="top-file-commits">
-                <GitCommitHorizontal size={16} strokeWidth={1} aria-hidden />
+                <GitCommitHorizontal
+                  size={16}
+                  strokeWidth={1}
+                  className="commit-icon"
+                  aria-hidden
+                />
                 {f.commits}
               </span>
             </div>

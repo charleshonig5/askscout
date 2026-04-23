@@ -181,6 +181,13 @@ a:hover {
   color: var(--color-text-secondary) !important;
 }
 
+/* Commit-graph glyph shares the same secondary-grey treatment as the
+   file icon across history rows, stats quick strip, most-active-files
+   rows, and the pace-check stats row. */
+.commit-icon {
+  color: var(--color-text-secondary) !important;
+}
+
 /* ============================================
    Header
    ============================================ */
