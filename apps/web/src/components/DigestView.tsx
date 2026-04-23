@@ -6,6 +6,7 @@ import {
   Check,
   Download,
   Send,
+  Sparkles,
   ClipboardList,
   ArrowUpRight,
   ListChecks,
@@ -226,7 +227,7 @@ function ResumePromptBtn({ onClick }: { onClick: () => void }) {
   return (
     <button className="digest-bulleted-share" onClick={onClick} aria-label="Open Resume Prompt">
       Resume Prompt
-      <ArrowUpRight size={10} strokeWidth={1} aria-hidden />
+      <Sparkles size={10} strokeWidth={1} aria-hidden />
     </button>
   );
 }
