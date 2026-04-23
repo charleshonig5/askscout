@@ -3304,11 +3304,29 @@ a:hover {
   gap: 14px;
 }
 
+/* Whole row is a button so clicking anywhere toggles the check
+   state (not just the checkbox). Button chrome is fully reset —
+   transparent bg, no border, no padding — so visually the row reads
+   the same as the old div layout. */
 .plan-item {
   display: flex;
   align-items: flex-start;
   gap: 14px;
+  width: 100%;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
   transition: opacity 0.15s ease;
+}
+
+.plan-item:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 .plan-item-divider {
@@ -3351,9 +3369,10 @@ a:hover {
 }
 
 /* Text column for each task. Title stacks directly over the reason
-   with no flex gap; line-height: 18px on both lines handles breathing
-   room. Matches Figma node 68:3218 where both <p>s sit flush inside
-   a flex-col with leading-[18px]. */
+   with line-height: 18px on both lines handling breathing room.
+   Children are <span>s so they can live inside the button wrapper
+   — display: block gives them stacking behavior without the <p>
+   default margin. */
 .plan-item-body {
   display: flex;
   flex-direction: column;
@@ -3364,6 +3383,7 @@ a:hover {
 
 .plan-task,
 .plan-reason {
+  display: block;
   font-family: var(--font-sans);
   font-size: 12px;
   line-height: 18px;

@@ -173,21 +173,24 @@ export function PlanModal({ isOpen, onClose, content }: PlanModalProps) {
                 const isChecked = !!checked[t.id];
                 return (
                   <Fragment key={t.id}>
-                    <div className={`plan-item${isChecked ? " plan-item--checked" : ""}`}>
-                      <button
-                        type="button"
+                    <button
+                      type="button"
+                      className={`plan-item${isChecked ? " plan-item--checked" : ""}`}
+                      onClick={() => toggleChecked(t.id)}
+                      aria-label={isChecked ? "Mark as not done" : "Mark as done"}
+                      aria-pressed={isChecked}
+                    >
+                      <span
                         className={`plan-checkbox${isChecked ? " plan-checkbox--checked" : ""}`}
-                        onClick={() => toggleChecked(t.id)}
-                        aria-label={isChecked ? "Mark as not done" : "Mark as done"}
-                        aria-pressed={isChecked}
+                        aria-hidden
                       >
                         {isChecked && <Check size={14} strokeWidth={2} aria-hidden />}
-                      </button>
-                      <div className="plan-item-body">
-                        <p className="plan-task">{t.task}</p>
-                        {t.reason && <p className="plan-reason">{t.reason}</p>}
-                      </div>
-                    </div>
+                      </span>
+                      <span className="plan-item-body">
+                        <span className="plan-task">{t.task}</span>
+                        {t.reason && <span className="plan-reason">{t.reason}</span>}
+                      </span>
+                    </button>
                     {i < tasks.length - 1 && <div className="plan-item-divider" aria-hidden />}
                   </Fragment>
                 );
