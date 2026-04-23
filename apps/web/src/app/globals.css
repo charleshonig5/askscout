@@ -490,6 +490,9 @@ a:hover {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  /* Explicit line-height guarantees enough vertical room for descenders
+     (g, p, q, y) inside the overflow: hidden clip box. */
+  line-height: 1.4;
   text-align: left;
 }
 
@@ -541,7 +544,7 @@ a:hover {
   font-family: var(--font-sans);
   font-weight: 300;
   font-size: 16px;
-  line-height: 1;
+  line-height: 1.4;
   color: var(--color-text-primary);
 }
 
@@ -586,7 +589,9 @@ a:hover {
   font-family: var(--font-sans);
   font-weight: 300;
   font-size: 16px;
-  line-height: 1;
+  /* 1.4 line-height gives the text a tall enough line-box to hold
+     descenders (g, p, q, y) without the row's overflow clipping them. */
+  line-height: 1.4;
   color: var(--color-text-primary);
   text-align: left;
   cursor: pointer;
@@ -1658,15 +1663,16 @@ a:hover {
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 }
 
-/* 25×25 rounded white square placeholder for the logo mark. Will be
-   swapped for the real telescope SVG later. */
+/* Rounded white square placeholder for the logo mark. Will be swapped
+   for the real telescope SVG later. Sized ~25% smaller than the Figma
+   default so the logo doesn't dominate the sidebar. */
 .sidebar-brand-mark {
-  width: 25px;
-  height: 25px;
-  border-radius: 6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
   background: var(--color-text-primary);
   flex-shrink: 0;
 }
@@ -1674,7 +1680,7 @@ a:hover {
 .sidebar-brand-name {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 24px;
+  font-size: 18px;
   line-height: 1;
   color: var(--color-text-primary);
   letter-spacing: 0;

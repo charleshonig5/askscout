@@ -172,7 +172,7 @@ export function Sidebar({
                           </span>
                           <span className="sidebar-item-stat">
                             {entry.filesChanged}
-                            <FileText size={16} strokeWidth={1} aria-hidden />
+                            <FileText size={14} strokeWidth={1} aria-hidden />
                           </span>
                         </div>
                       </div>
