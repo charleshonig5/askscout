@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { X, Copy, Check, Sparkles } from "lucide-react";
+import { CircleX, Copy, Check, Sparkles } from "lucide-react";
 
 interface AIContextModalProps {
   isOpen: boolean;
@@ -30,8 +30,8 @@ export function AIContextModal({ isOpen, onClose, content }: AIContextModalProps
           <div className="modal-title">
             <Sparkles size={16} /> AI Context
           </div>
-          <button className="header-icon-btn" onClick={onClose} aria-label="Close">
-            <X size={16} />
+          <button type="button" className="modal-close-btn" onClick={onClose} aria-label="Close">
+            <CircleX size={20} strokeWidth={1} aria-hidden />
           </button>
         </div>
         <p className="modal-desc">
