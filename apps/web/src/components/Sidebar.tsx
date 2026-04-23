@@ -4,17 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import {
-  GitCommit,
-  FileText,
-  Rocket,
-  Wrench,
-  AlertTriangle,
-  Clock,
-  Settings,
-  LogOut,
-  ChevronUp,
-} from "lucide-react";
+import { ArrowUpRight, FileText, GitCommit, HelpCircle, LogOut, Settings } from "lucide-react";
 import type { HistoryEntry } from "@/lib/mock-data";
 import { RepoSelector } from "./RepoSelector";
 import { ThemeToggle } from "./ThemeToggle";
@@ -31,6 +21,21 @@ interface SidebarProps {
   onRepoChange: (repo: string) => void;
 }
 
+/**
+ * Left navigation.
+ *
+ * Pixel-mapped from the Figma frame (node 127:2411):
+ *   - 372px total width, 24px internal padding.
+ *   - Logo row (25×25 mark + "AskScout" in Pridi 24) + theme & settings icons.
+ *   - Repo picker block (label + 44px combobox).
+ *   - History block (label + scrolling list; active row is an elevated card
+ *     with a top inner-glow; each row shows +lines / -lines / commits / files
+ *     and a top-right external-link arrow).
+ *   - Footer: divider, avatar (GitHub image; green circle is placeholder
+ *     only), display name + "GitHub" provider, sign-out icon. Clicking the
+ *     sign-out icon opens an inline confirmation popover pinned directly
+ *     above the profile row.
+ */
 export function Sidebar({
   entries,
   activeId,
@@ -44,147 +49,194 @@ export function Sidebar({
 }: SidebarProps) {
   const { data: session } = useSession();
   const router = useRouter();
-  const [profileOpen, setProfileOpen] = useState(false);
-  const profileRef = useRef<HTMLDivElement>(null);
+  const [signOutOpen, setSignOutOpen] = useState(false);
+  const footerRef = useRef<HTMLDivElement>(null);
 
   const avatarUrl = session?.user?.image;
   // Prefer the GitHub @handle. Fall back to display name, then generic "User".
   const userHandle = session?.user?.login ?? session?.user?.name ?? "User";
 
-  // Close the profile popover when clicking outside it.
+  // Close the sign-out confirmation on outside click or Esc so it doesn't
+  // linger once the user has moved on.
   useEffect(() => {
-    if (!profileOpen) return;
-    const handler = (e: MouseEvent) => {
-      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
-        setProfileOpen(false);
+    if (!signOutOpen) return;
+    const clickHandler = (e: MouseEvent) => {
+      if (footerRef.current && !footerRef.current.contains(e.target as Node)) {
+        setSignOutOpen(false);
       }
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [profileOpen]);
+    const keyHandler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSignOutOpen(false);
+    };
+    document.addEventListener("mousedown", clickHandler);
+    document.addEventListener("keydown", keyHandler);
+    return () => {
+      document.removeEventListener("mousedown", clickHandler);
+      document.removeEventListener("keydown", keyHandler);
+    };
+  }, [signOutOpen]);
 
   return (
     <>
       {isOpen && <div className="sidebar-overlay" onClick={onClose} />}
 
       <aside className={`sidebar ${isOpen ? "open" : ""}`}>
-        {/* TOP: logo + theme + settings */}
-        <div className="sidebar-top">
-          <span className="sidebar-logo">askscout</span>
-          <div className="sidebar-top-actions">
-            <ThemeToggle />
-            <button
-              className="header-icon-btn"
-              onClick={() => router.push("/settings")}
-              aria-label="Settings"
-            >
-              <Settings size={16} />
-            </button>
-          </div>
-        </div>
-
-        {/* MIDDLE: scrollable content (repo + history) */}
-        <div className="sidebar-content">
-          <div className="sidebar-section sidebar-section--repo">
-            <div className="sidebar-title">Repo</div>
-            <RepoSelector
-              repos={repos}
-              activeRepos={activeRepos}
-              selected={selectedRepo}
-              onChange={onRepoChange}
-            />
-          </div>
-
-          <div className="sidebar-title sidebar-title--history">
-            <Clock size={14} /> History
-          </div>
-          <div className="sidebar-subtitle">Last 30 days</div>
-
-          <div className="sidebar-list">
-            {entries.length === 0 && (
-              <div className="sidebar-empty">History will appear here as you generate digests.</div>
-            )}
-            {entries.map((entry) => (
+        {/* TOP HALF: logo row, repo picker, history list. */}
+        <div className="sidebar-main">
+          <div className="sidebar-top">
+            <div className="sidebar-brand">
+              <span className="sidebar-brand-mark" aria-hidden />
+              <span className="sidebar-brand-name">AskScout</span>
+            </div>
+            <div className="sidebar-top-actions">
+              <ThemeToggle />
               <button
-                key={entry.id}
-                className={`sidebar-item ${activeId === entry.id ? "active" : ""}`}
-                onClick={() => {
-                  onSelect(entry.id);
-                  onClose();
-                }}
+                className="header-icon-btn"
+                onClick={() => router.push("/settings")}
+                aria-label="Settings"
               >
-                <div className="sidebar-item-top">
-                  <span className="sidebar-item-date">{entry.date}</span>
-                  <div className="sidebar-item-metrics">
-                    <span className="sidebar-item-metric">
-                      <GitCommit size={10} /> {entry.commits}
-                    </span>
-                    <span className="sidebar-item-metric">
-                      <FileText size={10} /> {entry.filesChanged}
-                    </span>
-                  </div>
-                </div>
-                <div className="sidebar-item-metrics">
-                  {entry.shippedCount > 0 && (
-                    <span className="sidebar-item-metric sidebar-item-metric--shipped">
-                      <Rocket size={10} /> {entry.shippedCount}
-                    </span>
-                  )}
-                  {entry.changedCount > 0 && (
-                    <span className="sidebar-item-metric sidebar-item-metric--changed">
-                      <Wrench size={10} /> {entry.changedCount}
-                    </span>
-                  )}
-                  {entry.unstableCount > 0 && (
-                    <span className="sidebar-item-metric sidebar-item-metric--unstable">
-                      <AlertTriangle size={10} /> {entry.unstableCount}
-                    </span>
-                  )}
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* BOTTOM: profile row; click to open sign-out popover */}
-        <div className="sidebar-bottom" ref={profileRef}>
-          <button
-            className={`sidebar-profile-btn${profileOpen ? " is-open" : ""}`}
-            onClick={() => setProfileOpen((v) => !v)}
-            aria-haspopup="menu"
-            aria-expanded={profileOpen}
-          >
-            {avatarUrl ? (
-              <Image
-                src={avatarUrl}
-                alt={userHandle}
-                width={28}
-                height={28}
-                className="sidebar-profile-avatar"
-              />
-            ) : (
-              <div className="sidebar-profile-avatar sidebar-profile-avatar--placeholder" />
-            )}
-            <span className="sidebar-profile-text">
-              <span className="sidebar-profile-name">{userHandle}</span>
-              <span className="sidebar-profile-provider">GitHub</span>
-            </span>
-            <ChevronUp
-              size={14}
-              className={`sidebar-profile-chevron${profileOpen ? " is-open" : ""}`}
-              aria-hidden
-            />
-          </button>
-          {profileOpen && (
-            <div className="sidebar-profile-menu" role="menu">
-              <button
-                className="sidebar-profile-menu-item"
-                onClick={() => void signOut({ callbackUrl: "/" })}
-              >
-                <LogOut size={14} /> Sign out
+                <Settings size={20} strokeWidth={1.75} />
               </button>
             </div>
+          </div>
+
+          <div className="sidebar-content">
+            <div className="sidebar-section sidebar-section--repo">
+              <div className="sidebar-title">
+                Repo
+                <span
+                  className="sidebar-title-help"
+                  title="The repository Scout is scanning for this digest"
+                  aria-label="The repository Scout is scanning for this digest"
+                >
+                  <HelpCircle size={16} strokeWidth={1.75} aria-hidden />
+                </span>
+              </div>
+              <RepoSelector
+                repos={repos}
+                activeRepos={activeRepos}
+                selected={selectedRepo}
+                onChange={onRepoChange}
+              />
+            </div>
+
+            <div className="sidebar-section sidebar-section--history">
+              <div className="sidebar-title">
+                History
+                <span
+                  className="sidebar-title-help"
+                  title="Your digests from the last 30 days"
+                  aria-label="Your digests from the last 30 days"
+                >
+                  <HelpCircle size={16} strokeWidth={1.75} aria-hidden />
+                </span>
+              </div>
+
+              <div className="sidebar-list">
+                {entries.length === 0 && (
+                  <div className="sidebar-empty">
+                    History will appear here as you generate digests.
+                  </div>
+                )}
+                {entries.map((entry) => {
+                  const isActive = activeId === entry.id;
+                  return (
+                    <button
+                      key={entry.id}
+                      type="button"
+                      className={`sidebar-item${isActive ? " active" : ""}`}
+                      onClick={() => {
+                        onSelect(entry.id);
+                        onClose();
+                      }}
+                    >
+                      <div className="sidebar-item-body">
+                        <span className="sidebar-item-date">{entry.date}</span>
+                        <div className="sidebar-item-stats">
+                          <span className="sidebar-item-stat sidebar-item-stat--added">
+                            +{entry.linesAdded}
+                          </span>
+                          <span className="sidebar-item-stat sidebar-item-stat--removed">
+                            -{entry.linesRemoved}
+                          </span>
+                          <span className="sidebar-item-stat">
+                            {entry.commits}
+                            <GitCommit size={16} strokeWidth={1.75} aria-hidden />
+                          </span>
+                          <span className="sidebar-item-stat">
+                            {entry.filesChanged}
+                            <FileText size={16} strokeWidth={1.75} aria-hidden />
+                          </span>
+                        </div>
+                      </div>
+                      <span className="sidebar-item-open" aria-hidden>
+                        <ArrowUpRight size={20} strokeWidth={1.75} />
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* FOOTER: divider + profile row. Sign-out confirmation floats above
+            it instead of taking over the screen. */}
+        <div className="sidebar-bottom" ref={footerRef}>
+          {signOutOpen && (
+            <div className="sidebar-signout-confirm" role="dialog" aria-label="Sign out">
+              <div className="sidebar-signout-confirm-text">Sign out of Scout?</div>
+              <div className="sidebar-signout-confirm-actions">
+                <button
+                  type="button"
+                  className="sidebar-signout-confirm-btn sidebar-signout-confirm-btn--cancel"
+                  onClick={() => setSignOutOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="sidebar-signout-confirm-btn sidebar-signout-confirm-btn--confirm"
+                  onClick={() => void signOut({ callbackUrl: "/" })}
+                >
+                  Sign out
+                </button>
+              </div>
+            </div>
           )}
+
+          <div className="sidebar-profile-row">
+            <div className="sidebar-profile-identity">
+              {avatarUrl ? (
+                <Image
+                  src={avatarUrl}
+                  alt={userHandle}
+                  width={44}
+                  height={44}
+                  className="sidebar-profile-avatar"
+                />
+              ) : (
+                <div
+                  className="sidebar-profile-avatar sidebar-profile-avatar--placeholder"
+                  aria-hidden
+                />
+              )}
+              <div className="sidebar-profile-text">
+                <span className="sidebar-profile-name">{userHandle}</span>
+                <span className="sidebar-profile-provider">GitHub</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              className="sidebar-signout-btn"
+              onClick={() => setSignOutOpen((v) => !v)}
+              aria-label="Sign out"
+              aria-haspopup="dialog"
+              aria-expanded={signOutOpen}
+            >
+              <LogOut size={20} strokeWidth={1.75} />
+            </button>
+          </div>
         </div>
       </aside>
     </>

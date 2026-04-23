@@ -81,7 +81,8 @@
 
   /* Sizing */
   --header-height: 56px;
-  --sidebar-width: 260px;
+  /* Matches Figma left-nav frame: 324px content + 24px padding each side. */
+  --sidebar-width: 372px;
   --max-width: 720px;
 }
 
@@ -1541,6 +1542,14 @@ a:hover {
    Sidebar
    ============================================ */
 
+/* Pixel-perfect implementation of the Figma Left-Nav frame (node 127:2411):
+     - 372px outer (324 content + 24 padding each side)
+     - Top cluster: logo row + repo section + history list
+     - Bottom cluster: divider + profile row
+   Uses existing brand tokens. Hex values that don't have a token
+   equivalent (e.g. #1e1e1e for the active-row card) fall back to the
+   token that matches the intent (--color-bg-tertiary). */
+
 .sidebar {
   position: fixed;
   top: 0;
@@ -1548,229 +1557,158 @@ a:hover {
   width: var(--sidebar-width);
   height: 100vh;
   background: var(--color-bg-secondary);
-  /* 24px padding on both sides keeps internal content inset from the
-     browser's left edge and produces a symmetric gap between sidebar
-     content and the floating card on the right. */
-  padding: 0 var(--space-lg);
+  padding: 24px;
   display: flex;
   flex-direction: column;
   z-index: 5;
 }
 
-/* TOP: logo + theme toggle + settings. Fixed at top, doesn't scroll. */
+/* TOP HALF: logo header, repo picker, history. Grows to fill available
+   space so the footer sticks to the bottom. */
+.sidebar-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Logo + icon cluster. Fixed height row. */
 .sidebar-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* Horizontal padding lives on .sidebar so the divider below is inset
-     symmetrically from both edges. */
-  padding: var(--space-md) 0;
-  border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
 }
 
-.sidebar-logo {
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* 25×25 rounded white square placeholder for the logo mark. Will be
+   swapped for the real telescope SVG later. */
+.sidebar-brand-mark {
+  width: 25px;
+  height: 25px;
+  border-radius: 6px;
+  background: var(--color-text-primary);
+  flex-shrink: 0;
+}
+
+.sidebar-brand-name {
   font-family: var(--font-display);
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1;
   color: var(--color-text-primary);
+  letter-spacing: 0;
 }
 
 .sidebar-top-actions {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 14px;
 }
 
-/* MIDDLE: scrollable content between top and bottom */
-.sidebar-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: var(--space-md) 0;
-}
-
-/* BOTTOM: profile row. Fixed at bottom, doesn't scroll. */
-.sidebar-bottom {
-  position: relative;
-  padding: var(--space-sm) 0;
-  border-top: 1px solid var(--color-border);
-  flex-shrink: 0;
-}
-
-.sidebar-profile-btn {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  width: 100%;
-  padding: var(--space-sm);
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-md);
-  cursor: pointer;
+/* Override the generic header-icon-btn sizing for the sidebar's 20×20
+   inline-icon look. No background box — just the icon. */
+.sidebar-top-actions .header-icon-btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 0;
   color: var(--color-text-primary);
-  text-align: left;
-  transition: background 0.12s ease;
 }
 
-.sidebar-profile-btn:hover,
-.sidebar-profile-btn.is-open {
-  background: var(--color-bg-tertiary);
+.sidebar-top-actions .header-icon-btn:hover {
+  background: transparent;
+  color: var(--color-text-primary);
+  opacity: 0.7;
 }
 
-.sidebar-profile-avatar {
-  flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.sidebar-profile-avatar--placeholder {
-  background: var(--color-bg-tertiary);
-}
-
-.sidebar-profile-text {
+/* Scroll container that holds repo + history. The repo section stays
+   pinned at the top while the history list scrolls if it overflows. */
+.sidebar-content {
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  gap: 24px;
   flex: 1;
-  line-height: 1.2;
+  min-height: 0;
+  overflow-y: auto;
 }
 
-.sidebar-profile-name {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--color-text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.sidebar-profile-provider {
-  font-size: 11px;
-  color: var(--color-text-tertiary);
-  margin-top: 1px;
-}
-
-.sidebar-profile-chevron {
-  flex-shrink: 0;
-  color: var(--color-text-tertiary);
-  transition: transform 0.15s ease;
-}
-
-.sidebar-profile-chevron.is-open {
-  transform: rotate(180deg);
-}
-
-/* Popover menu that appears above the profile row when clicked. */
-.sidebar-profile-menu {
-  position: absolute;
-  bottom: calc(100% + 4px);
-  left: var(--space-sm);
-  right: var(--space-sm);
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  padding: var(--space-xs);
-  z-index: 20;
-}
-
-.sidebar-profile-menu-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  width: 100%;
-  padding: var(--space-sm);
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  font-size: 13px;
-  color: var(--color-text-primary);
-  text-align: left;
-  transition: background 0.12s ease;
-}
-
-.sidebar-profile-menu-item:hover {
-  background: var(--color-bg-tertiary);
-}
-
+/* Section label ("Repo", "History") with the small ? info icon. */
 .sidebar-title {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  padding: var(--space-xs) var(--space-sm);
-}
-
-.sidebar-subtitle {
-  font-size: 11px;
+  gap: 4px;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1;
   color: var(--color-text-tertiary);
-  padding: 0 var(--space-sm);
-  margin-bottom: var(--space-md);
 }
 
-/* Repo picker section at the top of the sidebar. A small heading + the
-   combobox trigger stretched full width. Bottom border separates it from
-   the History section below. */
+.sidebar-title-help {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-tertiary);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: help;
+}
+
+/* Repo picker row: label above trigger with 8px gap. */
 .sidebar-section--repo {
-  margin-bottom: var(--space-md);
-  padding-bottom: var(--space-md);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.sidebar-section--repo .sidebar-title {
-  margin-bottom: var(--space-xs);
-}
-
-/* RepoSelector inside sidebar: full-width trigger, popover opens below */
-.sidebar-section--repo .repo-combobox,
-.sidebar-section--repo .repo-combobox-trigger {
   display: flex;
-  width: 100%;
-  max-width: none;
+  flex-direction: column;
+  gap: 8px;
 }
 
-/* Popover width constrained to sidebar width so it doesn't bleed across
-   the content area. */
-.sidebar-section--repo .repo-combobox-popover {
-  width: 100%;
-}
-
-/* Slightly reduce top margin on the History title since the repo
-   section above provides its own visual separation. */
-.sidebar-title--history {
-  padding-top: 0;
+/* History section: label above list with 14px gap. */
+.sidebar-section--history {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
 }
 
 .sidebar-empty {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--color-text-tertiary);
-  padding: var(--space-md) var(--space-sm);
+  padding: 14px;
   line-height: 1.5;
 }
 
+/* History list. No gap — each row is spaced by its own padding so the
+   active card visually sits flush against the surrounding blank rows. */
 .sidebar-list {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
+  overflow-y: auto;
+  min-height: 0;
 }
 
+/* One history row. Inactive state is a bare flex row; active state gets
+   the elevated dark card with top inner glow. */
 .sidebar-item {
-  display: block;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   width: 100%;
-  text-align: left;
-  padding: var(--space-sm) var(--space-sm);
-  border-radius: var(--radius-sm);
+  padding: 14px;
+  border-radius: 8px;
   background: transparent;
+  border: none;
   cursor: pointer;
-  transition: all 0.1s ease;
-  border: 1px solid transparent;
+  text-align: left;
   font-family: var(--font-sans);
+  color: var(--color-text-primary);
+  transition: background 0.12s ease;
 }
 
 .sidebar-item:hover {
@@ -1779,61 +1717,228 @@ a:hover {
 
 .sidebar-item.active {
   background: var(--color-bg-tertiary);
-  border-color: var(--color-border);
+  /* Subtle top-inner glow matching the Figma shadow:
+     inset 0 8px 20px rgba(255, 255, 255, 0.04). */
+  box-shadow: inset 0 8px 20px 0 rgba(255, 255, 255, 0.04);
 }
 
-.sidebar-item-top {
+.sidebar-item-body {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 3px;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
 }
 
 .sidebar-item-date {
-  font-size: 12px;
-  font-weight: 600;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1;
   color: var(--color-text-primary);
-  letter-spacing: -0.01em;
 }
 
-.sidebar-item-badges {
+/* Stats strip under the date: +lines / -lines / commits / files. */
+.sidebar-item-stats {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 14px;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--color-text-primary);
 }
 
-.sidebar-item-badge {
+.sidebar-item-stat {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
-  font-size: 10px;
-  color: var(--color-text-tertiary);
+  gap: 4px;
+  white-space: nowrap;
 }
 
-.sidebar-item-metrics {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  font-size: 10px;
-  color: var(--color-text-tertiary);
-}
-
-.sidebar-item-metric {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.sidebar-item-metric--shipped {
+.sidebar-item-stat--added {
   color: var(--color-success);
 }
 
-.sidebar-item-metric--changed {
-  color: var(--color-text-tertiary);
+.sidebar-item-stat--removed {
+  color: var(--color-danger);
 }
 
-.sidebar-item-metric--unstable {
-  color: var(--color-warning);
+.sidebar-item-stat svg {
+  color: var(--color-text-primary);
+  flex-shrink: 0;
+}
+
+/* Top-right arrow icon indicating the row opens a full digest. */
+.sidebar-item-open {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: var(--color-text-primary);
+  flex-shrink: 0;
+}
+
+/* FOOTER: divider + profile row. Pinned to the bottom. */
+.sidebar-bottom {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex-shrink: 0;
+  padding-top: 24px;
+}
+
+.sidebar-bottom::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.sidebar-profile-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.sidebar-profile-identity {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* 44×44 round avatar. Green solid is the placeholder; actual GitHub
+   image replaces the background when present. */
+.sidebar-profile-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--color-success);
+}
+
+.sidebar-profile-avatar--placeholder {
+  background: var(--color-success);
+}
+
+.sidebar-profile-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1;
+}
+
+.sidebar-profile-name {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 16px;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-profile-provider {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 16px;
+  color: var(--color-text-tertiary);
+  margin-top: 4px;
+}
+
+/* Sign-out trigger in the footer. 20×20 icon only, no box. */
+.sidebar-signout-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity 0.12s ease;
+}
+
+.sidebar-signout-btn:hover {
+  opacity: 0.7;
+}
+
+/* Confirmation popover that appears directly above the footer row
+   when the sign-out icon is clicked. Fits inside the sidebar — not a
+   full-screen modal. */
+.sidebar-signout-confirm {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 8px);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 20;
+}
+
+.sidebar-signout-confirm-text {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+}
+
+.sidebar-signout-confirm-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.sidebar-signout-confirm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s ease;
+  border: 1px solid transparent;
+}
+
+.sidebar-signout-confirm-btn--cancel {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+}
+
+.sidebar-signout-confirm-btn--cancel:hover {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+.sidebar-signout-confirm-btn--confirm {
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+}
+
+.sidebar-signout-confirm-btn--confirm:hover {
+  background: var(--color-accent-hover);
 }
 
 .sidebar-overlay {
@@ -1842,6 +1947,39 @@ a:hover {
 
 .sidebar-toggle {
   display: none;
+}
+
+/* RepoSelector inside sidebar: full-width trigger styled to match the
+   Figma select (44px tall, 8px radius, Work Sans Medium 16px). */
+.sidebar-section--repo .repo-combobox,
+.sidebar-section--repo .repo-combobox-trigger {
+  display: flex;
+  width: 100%;
+  max-width: none;
+}
+
+.sidebar-section--repo .repo-combobox-trigger {
+  height: 44px;
+  padding: 0 11px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-bg-tertiary);
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--color-text-primary);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-section--repo .repo-combobox-chevron {
+  width: 20px;
+  height: 20px;
+  color: var(--color-text-primary);
+}
+
+.sidebar-section--repo .repo-combobox-popover {
+  width: 100%;
 }
 
 /* ============================================

@@ -131,6 +131,10 @@ export interface HistoryEntry {
   vibeCheck: string;
   commits: number;
   filesChanged: number;
+  /** Total lines added across the day. Rendered as "+N" in the sidebar. */
+  linesAdded: number;
+  /** Total lines removed across the day. Rendered as "-N" in the sidebar. */
+  linesRemoved: number;
   shippedCount: number;
   changedCount: number;
   unstableCount: number;
@@ -143,6 +147,8 @@ export const MOCK_HISTORY: HistoryEntry[] = [
     vibeCheck: "You're building fast. Shipped OAuth and a settings page in one session.",
     commits: 34,
     filesChanged: 47,
+    linesAdded: 1204,
+    linesRemoved: 389,
     shippedCount: 2,
     changedCount: 3,
     unstableCount: 1,
@@ -153,6 +159,8 @@ export const MOCK_HISTORY: HistoryEntry[] = [
     vibeCheck: "Solid grind day, mostly wiring up the pricing page and cleaning up nav.",
     commits: 18,
     filesChanged: 12,
+    linesAdded: 612,
+    linesRemoved: 208,
     shippedCount: 1,
     changedCount: 2,
     unstableCount: 0,
@@ -163,6 +171,8 @@ export const MOCK_HISTORY: HistoryEntry[] = [
     vibeCheck: "Database day. Migrated from SQLite to Postgres and didn't break anything. Rare W.",
     commits: 22,
     filesChanged: 31,
+    linesAdded: 984,
+    linesRemoved: 421,
     shippedCount: 0,
     changedCount: 4,
     unstableCount: 0,
@@ -174,6 +184,8 @@ export const MOCK_HISTORY: HistoryEntry[] = [
       "You went deep on the Stripe integration. It's half-wired but the foundation is there.",
     commits: 41,
     filesChanged: 19,
+    linesAdded: 1478,
+    linesRemoved: 512,
     shippedCount: 1,
     changedCount: 2,
     unstableCount: 2,
@@ -184,6 +196,8 @@ export const MOCK_HISTORY: HistoryEntry[] = [
     vibeCheck: "Slow day, a few bug fixes and some CSS tweaking. Sometimes that's the vibe.",
     commits: 7,
     filesChanged: 5,
+    linesAdded: 96,
+    linesRemoved: 42,
     shippedCount: 0,
     changedCount: 1,
     unstableCount: 0,
@@ -194,6 +208,8 @@ export const MOCK_HISTORY: HistoryEntry[] = [
     vibeCheck: "Auth day! Set up the whole login/signup flow from scratch. Big foundation piece.",
     commits: 28,
     filesChanged: 22,
+    linesAdded: 1103,
+    linesRemoved: 147,
     shippedCount: 3,
     changedCount: 1,
     unstableCount: 0,

@@ -9,9 +9,11 @@ Comprehensive briefing for any new Claude Code session continuing work on Scout.
 **Scout** (`askscout.dev` web · `askscout` npm package) is **the daily digest for vibe coders**. It sniffs through your git repo and tells you what you built, what changed, and where you left off — read top to bottom like a daily report from a personal assistant who stayed up reading your commits.
 
 ### Target user
+
 Solo devs and small teams using AI coding tools (Cursor, Claude Code, Windsurf) who want a clear daily summary of their progress without writing standups themselves.
 
 ### Voice and tone
+
 - Warm, narrative, slightly editorial
 - **Telescope mascot** — "scout" as in surveying from afar
 - Signature lines:
@@ -20,11 +22,13 @@ Solo devs and small teams using AI coding tools (Cursor, Claude Code, Windsurf) 
 - Personality without being saccharine. Direct and honest.
 
 ### Three output modes
+
 1. **digest** (default) — daily report
 2. **resume prompt** (`--resume`) — pasteable AI context for continuing work
 3. **standup** (`--standup`) — yesterday/today/blockers format
 
 ### PRD
+
 Located at `~/Desktop/PRD.md`. Always defer to it for product decisions, voice/tone, output format, and feature scope.
 
 ---
@@ -45,6 +49,7 @@ apps/
 ```
 
 ### Tech stack
+
 - **pnpm** workspaces (monorepo manager)
 - **TypeScript strict** everywhere — no `any` unless justified
 - **Next.js 15 App Router** + **React 19** (web app)
@@ -58,6 +63,7 @@ apps/
 - **Vanilla CSS** with custom-property token system. **NO Tailwind.** A Tailwind v4 migration was tried today and reverted.
 
 ### Storage model
+
 - Web: Supabase (digests, user profiles, settings, check-ins)
 - CLI: `.askscout/state.json` per project, rewritten each run
 - 30-day digest retention (free tier)
@@ -84,36 +90,36 @@ Always run `pnpm typecheck`, `pnpm format`, `pnpm lint` before committing. Build
 
 **8-color brand palette:**
 
-| Name | Hex |
-|---|---|
-| Primary Black | `#070707` |
-| Secondary Black | `#121212` |
-| Dark Grey | `#1E1E1E` |
-| Light Grey | `#616161` |
-| White | `#FFFFFF` |
-| Green | `#57D32E` (`#4AC321` in light mode — darker for readability) |
-| Yellow | `#F7C80B` (`#E2BB20` in light mode) |
-| Red | `#DD1D1D` (`#C32020` in light mode) |
+| Name            | Hex                                                          |
+| --------------- | ------------------------------------------------------------ |
+| Primary Black   | `#070707`                                                    |
+| Secondary Black | `#121212`                                                    |
+| Dark Grey       | `#1E1E1E`                                                    |
+| Light Grey      | `#616161`                                                    |
+| White           | `#FFFFFF`                                                    |
+| Green           | `#57D32E` (`#4AC321` in light mode — darker for readability) |
+| Yellow          | `#F7C80B` (`#E2BB20` in light mode)                          |
+| Red             | `#DD1D1D` (`#C32020` in light mode)                          |
 
 **Token system** (in `apps/web/src/app/globals.css`):
 
-| Token | Dark Mode | Light Mode |
-|---|---|---|
-| `--color-bg-primary` (card surface) | `#070707` | `#FFFFFF` |
-| `--color-bg-secondary` (body / sidebar / chrome) | `#121212` | `#F7F7F8` |
-| `--color-bg-tertiary` (subtle UI) | `#1E1E1E` | `#EFEFEF` |
-| `--color-bg-elevated` (popovers) | `#141414` | `#FFFFFF` |
-| `--color-text-primary` | `#EDEDED` | `#070707` |
-| `--color-text-secondary` | `#A0A0A0` | `#616161` |
-| `--color-text-tertiary` | `#616161` | `#A0A0A0` |
-| `--color-border` | `#222222` | `#ECECEC` |
-| `--color-border-hover` | `#333333` | `#D0D0D0` |
-| `--color-accent` | `#FFFFFF` | `#070707` |
-| `--color-accent-hover` | `#EDEDED` | `#1E1E1E` |
-| `--color-accent-text` | `#070707` | `#FFFFFF` |
-| `--color-success` (strong) | `#57D32E` | `#4AC321` |
-| `--color-warning` (moderate) | `#F7C80B` | `#E2BB20` |
-| `--color-danger` (rough) | `#DD1D1D` | `#C32020` |
+| Token                                            | Dark Mode | Light Mode |
+| ------------------------------------------------ | --------- | ---------- |
+| `--color-bg-primary` (card surface)              | `#070707` | `#FFFFFF`  |
+| `--color-bg-secondary` (body / sidebar / chrome) | `#121212` | `#F7F7F8`  |
+| `--color-bg-tertiary` (subtle UI)                | `#1E1E1E` | `#EFEFEF`  |
+| `--color-bg-elevated` (popovers)                 | `#141414` | `#FFFFFF`  |
+| `--color-text-primary`                           | `#EDEDED` | `#070707`  |
+| `--color-text-secondary`                         | `#A0A0A0` | `#616161`  |
+| `--color-text-tertiary`                          | `#616161` | `#A0A0A0`  |
+| `--color-border`                                 | `#222222` | `#ECECEC`  |
+| `--color-border-hover`                           | `#333333` | `#D0D0D0`  |
+| `--color-accent`                                 | `#FFFFFF` | `#070707`  |
+| `--color-accent-hover`                           | `#EDEDED` | `#1E1E1E`  |
+| `--color-accent-text`                            | `#070707` | `#FFFFFF`  |
+| `--color-success` (strong)                       | `#57D32E` | `#4AC321`  |
+| `--color-warning` (moderate)                     | `#F7C80B` | `#E2BB20`  |
+| `--color-danger` (rough)                         | `#DD1D1D` | `#C32020`  |
 
 Status colors drive: Codebase Health badges (success=strong, warning=moderate, danger=rough), live badge dot, +/- line counts, danger button.
 
@@ -127,10 +133,12 @@ Theme switching: `[data-theme="dark"]` attribute on `<html>`, wired via `apps/we
 - **Work Sans** (body sans) — everything else, including code, data, file paths, timestamps
 
 Loaded via `next/font/google` in `apps/web/src/app/layout.tsx`:
+
 - `--font-pridi` (weights 400/500/600/700)
 - `--font-work-sans` (weights 300/400/500/600, normal + italic)
 
 Aliased in globals.css:
+
 - `--font-sans` → Work Sans
 - `--font-display` → Pridi
 - `--font-mono` → aliased to `--font-sans` (legacy token; everything resolves to Work Sans, no monospace anywhere)
@@ -138,15 +146,18 @@ Aliased in globals.css:
 Editorial opener line ("Scanning the horizon…") uses `--font-sans` italic — **not** Pridi. Pridi reserved strictly for titles + logo.
 
 ### Iconography
+
 - **All utility icons:** `lucide-react`
 - **All emojis:** Microsoft Fluent 3D via the `<Emoji>` component (`apps/web/src/components/Emoji.tsx`), pulled from jsdelivr CDN. Named keys: `vibe`, `shipped`, `changed`, `unstable`, `leftOff`, `takeaway`, `statistics`, `mostActiveFiles`, `whenYouCoded`, `paceCheck`, `codebaseHealth`, `streak`, `quietDay`.
 
 ### Spacing
+
 `--space-xs/sm/md/lg/xl/2xl` = `4 / 8 / 16 / 24 / 32 / 48 px`.
 
 The card itself uses **34px uniform interior padding** (header, narrative column, stats column). All dividers run edge-to-edge of the card.
 
 ### Radii
+
 `--radius-sm` 6px · `--radius-md` 8px · `--radius-lg` 12px · `--radius-full` 9999px.
 
 ---
@@ -157,7 +168,7 @@ The card itself uses **34px uniform interior padding** (header, narrative column
 
 1. User clicks Generate (or auto-generates for today)
 2. SSE connection opens to `/api/digest/stream`
-3. **Opener phase** (~4.1s total): `DigestOpener` types out *"Scanning the horizon for commits…"* in italic Work Sans with a blinking caret. Timing: 450ms start delay + ~1320ms typing + 2000ms dwell + 350ms fade.
+3. **Opener phase** (~4.1s total): `DigestOpener` types out _"Scanning the horizon for commits…"_ in italic Work Sans with a blinking caret. Timing: 450ms start delay + ~1320ms typing + 2000ms dwell + 350ms fade.
 4. **Skeleton phase**: opener fades, `SectionSkeleton` placeholders fill the layout (narrative + sidebar) with two layered animations:
    - Linear shimmer (gradient sweep across each line, 1.8s)
    - Slow ease-in-out width breathing (scaleX 1 → 1.015 → 1, 4.5s, staggered per line)
@@ -176,14 +187,14 @@ The card itself uses **34px uniform interior padding** (header, narrative column
 
 The LLM outputs a structured response with emoji-prefixed section headers:
 
-| Emoji | Section | Visible? |
-|---|---|---|
-| 💬 | Vibe Check | yes (narrative col) |
-| 🚀 | Shipped | yes (narrative col) |
-| 🔧 | Changed | yes (narrative col) |
-| 🔄 | Still Shifting | yes (narrative col) |
-| 📍 | Left Off | yes (narrative col) |
-| 🔑 | Key Takeaways | yes (narrative col) |
+| Emoji | Section        | Visible?            |
+| ----- | -------------- | ------------------- |
+| 💬    | Vibe Check     | yes (narrative col) |
+| 🚀    | Shipped        | yes (narrative col) |
+| 🔧    | Changed        | yes (narrative col) |
+| 🔄    | Still Shifting | yes (narrative col) |
+| 📍    | Left Off       | yes (narrative col) |
+| 🔑    | Key Takeaways  | yes (narrative col) |
 
 After 🔑 the LLM emits `---STANDUP---`, `---PLAN---`, `---AI_CONTEXT---`, `---SUMMARY---` — these are private sections accessed via modals or invisible storage. The drip animation stops at `---STANDUP---`.
 
@@ -218,33 +229,33 @@ Plus computed stat sections (no LLM, rendered in stats sidebar): 📊 Statistics
 
 ## 5. Major components in `apps/web/src/components/`
 
-| Component | Purpose |
-|---|---|
-| `Sidebar.tsx` | Left nav: logo, settings, theme toggle, repo picker, history list, profile + sign out. **CURRENT FOCUS — about to be redesigned pixel-perfect from Figma using MCP.** |
-| `DigestView.tsx` | Main content. Renders streaming + final digest. Owns the two-column layout, opener phase machine, sidebar gate logic. ~1400 lines. |
-| `DigestOpener.tsx` | Editorial typing line ("Scanning the horizon for commits…"). Self-contained lifecycle: wait → type → dwell → onComplete. |
-| `PreGeneration.tsx` | `SectionSkeleton` component + `SECTION_SKELETONS` / `SIDEBAR_SKELETONS` data arrays. |
-| `RepoSelector.tsx` | Custom combobox replacing native `<select>`. Keyboard nav, search, smart sort. |
-| `ThemeToggle.tsx` | Light/dark flip via `data-theme` attribute on `<html>`. |
-| `Emoji.tsx` | Microsoft Fluent 3D emoji wrapper (renders via `<img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/...">`). |
-| `Header.tsx` | Mobile-only top bar (hamburger + logo). |
-| `AIContextModal.tsx` | "Resume Prompt" output modal. |
-| `StandupModal.tsx` | Standup output modal. |
-| `PlanModal.tsx` | To-Do List output modal. |
-| `HistoryList.tsx` | Sidebar history rows (legacy — currently unused; sidebar inlines its own list). |
+| Component            | Purpose                                                                                                                                                               |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Sidebar.tsx`        | Left nav: logo, settings, theme toggle, repo picker, history list, profile + sign out. **CURRENT FOCUS — about to be redesigned pixel-perfect from Figma using MCP.** |
+| `DigestView.tsx`     | Main content. Renders streaming + final digest. Owns the two-column layout, opener phase machine, sidebar gate logic. ~1400 lines.                                    |
+| `DigestOpener.tsx`   | Editorial typing line ("Scanning the horizon for commits…"). Self-contained lifecycle: wait → type → dwell → onComplete.                                              |
+| `PreGeneration.tsx`  | `SectionSkeleton` component + `SECTION_SKELETONS` / `SIDEBAR_SKELETONS` data arrays.                                                                                  |
+| `RepoSelector.tsx`   | Custom combobox replacing native `<select>`. Keyboard nav, search, smart sort.                                                                                        |
+| `ThemeToggle.tsx`    | Light/dark flip via `data-theme` attribute on `<html>`.                                                                                                               |
+| `Emoji.tsx`          | Microsoft Fluent 3D emoji wrapper (renders via `<img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/...">`).                                          |
+| `Header.tsx`         | Mobile-only top bar (hamburger + logo).                                                                                                                               |
+| `AIContextModal.tsx` | "Resume Prompt" output modal.                                                                                                                                         |
+| `StandupModal.tsx`   | Standup output modal.                                                                                                                                                 |
+| `PlanModal.tsx`      | To-Do List output modal.                                                                                                                                              |
+| `HistoryList.tsx`    | Sidebar history rows (legacy — currently unused; sidebar inlines its own list).                                                                                       |
 
 ### Key files in `apps/web/src/`
 
-| Path | Purpose |
-|---|---|
-| `app/globals.css` | ALL styling. ~3000 lines. Theme tokens (`:root` + `[data-theme="dark"]`) plus all component styles in BEM-ish class naming. |
-| `app/layout.tsx` | Root layout. Font loading (Pridi + Work Sans via `next/font/google`), theme bootstrap script, SessionProvider. |
-| `app/dashboard/page.tsx` | Main dashboard page (~900 lines). Orchestrates everything. |
-| `app/api/digest/stream/route.ts` | SSE endpoint that streams the digest. Filters out timeline for >36h spans. |
-| `lib/use-digest-stream.ts` | React hook wrapping the SSE consumer + typewriter drip. Keeps `isStreaming` true on no-commits errors specifically. |
-| `lib/parse-sections.ts` | Splits LLM output into the marked sections. |
-| `lib/typewriter-pace.ts` | Adaptive typing speed (faster on whitespace, slower on emoji). |
-| `lib/use-count-up.ts` | Animated number counter for stat reveals. |
+| Path                             | Purpose                                                                                                                     |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `app/globals.css`                | ALL styling. ~3000 lines. Theme tokens (`:root` + `[data-theme="dark"]`) plus all component styles in BEM-ish class naming. |
+| `app/layout.tsx`                 | Root layout. Font loading (Pridi + Work Sans via `next/font/google`), theme bootstrap script, SessionProvider.              |
+| `app/dashboard/page.tsx`         | Main dashboard page (~900 lines). Orchestrates everything.                                                                  |
+| `app/api/digest/stream/route.ts` | SSE endpoint that streams the digest. Filters out timeline for >36h spans.                                                  |
+| `lib/use-digest-stream.ts`       | React hook wrapping the SSE consumer + typewriter drip. Keeps `isStreaming` true on no-commits errors specifically.         |
+| `lib/parse-sections.ts`          | Splits LLM output into the marked sections.                                                                                 |
+| `lib/typewriter-pace.ts`         | Adaptive typing speed (faster on whitespace, slower on emoji).                                                              |
+| `lib/use-count-up.ts`            | Animated number counter for stat reveals.                                                                                   |
 
 ### Settings + auth
 
@@ -272,12 +283,14 @@ Plus computed stat sections (no LLM, rendered in stats sidebar): 📊 Statistics
 ## 7. Recent decisions (latest first)
 
 ### Today
+
 - **Tailwind v4 migration was tried then fully reverted.** Vanilla CSS + tokens is the chosen approach. Pixel-perfect brand work needs CSS control. Reason for revert: my Sidebar Tailwind execution was sloppy + the user wanted full design control without indirection.
 - **Figma Dev Mode MCP server installed.** New chats can read Figma directly via `mcp__plugin_figma_figma__*` tools (especially `get_design_context` and `get_screenshot`).
 - **About to redo the Sidebar pixel-perfect from Figma.** Frame to be shared. Implement in vanilla CSS using existing tokens, no class soup, BEM names, match every pixel against screenshot + MCP data.
 - **Skip Figma plugin code exports entirely.** They produce useless absolute-positioned div soup. Always read via MCP.
 
 ### Earlier this week
+
 - Editorial opener ("Scanning the horizon for commits…") added with focus-pull and dwell timing
 - Replaced per-commit Coding Timeline columns with fixed-bin histogram (16 bins, 14px fixed-width bars)
 - Quiet-day transition holds for opener completion (~4.1s) — no interstitial
@@ -334,18 +347,18 @@ When the user shares a Figma URL or selects a frame:
 
 If Figma uses Tailwind defaults via dev mode, mentally map:
 
-| Figma class | Likely intent | Use token |
-|---|---|---|
-| `bg-neutral-900` / `bg-stone-900` | Dark surface | `var(--color-bg-secondary)` or `var(--color-bg-tertiary)` depending on hierarchy |
-| `bg-zinc-950` / `bg-black` | Darkest | `var(--color-bg-primary)` |
-| `bg-white` | Lightest | `var(--color-bg-primary)` (light) or `#FFFFFF` literal |
-| `text-zinc-600` / `text-neutral-500` | Muted text | `var(--color-text-tertiary)` |
-| `text-zinc-400` | Less muted | `var(--color-text-secondary)` |
-| `text-white` | Body | `var(--color-text-primary)` |
-| `text-lime-500` / `text-green-500` | Success | `var(--color-success)` |
-| `text-red-500` / `text-red-600` | Danger | `var(--color-danger)` |
-| `text-yellow-500` / `text-amber-500` | Warning | `var(--color-warning)` |
-| `outline-stone-900` / `border-zinc-800` | Subtle border | `var(--color-border)` |
+| Figma class                             | Likely intent | Use token                                                                        |
+| --------------------------------------- | ------------- | -------------------------------------------------------------------------------- |
+| `bg-neutral-900` / `bg-stone-900`       | Dark surface  | `var(--color-bg-secondary)` or `var(--color-bg-tertiary)` depending on hierarchy |
+| `bg-zinc-950` / `bg-black`              | Darkest       | `var(--color-bg-primary)`                                                        |
+| `bg-white`                              | Lightest      | `var(--color-bg-primary)` (light) or `#FFFFFF` literal                           |
+| `text-zinc-600` / `text-neutral-500`    | Muted text    | `var(--color-text-tertiary)`                                                     |
+| `text-zinc-400`                         | Less muted    | `var(--color-text-secondary)`                                                    |
+| `text-white`                            | Body          | `var(--color-text-primary)`                                                      |
+| `text-lime-500` / `text-green-500`      | Success       | `var(--color-success)`                                                           |
+| `text-red-500` / `text-red-600`         | Danger        | `var(--color-danger)`                                                            |
+| `text-yellow-500` / `text-amber-500`    | Warning       | `var(--color-warning)`                                                           |
+| `outline-stone-900` / `border-zinc-800` | Subtle border | `var(--color-border)`                                                            |
 
 ---
 
