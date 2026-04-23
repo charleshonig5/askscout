@@ -2301,70 +2301,37 @@ a:hover {
   opacity: 0.7;
 }
 
-/* Confirmation popover that appears directly above the footer row
-   when the sign-out icon is clicked. Fits inside the sidebar — not a
-   full-screen modal. */
+/* Sign-out confirmation popover — stays inline above the profile row
+   (NOT a full-screen modal), but borrows the site's modal design
+   system: translucent glass surface, 1px tertiary hairline, 8px
+   radius, 4%-white inner glow. Pridi title + Light subtitle follow
+   the same modal-top content rhythm. */
 .sidebar-signout-confirm {
   position: absolute;
   left: 0;
   right: 0;
   bottom: calc(100% + 8px);
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--color-border);
+  background: rgba(18, 18, 18, 0.7);
+  border: 1px solid var(--color-bg-tertiary);
   border-radius: 8px;
-  box-shadow: var(--shadow-md);
-  padding: 14px;
+  box-shadow: inset 0 0 40px 0 rgba(255, 255, 255, 0.04);
+  z-index: 20;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  z-index: 20;
+  overflow: hidden;
 }
 
-.sidebar-signout-confirm-text {
-  font-family: var(--font-sans);
-  font-size: 14px;
-  color: var(--color-text-primary);
-  line-height: 1.4;
-}
-
-.sidebar-signout-confirm-actions {
+.sidebar-signout-confirm-top {
+  padding: 23px;
   display: flex;
-  gap: 8px;
-  justify-content: flex-end;
+  flex-direction: column;
+  gap: 0;
 }
 
-.sidebar-signout-confirm-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 14px;
-  border-radius: 6px;
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.12s ease;
-  border: 1px solid transparent;
-}
-
-.sidebar-signout-confirm-btn--cancel {
-  background: transparent;
-  color: var(--color-text-secondary);
-  border-color: var(--color-border);
-}
-
-.sidebar-signout-confirm-btn--cancel:hover {
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-primary);
-}
-
-.sidebar-signout-confirm-btn--confirm {
-  background: var(--color-accent);
-  color: var(--color-accent-text);
-}
-
-.sidebar-signout-confirm-btn--confirm:hover {
-  background: var(--color-accent-hover);
+/* Title sized a tick smaller than the big modals since the popover
+   has less horizontal room than a 585px modal. */
+.sidebar-signout-confirm-title {
+  font-size: 18px;
 }
 
 .sidebar-overlay {
@@ -3986,6 +3953,53 @@ a:hover {
    top border per Figma; the divider above the body handles separation. */
 .modal-footer {
   padding: 23px;
+}
+
+/* Split variant — used when the footer has two side-by-side actions
+   (e.g. sidebar sign-out confirmation: Cancel / Sign out). Both
+   buttons flex to equal width. */
+.modal-footer--split {
+  display: flex;
+  gap: 8px;
+}
+
+/* Shared secondary-action button used inside .modal-footer--split.
+   Borrowed from the header Copy/Download/Email treatment: body
+   surface, tertiary border, Work Sans Light 16, inset glow. */
+.modal-action-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-bg-tertiary);
+  border-radius: 8px;
+  box-shadow: inset 0 0 20px 0 rgba(255, 255, 255, 0.04);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.modal-action-btn:hover {
+  background: var(--color-bg-tertiary);
+}
+
+/* Danger variant — used for destructive confirmations (Sign out). Red
+   label + border; keeps the same shape/glow so it reads as a peer
+   button next to Cancel. */
+.modal-action-btn--danger {
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.modal-action-btn--danger:hover {
+  background: color-mix(in srgb, var(--color-danger) 12%, var(--color-bg-secondary));
 }
 
 /* Header-positioned Copy/Download/Email actions. Scoped override of

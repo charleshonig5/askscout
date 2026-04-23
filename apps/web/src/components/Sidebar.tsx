@@ -193,22 +193,34 @@ export function Sidebar({
         </div>
 
         {/* FOOTER: divider + profile row. Sign-out confirmation floats above
-            it instead of taking over the screen. */}
+            the profile row, styled to match the site's modal design system
+            (glass surface, tertiary border, inner glow, Cancel + Sign out
+            footer-split buttons) but kept inline in the sidebar. */}
         <div className="sidebar-bottom" ref={footerRef}>
           {signOutOpen && (
-            <div className="sidebar-signout-confirm" role="dialog" aria-label="Sign out">
-              <div className="sidebar-signout-confirm-text">Sign out of Scout?</div>
-              <div className="sidebar-signout-confirm-actions">
+            <div
+              className="sidebar-signout-confirm"
+              role="dialog"
+              aria-modal="false"
+              aria-label="Sign out of Scout"
+            >
+              <div className="sidebar-signout-confirm-top">
+                <h3 className="modal-title sidebar-signout-confirm-title">Sign out of Scout?</h3>
+                <p className="modal-subtitle">
+                  You&apos;ll need to sign back in with GitHub to see new digests.
+                </p>
+              </div>
+              <div className="modal-footer modal-footer--split">
                 <button
                   type="button"
-                  className="sidebar-signout-confirm-btn sidebar-signout-confirm-btn--cancel"
+                  className="modal-action-btn"
                   onClick={() => setSignOutOpen(false)}
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
-                  className="sidebar-signout-confirm-btn sidebar-signout-confirm-btn--confirm"
+                  className="modal-action-btn modal-action-btn--danger"
                   onClick={() => void signOut({ callbackUrl: "/" })}
                 >
                   Sign out
