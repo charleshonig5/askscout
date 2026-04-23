@@ -3350,6 +3350,10 @@ a:hover {
   color: #ffffff;
 }
 
+/* Text column for each task. Title stacks directly over the reason
+   with no flex gap; line-height: 18px on both lines handles breathing
+   room. Matches Figma node 68:3218 where both <p>s sit flush inside
+   a flex-col with leading-[18px]. */
 .plan-item-body {
   display: flex;
   flex-direction: column;
@@ -3358,20 +3362,22 @@ a:hover {
   min-width: 0;
 }
 
-.plan-task {
+.plan-task,
+.plan-reason {
   font-family: var(--font-sans);
-  font-weight: 500;
   font-size: 12px;
   line-height: 18px;
   color: var(--color-text-primary);
+  margin: 0;
+  word-break: break-word;
+}
+
+.plan-task {
+  font-weight: 500;
 }
 
 .plan-reason {
-  font-family: var(--font-sans);
   font-weight: 300;
-  font-size: 12px;
-  line-height: 18px;
-  color: var(--color-text-primary);
 }
 
 .plan-item--checked .plan-task,

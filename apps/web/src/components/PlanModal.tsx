@@ -184,8 +184,8 @@ export function PlanModal({ isOpen, onClose, content }: PlanModalProps) {
                         {isChecked && <Check size={14} strokeWidth={2} aria-hidden />}
                       </button>
                       <div className="plan-item-body">
-                        <span className="plan-task">{t.task}</span>
-                        {t.reason && <span className="plan-reason">{t.reason}</span>}
+                        <p className="plan-task">{t.task}</p>
+                        {t.reason && <p className="plan-reason">{t.reason}</p>}
                       </div>
                     </div>
                     {i < tasks.length - 1 && <div className="plan-item-divider" aria-hidden />}
