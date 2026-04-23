@@ -39,13 +39,12 @@ function parseResumePrompt(text: string): Section[] {
   const sections: Section[] = [];
   for (const block of blocks) {
     const rawLines = block.split("\n");
-    // Strip any leading warning sign / emoji from the heading so
-    // "⚠️ Heads Up" still matches "Heads Up". The regex eats
-    // emoji-adjacent invisible codepoints (FE0F variation selector)
-    // and whitespace.
-    const heading = (rawLines[0] ?? "")
-      .replace(/^[\u2600-\u27BF\uFE0F\u{1F300}-\u{1FAFF}\s]+/u, "")
-      .trim();
+    // Strip any leading non-alphanumeric prefix from the heading so
+    // "⚠️ Heads Up" still matches "Heads Up". Covers warning emojis,
+    // variation selectors, and stray whitespace without running into
+    // the `no-misleading-character-class` lint rule that flags
+    // emoji-adjacent codepoints inside bracketed ranges.
+    const heading = (rawLines[0] ?? "").replace(/^[^A-Za-z0-9]+/, "").trim();
     const rest = rawLines.slice(1);
 
     if (BULLET_HEADINGS.has(heading)) {
