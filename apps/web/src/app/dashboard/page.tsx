@@ -393,14 +393,15 @@ export default function DashboardPage() {
       }),
     };
 
-    // Wait just long enough for the typewriter to finish the sentence —
-    // no dwell, no fade. The moment the last character lands we cut to
-    // the quiet-day view.
+    // Hold the opener long enough that the typing actually lands as a
+    // moment, then transition to the quiet-day view.
     //   START_DELAY_MS (450) + 33 chars * PER_CHAR_MS (40) ≈ 1770ms
-    // Add a tiny 130ms buffer so the final character registers on screen
-    // before the cut. If the error arrives later than that (slow API),
-    // transition immediately.
-    const OPENER_TYPED_MS = 1900;
+    //   typing complete
+    //   + ~1230ms of breathing room so the user reads the line
+    //   = ~3000ms total
+    // If the error arrives later than that (slow API), transition
+    // immediately.
+    const OPENER_TYPED_MS = 3000;
     const elapsed =
       streamStartRef.current > 0 ? performance.now() - streamStartRef.current : OPENER_TYPED_MS;
     const delay = Math.max(0, OPENER_TYPED_MS - elapsed);
