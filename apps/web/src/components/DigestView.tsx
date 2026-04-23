@@ -895,11 +895,17 @@ function WhenYouCoded({
       <div className="timeline-track" ref={trackRef}>
         {baselineSegments.map((seg, i) => (
           <div
-            key={i}
+            key={`baseline-${i}`}
             className="timeline-baseline"
             style={{ left: `${seg.left}%`, right: `${100 - seg.right}%` }}
           />
         ))}
+        {/* Boundary ticks at each segment's start + end — 8px vertical
+            hairlines that straddle the baseline (Figma node 52:1485). */}
+        {baselineSegments.flatMap((seg, i) => [
+          <div key={`tick-l-${i}`} className="timeline-tick" style={{ left: `${seg.left}%` }} />,
+          <div key={`tick-r-${i}`} className="timeline-tick" style={{ left: `${seg.right}%` }} />,
+        ])}
         {activeBins.map((bin, i) => {
           // Bar is positioned at bin.centerPct (its slot center within the
           // track). Width is locked at 14px by CSS (.timeline-bar) so all
@@ -923,7 +929,7 @@ function WhenYouCoded({
               className={`timeline-bar${edgeClass}${isTapOpen ? " tap-open" : ""}`}
               style={{
                 left: `${bin.centerPct}%`,
-                bottom: "2px",
+                bottom: "6px",
                 height: `${h}px`,
               }}
               onClick={(e) => {

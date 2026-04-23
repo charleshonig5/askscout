@@ -1281,21 +1281,35 @@ a:hover {
 
 .timeline-track {
   position: relative;
-  height: 80px;
+  height: 82px;
   margin-bottom: 10px;
 }
 
-/* Baseline is the soft horizontal rail the bars sit on top of. Rebuilt
-   from the Figma: 4px tall, 60px rounded corners, --color-bg-tertiary
-   so it reads as a subtle track rather than a divider line. */
+/* Baseline is the soft horizontal rail the bars sit on top of. Figma
+   (node 52:1485): 4px tall, 60px rounded corners, --color-bg-tertiary.
+   Lifted 2px off the bottom so the segment-boundary ticks can straddle
+   it (2px below baseline, 2px above — 8px total tick height). */
 .timeline-baseline {
   position: absolute;
-  bottom: 0;
+  bottom: 2px;
   left: 0;
   right: 0;
   height: 4px;
   background: var(--color-bg-tertiary);
   border-radius: 60px;
+}
+
+/* Segment-boundary tick. A 1px × 8px vertical hairline centered on the
+   baseline middle. One tick at each segment's left and right edge;
+   with the midnight gap, a multi-day timeline shows four ticks (two
+   per day), matching the Figma. */
+.timeline-tick {
+  position: absolute;
+  bottom: 0;
+  width: 1px;
+  height: 8px;
+  margin-left: -0.5px;
+  background: var(--color-bg-tertiary);
 }
 
 /* One bar per histogram bin. Width locked at 4px to match the Figma —
