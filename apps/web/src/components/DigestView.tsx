@@ -823,20 +823,26 @@ function WhenYouCoded({
       }
     });
 
-    // Build bins within each segment. centerPct uses the segment's own
-    // leftPct/rightPct range so each bin's visual position respects the
-    // midnight gap rather than crossing it.
+    // Build bins within each segment. Crucially, centerPct is clamped
+    // to the RENDERED BASELINE edges — not the raw day-segment bounds —
+    // so bins never land inside the midnight gap where no baseline
+    // exists. Non-first segments start half-a-gap in from their
+    // leftPct; non-last segments end half-a-gap before their rightPct.
     daySegments.forEach((seg, segIdx) => {
       const count = segmentBinCounts[segIdx]!;
+      const isFirst = segIdx === 0;
+      const isLast = segIdx === daySegments.length - 1;
+      const baselineLeft = isFirst ? seg.leftPct : seg.leftPct + half;
+      const baselineRight = isLast ? seg.rightPct : seg.rightPct - half;
+      const baselineWidth = baselineRight - baselineLeft;
       const segSpanMs = seg.endMs - seg.startMs;
-      const segWidthPct = seg.rightPct - seg.leftPct;
       const binMs = segSpanMs / count;
-      const binWidthPct = segWidthPct / count;
+      const binWidthPct = baselineWidth / count;
       for (let i = 0; i < count; i++) {
         bins.push({
           startMs: seg.startMs + i * binMs,
           endMs: seg.startMs + (i + 1) * binMs,
-          centerPct: seg.leftPct + (i + 0.5) * binWidthPct,
+          centerPct: baselineLeft + (i + 0.5) * binWidthPct,
           commitCount: 0,
           totalAdded: 0,
           totalRemoved: 0,
