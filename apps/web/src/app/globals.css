@@ -44,9 +44,22 @@
   --color-warning: #e2bb20;
   --color-danger: #c32020;
 
-  /* Typography */
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", Menlo, monospace;
+  /* Typography — Scout uses TWO typefaces exclusively, no others:
+     --font-sans    → Work Sans. Body, UI, code, data, everything.
+     --font-display → Pridi. RESERVED for digest page titles and the
+                      askscout logo wordmark.
+     --font-mono    → aliased to --font-sans. Kept as a token so the
+                      30+ legacy var(--font-mono) references in this
+                      file keep resolving — but they all render in
+                      Work Sans now. (No JetBrains/SF Mono/etc.)
+     Both fonts are loaded via next/font/google in layout.tsx and
+     exposed as --font-pridi / --font-work-sans. The system fallbacks
+     in --font-sans are load-failure fallbacks only — not intentional
+     additional font families. */
+  --font-sans:
+    var(--font-work-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-pridi), Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-sans);
 
   /* Spacing */
   --space-xs: 4px;
@@ -316,7 +329,9 @@ a:hover {
 }
 
 .logo {
-  font-family: var(--font-mono);
+  /* Pridi — the askscout wordmark/logo is one of the two brand-voice
+     moments the display face carries (the other is digest titles). */
+  font-family: var(--font-display);
   font-size: 15px;
   font-weight: 600;
   color: var(--color-text-primary);
@@ -671,6 +686,9 @@ a:hover {
 }
 
 .digest-page-name {
+  /* Pridi (serif display) is reserved for digest titles — one of the
+     two brand-voice moments the face carries (the other is the logo). */
+  font-family: var(--font-display);
   font-size: 20px;
   font-weight: 600;
   color: var(--color-text-primary);
@@ -1552,6 +1570,7 @@ a:hover {
 }
 
 .sidebar-logo {
+  font-family: var(--font-display);
   font-size: 15px;
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -1956,7 +1975,7 @@ a:hover {
 }
 
 .public-nav-logo {
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-size: 16px;
   font-weight: 700;
   color: var(--color-text-primary);
@@ -2306,12 +2325,13 @@ a:hover {
    Digest opener (editorial pre-stream line)
    ============================================ */
 
-/* Single italic serif line that types itself out using the user's real
-   stats during the pre-text streaming phase. Quiet, restrained — meant
-   to feel narrated rather than loaded. Cross-fades into the skeletons
-   when its parent flips `fadingOut` (see DigestOpener.tsx). */
+/* Single italic line that types itself out during the pre-text
+   streaming phase. Quiet, restrained — meant to feel narrated rather
+   than loaded. Cross-fades into the skeletons when its parent flips
+   `fadingOut` (see DigestOpener.tsx). Uses Work Sans italic since
+   Pridi is reserved for digest titles + logo only. */
 .digest-opener {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-sans);
   font-style: italic;
   font-size: 16px;
   line-height: 1.5;
