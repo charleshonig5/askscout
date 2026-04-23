@@ -36,7 +36,7 @@ const EMOJI_MAP: Record<string, EmojiAsset> = {
   vibe: { folder: "Megaphone", file: "megaphone_3d.png" },
   shipped: { folder: "Rocket", file: "rocket_3d.png" },
   changed: { folder: "Hammer and wrench", file: "hammer_and_wrench_3d.png" },
-  unstable: { folder: "Clockwise vertical arrows", file: "clockwise_vertical_arrows_3d.png" },
+  unstable: { folder: "Construction", file: "construction_3d.png" },
   leftOff: { folder: "Round pushpin", file: "round_pushpin_3d.png" },
   takeaway: { folder: "Key", file: "key_3d.png" },
   // Computed stat section headers
