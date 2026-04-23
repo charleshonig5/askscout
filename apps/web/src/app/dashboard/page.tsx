@@ -393,15 +393,13 @@ export default function DashboardPage() {
       }),
     };
 
-    // Hold the opener long enough that the typing actually lands as a
-    // moment, then transition to the quiet-day view.
-    //   START_DELAY_MS (450) + 33 chars * PER_CHAR_MS (40) ≈ 1770ms
-    //   typing complete
-    //   + ~1230ms of breathing room so the user reads the line
-    //   = ~3000ms total
+    // Match the success-path opener lifecycle exactly so both flows feel
+    // like the same beat:
+    //   START_DELAY_MS (450) + typing (1320) + DWELL_MS (2000) + fade (350)
+    //   = ~4120ms total
     // If the error arrives later than that (slow API), transition
     // immediately.
-    const OPENER_TYPED_MS = 3000;
+    const OPENER_TYPED_MS = 4100;
     const elapsed =
       streamStartRef.current > 0 ? performance.now() - streamStartRef.current : OPENER_TYPED_MS;
     const delay = Math.max(0, OPENER_TYPED_MS - elapsed);
