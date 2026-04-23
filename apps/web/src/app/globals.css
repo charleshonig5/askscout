@@ -3124,21 +3124,95 @@ a:hover {
 }
 
 /* ============================================
-   Resume / Standup Views
+   Resume Prompt modal body
+   Figma (node 67:3083): sections stacked 24px apart, each with a
+   Medium 12 heading and either a Light 12 prose body or a 16×20 dot
+   bullet list (Key Files / Heads Up).
    ============================================ */
 
-.ai-context-card {
-  padding: var(--space-lg);
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+.resume-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-.ai-context-body {
-  font-size: 14px;
-  line-height: 1.7;
+.resume-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.resume-section-title {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-text-primary);
+}
+
+.resume-section-body {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.resume-section-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.resume-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.resume-item-bullet {
+  flex-shrink: 0;
+  display: block;
+  width: 16px;
+  height: 20px;
+  position: relative;
+}
+
+.resume-item-bullet::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-text-primary);
+  transform: translate(-50%, -50%);
+}
+
+.resume-item-text {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-text-primary);
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+}
+
+/* Fallback when the content doesn't parse into sections — show the
+   raw text preformatted so the user still has something copyable. */
+.resume-fallback {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 18px;
   color: var(--color-text-primary);
   white-space: pre-wrap;
+  word-break: break-word;
 }
 
 /* Standup body — Figma (node 65:2939) shows sections stacked 24px
@@ -3876,29 +3950,11 @@ a:hover {
   padding: 8px 0;
 }
 
-/* LEGACY modal classes — kept so PlanModal + AIContextModal keep
-   rendering until their own Figmas land and they get rebuilt onto
-   the new modal-top / modal-identity / modal-close-btn primitives. */
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 23px;
-  border-bottom: 1px solid var(--color-bg-tertiary);
-}
-
-.modal-desc {
-  font-family: var(--font-sans);
-  font-weight: 300;
-  font-size: 12px;
-  line-height: 18px;
-  color: var(--color-text-primary);
-  padding: 12px 23px 0;
-}
-
+/* Footer padding — all three modals (Standup, Plan, Resume Prompt)
+   use .modal-footer for their full-width Copy to Clipboard pill. No
+   top border per Figma; the divider above the body handles separation. */
 .modal-footer {
   padding: 23px;
-  border-top: 1px solid var(--color-bg-tertiary);
 }
 
 /* Header-positioned Copy/Download/Email actions. Scoped override of
