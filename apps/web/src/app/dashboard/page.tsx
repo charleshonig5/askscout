@@ -106,7 +106,12 @@ export default function DashboardPage() {
   const [noNewCommits, setNoNewCommits] = useState<{
     content: string;
     stats: Record<string, unknown> | null;
+    /** Raw ISO timestamp of the last digest. Source of truth for title
+        computation via formatDigestTitle(). */
     date: string;
+    /** Pretty, human-readable date ("Thursday, April 16, 2026"). Used in
+        the quiet-day subtitle and the header displayDate. */
+    dateDisplay: string;
   } | null>(null);
   // When true, expand from the Quiet Day state to show yesterday's actual digest
   const [showLatestFromQuietDay, setShowLatestFromQuietDay] = useState(false);
@@ -376,7 +381,8 @@ export default function DashboardPage() {
     const latestNoCommits = {
       content: latest.content,
       stats: latest.stats,
-      date: new Date(latest.created_at).toLocaleDateString("en-US", {
+      date: latest.created_at,
+      dateDisplay: new Date(latest.created_at).toLocaleDateString("en-US", {
         weekday: "long",
         month: "long",
         day: "numeric",
@@ -529,7 +535,7 @@ export default function DashboardPage() {
   let pageTitle = "Today\u2019s Digest";
 
   if (noNewCommits && showLatestFromQuietDay) {
-    displayDate = noNewCommits.date;
+    displayDate = noNewCommits.dateDisplay;
     pageTitle = formatDigestTitle(noNewCommits.date);
   } else if (noNewCommits) {
     // No-commits state — title echoes the streaming opener line
@@ -696,8 +702,9 @@ export default function DashboardPage() {
                 </div>
                 <h2 className="quiet-day-title">No new commits today</h2>
                 <p className="quiet-day-subtitle">
-                  {repoName} hasn&apos;t seen activity since your digest on {noNewCommits.date}.
-                  Rest counts too — Scout will be here when you&apos;re back.
+                  {repoName} hasn&apos;t seen activity since your digest on{" "}
+                  {noNewCommits.dateDisplay}. Rest counts too — Scout will be here when you&apos;re
+                  back.
                 </p>
                 {streak >= 2 && (
                   <div className="quiet-day-streak">
