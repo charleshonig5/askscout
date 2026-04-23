@@ -413,41 +413,6 @@ export default function DashboardPage() {
     return () => clearTimeout(timer);
   }, [digestStream.error, historyRecords, selectedRepo, fetchHistory]);
 
-  // Manual fallback: show latest digest when auto-redirect fails
-  const showLatestFromHistory = useCallback(async () => {
-    let records = historyRecords;
-    // If history is empty, fetch it on demand
-    if (records.length === 0 && selectedRepo) {
-      try {
-        const res = await fetch(`/api/history?repo=${encodeURIComponent(selectedRepo)}`);
-        if (res.ok) {
-          const data = (await res.json()) as {
-            history: HistoryRecord[];
-            checkinDates?: string[];
-          };
-          records = data.history;
-          setHistoryRecords(data.history);
-          setCheckinDates(data.checkinDates ?? []);
-        }
-      } catch {
-        return;
-      }
-    }
-    if (records.length === 0) return;
-    const latest = records[0]!;
-    setNoNewCommits({
-      content: latest.content,
-      stats: latest.stats,
-      date: new Date(latest.created_at).toLocaleDateString("en-US", {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      }),
-    });
-    digestStream.reset();
-  }, [historyRecords, selectedRepo, digestStream]);
-
   // Record a daily check-in when the user lands on the quiet-day empty state.
   // Keeps their streak alive on rest days. Best-effort — silent on failure,
   // and optimistically adds today to the local checkinDates so the streak
