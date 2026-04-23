@@ -1486,7 +1486,10 @@ a:hover {
 }
 
 .timeline-day-name {
-  text-align: center;
+  /* Left-align to match the Figma (node 52:1485): day name sits under
+     the leftmost time label of its segment, not centered under the
+     whole segment block. */
+  text-align: left;
   font-size: 12px;
   margin-top: auto;
   padding-top: 6px;
