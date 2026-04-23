@@ -112,7 +112,7 @@ Always run `pnpm typecheck`, `pnpm format`, `pnpm lint` before committing. Build
 | `--color-text-primary`                           | `#EDEDED` | `#070707`  |
 | `--color-text-secondary`                         | `#A0A0A0` | `#616161`  |
 | `--color-text-tertiary`                          | `#616161` | `#A0A0A0`  |
-| `--color-border`                                 | `#222222` | `#ECECEC`  |
+| `--color-border`                                 | `#222222` | `#E6E6E6`  |
 | `--color-border-hover`                           | `#333333` | `#D0D0D0`  |
 | `--color-accent`                                 | `#FFFFFF` | `#070707`  |
 | `--color-accent-hover`                           | `#EDEDED` | `#252525`  |

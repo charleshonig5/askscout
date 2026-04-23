@@ -22,7 +22,7 @@
   --color-text-tertiary: #a0a0a0;
 
   /* Borders — mirror of dark's #222222 / #333333 */
-  --color-border: #ececec;
+  --color-border: #e6e6e6;
   --color-border-hover: #d0d0d0;
 
   /* Accent — Scout has no dedicated accent color; we use Primary Black
