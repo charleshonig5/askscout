@@ -436,12 +436,13 @@ function StreamingDigest({
 
         if (section.key === "takeaway") {
           return (
-            <div key={section.key} className="digest-section">
-              <div className="digest-section-title">
-                <Emoji name={section.key} size={18} /> {section.label}
+            <div key={section.key} className="digest-section digest-takeaway">
+              <div className="digest-takeaway-title">
+                <Emoji name={section.key} size={20} />
+                <span>{section.label}</span>
                 {showCursor && <LiveBadge />}
               </div>
-              <p className="formatted-paragraph">
+              <p className="digest-takeaway-body">
                 {section.content}
                 {showCursor && cursor}
               </p>

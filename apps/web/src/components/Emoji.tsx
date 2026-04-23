@@ -38,7 +38,7 @@ const EMOJI_MAP: Record<string, EmojiAsset> = {
   changed: { folder: "Hammer and wrench", file: "hammer_and_wrench_3d.png" },
   unstable: { folder: "Construction", file: "construction_3d.png" },
   leftOff: { folder: "Round pushpin", file: "round_pushpin_3d.png" },
-  takeaway: { folder: "Key", file: "key_3d.png" },
+  takeaway: { folder: "Old key", file: "old_key_3d.png" },
   // Computed stat section headers
   statistics: { folder: "Bar chart", file: "bar_chart_3d.png" },
   mostActiveFiles: { folder: "File folder", file: "file_folder_3d.png" },

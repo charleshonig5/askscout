@@ -1113,6 +1113,36 @@ a:hover {
   font-weight: 300;
 }
 
+/* Key Takeaways — prose section (no bullets, no count pill).
+   Figma frame node 50:978. Shares the 20px emoji + Work Sans Medium 16
+   label pattern with the other narrative sections, plus a flowing
+   Work Sans Light 12 / 18px paragraph body. */
+.digest-takeaway {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.digest-takeaway-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: normal;
+  color: var(--color-text-primary);
+}
+
+.digest-takeaway-body {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
 .digest-item-title {
   font-weight: 600;
   color: var(--color-text-primary);
