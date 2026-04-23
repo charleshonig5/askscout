@@ -235,9 +235,11 @@ export function RepoSelector({ repos, activeRepos = [], selected, onChange }: Re
                       {displayName(repo)}
                     </span>
                     {hasActivity && !isSelected && (
-                      <span className="repo-combobox-item-badge" aria-label="Scout activity">
-                        {"\u2022"}
-                      </span>
+                      <span
+                        className="repo-combobox-item-badge"
+                        role="img"
+                        aria-label="Scout has generated digests for this repo"
+                      />
                     )}
                     {isSelected && (
                       <Check

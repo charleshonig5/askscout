@@ -615,11 +615,37 @@ a:hover {
   min-width: 0;
 }
 
+/* Scout-activity indicator. An 8px green dot with a soft green halo
+   plus a slow low-amplitude pulse, signaling "you've generated digests
+   for this repo before." The pulse stays gentle so a long list of
+   active repos doesn't turn the dropdown into a strobe. */
 .repo-combobox-item-badge {
-  color: var(--color-success);
-  font-size: 16px;
-  line-height: 1;
   flex-shrink: 0;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--color-success);
+  box-shadow: 0 0 8px 0 rgba(87, 211, 46, 0.45);
+  animation: repo-badge-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes repo-badge-pulse {
+  0%,
+  100% {
+    opacity: 0.85;
+    box-shadow: 0 0 6px 0 rgba(87, 211, 46, 0.35);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 12px 2px rgba(87, 211, 46, 0.55);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .repo-combobox-item-badge {
+    animation: none;
+  }
 }
 
 .repo-combobox-item-check {
