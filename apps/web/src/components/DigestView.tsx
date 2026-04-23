@@ -871,7 +871,10 @@ function WhenYouCoded({
   // Bar height scales by the biggest ACTIVE bin so the tallest bar always
   // hits the ceiling. Cap against one massive bin dominating the chart.
   const maxBinLines = Math.max(...activeBins.map((b) => b.totalLines), 1);
-  const MAX_BAR_HEIGHT = 68; // px; track is 80 with 12px breathing room
+  // Track is 82px; bars bottom at 14px (8px float above the 4px baseline
+  // at bottom:2). Max 60 keeps 8px of headroom at the top so the
+  // tallest bar breathes clear of the track ceiling.
+  const MAX_BAR_HEIGHT = 60;
   const MIN_BAR_HEIGHT = 6;
   const barHeight = (lines: number) => {
     const ratio = Math.min(lines / maxBinLines, 1);
@@ -934,7 +937,7 @@ function WhenYouCoded({
               className={`timeline-bar${edgeClass}${isTapOpen ? " tap-open" : ""}`}
               style={{
                 left: `${bin.centerPct}%`,
-                bottom: "6px",
+                bottom: "14px",
                 height: `${h}px`,
               }}
               onClick={(e) => {
