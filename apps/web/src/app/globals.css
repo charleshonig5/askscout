@@ -613,11 +613,16 @@ a:hover {
   padding: 0;
   /* Internal scroll region — the .app-main card has overflow: hidden so
      its frame stays fixed in the viewport; this container takes the
-     scroll instead. scrollbar-gutter: stable reserves space so layout
-     doesn't jiggle horizontally when the scrollbar appears/disappears. */
+     scroll instead. Scrollbars are hidden across all browsers; the
+     scroll behavior still works (mouse wheel, trackpad, keyboard). */
   height: 100%;
   overflow-y: auto;
-  scrollbar-gutter: stable;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE / legacy Edge */
+}
+
+.digest-container::-webkit-scrollbar {
+  display: none; /* Chrome / Safari / WebKit */
 }
 
 /* ============================================
@@ -1859,7 +1864,6 @@ a:hover {
   .digest-container {
     height: auto;
     overflow: visible;
-    scrollbar-gutter: auto;
   }
 
   .sidebar {
