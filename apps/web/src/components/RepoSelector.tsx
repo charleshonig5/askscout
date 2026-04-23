@@ -184,18 +184,18 @@ export function RepoSelector({ repos, activeRepos = [], selected, onChange }: Re
         onClick={() => !isLoading && setOpen((v) => !v)}
       >
         <span className="repo-combobox-trigger-label">{triggerLabel}</span>
-        <ChevronDown size={14} className="repo-combobox-chevron" aria-hidden />
+        <ChevronDown size={20} strokeWidth={1} className="repo-combobox-chevron" aria-hidden />
       </button>
 
       {open && !isLoading && (
         <div className="repo-combobox-popover" role="dialog" onKeyDown={onKeyDown}>
           <div className="repo-combobox-search">
-            <Search size={14} className="repo-combobox-search-icon" aria-hidden />
+            <Search size={20} strokeWidth={1} className="repo-combobox-search-icon" aria-hidden />
             <input
               ref={inputRef}
               type="text"
               className="repo-combobox-input"
-              placeholder="Search repos..."
+              placeholder="Search Repos"
               value={query}
               onChange={(e) => {
                 setQuery(e.target.value);
@@ -240,7 +240,12 @@ export function RepoSelector({ repos, activeRepos = [], selected, onChange }: Re
                       </span>
                     )}
                     {isSelected && (
-                      <Check size={14} className="repo-combobox-item-check" aria-hidden />
+                      <Check
+                        size={20}
+                        strokeWidth={1}
+                        className="repo-combobox-item-check"
+                        aria-hidden
+                      />
                     )}
                   </button>
                 );
