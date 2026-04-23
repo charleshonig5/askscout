@@ -6,7 +6,6 @@ import {
   Check,
   Download,
   Send,
-  Sparkles,
   ClipboardList,
   ArrowUpRight,
   ListChecks,
@@ -220,6 +219,18 @@ function ShareBtn({ items }: { items: string[] }) {
   );
 }
 
+/** Small header button that opens the AIContextModal from the Left Off
+    section. Mirrors the ShareBtn style — small bordered pill with a 10px
+    arrow glyph. */
+function ResumePromptBtn({ onClick }: { onClick: () => void }) {
+  return (
+    <button className="digest-bulleted-share" onClick={onClick} aria-label="Open Resume Prompt">
+      Resume Prompt
+      <ArrowUpRight size={10} strokeWidth={1} aria-hidden />
+    </button>
+  );
+}
+
 function EmailBtn() {
   const [sent, setSent] = useState(false);
   const handleEmail = useCallback(() => {
@@ -371,12 +382,15 @@ const sectionKeyMap: Record<string, string> = {
 function StreamingDigest({
   text,
   isStreaming,
-  afterLeftOff,
+  onResumeWithAI,
   visibleSections,
 }: {
   text: string;
   isStreaming: boolean;
-  afterLeftOff?: React.ReactNode;
+  /** If provided, the Left Off section renders a small "Resume Prompt"
+      button in its header that fires this callback (opens the
+      AIContextModal at the call site). */
+  onResumeWithAI?: () => void;
   visibleSections?: Record<string, boolean>;
 }) {
   const cursorRef = useRef<HTMLSpanElement>(null);
@@ -471,6 +485,9 @@ function StreamingDigest({
               {section.key === "shipped" && !isStreaming && items.length > 0 && (
                 <ShareBtn items={items} />
               )}
+              {section.key === "leftOff" && !isStreaming && onResumeWithAI && (
+                <ResumePromptBtn onClick={onResumeWithAI} />
+              )}
             </div>
             <div className="digest-bulleted-list">
               {items.map((item: string, i: number) => {
@@ -496,7 +513,6 @@ function StreamingDigest({
                 </div>
               )}
             </div>
-            {section.key === "leftOff" && !isStreaming && afterLeftOff}
           </div>
         );
       })}
@@ -1508,19 +1524,7 @@ export function DigestView({
                 text={streamingText}
                 isStreaming={isStreaming}
                 visibleSections={visibleSections}
-                afterLeftOff={
-                  onResumeWithAI ? (
-                    <button className="resume-ai-btn" onClick={onResumeWithAI}>
-                      <Sparkles size={14} />
-                      <span className="resume-ai-btn-text">
-                        <span className="resume-ai-btn-title">Resume Prompt</span>
-                        <span className="resume-ai-btn-subtitle">
-                          Paste into your AI coding tool to pick up exactly where you left off
-                        </span>
-                      </span>
-                    </button>
-                  ) : undefined
-                }
+                onResumeWithAI={onResumeWithAI}
               />
             )}
 

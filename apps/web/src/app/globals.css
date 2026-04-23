@@ -3516,58 +3516,6 @@ a:hover {
   width: 100%;
 }
 
-/* ============================================
-   Resume with AI button
-   ============================================ */
-
-.resume-ai-btn {
-  display: inline-flex;
-  align-items: flex-start;
-  gap: var(--space-sm);
-  margin-top: var(--space-md);
-  padding: var(--space-sm) var(--space-md);
-  font-family: var(--font-sans);
-  color: var(--color-text-secondary);
-  background: transparent;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  text-align: left;
-}
-
-.resume-ai-btn svg {
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.resume-ai-btn-text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.resume-ai-btn-title {
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.resume-ai-btn-subtitle {
-  font-size: 12px;
-  color: var(--color-text-tertiary);
-  font-weight: 400;
-}
-
-.resume-ai-btn:hover {
-  color: var(--color-text-primary);
-  border-color: var(--color-border-hover);
-  background: var(--color-bg-secondary);
-}
-
-.resume-ai-btn:hover .resume-ai-btn-subtitle {
-  color: var(--color-text-secondary);
-}
-
 /* Header-positioned Copy/Download/Email actions. Scoped override of
    .action-btn that matches the Figma header frame (node 52:1495):
    14×10 padding, 8px radius, 1px tertiary-grey border, body surface,
