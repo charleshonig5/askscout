@@ -4,6 +4,82 @@
    ============================================ */
 
 /* ─────────────────────────────────────────────────────────────────────────
+   Tailwind v4 wiring.
+
+   Loaded as TWO layers (theme + utilities) — preflight (Tailwind's CSS
+   reset) is intentionally NOT imported. The existing reset and base
+   styles further down this file are preserved exactly as written; the
+   only thing Tailwind contributes is utility class generation. This
+   keeps the migration zero-risk: no existing rule is altered, no
+   visual diff, no broken behavior.
+
+   `@theme inline` exposes our existing :root / [data-theme="dark"]
+   tokens to Tailwind so utilities like `bg-bg-primary`, `text-
+   text-secondary`, `p-md`, `rounded-lg`, etc. resolve to the right
+   value AND track dark-mode overrides automatically (because they
+   reference the live var, not a baked-in literal).
+
+   `@variant dark` rewires the `dark:` utility prefix to our
+   `[data-theme="dark"]` selector instead of the default
+   `prefers-color-scheme: dark`, matching the runtime theme switch
+   that lives in layout.tsx.
+   ───────────────────────────────────────────────────────────────────── */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme inline {
+  /* Surfaces */
+  --color-bg-primary: var(--color-bg-primary);
+  --color-bg-secondary: var(--color-bg-secondary);
+  --color-bg-tertiary: var(--color-bg-tertiary);
+  --color-bg-elevated: var(--color-bg-elevated);
+
+  /* Text */
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-tertiary: var(--color-text-tertiary);
+
+  /* Borders */
+  --color-border: var(--color-border);
+  --color-border-hover: var(--color-border-hover);
+
+  /* Accent */
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-text: var(--color-accent-text);
+
+  /* Status */
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-danger: var(--color-danger);
+
+  /* Spacing — Tailwind expects --spacing-* (drives p-, m-, w-, h-,
+     gap-, etc.); legacy CSS uses --space-*. Aliased here so both the
+     existing rules below AND new Tailwind utilities resolve to the
+     same physical pixels. */
+  --spacing-xs: var(--space-xs);
+  --spacing-sm: var(--space-sm);
+  --spacing-md: var(--space-md);
+  --spacing-lg: var(--space-lg);
+  --spacing-xl: var(--space-xl);
+  --spacing-2xl: var(--space-2xl);
+
+  /* Border radius */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-full: var(--radius-full);
+
+  /* Typography — Pridi (display) and Work Sans (sans). --font-mono
+     is aliased to sans elsewhere; exposed here for completeness. */
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
    LIGHT MODE — the lighter mirror of dark mode.
    Dark mode (below) is the source of truth for the brand palette; light
    mode inverts each token to its lighter counterpart while preserving the
