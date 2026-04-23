@@ -90,6 +90,9 @@ export default function DashboardPage() {
   const [standupOpen, setStandupOpen] = useState(false);
   const [planOpen, setPlanOpen] = useState(false);
   const lastRepoRef = useRef("");
+  // Tracks when the current stream first started so the no-commits
+  // transition can hold long enough for the editorial opener to finish.
+  const streamStartRef = useRef<number>(0);
   const [cachedDigests, setCachedDigests] = useState<
     Record<string, { content: string; stats: DigestViewStats | null }>
   >({});
@@ -311,13 +314,22 @@ export default function DashboardPage() {
   // When a new stream begins, treat this digest as fresh: remove it from the
   // revealed set so the animation plays from the start. This handles both
   // first-time generation and "Try again" regeneration of a previously
-  // revealed repo.
+  // revealed repo. Also stamp the stream-start time so the no-commits
+  // transition (below) knows how long the editorial opener has been on
+  // screen and can wait long enough for it to finish before switching.
   useEffect(() => {
-    if (digestStream.isStreaming && selectedRepo) {
-      if (revealedReposRef.current.has(selectedRepo)) {
+    if (digestStream.isStreaming) {
+      if (streamStartRef.current === 0) {
+        streamStartRef.current = performance.now();
+      }
+      if (selectedRepo && revealedReposRef.current.has(selectedRepo)) {
         revealedReposRef.current.delete(selectedRepo);
         forceUpdate({});
       }
+    } else {
+      // Stream ended (success or reset) — clear the start stamp so the
+      // next run captures a fresh start time.
+      streamStartRef.current = 0;
     }
   }, [digestStream.isStreaming, selectedRepo]);
 
@@ -351,33 +363,53 @@ export default function DashboardPage() {
   }, [digestStream.isDone]);
 
   // Handle "no commits" error by showing most recent digest.
-  // Matches both "No commits found..." (first-run) and "No new commits..." (returning user).
+  // Matches both "No commits found..." (first-run) and "No new commits..."
+  // (returning user). The transition is DEFERRED long enough for the
+  // editorial opener ("Scanning the horizon for commits…") to play out
+  // its full sequence — otherwise the user sees the line type for a
+  // beat and then get yanked into the quiet-day view, which feels
+  // broken. Scout should look like it's actually scanning.
   useEffect(() => {
     if (!digestStream.error || !/no (new )?commits/i.test(digestStream.error)) {
       return;
     }
 
-    // If history is loaded, show the latest digest
-    if (historyRecords.length > 0) {
-      const latest = historyRecords[0]!;
-      setNoNewCommits({
-        content: latest.content,
-        stats: latest.stats,
-        date: new Date(latest.created_at).toLocaleDateString("en-US", {
-          weekday: "long",
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-        }),
-      });
-      digestStream.reset();
+    // History not loaded yet — fetch and let the effect re-run when
+    // historyRecords updates.
+    if (historyRecords.length === 0) {
+      if (selectedRepo) void fetchHistory(selectedRepo);
       return;
     }
 
-    // History not loaded yet — try to fetch it so the effect can re-run
-    if (selectedRepo) {
-      void fetchHistory(selectedRepo);
-    }
+    const latest = historyRecords[0]!;
+    const latestNoCommits = {
+      content: latest.content,
+      stats: latest.stats,
+      date: new Date(latest.created_at).toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      }),
+    };
+
+    // Total visible duration of the DigestOpener:
+    //   START_DELAY_MS (450) + ~33 chars * PER_CHAR_MS (40) + DWELL_MS (2000)
+    //   + fade-out (~350) ≈ 4100ms
+    // Hold the transition until the opener has had at least that long on
+    // screen since the stream first started. If the error arrived later
+    // than that (e.g., slow API), transition immediately.
+    const OPENER_TOTAL_MS = 4100;
+    const elapsed =
+      streamStartRef.current > 0 ? performance.now() - streamStartRef.current : OPENER_TOTAL_MS;
+    const delay = Math.max(0, OPENER_TOTAL_MS - elapsed);
+
+    const timer = setTimeout(() => {
+      setNoNewCommits(latestNoCommits);
+      digestStream.reset();
+    }, delay);
+
+    return () => clearTimeout(timer);
   }, [digestStream.error, historyRecords, selectedRepo, fetchHistory]);
 
   // Manual fallback: show latest digest when auto-redirect fails

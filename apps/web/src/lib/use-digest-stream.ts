@@ -195,8 +195,16 @@ export function useDigestStream(): DigestStreamState {
         } catch (err) {
           if ((err as Error).name === "AbortError") return;
           stopDrip();
-          setError(err instanceof Error ? err.message : "Something went wrong");
-          setIsStreaming(false);
+          const errMsg = err instanceof Error ? err.message : "Something went wrong";
+          setError(errMsg);
+          // For "no commits" errors specifically, keep isStreaming true so
+          // the editorial opener can play out its full sequence — the
+          // dashboard schedules its transition to the quiet-day view and
+          // calls reset() when the opener has had time to finish. Other
+          // error types still terminate the streaming UI immediately.
+          if (!/no (new )?commits/i.test(errMsg)) {
+            setIsStreaming(false);
+          }
         }
       })();
     },
