@@ -931,20 +931,6 @@ a:hover {
   gap: var(--space-sm);
 }
 
-.digest-count-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
-  font-size: 11px;
-  font-weight: 600;
-  border-radius: var(--radius-full);
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-secondary);
-}
-
 /* Live pill — sits next to a section title while that section is being
    streamed. Matches the site pill pattern (health-card-level, count-badge):
    20px height, 11px/600, radius-full, color-mix 8% tint. Green dot pulses. */
