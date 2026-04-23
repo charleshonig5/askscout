@@ -880,12 +880,12 @@ function WhenYouCoded({
 
   // Split the baseline at each midnight so day-changes show as a visible
   // gap. Time labels anchor to the edges of their segment (flex
-  // space-between), so this gap also sets the minimum distance between
-  // the end-of-day-N label and the start-of-day-(N+1) label. Previous
-  // 2% read as ~6px on the stats-column width — tight enough that
-  // labels like "12am" and "11am" almost touched. 5% gives ~16px of
-  // visible breathing room between them.
-  const GAP_PCT = 5;
+  // space-between) — AND their segment container is also clamped to the
+  // baseline edge below — so this gap doubles as the minimum distance
+  // between the end-of-day-N label and the start-of-day-(N+1) label.
+  // 7% reads as ~22px on the stats-column width: clear breathing room
+  // with the labels cleanly on the baseline side of the break.
+  const GAP_PCT = 7;
   const half = GAP_PCT / 2;
   const baselineSegments: Array<{ left: number; right: number }> = [];
   let prev = 0;
@@ -978,9 +978,17 @@ function WhenYouCoded({
       {crossesDay ? (
         <div className="timeline-multi-labels">
           {daySegments.map((seg, i) => {
-            const widthPct = seg.rightPct - seg.leftPct;
-            const tooNarrow = widthPct < 10;
+            const isFirst = i === 0;
             const isLast = i === daySegments.length - 1;
+            // Clamp each segment's label container to the baseline edges
+            // so time labels (anchored via flex space-between) never
+            // extend into the midnight gap. Non-first segments start
+            // half-a-gap in from their "full day" left; non-last
+            // segments end half-a-gap before their "full day" right.
+            const labelLeft = isFirst ? seg.leftPct : seg.leftPct + half;
+            const labelRight = isLast ? seg.rightPct : seg.rightPct - half;
+            const widthPct = labelRight - labelLeft;
+            const tooNarrow = widthPct < 10;
             // Filter commits within this segment. Exclusive upper bound on all
             // but the last segment, so a commit at exactly midnight isn't counted
             // twice (it belongs to the next day, not this one).
@@ -1001,7 +1009,7 @@ function WhenYouCoded({
                 key={i}
                 className="timeline-day-segment"
                 style={{
-                  left: `${seg.leftPct}%`,
+                  left: `${labelLeft}%`,
                   width: `${widthPct}%`,
                 }}
               >
