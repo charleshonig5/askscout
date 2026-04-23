@@ -182,15 +182,12 @@ export default function DashboardPage() {
               return (section.match(/\u2022/g) ?? []).length;
             };
 
-            const stats = h.stats as Record<string, number> | null;
             return {
               id: h.id,
               date: formatHistoryDate(h.created_at),
               vibeCheck: h.content.slice(0, 100),
-              commits: stats?.commits ?? 0,
-              filesChanged: stats?.filesChanged ?? 0,
-              linesAdded: stats?.linesAdded,
-              linesRemoved: stats?.linesRemoved,
+              commits: (h.stats as Record<string, number> | null)?.commits ?? 0,
+              filesChanged: (h.stats as Record<string, number> | null)?.filesChanged ?? 0,
               shippedCount: countBullets("\ud83d\ude80", "\ud83d\udd27"),
               changedCount: countBullets("\ud83d\udd27", "\ud83d\udd01"),
               unstableCount: countBullets("\ud83d\udd01", "\ud83d\udccd"),

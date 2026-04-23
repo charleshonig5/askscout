@@ -134,11 +134,6 @@ export interface HistoryEntry {
   shippedCount: number;
   changedCount: number;
   unstableCount: number;
-  /** Total lines added in the digest. Optional — older history records
-   *  may not carry this field; the Sidebar falls back gracefully. */
-  linesAdded?: number;
-  /** Total lines removed in the digest. Same optionality as linesAdded. */
-  linesRemoved?: number;
 }
 
 export const MOCK_HISTORY: HistoryEntry[] = [
