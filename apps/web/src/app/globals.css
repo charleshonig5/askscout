@@ -3215,15 +3215,25 @@ a:hover {
   word-break: break-word;
 }
 
-/* Standup body — Figma (node 65:2939) shows sections stacked 24px
-   apart ("Done" / "Up Next" / "Heads Up"), each with a Medium 12
-   heading and bullets spaced 8px. Bullet marker mirrors the digest
-   narrative sections (16×20 frame with a centered 4px dot). */
+/* Standup body — Figma (node 65:3016) nests each section in its own
+   flex column with 8px internal gap (title → first item and between
+   items), while the outer wrapper has 24px gap between sections.
+   Flat sibling layout with mixed margins double-counted the gap and
+   spaced everything at 32px.
+
+   Bullet marker mirrors the digest narrative sections (16×20 frame
+   with a centered 4px dot). */
 .standup-formatted {
   display: flex;
   flex-direction: column;
   gap: 24px;
   color: var(--color-text-primary);
+}
+
+.standup-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .standup-section-title {
@@ -3232,7 +3242,6 @@ a:hover {
   font-size: 12px;
   line-height: 18px;
   color: var(--color-text-primary);
-  margin-bottom: 8px;
 }
 
 .standup-item {
@@ -3271,10 +3280,6 @@ a:hover {
   margin: 0;
   flex: 1;
   min-width: 0;
-}
-
-.standup-item + .standup-item {
-  margin-top: 8px;
 }
 
 .standup-text {
