@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { X, Copy, Check } from "lucide-react";
+import { CircleX, Copy, Check } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
 
 interface StandupModalProps {
@@ -78,7 +78,7 @@ export function StandupModal({ isOpen, onClose, content }: StandupModalProps) {
             <p className="modal-subtitle">Formatted for Slack and Teams. Just copy and paste.</p>
           </div>
           <button type="button" className="modal-close-btn" onClick={onClose} aria-label="Close">
-            <X size={20} strokeWidth={1} aria-hidden />
+            <CircleX size={20} strokeWidth={1} aria-hidden />
           </button>
         </div>
 

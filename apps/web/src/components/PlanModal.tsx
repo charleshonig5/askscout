@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
-import { X, Copy, Check } from "lucide-react";
+import { CircleX, Copy, Check } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
 
 interface PlanModalProps {
@@ -154,7 +154,7 @@ export function PlanModal({ isOpen, onClose, content }: PlanModalProps) {
             <p className="modal-subtitle">Your to-do list for today. Check off as you go.</p>
           </div>
           <button type="button" className="modal-close-btn" onClick={onClose} aria-label="Close">
-            <X size={20} strokeWidth={1} aria-hidden />
+            <CircleX size={20} strokeWidth={1} aria-hidden />
           </button>
         </div>
 

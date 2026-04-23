@@ -3739,7 +3739,13 @@ a:hover {
   width: 90%;
   max-width: 585px;
   max-height: 80vh;
-  background: rgba(18, 18, 18, 0.2);
+  /* The Figma spec is rgba(18,18,18,0.2). That value reads true when
+     Figma composites the modal over an opaque digest card, but in the
+     real app the modal stacks over the dimmed-and-blurred backdrop,
+     which leaves the panel almost invisible. Bumped to 0.7 so the
+     modal reads as a solid glass panel (still translucent enough to
+     show some of the blur behind it, but clearly an inset surface). */
+  background: rgba(18, 18, 18, 0.7);
   border: 1px solid var(--color-bg-tertiary);
   border-radius: 8px;
   box-shadow: inset 0 0 40px 0 rgba(255, 255, 255, 0.04);
