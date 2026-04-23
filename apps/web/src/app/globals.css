@@ -1183,42 +1183,77 @@ a:hover {
   color: var(--color-text-primary);
 }
 
-.digest-stats {
-  font-size: 13px;
-  color: var(--color-text-secondary);
-  font-family: var(--font-sans);
-  padding-top: var(--space-md);
-  border-top: 1px solid var(--color-border);
-}
-
 /* ============================================
-   Stats Row
+   Stats column (Figma node 52:1494)
    ============================================ */
 
-.stats-row {
+/* Umbrella "Statistics" header — sits above every sub-section in the
+   right column. Only the column header uses an emoji; sub-section
+   headings below are plain 12 Medium labels. */
+.stats-column-header {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  font-size: 13px;
+  gap: 8px;
   font-family: var(--font-sans);
-  color: var(--color-text-secondary);
-  margin: var(--space-md) 0;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: normal;
+  color: var(--color-text-primary);
+  margin-bottom: 24px;
 }
 
-.stats-item {
-  color: var(--color-text-secondary);
+.stats-column-body {
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
 }
 
-.stats-item.positive {
+.stats-subsection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stats-subsection-title {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-text-primary);
+}
+
+/* Quick stats strip: +lines / -lines / commits / files, directly under
+   the column header. Icons inline with count. */
+.stats-quick {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--color-text-primary);
+}
+
+.stats-quick-added {
   color: var(--color-success);
 }
 
-.stats-item.negative {
-  color: var(--color-accent);
+.stats-quick-removed {
+  color: var(--color-danger);
 }
 
-.stats-sep {
-  color: var(--color-text-tertiary);
+.stats-quick-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-text-primary);
+}
+
+.stats-quick-item svg {
+  flex-shrink: 0;
+  color: var(--color-text-primary);
 }
 
 /* ============================================
@@ -1226,36 +1261,38 @@ a:hover {
    ============================================ */
 
 .when-you-coded {
-  padding: var(--space-md) var(--space-sm);
+  padding: 0;
 }
 
 .timeline-track {
   position: relative;
   height: 80px;
-  margin-bottom: var(--space-sm);
+  margin-bottom: 10px;
 }
 
+/* Baseline is the soft horizontal rail the bars sit on top of. Rebuilt
+   from the Figma: 4px tall, 60px rounded corners, --color-bg-tertiary
+   so it reads as a subtle track rather than a divider line. */
 .timeline-baseline {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 2px;
-  background: var(--color-border);
-  border-radius: 1px;
+  height: 4px;
+  background: var(--color-bg-tertiary);
+  border-radius: 60px;
 }
 
-/* One bar per histogram bin. Width is locked at 14px in CSS so bars
-   always look identical in thickness regardless of viewport or how many
-   bins are populated — only HEIGHT encodes data (total lines changed in
-   the bin). The negative margin centers each bar on the `left: X%`
-   coordinate passed inline from JSX (which is the bin's center). */
+/* One bar per histogram bin. Width locked at 4px to match the Figma —
+   tight vertical lines against the rail, rounded 60px so the top and
+   bottom are fully curved. Height encodes total lines changed in the
+   bin. The negative margin centers the bar on `left: X%` from JSX. */
 .timeline-bar {
   position: absolute;
-  width: 14px;
-  margin-left: -7px;
+  width: 4px;
+  margin-left: -2px;
   background: var(--color-text-primary);
-  border-radius: 3px;
+  border-radius: 60px;
   cursor: default;
   transition: opacity 0.15s ease;
 }
@@ -1431,63 +1468,104 @@ a:hover {
    Pace Check
    ============================================ */
 
-.pace-card {
+/* ============================================
+   Pace Check
+   ============================================ */
+
+.pace {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pace-hero {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
+  gap: 8px;
 }
 
 .pace-multiplier {
-  font-size: 28px;
-  font-weight: 700;
   font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1;
   color: var(--color-text-primary);
-  letter-spacing: -0.02em;
-  min-width: 56px;
+  letter-spacing: 0;
 }
 
-.pace-detail {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+/* Above 1.0× multiplier → success green. Signals momentum vs. the
+   user's own rolling average, matching the Figma. */
+.pace-multiplier--up {
+  color: var(--color-success);
 }
 
 .pace-label {
-  font-size: 14px;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 18px;
   color: var(--color-text-primary);
-  font-weight: 500;
+  max-width: 160px;
 }
 
-.pace-comparison {
-  font-size: 12px;
+.pace-stats {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
   font-family: var(--font-sans);
-  color: var(--color-text-tertiary);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--color-text-primary);
+}
+
+.pace-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pace-stat svg {
+  flex-shrink: 0;
+  color: var(--color-text-primary);
 }
 
 /* ============================================
-   Top Files
+   Most Active Files
    ============================================ */
 
 .top-files {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: 8px;
 }
 
 .top-file-row {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  font-size: 12px;
+  justify-content: space-between;
+  gap: 12px;
   font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.top-file-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
 }
 
 .top-file-rank {
+  font-weight: 300;
   color: var(--color-text-tertiary);
-  min-width: 18px;
+  flex-shrink: 0;
 }
 
 .top-file-name {
+  font-weight: 300;
   color: var(--color-text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1495,35 +1573,33 @@ a:hover {
   min-width: 0;
 }
 
-/* Clickable filename variant — opens the file on GitHub in a new tab. */
-.top-file-name--link {
+/* 18×? bordered launch box — opens the file on GitHub. Small arrow
+   glyph inside. Matches the "Share on X" / "Resume Prompt" pill
+   treatment at a tighter scale. */
+.top-file-link {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  text-decoration: none;
-  color: var(--color-text-primary);
-  cursor: pointer;
-  transition: color 0.12s ease;
-}
-
-.top-file-name--link:hover {
-  color: var(--color-accent);
-}
-
-.top-file-name--link:hover .top-file-link-icon {
-  opacity: 1;
-}
-
-.top-file-link-icon {
+  justify-content: center;
   flex-shrink: 0;
-  opacity: 0.4;
-  transition: opacity 0.12s ease;
+  padding: 4px 6px;
+  border: 1px solid var(--color-bg-tertiary);
+  border-radius: 4px;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.12s ease;
 }
 
-.top-file-detail {
-  color: var(--color-text-tertiary);
-  white-space: nowrap;
-  margin-left: auto;
+.top-file-link:hover {
+  background: var(--color-bg-tertiary);
+}
+
+.top-file-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-weight: 400;
+  flex-shrink: 0;
 }
 
 .top-file-added {
@@ -1531,54 +1607,92 @@ a:hover {
 }
 
 .top-file-removed {
-  color: var(--color-accent);
+  color: var(--color-danger);
 }
 
 .top-file-commits {
-  color: var(--color-text-tertiary);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-text-primary);
+}
+
+.top-file-commits svg {
+  flex-shrink: 0;
 }
 
 /* ============================================
    Health Cards
    ============================================ */
 
-/* Codebase Health cards stack vertically in the sidebar context. Side-by-side
-   (3-col) gets cramped in the 460px sidebar track — Growth/Focus/Churn each
-   need enough horizontal space for the level pill and metric numbers without
-   wrapping. Single column gives each card its own breathing room. */
-.health-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-sm);
+/* Codebase Health cards stack vertically. Each card: label + subtitle
+   top-left, severity pill top-right, progress bar in the middle, bottom
+   stat at the base. Matches the Figma frame (node 52:1494).
+
+   Padding 13px matches the Figma inner offset; height 104px matches
+   the Figma card. Inner-glow is the same subtle 4% white wash used on
+   the narrative Vibe Check card. */
+.health-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .health-card {
-  padding: var(--space-md);
+  position: relative;
+  height: 104px;
+  padding: 13px;
   background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--color-bg-tertiary);
+  border-radius: 8px;
+  box-shadow: inset 0 0 40px 0 rgba(255, 255, 255, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.health-card-header {
+.health-card-top {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: var(--space-sm);
+  gap: 8px;
+}
+
+.health-card-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  line-height: 18px;
+  min-width: 0;
 }
 
 .health-card-label {
-  font-size: 13px;
+  font-family: var(--font-sans);
   font-weight: 500;
+  font-size: 12px;
   color: var(--color-text-primary);
+}
+
+.health-card-detail {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  color: var(--color-text-tertiary);
 }
 
 .health-card-level {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 6px;
+  border-radius: 60px;
+  font-family: var(--font-sans);
+  font-weight: 300;
   font-size: 12px;
-  font-weight: 600;
-  padding: 2px var(--space-sm);
-  border-radius: var(--radius-full);
+  line-height: 1;
   cursor: default;
+  flex-shrink: 0;
 }
 
 /* Hover tooltip on the level pill — explains what the rating means in plain
@@ -1643,33 +1757,47 @@ a:hover {
   border-bottom: 5px solid var(--color-bg-elevated);
 }
 
+/* Severity pill — status-color text on a 10% color tint over the
+   tertiary base. Matches the Figma layered-gradient effect. */
 .health-card-level--strong {
   color: var(--color-success);
-  background: color-mix(in srgb, var(--color-success) 8%, transparent);
+  background: color-mix(in srgb, var(--color-success) 10%, var(--color-bg-tertiary));
 }
 
 .health-card-level--okay {
   color: var(--color-warning);
-  background: color-mix(in srgb, var(--color-warning) 8%, transparent);
+  background: color-mix(in srgb, var(--color-warning) 10%, var(--color-bg-tertiary));
 }
 
 .health-card-level--rough {
   color: var(--color-danger);
-  background: color-mix(in srgb, var(--color-danger) 8%, transparent);
+  background: color-mix(in srgb, var(--color-danger) 10%, var(--color-bg-tertiary));
 }
 
+/* 4px tall progress rail. Same 10%-tint treatment as the severity pill,
+   so track and fill colors match. Fill renders solid at full alpha. */
 .health-card-bar {
-  height: 3px;
-  background: var(--color-bg-tertiary);
-  border-radius: 2px;
-  margin-bottom: var(--space-sm);
+  height: 4px;
+  border-radius: 60px;
   overflow: hidden;
+  flex-shrink: 0;
+}
+
+.health-card-bar:has(.health-card-fill--strong) {
+  background: color-mix(in srgb, var(--color-success) 10%, var(--color-bg-tertiary));
+}
+
+.health-card-bar:has(.health-card-fill--okay) {
+  background: color-mix(in srgb, var(--color-warning) 10%, var(--color-bg-tertiary));
+}
+
+.health-card-bar:has(.health-card-fill--rough) {
+  background: color-mix(in srgb, var(--color-danger) 10%, var(--color-bg-tertiary));
 }
 
 .health-card-fill {
   height: 100%;
-  border-radius: 2px;
-  opacity: 0.5;
+  border-radius: 60px;
   animation: healthBarFill 1s ease-out 2s both;
 }
 
@@ -1691,18 +1819,35 @@ a:hover {
   background: var(--color-danger);
 }
 
+/* Bottom stat row. Growth uses two color-coded line counts; Focus and
+   Churn use a file icon + textual stat. All render Regular 12 white. */
 .health-card-stat {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 14px;
   font-family: var(--font-sans);
-  margin-bottom: 2px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--color-text-primary);
 }
 
-.health-card-detail {
-  font-size: 12px;
-  color: var(--color-text-secondary);
-  line-height: 1.4;
+.health-card-stat svg {
+  flex-shrink: 0;
+  color: var(--color-text-primary);
+}
+
+.health-card-stat-added {
+  color: var(--color-success);
+}
+
+.health-card-stat-removed {
+  color: var(--color-danger);
+}
+
+.health-card-stat--focus,
+.health-card-stat--churn {
+  gap: 4px;
 }
 
 /* ============================================

@@ -10,7 +10,9 @@ import {
   BookText,
   ArrowUpRight,
   ScrollText,
-  ExternalLink,
+  FileText,
+  GitCommitHorizontal,
+  TrendingUp,
 } from "lucide-react";
 import { useCountUp } from "@/lib/use-count-up";
 import { parseSections } from "@/lib/parse-sections";
@@ -584,18 +586,17 @@ function StatsCards({ stats, animate = true }: { stats: DigestViewStats; animate
   const commits = useCountUp(stats.commits, 1000, animate);
   const files = useCountUp(stats.filesChanged, 1000, animate);
   return (
-    <div className="stats-row">
-      <span className="stats-item positive">+{fmt(added)} lines</span>
-      {stats.linesRemoved > 0 && (
-        <>
-          <span className="stats-sep">{"\u00b7"}</span>
-          <span className="stats-item negative">-{fmt(removed)} lines</span>
-        </>
-      )}
-      <span className="stats-sep">{"\u00b7"}</span>
-      <span className="stats-item">{fmt(commits)} commits</span>
-      <span className="stats-sep">{"\u00b7"}</span>
-      <span className="stats-item">{fmt(files)} files</span>
+    <div className="stats-quick">
+      <span className="stats-quick-added">+{fmt(added)} lines</span>
+      {stats.linesRemoved > 0 && <span className="stats-quick-removed">-{fmt(removed)} lines</span>}
+      <span className="stats-quick-item">
+        <GitCommitHorizontal size={16} strokeWidth={1} aria-hidden />
+        {fmt(commits)} commits
+      </span>
+      <span className="stats-quick-item">
+        <FileText size={16} strokeWidth={1} aria-hidden />
+        {fmt(files)} Files
+      </span>
     </div>
   );
 }
@@ -610,14 +611,26 @@ function PaceCard({
   animationDelay?: string;
 }) {
   const multiplier = useCountUp(pace.multiplier, 1000, animate, 1);
+  // Above 1.0× reads as "speeding up" → success green. At or below = neutral
+  // white. Matches the Figma mock which shows the 1.7× hero in success green.
+  const isAbove = pace.multiplier >= 1.0;
   return (
-    <div className="pace-card stats-reveal-item" style={{ animationDelay }}>
-      <div className="pace-multiplier">{multiplier.toFixed(1)}x</div>
-      <div className="pace-detail">
-        <div className="pace-label">{pace.label}</div>
-        <div className="pace-comparison">
-          {pace.todayCommits} commits today {"\u00b7"} {pace.avgCommits}-commit average
-        </div>
+    <div className="pace stats-reveal-item" style={{ animationDelay }}>
+      <div className="pace-hero">
+        <span className={`pace-multiplier${isAbove ? " pace-multiplier--up" : ""}`}>
+          {multiplier.toFixed(1)}x
+        </span>
+        <span className="pace-label">{pace.label}</span>
+      </div>
+      <div className="pace-stats">
+        <span className="pace-stat">
+          <GitCommitHorizontal size={16} strokeWidth={1} aria-hidden />
+          {pace.todayCommits} commits today
+        </span>
+        <span className="pace-stat">
+          <TrendingUp size={16} strokeWidth={1} aria-hidden />
+          {pace.avgCommits} commit average
+        </span>
       </div>
     </div>
   );
@@ -1078,32 +1091,31 @@ function TopFiles({ files, repoFullName }: { files: TopFile[]; repoFullName?: st
         const url = buildGitHubUrl(f.file);
         return (
           <div key={f.file} className="top-file-row">
-            <span className="top-file-rank">{i + 1}.</span>
-            {url ? (
-              <a
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="top-file-name top-file-name--link"
-                title={f.file}
-              >
-                {shortName}
-                <ExternalLink size={11} className="top-file-link-icon" aria-hidden />
-              </a>
-            ) : (
+            <div className="top-file-left">
+              <span className="top-file-rank">{i + 1})</span>
               <span className="top-file-name" title={f.file}>
                 {shortName}
               </span>
-            )}
-            <span className="top-file-detail">
+              {url && (
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="top-file-link"
+                  aria-label={`Open ${shortName} on GitHub`}
+                >
+                  <ArrowUpRight size={10} strokeWidth={1} aria-hidden />
+                </a>
+              )}
+            </div>
+            <div className="top-file-right">
               <span className="top-file-added">+{fmt(f.added ?? 0)}</span>
-              {" / "}
               <span className="top-file-removed">-{fmt(f.removed ?? 0)}</span>
               <span className="top-file-commits">
-                {" \u00b7 "}
-                {f.commits} {f.commits === 1 ? "commit" : "commits"}
+                <GitCommitHorizontal size={16} strokeWidth={1} aria-hidden />
+                {f.commits}
               </span>
-            </span>
+            </div>
           </div>
         );
       })}
@@ -1211,15 +1223,18 @@ function CodebaseHealth({ health }: { health: HealthData }) {
 
   return (
     <div>
-      <div className="health-grid" ref={gridRef}>
+      <div className="health-cards" ref={gridRef}>
         {indicators.map((h) => {
           const color = levelColor(h.level);
           const description = HEALTH_DESCRIPTIONS[h.label]?.[h.level];
           const isTapOpen = openCategory === h.label;
           return (
             <div key={h.label} className="health-card">
-              <div className="health-card-header">
-                <span className="health-card-label">{h.label}</span>
+              <div className="health-card-top">
+                <div className="health-card-identity">
+                  <span className="health-card-label">{h.label}</span>
+                  <span className="health-card-detail">{h.detail}</span>
+                </div>
                 <span
                   className={`health-card-level health-card-level--${color}${
                     isTapOpen ? " tap-open" : ""
@@ -1243,8 +1258,23 @@ function CodebaseHealth({ health }: { health: HealthData }) {
                   style={{ width: `${Math.max(0, Math.min(100, h.score * 10))}%` }}
                 />
               </div>
-              <div className="health-card-stat">{h.stat}</div>
-              <div className="health-card-detail">{h.detail}</div>
+              <div className={`health-card-stat health-card-stat--${h.label.toLowerCase()}`}>
+                {h.label === "Growth" ? (
+                  <>
+                    <span className="health-card-stat-added">
+                      +{fmt(health.growth.added)} lines
+                    </span>
+                    <span className="health-card-stat-removed">
+                      -{fmt(health.growth.removed)} lines
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <FileText size={16} strokeWidth={1} aria-hidden />
+                    <span>{h.stat}</span>
+                  </>
+                )}
+              </div>
             </div>
           );
         })}
@@ -1297,70 +1327,50 @@ function DigestStatsSidebar({
 
   return (
     <aside className="digest-stats-sidebar">
-      {vis("statistics") && stats.commits != null && (
-        <div className="digest-section stats-reveal">
-          <div className="digest-section-title stats-reveal-item" style={{ animationDelay: "0ms" }}>
-            <Emoji name="statistics" size={18} /> Statistics
-          </div>
+      {/* Umbrella "Statistics" header — one per column, matching the
+          Figma frame (node 52:1494). All quantitative sub-sections
+          below it are nested under this header with 12px Medium
+          sub-headings (no emoji on sub-sections). */}
+      <div className="stats-column-header stats-reveal-item" style={{ animationDelay: "0ms" }}>
+        <Emoji name="statistics" size={20} />
+        <span>Statistics</span>
+      </div>
+
+      <div className="stats-column-body">
+        {vis("statistics") && stats.commits != null && (
           <div className="stats-reveal-item" style={{ animationDelay: "200ms" }}>
             <StatsCards stats={stats} animate={animate} />
           </div>
-        </div>
-      )}
+        )}
 
-      {vis("mostActiveFiles") && stats.topFiles && stats.topFiles.length > 0 && (
-        <div className="digest-section stats-reveal">
-          <div
-            className="digest-section-title stats-reveal-item"
-            style={{ animationDelay: "450ms" }}
-          >
-            <Emoji name="mostActiveFiles" size={18} /> Most Active Files
-          </div>
-          <div className="stats-reveal-item" style={{ animationDelay: "600ms" }}>
+        {vis("mostActiveFiles") && stats.topFiles && stats.topFiles.length > 0 && (
+          <div className="stats-subsection stats-reveal-item" style={{ animationDelay: "450ms" }}>
+            <div className="stats-subsection-title">Most Active Files</div>
             <TopFiles files={stats.topFiles} repoFullName={repoFullName} />
           </div>
-        </div>
-      )}
+        )}
 
-      {vis("whenYouCoded") && stats.timeline && (
-        <div className="digest-section stats-reveal">
-          <div
-            className="digest-section-title stats-reveal-item"
-            style={{ animationDelay: "700ms" }}
-          >
-            <Emoji name="whenYouCoded" size={18} /> Coding Timeline
-          </div>
-          <div className="stats-reveal-item" style={{ animationDelay: "900ms" }}>
-            <WhenYouCoded timeline={stats.timeline} />
-          </div>
-        </div>
-      )}
-
-      {vis("paceCheck") && stats.pace && (
-        <div className="digest-section stats-reveal">
-          <div
-            className="digest-section-title stats-reveal-item"
-            style={{ animationDelay: "1150ms" }}
-          >
-            <Emoji name="paceCheck" size={18} /> Pace Check
-          </div>
-          <PaceCard pace={stats.pace} animate={animate} animationDelay="1350ms" />
-        </div>
-      )}
-
-      {vis("codebaseHealth") && stats.health && (
-        <div className="digest-section stats-reveal">
-          <div
-            className="digest-section-title stats-reveal-item"
-            style={{ animationDelay: "1700ms" }}
-          >
-            <Emoji name="codebaseHealth" size={18} /> Codebase Health
-          </div>
-          <div className="stats-reveal-item" style={{ animationDelay: "1900ms" }}>
+        {vis("codebaseHealth") && stats.health && (
+          <div className="stats-subsection stats-reveal-item" style={{ animationDelay: "700ms" }}>
+            <div className="stats-subsection-title">Codebase Health</div>
             <CodebaseHealth health={stats.health} />
           </div>
-        </div>
-      )}
+        )}
+
+        {vis("whenYouCoded") && stats.timeline && (
+          <div className="stats-subsection stats-reveal-item" style={{ animationDelay: "950ms" }}>
+            <div className="stats-subsection-title">Coding Timeline</div>
+            <WhenYouCoded timeline={stats.timeline} />
+          </div>
+        )}
+
+        {vis("paceCheck") && stats.pace && (
+          <div className="stats-subsection stats-reveal-item" style={{ animationDelay: "1200ms" }}>
+            <div className="stats-subsection-title">Pace Check</div>
+            <PaceCard pace={stats.pace} animate={animate} animationDelay="1350ms" />
+          </div>
+        )}
+      </div>
     </aside>
   );
 }
