@@ -994,19 +994,137 @@ a:hover {
   margin-bottom: var(--space-sm);
 }
 
-.digest-item {
-  padding: var(--space-xs) 0;
-  padding-left: var(--space-md);
-  position: relative;
-  font-size: 14px;
-  line-height: 1.5;
+/* Narrative bulleted sections (Shipped / Changed / Still Shifting /
+   Left Off). Pixel-mapped from the Figma Shipped frame (node 50:999):
+   a flex-between header with an emoji + label + item-count pill on the
+   left and an optional action button (Share on X for shipped) on the
+   right, followed by a 14px-gapped list of "dot + bold title — light
+   description" rows. */
+.digest-bulleted {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  /* Shared .digest-section already provides the bottom margin that
+     separates this section from the next one in the narrative column. */
 }
 
-.digest-item::before {
-  content: "\2022";
+.digest-bulleted-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+
+.digest-bulleted-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.digest-bulleted-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: normal;
+  color: var(--color-text-primary);
+}
+
+/* Count pill — "N items". Solid tertiary fill + subtle top inner-glow
+   matches the other small chips across the app (streak, repo chip). */
+.digest-bulleted-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 6px;
+  border-radius: 60px;
+  background: var(--color-bg-tertiary);
+  box-shadow: inset 0 8px 20px 0 rgba(255, 255, 255, 0.04);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--color-text-primary);
+}
+
+/* Small bordered button on the right of the header. Used for the
+   Share on X action on Shipped. */
+.digest-bulleted-share {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 6px;
+  background: transparent;
+  border: 1px solid var(--color-bg-tertiary);
+  border-radius: 4px;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 10px;
+  line-height: 1;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.digest-bulleted-share:hover {
+  background: var(--color-bg-tertiary);
+}
+
+.digest-bulleted-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.digest-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 0;
+  position: static;
+  font-family: var(--font-sans);
+}
+
+/* 16×20 frame with a centered round dot. Width matches the Figma
+   bullet frame; height matches the body line-height so the dot
+   vertically aligns with the first text line. */
+.digest-item-bullet {
+  flex-shrink: 0;
+  display: block;
+  width: 16px;
+  height: 20px;
+  position: relative;
+}
+
+.digest-item-bullet::before {
+  content: "";
   position: absolute;
-  left: 0;
-  color: var(--color-text-tertiary);
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-text-primary);
+  transform: translate(-50%, -50%);
+}
+
+.digest-item-text {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-text-primary);
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.digest-item-title {
+  font-weight: 500;
+}
+
+.digest-item-context {
+  font-weight: 300;
 }
 
 .digest-item-title {
@@ -3462,29 +3580,6 @@ a:hover {
 
 .resume-ai-btn:hover .resume-ai-btn-subtitle {
   color: var(--color-text-secondary);
-}
-
-.share-shipped-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  margin-top: var(--space-md);
-  padding: var(--space-sm) var(--space-md);
-  font-size: 13px;
-  font-weight: 500;
-  font-family: var(--font-sans);
-  color: var(--color-text-secondary);
-  background: transparent;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.share-shipped-btn:hover {
-  color: var(--color-text-primary);
-  border-color: var(--color-border-hover);
-  background: var(--color-bg-secondary);
 }
 
 /* Header-positioned Copy/Download/Email actions. Scoped override of

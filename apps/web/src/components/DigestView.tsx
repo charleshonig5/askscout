@@ -8,7 +8,7 @@ import {
   Send,
   Sparkles,
   ClipboardList,
-  Share2,
+  ArrowUpRight,
   ListChecks,
   ExternalLink,
 } from "lucide-react";
@@ -213,8 +213,9 @@ function ShareBtn({ items }: { items: string[] }) {
   }, [items]);
 
   return (
-    <button className="share-shipped-btn" onClick={handleShare}>
-      <Share2 size={14} /> Share on X
+    <button className="digest-bulleted-share" onClick={handleShare} aria-label="Share on X">
+      Share on X
+      <ArrowUpRight size={10} strokeWidth={1} aria-hidden />
     </button>
   );
 }
@@ -455,34 +456,46 @@ function StreamingDigest({
           .filter((l: string) => !SECTION_EMOJI_PREFIX.test(l));
 
         return (
-          <div key={section.key} className="digest-section">
-            <div className="digest-section-title">
-              <Emoji name={section.key} size={18} /> {section.label}
-              {items.length > 0 && <span className="digest-count-badge">{items.length}</span>}
-              {showCursor && <LiveBadge />}
+          <div key={section.key} className="digest-section digest-bulleted">
+            <div className="digest-bulleted-header">
+              <div className="digest-bulleted-heading">
+                <Emoji name={section.key} size={20} />
+                <span className="digest-bulleted-label">{section.label}</span>
+                {items.length > 0 && (
+                  <span className="digest-bulleted-count">
+                    {items.length} {items.length === 1 ? "item" : "items"}
+                  </span>
+                )}
+                {showCursor && <LiveBadge />}
+              </div>
+              {section.key === "shipped" && !isStreaming && items.length > 0 && (
+                <ShareBtn items={items} />
+              )}
             </div>
-            {items.map((item: string, i: number) => {
-              const dashIdx = item.indexOf(" - ");
-              if (dashIdx > 0 && dashIdx < 60) {
-                const title = item.slice(0, dashIdx);
-                const context = item.slice(dashIdx + 3);
+            <div className="digest-bulleted-list">
+              {items.map((item: string, i: number) => {
+                const dashIdx = item.indexOf(" - ");
+                const hasSplit = dashIdx > 0 && dashIdx < 60;
+                const title = hasSplit ? item.slice(0, dashIdx) : null;
+                const context = hasSplit ? item.slice(dashIdx + 3) : item;
                 return (
                   <div key={i} className="digest-item">
-                    <span className="digest-item-title">{title}</span>
-                    {context && <> - {context}</>}
+                    <span className="digest-item-bullet" aria-hidden />
+                    <p className="digest-item-text">
+                      {title && <span className="digest-item-title">{title}</span>}
+                      {title && context && " - "}
+                      {context && <span className="digest-item-context">{context}</span>}
+                    </p>
                   </div>
                 );
-              }
-              return (
-                <div key={i} className="digest-item">
-                  {item}
+              })}
+              {showCursor && (
+                <div className="digest-item">
+                  <span className="digest-item-bullet" aria-hidden />
+                  <p className="digest-item-text">{cursor}</p>
                 </div>
-              );
-            })}
-            {showCursor && <div className="digest-item">{cursor}</div>}
-            {section.key === "shipped" && !isStreaming && items.length > 0 && (
-              <ShareBtn items={items} />
-            )}
+              )}
+            </div>
             {section.key === "leftOff" && !isStreaming && afterLeftOff}
           </div>
         );
