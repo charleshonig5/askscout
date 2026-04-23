@@ -203,7 +203,6 @@ export async function POST(req: Request) {
                 : growthRatio <= 40
                   ? "Heavy"
                   : "Ballooning",
-        score: Math.max(0, Math.min(10, Math.round(10 - Math.min(growthRatio / 4, 10)))),
       },
       focus: {
         filesPerCommit: Math.round(filesPerCommit * 10) / 10,
@@ -217,7 +216,6 @@ export async function POST(req: Request) {
                 : filesPerCommit <= 20
                   ? "Wide"
                   : "Scattered",
-        score: Math.max(0, Math.min(10, Math.round(10 - Math.min(filesPerCommit / 2, 10)))),
       },
       churn: {
         files: churnFiles,
@@ -231,7 +229,6 @@ export async function POST(req: Request) {
                 : churnFiles <= 12
                   ? "Noisy"
                   : "High",
-        score: Math.max(0, Math.min(10, Math.round(10 - Math.min(churnFiles, 12) * 0.8))),
       },
     };
 

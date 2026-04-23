@@ -542,7 +542,6 @@ function StreamingDigest({
 }
 
 interface HealthIndicator {
-  score: number;
   level: string;
 }
 
@@ -1168,9 +1167,9 @@ function levelFillPercent(indicator: "Growth" | "Focus" | "Churn", level: string
 }
 
 /**
- * Per-level subtitle copy for the card's tertiary-grey second line.
- * Keeps the card's story tight at every state instead of the old
- * binary "Adding and cleaning up" / "Building new code" split.
+ * Per-level subtitle copy for each Codebase Health card's tertiary-grey
+ * second line. One line per level (5 per indicator = 15 total) so the
+ * card's story stays precise at every state instead of a binary branch.
  */
 const GROWTH_DETAIL: Record<string, string> = {
   Lean: "Balanced adds and cleanup",
@@ -1178,6 +1177,22 @@ const GROWTH_DETAIL: Record<string, string> = {
   Growing: "Mostly adding, light cleanup",
   Heavy: "Build-heavy phase",
   Ballooning: "All build, no cleanup",
+};
+
+const FOCUS_DETAIL: Record<string, string> = {
+  Tight: "Commits stay on one thing",
+  Sharp: "Small, focused commits",
+  Moderate: "Commits touch several areas",
+  Wide: "Broad commits across areas",
+  Scattered: "Commits reach everywhere",
+};
+
+const CHURN_DETAIL: Record<string, string> = {
+  Clean: "No repeated edits",
+  Minimal: "A few files returning",
+  Moderate: "Several files getting revisits",
+  Noisy: "Many files in rework rotation",
+  High: "Heavy repeated iteration",
 };
 
 /**
@@ -1240,14 +1255,13 @@ function CodebaseHealth({ health }: { health: HealthData }) {
       label: "Focus" as const,
       level: health.focus.level,
       stat: `${health.focus.filesPerCommit} files per commit`,
-      detail:
-        health.focus.filesPerCommit <= 3 ? "Changes are concentrated" : "Changes are spread out",
+      detail: FOCUS_DETAIL[health.focus.level] ?? "",
     },
     {
       label: "Churn" as const,
       level: health.churn.level,
       stat: `${health.churn.files} ${health.churn.files === 1 ? "file" : "files"} reworked`,
-      detail: health.churn.files === 0 ? "No repeated edits" : "Same files edited 3+ times",
+      detail: CHURN_DETAIL[health.churn.level] ?? "",
     },
   ];
 
