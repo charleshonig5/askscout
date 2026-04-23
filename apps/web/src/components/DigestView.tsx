@@ -1534,12 +1534,14 @@ export function DigestView({
               <div className="digest-bottom-actions">
                 {onGenerateStandup && (
                   <button className="standup-btn" onClick={onGenerateStandup}>
-                    <ClipboardList size={16} /> Generate Standup
+                    <ClipboardList size={20} strokeWidth={1} aria-hidden />
+                    Generate Standup
                   </button>
                 )}
                 {onGeneratePlan && (
                   <button className="standup-btn" onClick={onGeneratePlan}>
-                    <ListChecks size={16} /> To-Do List
+                    <ListChecks size={20} strokeWidth={1} aria-hidden />
+                    Generate Todo List
                   </button>
                 )}
               </div>
