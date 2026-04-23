@@ -50,6 +50,7 @@ const EMOJI_MAP: Record<string, EmojiAsset> = {
   quietDay: { folder: "Hot beverage", file: "hot_beverage_3d.png" },
   // Modal headers
   standup: { folder: "Scroll", file: "scroll_3d.png" },
+  plan: { folder: "Spiral notepad", file: "spiral_notepad_3d.png" },
 };
 
 export type EmojiName = keyof typeof EMOJI_MAP;

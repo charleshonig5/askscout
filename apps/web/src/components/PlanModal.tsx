@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { X, Copy, Check, ListChecks } from "lucide-react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { X, Copy, Check } from "lucide-react";
+import { Emoji } from "@/components/Emoji";
 
 interface PlanModalProps {
   isOpen: boolean;
@@ -110,7 +111,6 @@ export function PlanModal({ isOpen, onClose, content }: PlanModalProps) {
     (id: string) => {
       setChecked((prev) => {
         const next = { ...prev, [id]: !prev[id] };
-        // Persist immediately so state survives modal close / page refresh.
         if (storageKey && typeof window !== "undefined") {
           try {
             localStorage.setItem(storageKey, JSON.stringify(next));
@@ -139,49 +139,57 @@ export function PlanModal({ isOpen, onClose, content }: PlanModalProps) {
   return (
     <>
       <div className="modal-overlay" onClick={onClose} />
-      <div className="modal">
-        <div className="modal-header">
-          <div className="modal-title">
-            <ListChecks size={16} /> To-Do List
-            {tasks.length > 0 && (
-              <span className="plan-progress">
-                {doneCount} / {tasks.length}
-              </span>
-            )}
+      <div className="modal modal--plan">
+        <div className="modal-top">
+          <div className="modal-identity">
+            <div className="modal-title-row">
+              <Emoji name="plan" size={24} />
+              <h2 className="modal-title">To-Do List</h2>
+              {tasks.length > 0 && (
+                <span className="modal-progress-pill">
+                  {doneCount}/{tasks.length}
+                </span>
+              )}
+            </div>
+            <p className="modal-subtitle">Your to-do list for today. Check off as you go.</p>
           </div>
-          <button className="header-icon-btn" onClick={onClose} aria-label="Close">
-            <X size={16} />
+          <button type="button" className="modal-close-btn" onClick={onClose} aria-label="Close">
+            <X size={20} strokeWidth={1} aria-hidden />
           </button>
         </div>
-        <p className="modal-desc">Your to-do list for today. Check off as you go.</p>
+
+        <div className="modal-divider" aria-hidden />
 
         <div className="modal-body">
           {!content ? (
-            <div className="digest-loading">
+            <div className="modal-empty">
               Your to-do list will be ready when the digest finishes generating.
             </div>
           ) : tasks.length === 0 ? (
-            <div className="digest-loading">No tasks yet.</div>
+            <div className="modal-empty">No tasks yet.</div>
           ) : (
-            <div className="plan-formatted">
-              {tasks.map((t) => {
+            <div className="plan-list">
+              {tasks.map((t, i) => {
                 const isChecked = !!checked[t.id];
                 return (
-                  <div key={t.id} className={`plan-item${isChecked ? " plan-item--checked" : ""}`}>
-                    <button
-                      type="button"
-                      className={`plan-checkbox${isChecked ? " plan-checkbox--checked" : ""}`}
-                      onClick={() => toggleChecked(t.id)}
-                      aria-label={isChecked ? "Mark as not done" : "Mark as done"}
-                      aria-pressed={isChecked}
-                    >
-                      {isChecked && <Check size={12} strokeWidth={3} />}
-                    </button>
-                    <div className="plan-item-body">
-                      <span className="plan-task">{t.task}</span>
-                      {t.reason && <span className="plan-reason">{t.reason}</span>}
+                  <Fragment key={t.id}>
+                    <div className={`plan-item${isChecked ? " plan-item--checked" : ""}`}>
+                      <button
+                        type="button"
+                        className={`plan-checkbox${isChecked ? " plan-checkbox--checked" : ""}`}
+                        onClick={() => toggleChecked(t.id)}
+                        aria-label={isChecked ? "Mark as not done" : "Mark as done"}
+                        aria-pressed={isChecked}
+                      >
+                        {isChecked && <Check size={14} strokeWidth={2} aria-hidden />}
+                      </button>
+                      <div className="plan-item-body">
+                        <span className="plan-task">{t.task}</span>
+                        {t.reason && <span className="plan-reason">{t.reason}</span>}
+                      </div>
                     </div>
-                  </div>
+                    {i < tasks.length - 1 && <div className="plan-item-divider" aria-hidden />}
+                  </Fragment>
                 );
               })}
             </div>
@@ -191,16 +199,19 @@ export function PlanModal({ isOpen, onClose, content }: PlanModalProps) {
         {content && (
           <div className="modal-footer">
             <button
-              className={`action-btn modal-copy-btn ${copied ? "copied" : ""}`}
+              type="button"
+              className={`modal-copy-btn${copied ? " is-copied" : ""}`}
               onClick={handleCopy}
             >
               {copied ? (
                 <>
-                  <Check size={16} /> Copied
+                  <Check size={20} strokeWidth={1} aria-hidden />
+                  Copied
                 </>
               ) : (
                 <>
-                  <Copy size={16} /> Copy to clipboard
+                  <Copy size={20} strokeWidth={1} aria-hidden />
+                  Copy to Clipboard
                 </>
               )}
             </button>
