@@ -10,7 +10,7 @@
    same semantic role (bg-primary = main content surface, etc.).
    ───────────────────────────────────────────────────────────────────── */
 :root {
-  /* Backgrounds — mirror of dark's #070707 / #121212 / #1e1e1e / #141414 */
+  /* Backgrounds — mirror of dark's #070707 / #121212 / #252525 / #141414 */
   --color-bg-primary: #ffffff;
   --color-bg-secondary: #f7f7f8;
   --color-bg-tertiary: #efefef;
@@ -30,7 +30,7 @@
      links, and emphasis sit at maximum contrast against the surface
      and stay strictly inside the palette. */
   --color-accent: #070707;
-  --color-accent-hover: #1e1e1e;
+  --color-accent-hover: #252525;
   --color-accent-text: #ffffff;
 
   /* Status — light-mode variants of the Scout brand signal palette.
@@ -96,7 +96,7 @@
 [data-theme="dark"] {
   --color-bg-primary: #070707;
   --color-bg-secondary: #121212;
-  --color-bg-tertiary: #1e1e1e;
+  --color-bg-tertiary: #252525;
   --color-bg-elevated: #141414;
 
   --color-text-primary: #ededed;
@@ -1547,7 +1547,7 @@ a:hover {
      - Top cluster: logo row + repo section + history list
      - Bottom cluster: divider + profile row
    Uses existing brand tokens. Hex values that don't have a token
-   equivalent (e.g. #1e1e1e for the active-row card) fall back to the
+   equivalent (e.g. #252525 for the active-row card) fall back to the
    token that matches the intent (--color-bg-tertiary). */
 
 .sidebar {

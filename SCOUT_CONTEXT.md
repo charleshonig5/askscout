@@ -94,7 +94,7 @@ Always run `pnpm typecheck`, `pnpm format`, `pnpm lint` before committing. Build
 | --------------- | ------------------------------------------------------------ |
 | Primary Black   | `#070707`                                                    |
 | Secondary Black | `#121212`                                                    |
-| Dark Grey       | `#1E1E1E`                                                    |
+| Dark Grey       | `#252525`                                                    |
 | Light Grey      | `#616161`                                                    |
 | White           | `#FFFFFF`                                                    |
 | Green           | `#57D32E` (`#4AC321` in light mode — darker for readability) |
@@ -107,7 +107,7 @@ Always run `pnpm typecheck`, `pnpm format`, `pnpm lint` before committing. Build
 | ------------------------------------------------ | --------- | ---------- |
 | `--color-bg-primary` (card surface)              | `#070707` | `#FFFFFF`  |
 | `--color-bg-secondary` (body / sidebar / chrome) | `#121212` | `#F7F7F8`  |
-| `--color-bg-tertiary` (subtle UI)                | `#1E1E1E` | `#EFEFEF`  |
+| `--color-bg-tertiary` (subtle UI)                | `#252525` | `#EFEFEF`  |
 | `--color-bg-elevated` (popovers)                 | `#141414` | `#FFFFFF`  |
 | `--color-text-primary`                           | `#EDEDED` | `#070707`  |
 | `--color-text-secondary`                         | `#A0A0A0` | `#616161`  |
@@ -115,7 +115,7 @@ Always run `pnpm typecheck`, `pnpm format`, `pnpm lint` before committing. Build
 | `--color-border`                                 | `#222222` | `#ECECEC`  |
 | `--color-border-hover`                           | `#333333` | `#D0D0D0`  |
 | `--color-accent`                                 | `#FFFFFF` | `#070707`  |
-| `--color-accent-hover`                           | `#EDEDED` | `#1E1E1E`  |
+| `--color-accent-hover`                           | `#EDEDED` | `#252525`  |
 | `--color-accent-text`                            | `#070707` | `#FFFFFF`  |
 | `--color-success` (strong)                       | `#57D32E` | `#4AC321`  |
 | `--color-warning` (moderate)                     | `#F7C80B` | `#E2BB20`  |
