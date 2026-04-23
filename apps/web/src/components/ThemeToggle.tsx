@@ -20,7 +20,7 @@ export function ThemeToggle() {
 
   return (
     <button className="header-icon-btn" onClick={toggle} aria-label="Toggle theme">
-      {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
+      {theme === "light" ? <Moon size={20} strokeWidth={1} /> : <Sun size={20} strokeWidth={1} />}
     </button>
   );
 }

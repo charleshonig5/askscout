@@ -9,8 +9,8 @@ import {
   GitCommitHorizontal,
   HelpCircle,
   LogOut,
-  SlidersHorizontal,
-  SquareArrowOutUpRight,
+  Settings2,
+  SquareArrowUpRight,
 } from "lucide-react";
 import type { HistoryEntry } from "@/lib/mock-data";
 import { RepoSelector } from "./RepoSelector";
@@ -102,7 +102,7 @@ export function Sidebar({
                 onClick={() => router.push("/settings")}
                 aria-label="Settings"
               >
-                <SlidersHorizontal size={20} strokeWidth={1.75} />
+                <Settings2 size={20} strokeWidth={1} />
               </button>
             </div>
           </div>
@@ -116,7 +116,7 @@ export function Sidebar({
                   title="The repository Scout is scanning for this digest"
                   aria-label="The repository Scout is scanning for this digest"
                 >
-                  <HelpCircle size={16} strokeWidth={1.75} aria-hidden />
+                  <HelpCircle size={16} strokeWidth={1} aria-hidden />
                 </span>
               </div>
               <RepoSelector
@@ -135,7 +135,7 @@ export function Sidebar({
                   title="Your digests from the last 30 days"
                   aria-label="Your digests from the last 30 days"
                 >
-                  <HelpCircle size={16} strokeWidth={1.75} aria-hidden />
+                  <HelpCircle size={16} strokeWidth={1} aria-hidden />
                 </span>
               </div>
 
@@ -168,16 +168,16 @@ export function Sidebar({
                           </span>
                           <span className="sidebar-item-stat">
                             {entry.commits}
-                            <GitCommitHorizontal size={16} strokeWidth={1.75} aria-hidden />
+                            <GitCommitHorizontal size={16} strokeWidth={1} aria-hidden />
                           </span>
                           <span className="sidebar-item-stat">
                             {entry.filesChanged}
-                            <FileText size={16} strokeWidth={1.75} aria-hidden />
+                            <FileText size={16} strokeWidth={1} aria-hidden />
                           </span>
                         </div>
                       </div>
                       <span className="sidebar-item-open" aria-hidden>
-                        <SquareArrowOutUpRight size={20} strokeWidth={1.75} />
+                        <SquareArrowUpRight size={20} strokeWidth={1} />
                       </span>
                     </button>
                   );
@@ -241,7 +241,7 @@ export function Sidebar({
               aria-haspopup="dialog"
               aria-expanded={signOutOpen}
             >
-              <LogOut size={20} strokeWidth={1.75} />
+              <LogOut size={20} strokeWidth={1} />
             </button>
           </div>
         </div>
