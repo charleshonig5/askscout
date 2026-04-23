@@ -798,7 +798,12 @@ export default function DashboardPage() {
               </>
             ) : (
               <>
-                {digestStream.error ? (
+                {digestStream.error && !/no (new )?commits/i.test(digestStream.error) ? (
+                  // Error UI is suppressed for "no commits" errors specifically —
+                  // those are handled by the deferred quiet-day transition above
+                  // (see the no-commits effect). DigestView stays mounted with
+                  // its opener typing through the wait, then the view switches
+                  // straight to the quiet-day graphic. No interstitial.
                   <div className="digest-error">
                     <p>{digestStream.error}</p>
                     <div className="digest-error-actions">
@@ -808,14 +813,6 @@ export default function DashboardPage() {
                       >
                         Try again
                       </button>
-                      {/no (new )?commits/i.test(digestStream.error) && (
-                        <button
-                          className="btn btn-secondary"
-                          onClick={() => void showLatestFromHistory()}
-                        >
-                          Show latest digest
-                        </button>
-                      )}
                     </div>
                   </div>
                 ) : (
