@@ -817,10 +817,13 @@ a:hover {
 
 /* Repo chip — solid tertiary fill with a subtle top inner-glow, pill
    shape, small Work Sans Light label. Reads as quiet metadata next to
-   the serif title. */
+   the serif title. Now a clickable link that opens the repo on
+   GitHub in a new tab; the small ArrowUpRight glyph signals the
+   external-link affordance. */
 .digest-repo-chip {
   display: inline-flex;
   align-items: center;
+  gap: 4px;
   padding: 4px 8px;
   border-radius: 90px;
   background: var(--color-bg-tertiary);
@@ -831,6 +834,13 @@ a:hover {
   font-size: 12px;
   line-height: 1;
   letter-spacing: 0;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.digest-repo-chip:hover {
+  background: color-mix(in srgb, var(--color-text-primary) 8%, var(--color-bg-tertiary));
 }
 
 /* "Back to Today" button — appears above the digest title when the

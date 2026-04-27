@@ -11,7 +11,7 @@ import { useDigestStream } from "@/lib/use-digest-stream";
 import { parseSections } from "@/lib/parse-sections";
 import { useTapTooltip } from "@/lib/use-tap-tooltip";
 import { Emoji } from "@/components/Emoji";
-import { ArrowLeft, SquareArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, SquareArrowUpRight } from "lucide-react";
 
 import type { HistoryEntry } from "@/lib/mock-data";
 
@@ -681,7 +681,18 @@ export default function DashboardPage() {
                   <span className="digest-page-title-text">{pageTitle}</span>
                   {(repoName || (!noNewCommits && !isViewingHistory && streak >= 2)) && (
                     <span className="digest-page-pills">
-                      {repoName && <span className="digest-repo-chip">{repoName}</span>}
+                      {repoName && selectedRepo && (
+                        <a
+                          href={`https://github.com/${selectedRepo}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="digest-repo-chip"
+                          aria-label={`Open ${selectedRepo} on GitHub`}
+                        >
+                          {repoName}
+                          <ArrowUpRight size={10} strokeWidth={1} aria-hidden />
+                        </a>
+                      )}
                       {!noNewCommits && !isViewingHistory && streak >= 2 && (
                         <span
                           ref={streakTap.ref}
