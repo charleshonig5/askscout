@@ -4124,12 +4124,13 @@ a:hover {
   min-width: 0;
 }
 
-/* Action row sibling — sits below the section head, right-
-   aligned. Used when the action is too heavy-scope to share a
-   row with the title (Danger Zone → Delete Account). */
+/* Action row sibling — sits below the section head, left-
+   aligned to start at the same edge as the title. Used when
+   the action is too heavy-scope to share a row with the title
+   (Danger Zone → Delete Account). */
 .settings-section-action-row {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 /* Danger-tinted outlined button. Mirrors .modal-action-btn--danger
