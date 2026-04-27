@@ -354,31 +354,32 @@ export default function SettingsPage() {
 
           <hr className="settings-divider" />
 
-          {/* Clear History */}
+          {/* Clear History — section head uses the --with-action
+              modifier: title + desc stack on the left, danger button
+              vertically centered against the stack on the right. The
+              4px title→desc gap stays untouched (the button is now a
+              sibling of the stack, not part of it). */}
           <section className="settings-section">
-            <header className="settings-section-head">
-              <div className="settings-section-title-row">
+            <header className="settings-section-head settings-section-head--with-action">
+              <div className="settings-section-text">
                 <div className="settings-section-title">
                   <Emoji name="clearHistory" size={20} />
                   <h2>Clear History</h2>
                 </div>
-                {/* Section-level action — sits in the title row, right-
-                    aligned, gated on having history to clear. Triggers
-                    the confirm modal mounted at page bottom. */}
-                {activeRepos.length > 0 && (
-                  <button
-                    type="button"
-                    className="settings-clear-all-btn"
-                    onClick={openClearAll}
-                  >
-                    <Trash2 size={16} strokeWidth={1} aria-hidden />
-                    Clear All History
-                  </button>
-                )}
+                <p className="settings-section-desc">
+                  Delete past digests. This cannot be undone.
+                </p>
               </div>
-              <p className="settings-section-desc">
-                Delete past digests. This cannot be undone.
-              </p>
+              {activeRepos.length > 0 && (
+                <button
+                  type="button"
+                  className="settings-clear-all-btn"
+                  onClick={openClearAll}
+                >
+                  <Trash2 size={16} strokeWidth={1} aria-hidden />
+                  Clear All History
+                </button>
+              )}
             </header>
             <div className="settings-panel settings-panel--repos">
               {activeRepos.length === 0 ? (
@@ -483,31 +484,31 @@ export default function SettingsPage() {
 
           <hr className="settings-divider" />
 
-          {/* Danger Zone — account deletion. Same section primitive
-              as the others: emoji + title + desc, with a right-aligned
-              danger action in the title row (mirrors Clear History).
-              Reuses .settings-clear-all-btn since the visual treatment
-              is identical (section-level danger pill). */}
+          {/* Danger Zone — section head stays the default column flow
+              (emoji + title + desc stacked). The danger action sits as
+              a sibling BELOW the description, right-aligned. Heavier
+              scope than Clear All warrants a more deliberate
+              affordance away from the title. */}
           <section className="settings-section">
             <header className="settings-section-head">
-              <div className="settings-section-title-row">
-                <div className="settings-section-title">
-                  <Emoji name="dangerZone" size={20} />
-                  <h2>Danger Zone</h2>
-                </div>
-                <button
-                  type="button"
-                  className="settings-clear-all-btn"
-                  onClick={openDeleteAccount}
-                >
-                  <Trash2 size={16} strokeWidth={1} aria-hidden />
-                  Delete Account
-                </button>
+              <div className="settings-section-title">
+                <Emoji name="dangerZone" size={20} />
+                <h2>Danger Zone</h2>
               </div>
               <p className="settings-section-desc">
                 Permanently delete your account and all data. This cannot be undone.
               </p>
             </header>
+            <div className="settings-section-action-row">
+              <button
+                type="button"
+                className="settings-clear-all-btn"
+                onClick={openDeleteAccount}
+              >
+                <Trash2 size={16} strokeWidth={1} aria-hidden />
+                Delete Account
+              </button>
+            </div>
           </section>
         </div>
       </div>

@@ -812,6 +812,20 @@ a:hover {
   color: var(--color-text-secondary);
 }
 
+/* Separator between the dynamic-default pseudo-option and the
+   real repo list. With the list's gap: 8px, this 0-height line
+   gets 8px above and 8px below — visual breathing room plus a
+   thin hairline to group "Most recently pushed" as its own
+   distinct kind of choice. */
+.repo-combobox-separator {
+  width: 100%;
+  height: 0;
+  margin: 0;
+  border: none;
+  border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
 .repo-combobox-item--dynamic.is-active .repo-combobox-item-icon,
 .repo-combobox-item--dynamic.is-selected .repo-combobox-item-icon {
   color: var(--color-text-primary);
@@ -4088,15 +4102,34 @@ a:hover {
   padding: 4px 0;
 }
 
-/* Title row — used by sections that surface an inline action
-   (Clear History → Clear All). Title hugs the left, action pill
-   hugs the right; description sits below this row. Other sections
-   without an action just render the title directly. */
-.settings-section-title-row {
-  display: flex;
+/* Section-head modifier for sections that surface an inline
+   action (Clear History → Clear All). The default head is a
+   flex-column stack of title + desc; --with-action flips it
+   into a flex-row where the title + desc become a stacked
+   text block on the left and the action sits vertically
+   centered on the right. Crucially, the title-to-desc 4px gap
+   stays intact because they live in their own column wrapper —
+   the action button doesn't push them apart. */
+.settings-section-head--with-action {
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-md);
+}
+
+.settings-section-head--with-action .settings-section-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+/* Action row sibling — sits below the section head, right-
+   aligned. Used when the action is too heavy-scope to share a
+   row with the title (Danger Zone → Delete Account). */
+.settings-section-action-row {
+  display: flex;
+  justify-content: flex-end;
 }
 
 /* Danger-tinted outlined button. Mirrors .modal-action-btn--danger

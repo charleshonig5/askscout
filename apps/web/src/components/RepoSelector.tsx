@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { Check, ChevronDown, Clock, Search } from "lucide-react";
 
 interface RepoSelectorProps {
@@ -264,34 +264,41 @@ export function RepoSelector({
                   const isSelected = selected === "";
                   const isActive = i === activeIdx;
                   return (
-                    <button
-                      key="__dynamic-default__"
-                      type="button"
-                      data-idx={i}
-                      role="option"
-                      aria-selected={isSelected}
-                      className={`repo-combobox-item repo-combobox-item--dynamic${
-                        isActive ? " is-active" : ""
-                      }${isSelected ? " is-selected" : ""}`}
-                      onMouseEnter={() => setActiveIdx(i)}
-                      onClick={() => commit("")}
-                    >
-                      <Clock
-                        size={16}
-                        strokeWidth={1}
-                        className="repo-combobox-item-icon"
-                        aria-hidden
-                      />
-                      <span className="repo-combobox-item-name">Most recently pushed</span>
-                      {isSelected && (
-                        <Check
-                          size={20}
+                    <Fragment key="__dynamic-default__">
+                      <button
+                        type="button"
+                        data-idx={i}
+                        role="option"
+                        aria-selected={isSelected}
+                        className={`repo-combobox-item repo-combobox-item--dynamic${
+                          isActive ? " is-active" : ""
+                        }${isSelected ? " is-selected" : ""}`}
+                        onMouseEnter={() => setActiveIdx(i)}
+                        onClick={() => commit("")}
+                      >
+                        <Clock
+                          size={16}
                           strokeWidth={1}
-                          className="repo-combobox-item-check"
+                          className="repo-combobox-item-icon"
                           aria-hidden
                         />
-                      )}
-                    </button>
+                        <span className="repo-combobox-item-name">Most recently pushed</span>
+                        {isSelected && (
+                          <Check
+                            size={20}
+                            strokeWidth={1}
+                            className="repo-combobox-item-check"
+                            aria-hidden
+                          />
+                        )}
+                      </button>
+                      {/* Visual separator + breathing room between the
+                          dynamic-default option and the regular repos.
+                          Without this, the rows pack against the special
+                          option and lose the "this is a different kind
+                          of choice" cue. */}
+                      <hr className="repo-combobox-separator" aria-hidden />
+                    </Fragment>
                   );
                 }
                 const isSelected = repo === selected;
