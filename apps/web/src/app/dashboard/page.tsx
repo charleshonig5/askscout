@@ -116,6 +116,18 @@ export default function DashboardPage() {
   } | null>(null);
   // When true, expand from the Quiet Day state to show yesterday's actual digest
   const [showLatestFromQuietDay, setShowLatestFromQuietDay] = useState(false);
+  // True when a first-run generation hits "no commits in 90 days" AND there's
+  // no prior history to fall back on. Distinct from `noNewCommits` because the
+  // data model differs — there's no last-digest date to reference, no "View
+  // Last Digest" button, and no streak check-in (zero commits = nothing to
+  // credit). Renders its own quiet-shell variant.
+  const [emptyRepo, setEmptyRepo] = useState(false);
+  // Tracks the most recent repo we've completed a /api/history fetch for.
+  // The no-commits effect uses this to distinguish "history hasn't loaded yet,
+  // wait and re-run" from "history loaded and is genuinely empty, fall through
+  // to the empty-repo branch." Without this gate, an empty-history repo would
+  // hang on the post-opener UI forever.
+  const historyFetchedForRef = useRef<string | null>(null);
   const [digestSectionPrefs, setDigestSectionPrefs] = useState<Record<string, boolean> | null>(
     null,
   );
@@ -176,6 +188,7 @@ export default function DashboardPage() {
           checkinDates?: string[];
         };
         setHistoryRecords(data.history);
+        historyFetchedForRef.current = repo;
         setCheckinDates(data.checkinDates ?? []);
         setHistory(
           data.history.map((h) => {
@@ -299,7 +312,9 @@ export default function DashboardPage() {
       setActiveHistoryId(null);
       setNoNewCommits(null);
       setShowLatestFromQuietDay(false);
+      setEmptyRepo(false);
       // Clear history so the no-commits effect can't use the previous repo's data
+      historyFetchedForRef.current = null;
       setHistoryRecords([]);
       setCheckinDates([]);
       setHistory([]);
@@ -371,11 +386,27 @@ export default function DashboardPage() {
       return;
     }
 
-    // History not loaded yet — fetch and let the effect re-run when
-    // historyRecords updates.
+    // History empty: two sub-cases. If we haven't completed a fetch for this
+    // repo yet, kick one off and let the effect re-run when historyRecords
+    // updates. If we *have* fetched and history is genuinely empty, this is a
+    // brand-new / dormant repo with no prior digest to fall back on — route
+    // to the empty-repo quiet shell instead of waiting forever.
     if (historyRecords.length === 0) {
-      if (selectedRepo) void fetchHistory(selectedRepo);
-      return;
+      if (historyFetchedForRef.current !== selectedRepo) {
+        if (selectedRepo) void fetchHistory(selectedRepo);
+        return;
+      }
+      // Confirmed empty repo. Reuse the same opener-aligned delay so the
+      // transition feels identical to the quiet-day path.
+      const OPENER_TYPED_MS = 4100;
+      const elapsed =
+        streamStartRef.current > 0 ? performance.now() - streamStartRef.current : OPENER_TYPED_MS;
+      const delay = Math.max(0, OPENER_TYPED_MS - elapsed);
+      const emptyTimer = setTimeout(() => {
+        setEmptyRepo(true);
+        digestStream.reset();
+      }, delay);
+      return () => clearTimeout(emptyTimer);
     }
 
     const latest = historyRecords[0]!;
@@ -546,9 +577,11 @@ export default function DashboardPage() {
     displayDate = noNewCommits.dateDisplay;
     pageTitle = formatDigestTitle(noNewCommits.date);
   } else if (noNewCommits) {
-    // No-commits state — title echoes the streaming opener line
-    // ("Scanning the horizon for commits…"). Scout scans, finds nothing.
-    pageTitle = "Nothing on the Horizon";
+    // Quiet-day state — repo has prior digests but nothing new today.
+    pageTitle = "Nothing New to Report";
+  } else if (emptyRepo) {
+    // First-run / dormant repo — no commits in 90d AND no prior digests.
+    pageTitle = "No Activity Yet";
   } else if (isViewingHistory && activeHistoryEntry) {
     displayDate = new Date(activeHistoryEntry.created_at).toLocaleDateString("en-US", {
       weekday: "long",
@@ -643,6 +676,7 @@ export default function DashboardPage() {
   const showHeaderActions =
     currentRawContent !== "" &&
     !digestStream.isStreaming &&
+    !emptyRepo &&
     !(noNewCommits && !showLatestFromQuietDay);
 
   return (
@@ -679,7 +713,8 @@ export default function DashboardPage() {
                 )}
                 <h1 className="digest-page-name">
                   <span className="digest-page-title-text">{pageTitle}</span>
-                  {(repoName || (!noNewCommits && !isViewingHistory && streak >= 2)) && (
+                  {(repoName ||
+                    (!noNewCommits && !emptyRepo && !isViewingHistory && streak >= 2)) && (
                     <span className="digest-page-pills">
                       {repoName && selectedRepo && (
                         <a
@@ -693,7 +728,7 @@ export default function DashboardPage() {
                           <ArrowUpRight size={10} strokeWidth={1} aria-hidden />
                         </a>
                       )}
-                      {!noNewCommits && !isViewingHistory && streak >= 2 && (
+                      {!noNewCommits && !emptyRepo && !isViewingHistory && streak >= 2 && (
                         <span
                           ref={streakTap.ref}
                           className={`digest-streak${streakTap.open ? " tap-open" : ""}`}
@@ -743,6 +778,24 @@ export default function DashboardPage() {
                 onGenerateStandup={() => setStandupOpen(true)}
                 onGeneratePlan={() => setPlanOpen(true)}
               />
+            ) : emptyRepo ? (
+              // First-run / dormant repo: no commits in 90d AND no prior
+              // digests to fall back on. Same shell as the quiet-day branch
+              // (emoji + text), but no "View Last Digest" button — there is
+              // no last digest. Distinct copy because we can't reference a
+              // last-digest date that doesn't exist.
+              <div className="quiet-day">
+                <div className="quiet-day-emoji">
+                  <Emoji name="quietDay" size={104} />
+                </div>
+                <div className="quiet-day-text">
+                  <h2 className="quiet-day-title">No Activity in {repoName}</h2>
+                  <p className="quiet-day-subtitle">
+                    Scout checked the last 90 days and didn&apos;t find any commits. Push some
+                    changes or pick a different repo.
+                  </p>
+                </div>
+              </div>
             ) : noNewCommits && !showLatestFromQuietDay ? (
               <div className="quiet-day">
                 <div className="quiet-day-emoji">
@@ -751,8 +804,8 @@ export default function DashboardPage() {
                 <div className="quiet-day-text">
                   <h2 className="quiet-day-title">No New Digest Today for {repoName}</h2>
                   <p className="quiet-day-subtitle">
-                    {repoName} hasn&apos;t seen any activity since your last digest on{" "}
-                    {noNewCommits.dateDisplay}. Nothing new for Scout to dig through.
+                    {repoName} has been quiet since your last digest on{" "}
+                    {noNewCommits.dateDisplay}. Nothing new to report.
                   </p>
                 </div>
                 <button
