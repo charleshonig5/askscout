@@ -113,8 +113,8 @@ export function Sidebar({
                 Repo
                 <span
                   className="sidebar-title-help"
-                  title="The repo this digest is for. Switch any time."
-                  aria-label="The repo this digest is for. Switch any time."
+                  title="Each repo has its own digest and history. Switch any time."
+                  aria-label="Each repo has its own digest and history. Switch any time."
                 >
                   <HelpCircle size={16} strokeWidth={1} aria-hidden />
                 </span>
