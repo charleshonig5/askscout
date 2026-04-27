@@ -99,6 +99,15 @@
      contrast bump. */
   --color-tooltip-surface: color-mix(in srgb, var(--color-bg-secondary) 85%, transparent);
 
+  /* Skeleton shimmer pair — base color is visible on the page; the
+     shimmer mid is one tier brighter. Same direction in both themes
+     (base → brighter → base) so the sheen reads identically. The
+     light-mode base is intentionally darker than --color-bg-secondary
+     because that token is too close to the white page bg
+     (#FAFAFA on #FFFFFF = 5-level delta — bars would disappear). */
+  --color-skeleton-base: #ebebeb;
+  --color-skeleton-shimmer: #f6f6f6;
+
   /* Sizing */
   --header-height: 56px;
   /* Matches Figma left-nav frame: 324px content + 24px padding each side. */
@@ -3128,9 +3137,9 @@ a:hover {
   border-radius: 4px;
   background: linear-gradient(
     90deg,
-    var(--color-bg-secondary) 0%,
-    var(--color-bg-tertiary) 50%,
-    var(--color-bg-secondary) 100%
+    var(--color-skeleton-base) 0%,
+    var(--color-skeleton-shimmer) 50%,
+    var(--color-skeleton-base) 100%
   );
   background-size: 200% 100%;
   transform-origin: left center;
@@ -3154,9 +3163,9 @@ a:hover {
   border-radius: 4px;
   background: linear-gradient(
     90deg,
-    var(--color-bg-secondary) 0%,
-    var(--color-bg-tertiary) 50%,
-    var(--color-bg-secondary) 100%
+    var(--color-skeleton-base) 0%,
+    var(--color-skeleton-shimmer) 50%,
+    var(--color-skeleton-base) 100%
   );
   background-size: 200% 100%;
   transform-origin: left center;
