@@ -106,6 +106,41 @@
   --max-width: 720px;
 }
 
+/* Dashboard error boundary — Scout's last-resort fallback when a
+   render throws. Centered, minimal, theme-aware via tokens. */
+.dashboard-error-boundary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 48px 32px;
+  text-align: center;
+  font-family: var(--font-sans);
+  color: var(--color-text-primary);
+}
+
+.dashboard-error-boundary h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 24px;
+  margin: 0;
+}
+
+.dashboard-error-boundary p {
+  font-weight: 300;
+  font-size: 14px;
+  max-width: 420px;
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.dashboard-error-boundary-digest {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+}
+
 /* ─────────────────────────────────────────────────────────────────────────
    DARK MODE — the source of truth for the Scout brand palette.
    Surface tokens map directly to: Primary Black / Secondary Black /

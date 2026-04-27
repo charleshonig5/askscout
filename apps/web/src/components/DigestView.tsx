@@ -1436,21 +1436,32 @@ function DigestStatsSidebar({
           </div>
         )}
 
-        {vis("codebaseHealth") && stats.health && (
-          <div className="stats-subsection stats-reveal-item" style={{ animationDelay: "700ms" }}>
-            <div className="stats-subsection-title">Codebase Health</div>
-            <CodebaseHealth health={stats.health} />
-          </div>
-        )}
+        {/* Tightened gates: older stored digests can have an
+            incomplete stats blob (e.g. health without all three
+            indicators, timeline without a points array, pace without
+            a numeric multiplier). Without these checks, clicking an
+            old digest in the sidebar would crash the whole page. */}
+        {vis("codebaseHealth") &&
+          stats.health?.growth?.level &&
+          stats.health.focus?.level &&
+          stats.health.churn?.level && (
+            <div className="stats-subsection stats-reveal-item" style={{ animationDelay: "700ms" }}>
+              <div className="stats-subsection-title">Codebase Health</div>
+              <CodebaseHealth health={stats.health} />
+            </div>
+          )}
 
-        {vis("whenYouCoded") && stats.timeline && (
-          <div className="stats-subsection stats-reveal-item" style={{ animationDelay: "950ms" }}>
-            <div className="stats-subsection-title">Coding Timeline</div>
-            <WhenYouCoded timeline={stats.timeline} />
-          </div>
-        )}
+        {vis("whenYouCoded") &&
+          stats.timeline &&
+          Array.isArray(stats.timeline.points) &&
+          stats.timeline.points.length > 0 && (
+            <div className="stats-subsection stats-reveal-item" style={{ animationDelay: "950ms" }}>
+              <div className="stats-subsection-title">Coding Timeline</div>
+              <WhenYouCoded timeline={stats.timeline} />
+            </div>
+          )}
 
-        {vis("paceCheck") && stats.pace && (
+        {vis("paceCheck") && stats.pace && typeof stats.pace.multiplier === "number" && (
           <div className="stats-subsection stats-reveal-item" style={{ animationDelay: "1200ms" }}>
             <div className="stats-subsection-title">Pace Check</div>
             <PaceCard pace={stats.pace} animate={animate} animationDelay="1350ms" />
