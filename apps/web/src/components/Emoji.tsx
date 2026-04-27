@@ -13,7 +13,7 @@
  *      — decoding character → folder name requires a lookup anyway, and
  *      explicit names are easier to read in JSX.
  *   2. Semantic names (section keys like "vibe", "shipped") pair with the
- *      existing SECTION_MARKERS / SIDEBAR_SKELETONS keys so callers don't
+ *      existing SECTION_MARKERS / SIDEBAR_SECTION_KEYS keys so callers don't
  *      need a separate mapping layer.
  */
 
