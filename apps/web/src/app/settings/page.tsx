@@ -168,6 +168,21 @@ export default function SettingsPage() {
     [refreshRepos],
   );
 
+  /** Wipe all saved digests across every repo. Heavier scope than
+   *  per-row Clear, so it runs through a centered modal confirm
+   *  (the same .modal primitives the Standup / Plan / AI Context
+   *  modals use) rather than the inline confirm pattern. */
+  const [clearAllOpen, setClearAllOpen] = useState(false);
+  const deleteAllHistory = useCallback(async () => {
+    try {
+      await fetch("/api/account?action=delete-all-history", { method: "DELETE" });
+      setClearAllOpen(false);
+      void refreshRepos();
+    } catch {
+      /* silent */
+    }
+  }, [refreshRepos]);
+
   const toggleSection = useCallback(
     async (key: string, enabled: boolean) => {
       const updated = { ...sectionPrefs, [key]: enabled };
@@ -284,7 +299,9 @@ export default function SettingsPage() {
             </header>
             <div className="settings-panel settings-panel--repos">
               {activeRepos.length === 0 ? (
-                <p className="settings-empty">No digest history yet.</p>
+                <p className="settings-empty">
+                  Nothing here yet. Your past digests will show up as you generate them.
+                </p>
               ) : (
                 activeRepos.map((repo, i) => (
                   <div className="settings-repo-row" key={repo}>
@@ -325,6 +342,23 @@ export default function SettingsPage() {
                 ))
               )}
             </div>
+            {/* Section-end "Clear All" affordance, gated on having
+                history to clear. Sits outside the panel so it reads
+                as a section action, not a list row. Danger-tinted
+                via the same .modal-action-btn--danger primitive used
+                by the sign-out confirm modal. */}
+            {activeRepos.length > 0 && (
+              <div className="settings-clear-all-row">
+                <button
+                  type="button"
+                  className="settings-clear-all-btn"
+                  onClick={() => setClearAllOpen(true)}
+                >
+                  <Trash2 size={16} strokeWidth={1} aria-hidden />
+                  Clear All History
+                </button>
+              </div>
+            )}
           </section>
 
           <hr className="settings-divider" />
@@ -380,6 +414,62 @@ export default function SettingsPage() {
           </section>
         </div>
       </div>
+
+      {/* Clear-All confirm — uses the site's modal primitives
+          (.modal-overlay / .modal / .modal-top / .modal-action-btn)
+          so this sits in the same design family as Standup / Plan /
+          AI Context modals and the sidebar sign-out confirm. */}
+      {clearAllOpen && (
+        <>
+          <div
+            className="modal-overlay"
+            onClick={() => setClearAllOpen(false)}
+            aria-hidden
+          />
+          <div
+            className="modal modal--confirm"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="clear-all-title"
+          >
+            <div className="modal-top">
+              <div className="modal-identity">
+                <h2 id="clear-all-title" className="modal-title">
+                  Clear all digest history?
+                </h2>
+                <p className="modal-subtitle">
+                  This deletes every saved digest across all repos. This cannot be undone.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="modal-close-btn"
+                onClick={() => setClearAllOpen(false)}
+                aria-label="Close"
+              >
+                <CircleX size={20} strokeWidth={1} aria-hidden />
+              </button>
+            </div>
+            <div className="modal-divider" aria-hidden />
+            <div className="modal-footer modal-footer--split">
+              <button
+                type="button"
+                className="modal-action-btn"
+                onClick={() => setClearAllOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="modal-action-btn modal-action-btn--danger"
+                onClick={() => void deleteAllHistory()}
+              >
+                Yes, clear all
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

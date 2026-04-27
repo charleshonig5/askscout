@@ -4059,6 +4059,41 @@ a:hover {
   padding: 4px 0;
 }
 
+/* Clear-All affordance row — sits below the per-repo list, outside
+   the panel, right-aligned so it reads as a section action rather
+   than a list-end item. Hidden when there's no history to clear. */
+.settings-clear-all-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+/* Danger-tinted outlined button. Mirrors .modal-action-btn--danger
+   exactly (same border / padding / radius / inner glow) so the
+   gesture reads as a peer of the sign-out confirm's danger button.
+   Sized to its content; no flex:1 since it stands alone here. */
+.settings-clear-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-danger);
+  background: var(--color-bg-secondary);
+  color: var(--color-danger);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
+  transition: background 0.12s ease;
+}
+
+.settings-clear-all-btn:hover {
+  background: color-mix(in srgb, var(--color-danger) 12%, var(--color-bg-secondary));
+}
+
 /* --- Privacy & Security ------------------------------------- */
 
 .settings-privacy-grid {
@@ -4251,6 +4286,13 @@ a:hover {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+/* Confirm-dialog variant — title + subtitle + 2-button footer only
+   (no body content). Tighter than the 585px content modals so it
+   reads as a focused decision prompt rather than a content panel. */
+.modal--confirm {
+  max-width: 420px;
 }
 
 /* Header row: title identity block on the left + close button on the
