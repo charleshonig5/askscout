@@ -578,7 +578,9 @@ export default function DashboardPage() {
     pageTitle = formatDigestTitle(noNewCommits.date);
   } else if (noNewCommits) {
     // Quiet-day state — repo has prior digests but nothing new today.
-    pageTitle = "Nothing New to Report";
+    // Page-header title echoes the streaming opener line ("Scanning the
+    // horizon for commits…"). Scout scans, finds nothing.
+    pageTitle = "Nothing on the Horizon";
   } else if (emptyRepo) {
     // First-run / dormant repo — no commits in 90d AND no prior digests.
     pageTitle = "No Activity Yet";
