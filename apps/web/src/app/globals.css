@@ -2091,6 +2091,7 @@ a:hover {
 }
 
 .sidebar-title-help {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2099,6 +2100,49 @@ a:hover {
   border: none;
   padding: 0;
   cursor: help;
+}
+
+/* Glass tooltip on the "?" help icons next to "Repo" and "History"
+   in the sidebar. Same glass treatment as the streak / timeline /
+   health tooltips — modal-surface tier of the palette plus the
+   shared inset glow. Anchored below the icon, left-aligned with
+   the icon, max-width caps the line at the sidebar gutter. */
+.sidebar-title-tooltip {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: max-content;
+  max-width: 220px;
+  padding: 4px 6px;
+  background: var(--color-tooltip-surface);
+  border: 1px solid var(--color-bg-tertiary);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  border-radius: 4px;
+  box-shadow: inset 0 8px 20px 0 var(--color-inner-glow);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 10px;
+  line-height: normal;
+  color: var(--color-text-primary);
+  text-align: left;
+  white-space: normal;
+  letter-spacing: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.12s ease,
+    visibility 0s linear 0.12s;
+  pointer-events: none;
+  z-index: 30;
+}
+
+.sidebar-title-help:hover .sidebar-title-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.12s ease,
+    visibility 0s linear 0s;
 }
 
 /* Repo picker row: label above trigger with 8px gap. */

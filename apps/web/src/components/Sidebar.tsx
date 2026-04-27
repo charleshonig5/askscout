@@ -113,10 +113,12 @@ export function Sidebar({
                 Repo
                 <span
                   className="sidebar-title-help"
-                  title="Each repo has its own digest and history. Switch any time."
                   aria-label="Each repo has its own digest and history. Switch any time."
                 >
                   <HelpCircle size={16} strokeWidth={1} aria-hidden />
+                  <span className="sidebar-title-tooltip" role="tooltip">
+                    Each repo has its own digest and history. Switch any time.
+                  </span>
                 </span>
               </div>
               <RepoSelector
@@ -132,10 +134,12 @@ export function Sidebar({
                 History
                 <span
                   className="sidebar-title-help"
-                  title="Past 30 days of digests. Click to revisit."
                   aria-label="Past 30 days of digests. Click to revisit."
                 >
                   <HelpCircle size={16} strokeWidth={1} aria-hidden />
+                  <span className="sidebar-title-tooltip" role="tooltip">
+                    Past 30 days of digests. Click to revisit.
+                  </span>
                 </span>
               </div>
 
