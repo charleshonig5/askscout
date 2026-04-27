@@ -4088,13 +4088,15 @@ a:hover {
   padding: 4px 0;
 }
 
-/* Clear-All affordance row — sits below the per-repo list, outside
-   the panel, right-aligned so it reads as a section action rather
-   than a list-end item. Hidden when there's no history to clear. */
-.settings-clear-all-row {
+/* Title row — used by sections that surface an inline action
+   (Clear History → Clear All). Title hugs the left, action pill
+   hugs the right; description sits below this row. Other sections
+   without an action just render the title directly. */
+.settings-section-title-row {
   display: flex;
-  justify-content: flex-end;
-  margin-top: 4px;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
 }
 
 /* Danger-tinted outlined button. Mirrors .modal-action-btn--danger

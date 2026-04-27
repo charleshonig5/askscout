@@ -292,9 +292,24 @@ export default function SettingsPage() {
           {/* Clear History */}
           <section className="settings-section">
             <header className="settings-section-head">
-              <div className="settings-section-title">
-                <Emoji name="clearHistory" size={20} />
-                <h2>Clear History</h2>
+              <div className="settings-section-title-row">
+                <div className="settings-section-title">
+                  <Emoji name="clearHistory" size={20} />
+                  <h2>Clear History</h2>
+                </div>
+                {/* Section-level action — sits in the title row, right-
+                    aligned, gated on having history to clear. Triggers
+                    the confirm modal mounted at page bottom. */}
+                {activeRepos.length > 0 && (
+                  <button
+                    type="button"
+                    className="settings-clear-all-btn"
+                    onClick={() => setClearAllOpen(true)}
+                  >
+                    <Trash2 size={16} strokeWidth={1} aria-hidden />
+                    Clear All History
+                  </button>
+                )}
               </div>
               <p className="settings-section-desc">
                 Delete past digests. This cannot be undone.
@@ -347,23 +362,6 @@ export default function SettingsPage() {
                 ))
               )}
             </div>
-            {/* Section-end "Clear All" affordance, gated on having
-                history to clear. Sits outside the panel so it reads
-                as a section action, not a list row. Danger-tinted
-                via the same .modal-action-btn--danger primitive used
-                by the sign-out confirm modal. */}
-            {activeRepos.length > 0 && (
-              <div className="settings-clear-all-row">
-                <button
-                  type="button"
-                  className="settings-clear-all-btn"
-                  onClick={() => setClearAllOpen(true)}
-                >
-                  <Trash2 size={16} strokeWidth={1} aria-hidden />
-                  Clear All History
-                </button>
-              </div>
-            )}
           </section>
 
           <hr className="settings-divider" />
