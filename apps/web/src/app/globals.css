@@ -2099,7 +2099,10 @@ a:hover {
   background: transparent;
   border: none;
   padding: 0;
-  cursor: help;
+  /* Match every other hover-tooltip on the site (.digest-streak,
+     .timeline-bar, .health-card-level) — cursor: default. The
+     browser's `?` help-cursor is the odd one out. */
+  cursor: default;
 }
 
 /* Glass tooltip on the "?" help icons next to "Repo" and "History"
