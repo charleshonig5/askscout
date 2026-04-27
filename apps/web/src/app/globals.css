@@ -590,7 +590,7 @@ a:hover {
   width: 324px;
   max-width: calc(100vw - var(--space-md) * 2);
   background: var(--color-bg-secondary);
-  border: 1px solid var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   z-index: 50;
   display: flex;
@@ -847,7 +847,7 @@ a:hover {
   padding: 4px 6px;
   margin-bottom: 8px;
   background: transparent;
-  border: 1px solid var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   font-family: var(--font-sans);
   font-weight: 300;
@@ -1142,7 +1142,7 @@ a:hover {
   gap: 2px;
   padding: 4px 6px;
   background: transparent;
-  border: 1px solid var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   font-family: var(--font-sans);
   font-weight: 300;
@@ -1259,7 +1259,7 @@ a:hover {
   gap: 8px;
   padding: 13px;
   background: var(--color-bg-secondary);
-  border: 1px solid var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
   margin-bottom: var(--space-xl);
@@ -1674,7 +1674,7 @@ a:hover {
   width: 20px;
   height: 20px;
   padding: 0;
-  border: 1px solid var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   color: var(--color-text-primary);
   text-decoration: none;
@@ -1735,7 +1735,7 @@ a:hover {
   height: 104px;
   padding: 13px;
   background: var(--color-bg-secondary);
-  border: 1px solid var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
   display: flex;
@@ -2401,7 +2401,7 @@ a:hover {
   right: 0;
   bottom: calc(100% + 8px);
   background: var(--color-modal-surface);
-  border: 1px solid var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
   z-index: 20;
@@ -2444,7 +2444,7 @@ a:hover {
   height: 44px;
   padding: 0 11px;
   background: var(--color-bg-secondary);
-  border: 1px solid var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   font-family: var(--font-sans);
   font-weight: 500;
@@ -3401,7 +3401,7 @@ a:hover {
   height: 20px;
   padding: 0;
   background: var(--color-bg-secondary);
-  border: 1px solid var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
   color: var(--color-text-primary);
@@ -3909,7 +3909,7 @@ a:hover {
      modal reads as a solid glass panel (still translucent enough to
      show some of the blur behind it, but clearly an inset surface). */
   background: var(--color-modal-surface);
-  border: 1px solid var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
   z-index: 101;
@@ -3972,7 +3972,7 @@ a:hover {
   height: 40px;
   padding: 0;
   background: var(--color-bg-secondary);
-  border: 1px solid var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
   color: var(--color-text-primary);
@@ -4009,7 +4009,7 @@ a:hover {
   width: 100%;
   padding: 10px 14px;
   background: var(--color-bg-secondary);
-  border: 1px solid var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
   font-family: var(--font-sans);
@@ -4065,7 +4065,7 @@ a:hover {
   gap: 8px;
   padding: 10px 14px;
   background: var(--color-bg-secondary);
-  border: 1px solid var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
   font-family: var(--font-sans);
@@ -4113,14 +4113,14 @@ a:hover {
   line-height: 1;
   color: var(--color-text-primary);
   background: var(--color-bg-secondary);
-  border: 1px solid var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
 }
 
 .digest-page-header-right .action-btn:hover {
   background: var(--color-bg-tertiary);
-  border-color: var(--color-bg-tertiary);
+  border-color: var(--color-border);
   color: var(--color-text-primary);
 }
 
@@ -4151,14 +4151,14 @@ a:hover {
   line-height: 1;
   color: var(--color-text-primary);
   background: var(--color-bg-secondary);
-  border: 1px solid var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
 }
 
 .digest-bottom-actions .standup-btn:hover {
   background: var(--color-bg-tertiary);
-  border-color: var(--color-bg-tertiary);
+  border-color: var(--color-border);
   color: var(--color-text-primary);
 }
 
