@@ -5,59 +5,63 @@ import { Emoji } from "@/components/Emoji";
 /**
  * Pre-generation UI pieces.
  *
- *   - SectionSkeleton: one skeleton section (emoji header + shimmer lines/
- *     bullets). Used by StreamingDigest to hold space for sections that
- *     haven't streamed in yet, and by DigestStatsSidebar to fill the right
- *     column while stats wait for the stream to finish cascading in.
+ *   - SectionSkeleton: one skeleton section (emoji header + 4 shimmer
+ *     lines) used in the narrative column. As each section marker
+ *     arrives in the stream, its skeleton is replaced in place by the
+ *     real typing content.
+ *   - SidebarSkeleton: the umbrella stats-column skeleton — one
+ *     "Statistics" header followed by three sub-blocks (lines /
+ *     cards / lines) per the Figma. Renders during streaming and
+ *     unmounts in one beat when stats arrive.
  *
- * The progressive-replacement pattern: during streaming, parsed sections
- * render as real content, and SECTION_MARKERS that haven't arrived yet
- * render as skeletons. As each new section marker appears in the stream,
- * its skeleton gets replaced by the real typing content. Layout stays
- * stable, transitions feel smooth — no big collapse when typing begins.
+ * The progressive-replacement pattern: during streaming, parsed
+ * sections render as real content, and SECTION_MARKERS that haven't
+ * arrived yet render as SectionSkeletons. As each new section marker
+ * appears in the stream, its skeleton gets replaced by the real
+ * typing section. Layout stays stable, transitions feel smooth — no
+ * big collapse when typing begins.
  *
- * The pre-stream "voice" of Scout (single editorial typed line) lives in
- * DigestOpener.tsx and runs BEFORE skeletons appear. The old PhaseTracker
- * (rotating "Sniffing through your commits…" messages) was removed when
- * the opener replaced it.
+ * The pre-stream "voice" of Scout (single editorial typed line) lives
+ * in DigestOpener.tsx and runs BEFORE skeletons appear.
  */
 
 export interface SkeletonShape {
   key: string;
   emoji: string;
   label: string;
-  lines?: number;
-  bullets?: number;
 }
 
 /**
- * Main column skeletons: the six LLM-streamed narrative sections. Rendered
- * in StreamingDigest for any section whose marker hasn't been parsed out of
- * the stream yet. Each one is replaced in place by the real typing section
- * when its marker arrives.
+ * Main column skeletons: the six LLM-streamed narrative sections.
+ * Rendered in StreamingDigest for any section whose marker hasn't been
+ * parsed out of the stream yet. Each one is replaced in place by the
+ * real typing section when its marker arrives.
  */
 export const SECTION_SKELETONS: SkeletonShape[] = [
-  { key: "vibe", emoji: "\u{1F4AC}", label: "Vibe Check", lines: 3 },
-  { key: "shipped", emoji: "\u{1F680}", label: "Shipped", bullets: 3 },
-  { key: "changed", emoji: "\u{1F527}", label: "Changed", bullets: 2 },
-  { key: "unstable", emoji: "\u{1F501}", label: "Still Shifting", bullets: 2 },
-  { key: "leftOff", emoji: "\u{1F4CD}", label: "Left Off", bullets: 1 },
-  { key: "takeaway", emoji: "\u{1F511}", label: "Key Takeaways", lines: 2 },
+  { key: "vibe", emoji: "\u{1F4AC}", label: "Vibe Check" },
+  { key: "shipped", emoji: "\u{1F680}", label: "Shipped" },
+  { key: "changed", emoji: "\u{1F527}", label: "Changed" },
+  { key: "unstable", emoji: "\u{1F501}", label: "Still Shifting" },
+  { key: "leftOff", emoji: "\u{1F4CD}", label: "Left Off" },
+  { key: "takeaway", emoji: "\u{1F511}", label: "Key Takeaways" },
 ];
 
 /**
- * Right-column skeletons: the five computed stat sections. Rendered by
- * DigestStatsSidebar during streaming (since real stats wait for the stream
- * to finish before cascading in). All five show up at once during the entire
- * streaming phase, then get replaced by the cascade-animated real content.
+ * Sub-section keys the sidebar can show post-streaming. Used by the
+ * "should sidebar mount at all?" check — if a user has hidden every
+ * sidebar section, the column gets dropped from the layout entirely.
  */
-export const SIDEBAR_SKELETONS: SkeletonShape[] = [
-  { key: "statistics", emoji: "\u{1F4CA}", label: "Statistics", lines: 2 },
-  { key: "mostActiveFiles", emoji: "\u{1F4C1}", label: "Most Active Files", bullets: 3 },
-  { key: "whenYouCoded", emoji: "\u{1F550}", label: "Coding Timeline", lines: 2 },
-  { key: "paceCheck", emoji: "\u26A1", label: "Pace Check", lines: 2 },
-  { key: "codebaseHealth", emoji: "\u{1FA7A}", label: "Codebase Health", bullets: 3 },
-];
+export const SIDEBAR_SECTION_KEYS = [
+  "statistics",
+  "mostActiveFiles",
+  "whenYouCoded",
+  "paceCheck",
+  "codebaseHealth",
+] as const;
+
+// Per-section line widths (Figma node 138:1151). Keep four lines per
+// section, varied widths so the skeleton reads as natural prose.
+const NARRATIVE_LINE_WIDTHS = ["100%", "84%", "67%", "94%"];
 
 export function SectionSkeleton({
   shape,
@@ -73,31 +77,47 @@ export function SectionSkeleton({
       aria-hidden
     >
       <div className="pregen-skeleton-title">
-        <span className="pregen-skeleton-emoji">
-          <Emoji name={shape.key} size={18} />
-        </span>
+        <Emoji name={shape.key} size={20} />
         <span className="pregen-skeleton-label">{shape.label}</span>
       </div>
-      {shape.lines ? (
+      <div className="pregen-skeleton-lines">
+        {NARRATIVE_LINE_WIDTHS.map((w, i) => (
+          <div key={i} className="pregen-skeleton-line" style={{ width: w }} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Sidebar skeleton uses three sub-blocks per Figma node 138:1151:
+// quick-stats lines, three card placeholders, then more lines.
+const SIDEBAR_LINE_WIDTHS_TOP = ["100%", "84%", "67%", "92%"];
+const SIDEBAR_LINE_WIDTHS_BOTTOM = ["100%", "84%", "67%", "92%"];
+
+export function SidebarSkeleton() {
+  return (
+    <div className="pregen-sidebar-skeleton" aria-hidden>
+      <div className="pregen-skeleton-title">
+        <Emoji name="statistics" size={20} />
+        <span className="pregen-skeleton-label">Statistics</span>
+      </div>
+      <div className="pregen-sidebar-skeleton-body">
         <div className="pregen-skeleton-lines">
-          {Array.from({ length: shape.lines }).map((_, li) => (
-            <div
-              key={li}
-              className="pregen-skeleton-line"
-              style={{ width: li === (shape.lines ?? 0) - 1 ? "60%" : "100%" }}
-            />
+          {SIDEBAR_LINE_WIDTHS_TOP.map((w, i) => (
+            <div key={i} className="pregen-skeleton-line" style={{ width: w }} />
           ))}
         </div>
-      ) : (
-        <div className="pregen-skeleton-bullets">
-          {Array.from({ length: shape.bullets ?? 0 }).map((_, bi) => (
-            <div key={bi} className="pregen-skeleton-bullet">
-              <span className="pregen-skeleton-bullet-dot" />
-              <span className="pregen-skeleton-line" style={{ width: `${75 - bi * 10}%` }} />
-            </div>
+        <div className="pregen-skeleton-cards">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="pregen-skeleton-card" />
           ))}
         </div>
-      )}
+        <div className="pregen-skeleton-lines">
+          {SIDEBAR_LINE_WIDTHS_BOTTOM.map((w, i) => (
+            <div key={i} className="pregen-skeleton-line" style={{ width: w }} />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

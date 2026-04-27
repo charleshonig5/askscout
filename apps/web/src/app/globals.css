@@ -3038,10 +3038,19 @@ a:hover {
   }
 }
 
+/* Pre-generation skeleton — Figma node 138:1151.
+   Each narrative section: 14px title→lines gap, 12px between lines.
+   Section→section gap: 44px (set on .pregen-skeleton-section
+   margin-bottom).
+   Sidebar skeleton: same line treatment + a dedicated 90px card
+   variant for the codebase-health placeholders. */
 .pregen-skeleton-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
   opacity: 0;
   animation: pregen-section-in 0.4s ease-out forwards;
-  margin-bottom: var(--space-xl);
+  margin-bottom: 44px;
 }
 
 .pregen-skeleton-section:last-child {
@@ -3059,19 +3068,16 @@ a:hover {
   }
 }
 
+/* Header row matches the real digest section header: 8px gap between
+   emoji and label, Work Sans Medium 16 white. */
 .pregen-skeleton-title {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.pregen-skeleton-emoji {
-  opacity: 0.4;
-  display: inline-flex;
-  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: normal;
 }
 
 .emoji {
@@ -3083,8 +3089,8 @@ a:hover {
 }
 
 .pregen-skeleton-label {
-  color: var(--color-text-tertiary);
-  letter-spacing: 0.01em;
+  color: var(--color-text-primary);
+  letter-spacing: 0;
 }
 
 .pregen-skeleton-lines {
@@ -3093,25 +3099,44 @@ a:hover {
   gap: 12px;
 }
 
-.pregen-skeleton-bullets {
+/* Sidebar umbrella skeleton — single "Statistics" header + 3 stacked
+   sub-blocks. 14px header→body gap; 44px between sub-blocks so the
+   group reads like the real stats column would. */
+.pregen-sidebar-skeleton {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
-.pregen-skeleton-bullet {
+.pregen-sidebar-skeleton-body {
   display: flex;
-  align-items: center;
-  gap: var(--space-sm);
+  flex-direction: column;
+  gap: 44px;
 }
 
-.pregen-skeleton-bullet-dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--color-text-tertiary);
-  opacity: 0.3;
-  flex-shrink: 0;
+.pregen-skeleton-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 90px card placeholder — stands in for the Codebase Health card row
+   in the stats column. Shares the same shimmer + breathe motion as
+   the line skeletons so the whole sidebar feels coherent. */
+.pregen-skeleton-card {
+  height: 90px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-secondary) 0%,
+    var(--color-bg-tertiary) 50%,
+    var(--color-bg-secondary) 100%
+  );
+  background-size: 200% 100%;
+  transform-origin: left center;
+  animation:
+    pregen-shimmer 1.8s linear infinite,
+    pregen-line-breathe 4.5s ease-in-out infinite;
 }
 
 /* Two layered animations on every skeleton line:
@@ -3126,7 +3151,7 @@ a:hover {
    background-position only, breathe touches transform only. */
 .pregen-skeleton-line {
   height: 10px;
-  border-radius: var(--radius-sm);
+  border-radius: 4px;
   background: linear-gradient(
     90deg,
     var(--color-bg-secondary) 0%,
@@ -3166,19 +3191,23 @@ a:hover {
 /* Stagger only the breathe animation (second value in the comma list);
    keep shimmer synchronized across every line (first value stays at 0s)
    so the sheen reads as one continuous ambient layer while the spring
-   creates the section-internal wave. Offsets scale with the new longer
-   duration — ~25% and ~50% of the 4.5s cycle. */
+   creates the section-internal wave. Offsets scale with the 4.5s cycle:
+   ~25% / ~50% / ~75%. Cards inside .pregen-skeleton-cards stagger the
+   same way for the sidebar's 3-card block. */
 .pregen-skeleton-lines .pregen-skeleton-line:nth-child(2) {
   animation-delay: 0s, 1.1s;
 }
 .pregen-skeleton-lines .pregen-skeleton-line:nth-child(3) {
   animation-delay: 0s, 2.2s;
 }
-.pregen-skeleton-bullet:nth-child(2) .pregen-skeleton-line {
-  animation-delay: 0s, 1.1s;
+.pregen-skeleton-lines .pregen-skeleton-line:nth-child(4) {
+  animation-delay: 0s, 3.3s;
 }
-.pregen-skeleton-bullet:nth-child(3) .pregen-skeleton-line {
-  animation-delay: 0s, 2.2s;
+.pregen-skeleton-cards .pregen-skeleton-card:nth-child(2) {
+  animation-delay: 0s, 1.5s;
+}
+.pregen-skeleton-cards .pregen-skeleton-card:nth-child(3) {
+  animation-delay: 0s, 3s;
 }
 
 .digest-error {

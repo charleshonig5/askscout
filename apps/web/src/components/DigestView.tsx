@@ -16,7 +16,12 @@ import {
 } from "lucide-react";
 import { useCountUp } from "@/lib/use-count-up";
 import { parseSections } from "@/lib/parse-sections";
-import { SectionSkeleton, SECTION_SKELETONS, SIDEBAR_SKELETONS } from "@/components/PreGeneration";
+import {
+  SectionSkeleton,
+  SidebarSkeleton,
+  SECTION_SKELETONS,
+  SIDEBAR_SECTION_KEYS,
+} from "@/components/PreGeneration";
 import { Emoji } from "@/components/Emoji";
 import { DigestOpener } from "@/components/DigestOpener";
 
@@ -1397,16 +1402,15 @@ function DigestStatsSidebar({
 }) {
   const vis = (key: string) => !visibleSections || visibleSections[key] !== false;
 
-  // Streaming (or no stats yet): show skeletons for every section the user
-  // hasn't hidden. Once streaming ends with real stats in hand, the skeletons
-  // unmount and the cascade section takes over.
+  // Streaming (or no stats yet): show the umbrella sidebar skeleton.
+  // Per Figma (node 138:1151) the sidebar's loading state isn't five
+  // independent section skeletons — it's a single "Statistics" header
+  // with three generic sub-blocks below. Once stats arrive, this whole
+  // unit unmounts and the cascade reveal takes over.
   if (isStreaming || !stats) {
-    const visibleSkeletons = SIDEBAR_SKELETONS.filter((s) => vis(s.key));
     return (
       <aside className="digest-stats-sidebar">
-        {visibleSkeletons.map((shape, i) => (
-          <SectionSkeleton key={shape.key} shape={shape} animationDelay={i * 60} />
-        ))}
+        <SidebarSkeleton />
       </aside>
     );
   }
@@ -1492,7 +1496,7 @@ function sidebarHasContent(
 
   // Pre-streaming / streaming: skeletons just need at least one toggle on.
   if (isStreaming) {
-    return SIDEBAR_SKELETONS.some((s) => vis(s.key));
+    return SIDEBAR_SECTION_KEYS.some((k) => vis(k));
   }
 
   // Post-streaming: need actual data in at least one visible section.
