@@ -32,8 +32,14 @@ const SECTION_OPTIONS = [
     desc: "Scout's sign-off with a specific observation and a nudge",
   },
   {
+    // The umbrella "Statistics" header in the digest sidebar always
+    // shows whenever any quantitative sub-section is visible — that
+    // header is intentionally NOT user-toggleable. This toggle
+    // controls only the lines/commits/files cards underneath. Label
+    // calls them "Commit Stats" so the toggle name doesn't collide
+    // with the umbrella's name.
     key: "statistics",
-    label: "Statistics",
+    label: "Commit Stats",
     desc: "Lines added and removed, commits, and files changed",
   },
   {
