@@ -113,8 +113,8 @@ export function Sidebar({
                 Repo
                 <span
                   className="sidebar-title-help"
-                  title="The repo Scout's reading. Switch any time to scan a different project."
-                  aria-label="The repo Scout's reading. Switch any time to scan a different project."
+                  title="The repo this digest is for. Switch any time."
+                  aria-label="The repo this digest is for. Switch any time."
                 >
                   <HelpCircle size={16} strokeWidth={1} aria-hidden />
                 </span>
@@ -132,8 +132,8 @@ export function Sidebar({
                 History
                 <span
                   className="sidebar-title-help"
-                  title="Your last 30 days of digests for this repo. Click any day to look back."
-                  aria-label="Your last 30 days of digests for this repo. Click any day to look back."
+                  title="Past 30 days of digests. Click to revisit."
+                  aria-label="Past 30 days of digests. Click to revisit."
                 >
                   <HelpCircle size={16} strokeWidth={1} aria-hidden />
                 </span>
