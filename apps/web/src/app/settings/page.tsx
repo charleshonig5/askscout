@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { Fragment, useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, CircleX, Trash2, CircleCheck, CircleSlash } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
@@ -262,24 +262,26 @@ export default function SettingsPage() {
             </header>
             <div className="settings-panel settings-panel--toggles">
               {SECTION_OPTIONS.map((opt, i) => (
-                <div className="settings-toggle-row" key={opt.key}>
-                  <div className="settings-toggle-info">
-                    <span className="settings-toggle-label">{opt.label}</span>
-                    <span className="settings-toggle-desc">{opt.desc}</span>
+                <Fragment key={opt.key}>
+                  <div className="settings-toggle-row">
+                    <div className="settings-toggle-info">
+                      <span className="settings-toggle-label">{opt.label}</span>
+                      <span className="settings-toggle-desc">{opt.desc}</span>
+                    </div>
+                    <label className="settings-switch" aria-label={`Toggle ${opt.label}`}>
+                      <input
+                        type="checkbox"
+                        checked={sectionPrefs[opt.key] !== false}
+                        onChange={(e) => void toggleSection(opt.key, e.target.checked)}
+                      />
+                      <span className="settings-switch-track" aria-hidden />
+                      <span className="settings-switch-thumb" aria-hidden />
+                    </label>
                   </div>
-                  <label className="settings-switch" aria-label={`Toggle ${opt.label}`}>
-                    <input
-                      type="checkbox"
-                      checked={sectionPrefs[opt.key] !== false}
-                      onChange={(e) => void toggleSection(opt.key, e.target.checked)}
-                    />
-                    <span className="settings-switch-track" aria-hidden />
-                    <span className="settings-switch-thumb" aria-hidden />
-                  </label>
                   {i < SECTION_OPTIONS.length - 1 && (
                     <hr className="settings-row-divider" aria-hidden />
                   )}
-                </div>
+                </Fragment>
               ))}
             </div>
           </section>
@@ -304,41 +306,43 @@ export default function SettingsPage() {
                 </p>
               ) : (
                 activeRepos.map((repo, i) => (
-                  <div className="settings-repo-row" key={repo}>
-                    <span className="settings-repo-name" title={repo}>
-                      {repo}
-                    </span>
-                    {confirmDelete === `repo:${repo}` ? (
-                      <span className="settings-repo-confirm">
-                        <button
-                          type="button"
-                          className="settings-clear-pill settings-clear-pill--confirm"
-                          onClick={() => void deleteRepoHistory(repo)}
-                        >
-                          Confirm
-                        </button>
+                  <Fragment key={repo}>
+                    <div className="settings-repo-row">
+                      <span className="settings-repo-name" title={repo}>
+                        {repo}
+                      </span>
+                      {confirmDelete === `repo:${repo}` ? (
+                        <span className="settings-repo-confirm">
+                          <button
+                            type="button"
+                            className="settings-clear-pill settings-clear-pill--confirm"
+                            onClick={() => void deleteRepoHistory(repo)}
+                          >
+                            Confirm
+                          </button>
+                          <button
+                            type="button"
+                            className="settings-clear-pill"
+                            onClick={() => setConfirmDelete(null)}
+                          >
+                            Cancel
+                          </button>
+                        </span>
+                      ) : (
                         <button
                           type="button"
                           className="settings-clear-pill"
-                          onClick={() => setConfirmDelete(null)}
+                          onClick={() => setConfirmDelete(`repo:${repo}`)}
                         >
-                          Cancel
+                          Clear
+                          <Trash2 size={10} strokeWidth={1} aria-hidden />
                         </button>
-                      </span>
-                    ) : (
-                      <button
-                        type="button"
-                        className="settings-clear-pill"
-                        onClick={() => setConfirmDelete(`repo:${repo}`)}
-                      >
-                        Clear
-                        <Trash2 size={10} strokeWidth={1} aria-hidden />
-                      </button>
-                    )}
+                      )}
+                    </div>
                     {i < activeRepos.length - 1 && (
                       <hr className="settings-row-divider" aria-hidden />
                     )}
-                  </div>
+                  </Fragment>
                 ))
               )}
             </div>
