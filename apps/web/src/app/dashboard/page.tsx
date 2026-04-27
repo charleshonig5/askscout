@@ -491,11 +491,18 @@ export default function DashboardPage() {
     [historyRecords],
   );
 
-  // "Back to today" — clear historical view
+  // Unified "Back to today" handler. Used by every back-to-today
+  // button (history view AND quiet-expanded view) so the sidebar
+  // selection, history-content state, and quiet-day expansion flag
+  // all reset together. Avoids the bug where clicking back-to-today
+  // from quiet-expanded only cleared the expansion flag and left
+  // activeHistoryId stuck — making the sidebar keep highlighting an
+  // old digest after returning to the quiet state.
   const handleBackToToday = useCallback(() => {
     setActiveHistoryId(null);
     setViewingHistoryContent(null);
     setViewingHistoryStats(null);
+    setShowLatestFromQuietDay(false);
   }, []);
 
   const isViewingHistory = viewingHistoryContent !== null;
@@ -695,7 +702,34 @@ export default function DashboardPage() {
               )}
             </div>
 
-            {noNewCommits && !showLatestFromQuietDay ? (
+            {/* Render priority — `isViewingHistory` MUST come first so a
+                user clicking a sidebar history entry while in the quiet
+                state gets the historic digest in the main view. With the
+                quiet-state branches first, that click would set state but
+                the quiet UI would keep rendering, so the sidebar would
+                highlight a digest the main view wasn't showing. */}
+            {isViewingHistory ? (
+              <>
+                <button
+                  className="btn btn-secondary"
+                  onClick={handleBackToToday}
+                  style={{ marginBottom: "var(--space-lg)" }}
+                >
+                  Back to today
+                </button>
+                <DigestView
+                  isStreaming={false}
+                  streamingText={currentSections?.digest ?? viewingHistoryContent ?? ""}
+                  stats={viewingHistoryStats as DigestViewStats | null}
+                  repoName={repoName}
+                  repoFullName={selectedRepo}
+                  visibleSections={digestSectionPrefs ?? undefined}
+                  onResumeWithAI={() => setAiContextOpen(true)}
+                  onGenerateStandup={() => setStandupOpen(true)}
+                  onGeneratePlan={() => setPlanOpen(true)}
+                />
+              </>
+            ) : noNewCommits && !showLatestFromQuietDay ? (
               <div className="quiet-day">
                 <div className="quiet-day-emoji">
                   <Emoji name="quietDay" size={56} />
@@ -724,7 +758,7 @@ export default function DashboardPage() {
               <>
                 <button
                   className="btn btn-secondary"
-                  onClick={() => setShowLatestFromQuietDay(false)}
+                  onClick={handleBackToToday}
                   style={{ marginBottom: "var(--space-lg)" }}
                 >
                   ← Back to today
@@ -733,27 +767,6 @@ export default function DashboardPage() {
                   isStreaming={false}
                   streamingText={currentSections?.digest ?? noNewCommits.content}
                   stats={noNewCommits.stats as DigestViewStats | null}
-                  repoName={repoName}
-                  repoFullName={selectedRepo}
-                  visibleSections={digestSectionPrefs ?? undefined}
-                  onResumeWithAI={() => setAiContextOpen(true)}
-                  onGenerateStandup={() => setStandupOpen(true)}
-                  onGeneratePlan={() => setPlanOpen(true)}
-                />
-              </>
-            ) : isViewingHistory ? (
-              <>
-                <button
-                  className="btn btn-secondary"
-                  onClick={handleBackToToday}
-                  style={{ marginBottom: "var(--space-lg)" }}
-                >
-                  Back to today
-                </button>
-                <DigestView
-                  isStreaming={false}
-                  streamingText={currentSections?.digest ?? viewingHistoryContent ?? ""}
-                  stats={viewingHistoryStats as DigestViewStats | null}
                   repoName={repoName}
                   repoFullName={selectedRepo}
                   visibleSections={digestSectionPrefs ?? undefined}
