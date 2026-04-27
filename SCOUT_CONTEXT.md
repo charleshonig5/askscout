@@ -106,7 +106,7 @@ Always run `pnpm typecheck`, `pnpm format`, `pnpm lint` before committing. Build
 | Token                                            | Dark Mode | Light Mode |
 | ------------------------------------------------ | --------- | ---------- |
 | `--color-bg-primary` (card surface)              | `#070707` | `#FFFFFF`  |
-| `--color-bg-secondary` (body / sidebar / chrome) | `#121212` | `#F7F7F8`  |
+| `--color-bg-secondary` (body / sidebar / chrome) | `#121212` | `#FAFAFA`  |
 | `--color-bg-tertiary` (subtle UI)                | `#252525` | `#EFEFEF`  |
 | `--color-bg-elevated` (popovers)                 | `#141414` | `#FFFFFF`  |
 | `--color-text-primary`                           | `#EDEDED` | `#070707`  |
