@@ -337,8 +337,8 @@ interface ParsedSection {
 function LiveBadge() {
   return (
     <span className="live-badge" aria-label="Currently streaming">
-      <span className="live-badge-dot" />
       <span className="live-badge-text">Live</span>
+      <span className="live-badge-dot" />
     </span>
   );
 }
