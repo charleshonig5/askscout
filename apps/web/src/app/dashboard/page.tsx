@@ -11,6 +11,7 @@ import { useDigestStream } from "@/lib/use-digest-stream";
 import { parseSections } from "@/lib/parse-sections";
 import { useTapTooltip } from "@/lib/use-tap-tooltip";
 import { Emoji } from "@/components/Emoji";
+import { ArrowLeft } from "lucide-react";
 
 import type { HistoryEntry } from "@/lib/mock-data";
 
@@ -665,6 +666,17 @@ export default function DashboardPage() {
           <div className="digest-container">
             <div className="digest-page-header">
               <div className="digest-page-header-left">
+                {(isViewingHistory || (noNewCommits && showLatestFromQuietDay)) && (
+                  <button
+                    type="button"
+                    className="digest-back-btn"
+                    onClick={handleBackToToday}
+                    aria-label="Back to today"
+                  >
+                    <ArrowLeft size={10} strokeWidth={1} aria-hidden />
+                    Back to Today
+                  </button>
+                )}
                 <h1 className="digest-page-name">
                   <span className="digest-page-title-text">{pageTitle}</span>
                   {(repoName || (!noNewCommits && !isViewingHistory && streak >= 2)) && (
@@ -709,26 +721,17 @@ export default function DashboardPage() {
                 the quiet UI would keep rendering, so the sidebar would
                 highlight a digest the main view wasn't showing. */}
             {isViewingHistory ? (
-              <>
-                <button
-                  className="btn btn-secondary"
-                  onClick={handleBackToToday}
-                  style={{ marginBottom: "var(--space-lg)" }}
-                >
-                  Back to today
-                </button>
-                <DigestView
-                  isStreaming={false}
-                  streamingText={currentSections?.digest ?? viewingHistoryContent ?? ""}
-                  stats={viewingHistoryStats as DigestViewStats | null}
-                  repoName={repoName}
-                  repoFullName={selectedRepo}
-                  visibleSections={digestSectionPrefs ?? undefined}
-                  onResumeWithAI={() => setAiContextOpen(true)}
-                  onGenerateStandup={() => setStandupOpen(true)}
-                  onGeneratePlan={() => setPlanOpen(true)}
-                />
-              </>
+              <DigestView
+                isStreaming={false}
+                streamingText={currentSections?.digest ?? viewingHistoryContent ?? ""}
+                stats={viewingHistoryStats as DigestViewStats | null}
+                repoName={repoName}
+                repoFullName={selectedRepo}
+                visibleSections={digestSectionPrefs ?? undefined}
+                onResumeWithAI={() => setAiContextOpen(true)}
+                onGenerateStandup={() => setStandupOpen(true)}
+                onGeneratePlan={() => setPlanOpen(true)}
+              />
             ) : noNewCommits && !showLatestFromQuietDay ? (
               <div className="quiet-day">
                 <div className="quiet-day-emoji">
@@ -755,26 +758,17 @@ export default function DashboardPage() {
                 </div>
               </div>
             ) : noNewCommits && showLatestFromQuietDay ? (
-              <>
-                <button
-                  className="btn btn-secondary"
-                  onClick={handleBackToToday}
-                  style={{ marginBottom: "var(--space-lg)" }}
-                >
-                  ← Back to today
-                </button>
-                <DigestView
-                  isStreaming={false}
-                  streamingText={currentSections?.digest ?? noNewCommits.content}
-                  stats={noNewCommits.stats as DigestViewStats | null}
-                  repoName={repoName}
-                  repoFullName={selectedRepo}
-                  visibleSections={digestSectionPrefs ?? undefined}
-                  onResumeWithAI={() => setAiContextOpen(true)}
-                  onGenerateStandup={() => setStandupOpen(true)}
-                  onGeneratePlan={() => setPlanOpen(true)}
-                />
-              </>
+              <DigestView
+                isStreaming={false}
+                streamingText={currentSections?.digest ?? noNewCommits.content}
+                stats={noNewCommits.stats as DigestViewStats | null}
+                repoName={repoName}
+                repoFullName={selectedRepo}
+                visibleSections={digestSectionPrefs ?? undefined}
+                onResumeWithAI={() => setAiContextOpen(true)}
+                onGenerateStandup={() => setStandupOpen(true)}
+                onGeneratePlan={() => setPlanOpen(true)}
+              />
             ) : (
               <>
                 {digestStream.error && !/no (new )?commits/i.test(digestStream.error) ? (
