@@ -99,6 +99,15 @@
      contrast bump. */
   --color-tooltip-surface: color-mix(in srgb, var(--color-bg-secondary) 85%, transparent);
 
+  /* Switch surfaces (settings page, plan checkbox). The track-recess
+     token is the inset shadow color used on a switch's track / a
+     checkbox's "checked" state to give a soft "recessed" feel. The
+     thumb-shadow is the drop shadow under the floating thumb. Light
+     mode runs softer (light bg can't take a heavy black hole),
+     dark mode runs deeper (dark bg needs the contrast). */
+  --color-switch-track-recess: rgba(0, 0, 0, 0.18);
+  --color-switch-thumb-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+
   /* Skeleton shimmer pair — base color is visible on the page; the
      shimmer mid is one tier brighter. Same direction in both themes
      (base → brighter → base) so the sheen reads identically. The
@@ -191,6 +200,8 @@
   --color-modal-surface: rgba(18, 18, 18, 0.7);
   --color-modal-backdrop: rgba(7, 7, 7, 0.72);
   --color-tooltip-surface: color-mix(in srgb, var(--color-bg-tertiary) 70%, transparent);
+  --color-switch-track-recess: rgba(0, 0, 0, 0.5);
+  --color-switch-thumb-shadow: 0 2px 4px 0 rgba(39, 39, 39, 0.14);
   /* Skeleton shimmer pair (dark) — same base→brighter direction as
      light. Reuses the existing surface tiers since they're already
      calibrated against the near-black page bg. */
@@ -3932,7 +3943,7 @@ a:hover {
   inset: 0;
   border-radius: 100px;
   background: var(--color-bg-tertiary);
-  box-shadow: inset 0 0 14px 0 rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 0 14px 0 var(--color-switch-track-recess);
   transition: background 0.18s ease;
 }
 
@@ -3943,17 +3954,23 @@ a:hover {
   width: 20px;
   height: 20px;
   border-radius: 100px;
-  background: var(--color-bg-primary);
+  /* Thumb sits on the green track when ON and the bg-tertiary track
+     when OFF. --color-bg-elevated reads as a near-white in light mode
+     and a slightly-lifted dark in dark mode, so the thumb stays
+     legible against both ON-state green and OFF-state grey. */
+  background: var(--color-bg-elevated);
   box-shadow:
-    0 2px 4px 0 rgba(39, 39, 39, 0.14),
+    var(--color-switch-thumb-shadow),
     inset 0 0 10px 0 var(--color-inner-glow);
   transition: transform 0.2s cubic-bezier(0.4, 0.2, 0.2, 1);
   pointer-events: none;
 }
 
 .settings-switch input:checked ~ .settings-switch-track {
+  /* ON-state recess uses the same theme-aware token — on saturated
+     green, the inset reads as a soft depth cue in both themes. */
   background: var(--color-success);
-  box-shadow: inset 0 0 14px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 14px 0 var(--color-switch-track-recess);
 }
 
 .settings-switch input:checked ~ .settings-switch-thumb {
