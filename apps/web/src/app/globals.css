@@ -3703,9 +3703,11 @@ a:hover {
   align-items: flex-start;
 }
 
-/* Tiny outlined "Back to Digest" pill — same primitive as the
-   live-badge / clear-row pill: 1px stroke, transparent fill,
-   4px radius, 10px Light. */
+/* Tiny outlined "Back to Digest" pill — same primitive as
+   .digest-back-btn / .live-badge / .settings-clear-pill: 1px
+   stroke, transparent fill, 4px radius, 10px Light. Hover
+   matches .digest-back-btn exactly so the same gesture reads
+   the same way wherever this primitive appears. */
 .settings-back-pill {
   display: inline-flex;
   align-items: center;
@@ -3720,14 +3722,11 @@ a:hover {
   font-weight: 300;
   line-height: 1;
   cursor: pointer;
-  transition:
-    background 0.15s ease,
-    border-color 0.15s ease;
+  transition: background 0.12s ease;
 }
 
 .settings-back-pill:hover {
-  border-color: var(--color-border-hover);
-  background: color-mix(in srgb, var(--color-bg-secondary) 60%, transparent);
+  background: var(--color-bg-tertiary);
 }
 
 .settings-title {
@@ -3739,9 +3738,11 @@ a:hover {
   margin: 0;
 }
 
-/* Glass close button — mirrors modal-close-btn pattern (8px
+/* Glass close button — mirrors .modal-close-btn exactly (8px
    radius, --color-bg-secondary fill, --color-border stroke,
-   inset glow) but with a "Close" label alongside the X. */
+   inner-glow inset, bg-tertiary hover) but adds a "Close" label
+   alongside the X icon. Same hover gesture as the icon-only
+   modal close. */
 .settings-close-btn {
   display: inline-flex;
   align-items: center;
@@ -3757,13 +3758,11 @@ a:hover {
   line-height: 1;
   cursor: pointer;
   box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
-  transition:
-    border-color 0.15s ease,
-    background 0.15s ease;
+  transition: background 0.12s ease;
 }
 
 .settings-close-btn:hover {
-  border-color: var(--color-border-hover);
+  background: var(--color-bg-tertiary);
 }
 
 .settings-header-divider {
