@@ -2,7 +2,7 @@
 
 import { Fragment, useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CircleX, Trash2, CircleCheck, CircleSlash } from "lucide-react";
+import { ArrowLeft, CircleX, Trash2, ShieldCheck, ShieldX } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
 import { RepoSelector } from "@/components/RepoSelector";
 
@@ -385,7 +385,7 @@ export default function SettingsPage() {
                 <ul className="settings-privacy-list">
                   {PRIVACY_READS.map((item) => (
                     <li key={item} className="settings-privacy-item">
-                      <CircleCheck
+                      <ShieldCheck
                         size={20}
                         strokeWidth={1}
                         aria-hidden
@@ -401,7 +401,7 @@ export default function SettingsPage() {
                 <ul className="settings-privacy-list">
                   {PRIVACY_NEVER.map((item) => (
                     <li key={item} className="settings-privacy-item">
-                      <CircleSlash
+                      <ShieldX
                         size={20}
                         strokeWidth={1}
                         aria-hidden
