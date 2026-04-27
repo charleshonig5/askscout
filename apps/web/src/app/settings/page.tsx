@@ -173,30 +173,78 @@ export default function SettingsPage() {
    *  per-row Clear, so it runs through a centered modal confirm
    *  (the same .modal primitives the Standup / Plan / AI Context
    *  modals use) rather than the inline confirm pattern. */
+  /** Clear-All flow state. `submitting` disables the Cancel + Confirm
+   *  buttons during the in-flight request (prevents double-clicks).
+   *  `error` surfaces backend failures inline in the modal so the user
+   *  knows the deletion didn't actually go through. */
   const [clearAllOpen, setClearAllOpen] = useState(false);
+  const [clearAllSubmitting, setClearAllSubmitting] = useState(false);
+  const [clearAllError, setClearAllError] = useState<string | null>(null);
+
+  const openClearAll = useCallback(() => {
+    setClearAllError(null);
+    setClearAllOpen(true);
+  }, []);
+  const cancelClearAll = useCallback(() => {
+    if (clearAllSubmitting) return;
+    setClearAllOpen(false);
+  }, [clearAllSubmitting]);
+
   const deleteAllHistory = useCallback(async () => {
+    setClearAllSubmitting(true);
+    setClearAllError(null);
     try {
-      await fetch("/api/account?action=delete-all-history", { method: "DELETE" });
+      const res = await fetch("/api/account?action=delete-all-history", { method: "DELETE" });
+      if (!res.ok) throw new Error(`Server returned ${res.status}`);
       setClearAllOpen(false);
-      void refreshRepos();
+      await refreshRepos();
     } catch {
-      /* silent */
+      setClearAllError("Couldn't clear history. Please try again.");
+    } finally {
+      setClearAllSubmitting(false);
     }
   }, [refreshRepos]);
 
-  /** Wipe the user's entire footprint in Scout — saved digests,
-   *  settings, check-ins, and the user row itself — then sign out
-   *  so they're back at the landing page. Required for both right-
-   *  to-erasure compliance (GDPR / CCPA) and basic trust: revoking
-   *  the GitHub OAuth grant on github.com only stops new reads, it
-   *  doesn't touch data already stored in Supabase. */
+  /** Delete-Account flow state — same submitting / error pattern as
+   *  Clear All. Wipes the user's entire footprint in Scout (saved
+   *  digests, settings, check-ins) then signs them out. Required for
+   *  right-to-erasure compliance (GDPR / CCPA) and basic trust:
+   *  revoking the GitHub OAuth grant on github.com only stops new
+   *  reads, it doesn't touch data already stored in Supabase. */
   const [deleteAccountOpen, setDeleteAccountOpen] = useState(false);
+  const [deleteAccountSubmitting, setDeleteAccountSubmitting] = useState(false);
+  const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
+
+  const openDeleteAccount = useCallback(() => {
+    setDeleteAccountError(null);
+    setDeleteAccountOpen(true);
+  }, []);
+  const cancelDeleteAccount = useCallback(() => {
+    if (deleteAccountSubmitting) return;
+    setDeleteAccountOpen(false);
+  }, [deleteAccountSubmitting]);
+
   const deleteAccount = useCallback(async () => {
+    setDeleteAccountSubmitting(true);
+    setDeleteAccountError(null);
     try {
-      await fetch("/api/account?action=delete-account", { method: "DELETE" });
+      // Phase 1: delete the data. Surface any server error inline so
+      // the user knows the account is still alive and they can retry.
+      const res = await fetch("/api/account?action=delete-account", { method: "DELETE" });
+      if (!res.ok) throw new Error(`Server returned ${res.status}`);
+    } catch {
+      setDeleteAccountError("Couldn't delete your account. Please try again.");
+      setDeleteAccountSubmitting(false);
+      return;
+    }
+    // Phase 2: data is gone. Sign out + redirect to landing. Failures
+    // here are rare (NextAuth client-side); on a soft failure the user
+    // would land in a logged-in-but-no-data state on next render. Hard
+    // navigate as a fallback so they always end up on a clean page.
+    try {
       await signOut({ callbackUrl: "/" });
     } catch {
-      /* silent */
+      window.location.href = "/";
     }
   }, []);
 
@@ -321,7 +369,7 @@ export default function SettingsPage() {
                   <button
                     type="button"
                     className="settings-clear-all-btn"
-                    onClick={() => setClearAllOpen(true)}
+                    onClick={openClearAll}
                   >
                     <Trash2 size={16} strokeWidth={1} aria-hidden />
                     Clear All History
@@ -450,7 +498,7 @@ export default function SettingsPage() {
                 <button
                   type="button"
                   className="settings-clear-all-btn"
-                  onClick={() => setDeleteAccountOpen(true)}
+                  onClick={openDeleteAccount}
                 >
                   <Trash2 size={16} strokeWidth={1} aria-hidden />
                   Delete Account
@@ -470,11 +518,7 @@ export default function SettingsPage() {
           AI Context modals and the sidebar sign-out confirm. */}
       {clearAllOpen && (
         <>
-          <div
-            className="modal-overlay"
-            onClick={() => setClearAllOpen(false)}
-            aria-hidden
-          />
+          <div className="modal-overlay" onClick={cancelClearAll} aria-hidden />
           <div
             className="modal modal--confirm"
             role="dialog"
@@ -493,18 +537,25 @@ export default function SettingsPage() {
               <button
                 type="button"
                 className="modal-close-btn"
-                onClick={() => setClearAllOpen(false)}
+                onClick={cancelClearAll}
                 aria-label="Close"
+                disabled={clearAllSubmitting}
               >
                 <CircleX size={20} strokeWidth={1} aria-hidden />
               </button>
             </div>
             <div className="modal-divider" aria-hidden />
+            {clearAllError && (
+              <p className="modal-error" role="alert">
+                {clearAllError}
+              </p>
+            )}
             <div className="modal-footer modal-footer--split">
               <button
                 type="button"
                 className="modal-action-btn"
-                onClick={() => setClearAllOpen(false)}
+                onClick={cancelClearAll}
+                disabled={clearAllSubmitting}
               >
                 Cancel
               </button>
@@ -512,8 +563,9 @@ export default function SettingsPage() {
                 type="button"
                 className="modal-action-btn modal-action-btn--danger"
                 onClick={() => void deleteAllHistory()}
+                disabled={clearAllSubmitting}
               >
-                Yes, clear all
+                {clearAllSubmitting ? "Clearing…" : "Yes, clear all"}
               </button>
             </div>
           </div>
@@ -525,11 +577,7 @@ export default function SettingsPage() {
           scope (wipes data AND signs the user out). */}
       {deleteAccountOpen && (
         <>
-          <div
-            className="modal-overlay"
-            onClick={() => setDeleteAccountOpen(false)}
-            aria-hidden
-          />
+          <div className="modal-overlay" onClick={cancelDeleteAccount} aria-hidden />
           <div
             className="modal modal--confirm"
             role="dialog"
@@ -549,18 +597,25 @@ export default function SettingsPage() {
               <button
                 type="button"
                 className="modal-close-btn"
-                onClick={() => setDeleteAccountOpen(false)}
+                onClick={cancelDeleteAccount}
                 aria-label="Close"
+                disabled={deleteAccountSubmitting}
               >
                 <CircleX size={20} strokeWidth={1} aria-hidden />
               </button>
             </div>
             <div className="modal-divider" aria-hidden />
+            {deleteAccountError && (
+              <p className="modal-error" role="alert">
+                {deleteAccountError}
+              </p>
+            )}
             <div className="modal-footer modal-footer--split">
               <button
                 type="button"
                 className="modal-action-btn"
-                onClick={() => setDeleteAccountOpen(false)}
+                onClick={cancelDeleteAccount}
+                disabled={deleteAccountSubmitting}
               >
                 Cancel
               </button>
@@ -568,8 +623,9 @@ export default function SettingsPage() {
                 type="button"
                 className="modal-action-btn modal-action-btn--danger"
                 onClick={() => void deleteAccount()}
+                disabled={deleteAccountSubmitting}
               >
-                Yes, delete account
+                {deleteAccountSubmitting ? "Deleting…" : "Yes, delete account"}
               </button>
             </div>
           </div>
