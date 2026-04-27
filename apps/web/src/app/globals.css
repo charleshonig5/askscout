@@ -2105,17 +2105,19 @@ a:hover {
   cursor: default;
 }
 
-/* Glass tooltip on the "?" help icons next to "Repo" and "History"
-   in the sidebar. Same glass treatment as the streak / timeline /
-   health tooltips — modal-surface tier of the palette plus the
-   shared inset glow. Anchored below the icon, left-aligned with
-   the icon, max-width caps the line at the sidebar gutter. */
+/* Help-icon tooltip — uses the EXACT same treatment as
+   .health-tooltip so the hover vocabulary stays uniform across the
+   site: 160px max-width, 4×6 padding, text-align center, glass
+   surface + inner glow. Position is left-anchored to the icon
+   (rather than the health card's right-anchor) only because the
+   sidebar gutter is narrow and centering or right-anchoring would
+   clip the pill against the left edge. */
 .sidebar-title-tooltip {
   position: absolute;
   top: calc(100% + 6px);
   left: 0;
   width: max-content;
-  max-width: 220px;
+  max-width: 160px;
   padding: 4px 6px;
   background: var(--color-tooltip-surface);
   border: 1px solid var(--color-bg-tertiary);
@@ -2128,7 +2130,7 @@ a:hover {
   font-size: 10px;
   line-height: normal;
   color: var(--color-text-primary);
-  text-align: left;
+  text-align: center;
   white-space: normal;
   letter-spacing: 0;
   opacity: 0;
