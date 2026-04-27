@@ -3697,7 +3697,7 @@ a:hover {
 .settings-header-left {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-sm);
   align-items: flex-start;
 }
 
@@ -3744,9 +3744,9 @@ a:hover {
 .settings-close-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-sm);
   padding: 10px 14px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-bg-secondary);
   color: var(--color-text-primary);
@@ -3792,13 +3792,13 @@ a:hover {
 .settings-section-head {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-xs);
 }
 
 .settings-section-title {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-sm);
 }
 
 .settings-section-title h2 {
@@ -3831,7 +3831,7 @@ a:hover {
 /* Shared panel surface — every section's control container. */
 .settings-panel {
   position: relative;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-bg-secondary);
   box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
@@ -3941,7 +3941,7 @@ a:hover {
 .settings-switch-track {
   position: absolute;
   inset: 0;
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   background: var(--color-bg-tertiary);
   box-shadow: inset 0 0 14px 0 var(--color-switch-track-recess);
   transition: background 0.18s ease;
@@ -3953,7 +3953,7 @@ a:hover {
   left: 2px;
   width: 20px;
   height: 20px;
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   /* Thumb sits on the green track when ON and the bg-tertiary track
      when OFF. --color-bg-elevated reads as a near-white in light mode
      and a slightly-lifted dark in dark mode, so the thumb stays
@@ -4059,7 +4059,7 @@ a:hover {
 
 .settings-privacy-card {
   position: relative;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-bg-secondary);
   box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
