@@ -300,7 +300,7 @@ export default function SettingsPage() {
             <div className="settings-panel settings-panel--repos">
               {activeRepos.length === 0 ? (
                 <p className="settings-empty">
-                  Nothing here yet. Your past digests will show up as you generate them.
+                  No history to clear yet. Repos with saved digests will appear here.
                 </p>
               ) : (
                 activeRepos.map((repo, i) => (
