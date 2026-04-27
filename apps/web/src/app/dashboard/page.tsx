@@ -11,7 +11,7 @@ import { useDigestStream } from "@/lib/use-digest-stream";
 import { parseSections } from "@/lib/parse-sections";
 import { useTapTooltip } from "@/lib/use-tap-tooltip";
 import { Emoji } from "@/components/Emoji";
-import { ArrowLeft, Eye } from "lucide-react";
+import { ArrowLeft, SquareArrowUpRight } from "lucide-react";
 
 import type { HistoryEntry } from "@/lib/mock-data";
 
@@ -749,7 +749,7 @@ export default function DashboardPage() {
                   className="quiet-day-btn"
                   onClick={() => setShowLatestFromQuietDay(true)}
                 >
-                  <Eye size={20} strokeWidth={1} aria-hidden />
+                  <SquareArrowUpRight size={20} strokeWidth={1} aria-hidden />
                   View Last Digest
                 </button>
               </div>
