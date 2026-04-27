@@ -75,6 +75,14 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
 
+  /* Theme-INVARIANT palette anchors — same value in both themes,
+     used wherever a treatment is intentionally not theme-aware
+     (saturated-surface text, classic dark-on-any-bg tooltip chip,
+     etc.). Component rules never use these directly; they get
+     consumed by other semantic tokens below. */
+  --color-palette-black: #070707;
+  --color-palette-white: #ffffff;
+
   /* Theme-aware glass treatments (light defaults). All modal / card
      inner-glows and overlay surfaces use these tokens so themes flip
      cleanly. Dark mode overrides live in the [data-theme="dark"]
@@ -82,13 +90,13 @@
   --color-inner-glow: rgba(0, 0, 0, 0.04);
   --color-modal-surface: rgba(255, 255, 255, 0.85);
   --color-modal-backdrop: rgba(17, 17, 17, 0.4);
-  /* Tooltip is always a dark chip — contrasts cleanly against either
-     the white light-mode page chrome or the near-black dark-mode
-     chrome. Light mode = near-opaque palette black; dark mode (below)
-     = translucent tertiary tint per Figma node 134:50. Text is always
-     white since the surface is always dark. */
-  --color-tooltip-surface: rgba(7, 7, 7, 0.88);
-  --color-tooltip-text: #ffffff;
+  /* Tooltip is intentionally a dark chip in BOTH themes — high
+     contrast against light-mode white chrome AND against dark-mode
+     near-black chrome. Light = near-opaque palette black; dark
+     (below) = translucent tertiary tint per Figma node 134:50. Text
+     is always palette white since the surface is always dark. */
+  --color-tooltip-surface: color-mix(in srgb, var(--color-palette-black) 88%, transparent);
+  --color-tooltip-text: var(--color-palette-white);
 
   /* Sizing */
   --header-height: 56px;
@@ -3280,7 +3288,7 @@ a:hover {
   background: var(--color-success);
   border-color: var(--color-success);
   box-shadow: inset 0 0 14px 0 rgba(0, 0, 0, 0.5);
-  color: #ffffff;
+  color: var(--color-palette-white);
 }
 
 /* Text column for each task. Title stacks directly over the reason
@@ -3675,7 +3683,7 @@ a:hover {
   /* Always white on the saturated red surface — intentionally not
      theme-aware. Both light and dark mode read white-on-red cleanly,
      and accent-text would flip to black in dark mode (unreadable). */
-  color: #ffffff;
+  color: var(--color-palette-white);
   background: var(--color-danger);
   border: 1px solid var(--color-danger);
   border-radius: var(--radius-md);
@@ -3692,8 +3700,8 @@ a:hover {
   font-size: 12px;
   font-weight: 500;
   font-family: var(--font-sans);
-  /* Same as .btn-danger — see comment above for the hardcoded white. */
-  color: #ffffff;
+  /* Same as .btn-danger — see comment above. */
+  color: var(--color-palette-white);
   background: var(--color-danger);
   border: 1px solid var(--color-danger);
   border-radius: var(--radius-sm);
