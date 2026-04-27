@@ -2189,11 +2189,17 @@ a:hover {
   min-height: 0;
 }
 
+/* Empty-state placeholder for the sidebar history list. Sits where
+   the history rows would, left-edge aligned to the item date column
+   (same 14px padding the rows use). Work Sans Light 12 / 18 in
+   secondary grey — matches the site's quiet supporting-text pattern. */
 .sidebar-empty {
-  font-size: 13px;
-  color: var(--color-text-tertiary);
   padding: 14px;
-  line-height: 1.5;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-text-secondary);
 }
 
 /* History list. No gap — each row is spaced by its own padding so the
