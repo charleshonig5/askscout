@@ -11,7 +11,7 @@ import { useDigestStream } from "@/lib/use-digest-stream";
 import { parseSections } from "@/lib/parse-sections";
 import { useTapTooltip } from "@/lib/use-tap-tooltip";
 import { Emoji } from "@/components/Emoji";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye } from "lucide-react";
 
 import type { HistoryEntry } from "@/lib/mock-data";
 
@@ -735,27 +735,23 @@ export default function DashboardPage() {
             ) : noNewCommits && !showLatestFromQuietDay ? (
               <div className="quiet-day">
                 <div className="quiet-day-emoji">
-                  <Emoji name="quietDay" size={56} />
+                  <Emoji name="quietDay" size={104} />
                 </div>
-                <h2 className="quiet-day-title">No new commits today</h2>
-                <p className="quiet-day-subtitle">
-                  {repoName} hasn&apos;t seen activity since your digest on{" "}
-                  {noNewCommits.dateDisplay}. Rest counts too — Scout will be here when you&apos;re
-                  back.
-                </p>
-                {streak >= 2 && (
-                  <div className="quiet-day-streak">
-                    <Emoji name="streak" size={16} /> {streak}-day streak kept alive
-                  </div>
-                )}
-                <div className="quiet-day-actions">
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => setShowLatestFromQuietDay(true)}
-                  >
-                    View your last digest
-                  </button>
+                <div className="quiet-day-text">
+                  <h2 className="quiet-day-title">No New Digest Today for {repoName}</h2>
+                  <p className="quiet-day-subtitle">
+                    {repoName} hasn&apos;t seen any activity since your last digest on{" "}
+                    {noNewCommits.dateDisplay}. Nothing new for Scout to dig through.
+                  </p>
                 </div>
+                <button
+                  type="button"
+                  className="quiet-day-btn"
+                  onClick={() => setShowLatestFromQuietDay(true)}
+                >
+                  <Eye size={20} strokeWidth={1} aria-hidden />
+                  View Last Digest
+                </button>
               </div>
             ) : noNewCommits && showLatestFromQuietDay ? (
               <DigestView

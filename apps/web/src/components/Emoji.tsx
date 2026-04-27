@@ -47,7 +47,7 @@ const EMOJI_MAP: Record<string, EmojiAsset> = {
   codebaseHealth: { folder: "Stethoscope", file: "stethoscope_3d.png" },
   // Misc UI
   streak: { folder: "Fire", file: "fire_3d.png" },
-  quietDay: { folder: "Hot beverage", file: "hot_beverage_3d.png" },
+  quietDay: { folder: "Zzz", file: "zzz_3d.png" },
   // Modal headers
   standup: { folder: "Scroll", file: "scroll_3d.png" },
   plan: { folder: "Spiral notepad", file: "spiral_notepad_3d.png" },

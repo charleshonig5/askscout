@@ -2787,56 +2787,77 @@ a:hover {
   margin-bottom: var(--space-lg);
 }
 
+/* Quiet-day empty state — Figma node 65:1222.
+   Centered vertical stack: 104px Zzz emoji, 16px Medium title +
+   12px Light subtitle (text block gap 8), and a bordered glass-pill
+   "View Last Digest" button. 24px gap between the three parts. No
+   surrounding card background — sits directly on the digest surface. */
 .quiet-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 64px 24px;
   text-align: center;
-  padding: var(--space-2xl) var(--space-lg);
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  /* .digest-container no longer contributes padding — inset the quiet-day
-     inner card from the outer card's edges. */
-  margin: 34px;
 }
 
 .quiet-day-emoji {
-  font-size: 40px;
-  margin-bottom: var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 104px;
+  height: 104px;
+}
+
+.quiet-day-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 480px;
 }
 
 .quiet-day-title {
-  font-size: 22px;
-  font-weight: 600;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: normal;
   color: var(--color-text-primary);
-  margin-bottom: var(--space-sm);
-  letter-spacing: -0.01em;
+  margin: 0;
 }
 
 .quiet-day-subtitle {
-  font-size: 14px;
-  color: var(--color-text-secondary);
-  line-height: 1.6;
-  max-width: 480px;
-  margin: 0 auto var(--space-xl);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-text-primary);
+  margin: 0;
 }
 
-.quiet-day-actions {
-  display: flex;
-  gap: var(--space-sm);
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.quiet-day-streak {
+/* CTA button — same elevated-glass-pill treatment as the digest
+   header Copy/Download/Email and the bottom Standup/Todo buttons. */
+.quiet-day-btn {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-xs);
-  padding: 6px 14px;
-  margin: 0 auto var(--space-xl);
-  border-radius: var(--radius-full);
-  background: color-mix(in srgb, var(--color-warning) 10%, transparent);
-  color: var(--color-warning);
-  font-size: 13px;
-  font-weight: 500;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.quiet-day-btn:hover {
+  background: var(--color-bg-tertiary);
 }
 
 .digest-loading {
