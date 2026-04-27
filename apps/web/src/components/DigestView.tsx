@@ -673,10 +673,21 @@ function WhenYouCoded({
     leftPct: number;
     rightPct: number;
   };
+  // Day-name formatter for the timeline axis. Renders as "Thu, Apr 12"
+  // (short weekday + short month + numeric day) so each segment shows
+  // exactly which day it represents — not just "Thursday" floating in
+  // space with no calendar context.
+  const fmtDayName = (ms: number) =>
+    new Date(ms).toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+    });
+
   const daySegments: DaySeg[] = [];
   if (isSinglePoint) {
     daySegments.push({
-      dayName: new Date(timeline.startMs).toLocaleDateString("en-US", { weekday: "long" }),
+      dayName: fmtDayName(timeline.startMs),
       startMs: timeline.startMs,
       endMs: timeline.endMs,
       leftPct: 0,
@@ -691,7 +702,7 @@ function WhenYouCoded({
       const segEnd = cursor.getTime();
       if (segEnd > segStart) {
         daySegments.push({
-          dayName: new Date(segStart).toLocaleDateString("en-US", { weekday: "long" }),
+          dayName: fmtDayName(segStart),
           startMs: segStart,
           endMs: segEnd,
           leftPct: ((segStart - timeline.startMs) / span) * 100,
@@ -702,7 +713,7 @@ function WhenYouCoded({
       cursor.setDate(cursor.getDate() + 1);
     }
     daySegments.push({
-      dayName: new Date(segStart).toLocaleDateString("en-US", { weekday: "long" }),
+      dayName: fmtDayName(segStart),
       startMs: segStart,
       endMs: timeline.endMs,
       leftPct: ((segStart - timeline.startMs) / span) * 100,
@@ -1049,9 +1060,7 @@ function WhenYouCoded({
         (() => {
           // Single-day path. Dedupe identical labels (commits within same rounded
           // minute/hour produce visually redundant labels like "10:05am · 10:05am").
-          const dayName = new Date(timeline.startMs).toLocaleDateString("en-US", {
-            weekday: "long",
-          });
+          const dayName = fmtDayName(timeline.startMs);
           if (isSinglePoint) {
             return (
               <div className="timeline-single-labels">
