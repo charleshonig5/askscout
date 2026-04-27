@@ -9,6 +9,15 @@ interface RepoSelectorProps {
   activeRepos?: string[];
   selected: string;
   onChange: (repo: string) => void;
+  /** Visual variant. "sidebar" is the compact dashboard nav trigger;
+   *  "settings" is the full-width 44px trigger used on the settings page. */
+  variant?: "sidebar" | "settings";
+  /** Suppress the green Scout-activity dot on each item. The dot signals
+   *  "you've generated digests for this repo before" — useful in the
+   *  dashboard nav, irrelevant in the settings default-repo picker. */
+  hideActivityBadge?: boolean;
+  /** Override the empty-state trigger label. Defaults to "Select a repo". */
+  placeholder?: string;
 }
 
 /**
@@ -18,7 +27,15 @@ interface RepoSelectorProps {
  *   - smart sort by default: selected → Scout-active by recency → rest
  *   - closes on outside click and Esc
  */
-export function RepoSelector({ repos, activeRepos = [], selected, onChange }: RepoSelectorProps) {
+export function RepoSelector({
+  repos,
+  activeRepos = [],
+  selected,
+  onChange,
+  variant = "sidebar",
+  hideActivityBadge = false,
+  placeholder = "Select a repo",
+}: RepoSelectorProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [activeIdx, setActiveIdx] = useState(0);
@@ -170,10 +187,14 @@ export function RepoSelector({ repos, activeRepos = [], selected, onChange }: Re
     ? displayName(selected)
     : isLoading
       ? "Loading repositories..."
-      : "Select a repo";
+      : placeholder;
 
   return (
-    <div className="repo-combobox" ref={rootRef} onBlur={onRootBlur}>
+    <div
+      className={`repo-combobox repo-combobox--${variant}`}
+      ref={rootRef}
+      onBlur={onRootBlur}
+    >
       <button
         ref={triggerRef}
         type="button"
@@ -234,7 +255,7 @@ export function RepoSelector({ repos, activeRepos = [], selected, onChange }: Re
                     <span className="repo-combobox-item-name" title={repo}>
                       {displayName(repo)}
                     </span>
-                    {hasActivity && !isSelected && (
+                    {hasActivity && !isSelected && !hideActivityBadge && (
                       <span
                         className="repo-combobox-item-badge"
                         role="img"

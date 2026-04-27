@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ChevronDown, CircleX, Trash2, CircleCheck, CircleSlash } from "lucide-react";
+import { ArrowLeft, CircleX, Trash2, CircleCheck, CircleSlash } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
+import { RepoSelector } from "@/components/RepoSelector";
 
 /**
  * Settings page (Figma node 56:4092).
@@ -185,26 +186,14 @@ export default function SettingsPage() {
               </div>
               <p className="settings-section-desc">The repo that loads when you open askscout.</p>
             </header>
-            <div className="settings-panel settings-panel--combo">
-              <select
-                className="settings-combo-select"
-                value={defaultRepo}
-                onChange={(e) => void saveDefaultRepo(e.target.value)}
-              >
-                <option value="">Most recently pushed</option>
-                {repos.map((repo) => (
-                  <option key={repo} value={repo}>
-                    {repo}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown
-                size={20}
-                strokeWidth={1}
-                aria-hidden
-                className="settings-combo-chevron"
-              />
-            </div>
+            <RepoSelector
+              repos={repos}
+              selected={defaultRepo}
+              onChange={(repo) => void saveDefaultRepo(repo)}
+              variant="settings"
+              hideActivityBadge
+              placeholder="Most recently pushed"
+            />
           </section>
 
           <hr className="settings-divider" />
