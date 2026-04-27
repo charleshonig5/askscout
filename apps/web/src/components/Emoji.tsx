@@ -52,6 +52,11 @@ const EMOJI_MAP: Record<string, EmojiAsset> = {
   standup: { folder: "Scroll", file: "scroll_3d.png" },
   plan: { folder: "Spiral notepad", file: "spiral_notepad_3d.png" },
   resume: { folder: "Sparkles", file: "sparkles_3d.png" },
+  // Settings page section headers
+  defaultRepo: { folder: "Card file box", file: "card_file_box_3d.png" },
+  customize: { folder: "Gear", file: "gear_3d.png" },
+  clearHistory: { folder: "Wastebasket", file: "wastebasket_3d.png" },
+  privacy: { folder: "Locked", file: "locked_3d.png" },
 };
 
 export type EmojiName = keyof typeof EMOJI_MAP;

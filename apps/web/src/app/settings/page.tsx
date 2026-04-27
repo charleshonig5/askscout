@@ -1,9 +1,23 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Trash2, AlertTriangle } from "lucide-react";
+import { ArrowLeft, ChevronDown, CircleX, Trash2, CircleCheck, CircleSlash } from "lucide-react";
+import { Emoji } from "@/components/Emoji";
+
+/**
+ * Settings page (Figma node 56:4092).
+ *
+ * Structure mirrors the digest page color story but inverted: the page wall
+ * uses --color-bg-secondary and the centered card sits on top in
+ * --color-bg-primary. Each section is a 527px-wide block with an emoji-led
+ * header (label + desc) and a panel underneath. Sections are separated by
+ * full-card dividers. All theming via tokens — no hardcoded hex.
+ *
+ * This pass establishes the shell + section scaffolding. Control internals
+ * (toggle pill geometry, combobox styling, clear-row pills, privacy card
+ * icons) get refined in subsequent passes.
+ */
 
 const SECTION_OPTIONS = [
   { key: "vibeCheck", label: "Vibe Check", desc: "Casual overview of your day" },
@@ -12,6 +26,11 @@ const SECTION_OPTIONS = [
   { key: "unstable", label: "Still Shifting", desc: "Things that keep getting reworked" },
   { key: "leftOff", label: "Left Off", desc: "Where you stopped working" },
   {
+    key: "oneTakeaway",
+    label: "Key Takeaways",
+    desc: "Scout's sign-off with a specific observation and a nudge",
+  },
+  {
     key: "statistics",
     label: "Statistics",
     desc: "Lines added and removed, commits, and files changed",
@@ -19,7 +38,12 @@ const SECTION_OPTIONS = [
   {
     key: "mostActiveFiles",
     label: "Most Active Files",
-    desc: "The files you touched most this session",
+    desc: "The files you touched most in a session",
+  },
+  {
+    key: "codebaseHealth",
+    label: "Codebase Health",
+    desc: "Growth, focus, and churn indicators",
   },
   {
     key: "whenYouCoded",
@@ -31,32 +55,31 @@ const SECTION_OPTIONS = [
     label: "Pace Check",
     desc: "Compare today's output to your rolling average",
   },
-  {
-    key: "codebaseHealth",
-    label: "Codebase Health",
-    desc: "Growth, focus, and churn indicators",
-  },
-  {
-    key: "oneTakeaway",
-    label: "Key Takeaways",
-    desc: "Scout's sign-off with a specific observation and a nudge",
-  },
 ] as const;
 
 const DEFAULT_SECTIONS: Record<string, boolean> = Object.fromEntries(
   SECTION_OPTIONS.map((s) => [s.key, true]),
 );
 
+const PRIVACY_READS = [
+  "Commit messages and metadata",
+  "Diff patches (the specific lines you added or removed)",
+  "File names and paths",
+];
+
+const PRIVACY_NEVER = [
+  "Full source files (only diff patches, never entire files)",
+  "Environment variables, secrets, and API keys",
+  "Dependencies, node_modules, and build artifacts",
+];
+
 export default function SettingsPage() {
   const router = useRouter();
   const [repos, setRepos] = useState<string[]>([]);
   const [defaultRepo, setDefaultRepo] = useState<string>("");
-  const [saving, setSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
   const [sectionPrefs, setSectionPrefs] = useState<Record<string, boolean>>(DEFAULT_SECTIONS);
 
-  // Fetch repos and current settings
   useEffect(() => {
     void (async () => {
       try {
@@ -79,13 +102,12 @@ export default function SettingsPage() {
           }
         }
       } catch {
-        // Silently fail
+        /* silent */
       }
     })();
   }, []);
 
   const saveDefaultRepo = useCallback(async (repo: string) => {
-    setSaving(true);
     setDefaultRepo(repo);
     try {
       await fetch("/api/settings", {
@@ -93,11 +115,9 @@ export default function SettingsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ default_repo: repo }),
       });
-      showMessage("Default repo saved");
     } catch {
-      showMessage("Failed to save");
+      /* silent */
     }
-    setSaving(false);
   }, []);
 
   const deleteRepoHistory = useCallback(async (repo: string) => {
@@ -105,29 +125,9 @@ export default function SettingsPage() {
       await fetch(`/api/account?action=delete-repo-history&repo=${encodeURIComponent(repo)}`, {
         method: "DELETE",
       });
-      showMessage(`History cleared for ${repo.split("/").pop()}`);
       setConfirmDelete(null);
     } catch {
-      showMessage("Failed to delete");
-    }
-  }, []);
-
-  const deleteAllHistory = useCallback(async () => {
-    try {
-      await fetch("/api/account?action=delete-all-history", { method: "DELETE" });
-      showMessage("All history cleared");
-      setConfirmDelete(null);
-    } catch {
-      showMessage("Failed to delete");
-    }
-  }, []);
-
-  const deleteAccount = useCallback(async () => {
-    try {
-      await fetch("/api/account?action=delete-account", { method: "DELETE" });
-      await signOut({ callbackUrl: "/" });
-    } catch {
-      showMessage("Failed to delete account");
+      /* silent */
     }
   }, []);
 
@@ -142,197 +142,215 @@ export default function SettingsPage() {
           body: JSON.stringify({ digest_sections: updated }),
         });
       } catch {
-        // Revert on failure
         setSectionPrefs((prev) => ({ ...prev, [key]: !enabled }));
       }
     },
     [sectionPrefs],
   );
 
-  const showMessage = (msg: string) => {
-    setMessage(msg);
-    setTimeout(() => setMessage(null), 3000);
-  };
+  const goBack = () => router.push("/dashboard");
 
   return (
     <div className="settings-page">
-      <div className="settings-container">
-        <button className="settings-back" onClick={() => router.push("/dashboard")}>
-          <ArrowLeft size={16} /> Back to dashboard
-        </button>
-
-        <h1 className="settings-title">Settings</h1>
-
-        {message && <div className="settings-message">{message}</div>}
-
-        {/* Default Repo */}
-        <div className="settings-section">
-          <h2 className="settings-section-title">Default Repository</h2>
-          <p className="settings-section-desc">The repo that loads when you open askscout.</p>
-          <select
-            className="repo-selector settings-select"
-            value={defaultRepo}
-            onChange={(e) => void saveDefaultRepo(e.target.value)}
-            disabled={saving}
-          >
-            <option value="">Most recently pushed</option>
-            {repos.map((repo) => (
-              <option key={repo} value={repo}>
-                {repo}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Customize Digest */}
-        <div className="settings-section">
-          <h2 className="settings-section-title">Customize Digest</h2>
-          <p className="settings-section-desc">
-            Choose which sections appear in your digest. Changes are saved automatically.
-          </p>
-          <div className="settings-toggles">
-            {SECTION_OPTIONS.map((opt) => (
-              <label key={opt.key} className="settings-toggle-row">
-                <div className="settings-toggle-info">
-                  <span className="settings-toggle-label">{opt.label}</span>
-                  <span className="settings-toggle-desc">{opt.desc}</span>
-                </div>
-                <input
-                  type="checkbox"
-                  className="settings-toggle"
-                  checked={sectionPrefs[opt.key] !== false}
-                  onChange={(e) => void toggleSection(opt.key, e.target.checked)}
-                />
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Clear History */}
-        <div className="settings-section">
-          <h2 className="settings-section-title">Clear History</h2>
-          <p className="settings-section-desc">Delete past digests. This cannot be undone.</p>
-          <div className="settings-actions">
-            {repos.slice(0, 10).map((repo) => (
-              <div key={repo} className="settings-repo-row">
-                <span className="settings-repo-name">{repo}</span>
-                {confirmDelete === `repo:${repo}` ? (
-                  <div className="settings-confirm">
-                    <span>Are you sure?</span>
-                    <button
-                      className="btn btn-danger-sm"
-                      onClick={() => void deleteRepoHistory(repo)}
-                    >
-                      Yes, delete
-                    </button>
-                    <button className="btn btn-secondary-sm" onClick={() => setConfirmDelete(null)}>
-                      Cancel
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    className="btn btn-ghost-sm"
-                    onClick={() => setConfirmDelete(`repo:${repo}`)}
-                  >
-                    <Trash2 size={14} /> Clear
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-          <div style={{ marginTop: "var(--space-md)" }}>
-            {confirmDelete === "all" ? (
-              <div className="settings-confirm">
-                <span>Delete ALL history for every repo?</span>
-                <button className="btn btn-danger-sm" onClick={() => void deleteAllHistory()}>
-                  Yes, delete all
-                </button>
-                <button className="btn btn-secondary-sm" onClick={() => setConfirmDelete(null)}>
-                  Cancel
-                </button>
-              </div>
-            ) : (
-              <button className="btn btn-secondary" onClick={() => setConfirmDelete("all")}>
-                <Trash2 size={14} /> Clear all history
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Privacy & Security */}
-        <div className="settings-section">
-          <h2 className="settings-section-title">Privacy &amp; Security</h2>
-          <p className="settings-section-desc">
-            Scout is read-only. Here is exactly what we access, what we send, and what we store.
-          </p>
-          <div className="privacy-grid">
-            <div className="privacy-card">
-              <div className="privacy-card-title">What Scout reads</div>
-              <div className="privacy-card-items">
-                <div className="privacy-item privacy-item--safe">Commit messages and metadata</div>
-                <div className="privacy-item privacy-item--safe">
-                  Diff patches (the specific lines you added or removed)
-                </div>
-                <div className="privacy-item privacy-item--safe">File names and paths</div>
-              </div>
-            </div>
-            <div className="privacy-card">
-              <div className="privacy-card-title">What Scout stores</div>
-              <div className="privacy-card-items">
-                <div className="privacy-item privacy-item--safe">
-                  Your plain-English digest (no raw code)
-                </div>
-                <div className="privacy-item privacy-item--safe">
-                  A short project summary for context across sessions
-                </div>
-                <div className="privacy-item privacy-item--safe">Your settings and preferences</div>
-              </div>
-            </div>
-            <div className="privacy-card">
-              <div className="privacy-card-title">What Scout never touches</div>
-              <div className="privacy-card-items">
-                <div className="privacy-item privacy-item--never">
-                  Full source files (only diff patches, never entire files)
-                </div>
-                <div className="privacy-item privacy-item--never">
-                  Environment variables, secrets, and API keys
-                </div>
-                <div className="privacy-item privacy-item--never">
-                  Dependencies, node_modules, and build artifacts
-                </div>
-              </div>
-            </div>
-          </div>
-          <p className="privacy-footer">
-            Diff patches are sent to Anthropic or OpenAI to generate your digest, then discarded. No
-            raw code is stored. Scout never writes to your repository.
-          </p>
-        </div>
-
-        {/* Delete Account */}
-        <div className="settings-section settings-danger-zone">
-          <h2 className="settings-section-title">
-            <AlertTriangle size={16} /> Danger Zone
-          </h2>
-          <p className="settings-section-desc">
-            Permanently delete your account and all associated data. This removes all your digests,
-            settings, and disconnects your GitHub account. This cannot be undone.
-          </p>
-          {confirmDelete === "account" ? (
-            <div className="settings-confirm">
-              <span>This is permanent. All your data will be deleted.</span>
-              <button className="btn btn-danger" onClick={() => void deleteAccount()}>
-                Yes, delete my account
-              </button>
-              <button className="btn btn-secondary" onClick={() => setConfirmDelete(null)}>
-                Cancel
-              </button>
-            </div>
-          ) : (
-            <button className="btn btn-danger" onClick={() => setConfirmDelete("account")}>
-              Delete account
+      <div className="settings-card">
+        {/* Header strip — back pill + Settings title on the left,
+            Close button on the right, divider underneath. */}
+        <div className="settings-header">
+          <div className="settings-header-left">
+            <button type="button" className="settings-back-pill" onClick={goBack}>
+              <ArrowLeft size={10} strokeWidth={1} aria-hidden />
+              Back to Digest
             </button>
-          )}
+            <h1 className="settings-title">Settings</h1>
+          </div>
+          <button
+            type="button"
+            className="settings-close-btn"
+            onClick={goBack}
+            aria-label="Close settings"
+          >
+            <CircleX size={20} strokeWidth={1} aria-hidden />
+            <span>Close</span>
+          </button>
+        </div>
+        <hr className="settings-header-divider" />
+
+        <div className="settings-content">
+          {/* Default Repository */}
+          <section className="settings-section">
+            <header className="settings-section-head">
+              <div className="settings-section-title">
+                <Emoji name="defaultRepo" size={20} />
+                <h2>Default Repository</h2>
+              </div>
+              <p className="settings-section-desc">The repo that loads when you open askscout.</p>
+            </header>
+            <div className="settings-panel settings-panel--combo">
+              <select
+                className="settings-combo-select"
+                value={defaultRepo}
+                onChange={(e) => void saveDefaultRepo(e.target.value)}
+              >
+                <option value="">Most recently pushed</option>
+                {repos.map((repo) => (
+                  <option key={repo} value={repo}>
+                    {repo}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                size={20}
+                strokeWidth={1}
+                aria-hidden
+                className="settings-combo-chevron"
+              />
+            </div>
+          </section>
+
+          <hr className="settings-divider" />
+
+          {/* Customize Digest */}
+          <section className="settings-section">
+            <header className="settings-section-head">
+              <div className="settings-section-title">
+                <Emoji name="customize" size={20} />
+                <h2>Customize Digest</h2>
+              </div>
+              <p className="settings-section-desc">
+                Choose which sections appear in your digest. Changes are saved automatically.
+              </p>
+            </header>
+            <div className="settings-panel settings-panel--toggles">
+              {SECTION_OPTIONS.map((opt, i) => (
+                <div className="settings-toggle-row" key={opt.key}>
+                  <div className="settings-toggle-info">
+                    <span className="settings-toggle-label">{opt.label}</span>
+                    <span className="settings-toggle-desc">{opt.desc}</span>
+                  </div>
+                  <label className="settings-switch" aria-label={`Toggle ${opt.label}`}>
+                    <input
+                      type="checkbox"
+                      checked={sectionPrefs[opt.key] !== false}
+                      onChange={(e) => void toggleSection(opt.key, e.target.checked)}
+                    />
+                    <span className="settings-switch-track" aria-hidden />
+                    <span className="settings-switch-thumb" aria-hidden />
+                  </label>
+                  {i < SECTION_OPTIONS.length - 1 && (
+                    <hr className="settings-row-divider" aria-hidden />
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <hr className="settings-divider" />
+
+          {/* Clear History */}
+          <section className="settings-section">
+            <header className="settings-section-head">
+              <div className="settings-section-title">
+                <Emoji name="clearHistory" size={20} />
+                <h2>Clear History</h2>
+              </div>
+              <p className="settings-section-desc">
+                Delete past digests. This cannot be undone.
+              </p>
+            </header>
+            <div className="settings-panel settings-panel--repos">
+              {repos.length === 0 ? (
+                <p className="settings-empty">No repos to clear.</p>
+              ) : (
+                repos.map((repo, i) => (
+                  <div className="settings-repo-row" key={repo}>
+                    <span className="settings-repo-name">{repo}</span>
+                    {confirmDelete === `repo:${repo}` ? (
+                      <span className="settings-repo-confirm">
+                        <button
+                          type="button"
+                          className="settings-clear-pill settings-clear-pill--confirm"
+                          onClick={() => void deleteRepoHistory(repo)}
+                        >
+                          Confirm
+                        </button>
+                        <button
+                          type="button"
+                          className="settings-clear-pill"
+                          onClick={() => setConfirmDelete(null)}
+                        >
+                          Cancel
+                        </button>
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        className="settings-clear-pill"
+                        onClick={() => setConfirmDelete(`repo:${repo}`)}
+                      >
+                        Clear
+                        <Trash2 size={10} strokeWidth={1} aria-hidden />
+                      </button>
+                    )}
+                    {i < repos.length - 1 && (
+                      <hr className="settings-row-divider" aria-hidden />
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+          </section>
+
+          <hr className="settings-divider" />
+
+          {/* Privacy & Security */}
+          <section className="settings-section">
+            <header className="settings-section-head">
+              <div className="settings-section-title">
+                <Emoji name="privacy" size={20} />
+                <h2>Privacy &amp; Security</h2>
+              </div>
+              <p className="settings-section-desc">
+                Scout is read-only. Here is exactly what we access and what we don&apos;t.
+              </p>
+            </header>
+            <div className="settings-privacy-grid">
+              <div className="settings-privacy-card">
+                <h3 className="settings-privacy-card-title">What Scout reads</h3>
+                <ul className="settings-privacy-list">
+                  {PRIVACY_READS.map((item) => (
+                    <li key={item} className="settings-privacy-item">
+                      <CircleCheck
+                        size={20}
+                        strokeWidth={1}
+                        aria-hidden
+                        className="settings-privacy-icon settings-privacy-icon--safe"
+                      />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="settings-privacy-card">
+                <h3 className="settings-privacy-card-title">What Scout never touches</h3>
+                <ul className="settings-privacy-list">
+                  {PRIVACY_NEVER.map((item) => (
+                    <li key={item} className="settings-privacy-item">
+                      <CircleSlash
+                        size={20}
+                        strokeWidth={1}
+                        aria-hidden
+                        className="settings-privacy-icon settings-privacy-icon--never"
+                      />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <p className="settings-privacy-footer">
+              No raw code is stored. Scout never writes to your repository.
+            </p>
+          </section>
         </div>
       </div>
     </div>

@@ -3645,246 +3645,473 @@ a:hover {
    Settings Page
    ============================================ */
 
+/* ============================================================
+   SETTINGS PAGE  (Figma node 56:4092)
+   ------------------------------------------------------------
+   Color story flips the dashboard pattern: page wall is
+   --color-bg-secondary (the lighter dark / lighter light), and
+   the centered card sits on top in --color-bg-primary. Every
+   color goes through tokens so the same component reads
+   correctly in both themes.
+   ============================================================ */
+
 .settings-page {
   min-height: 100vh;
-  padding: var(--space-2xl) var(--space-lg);
+  background: var(--color-bg-secondary);
+  padding: 60px var(--space-lg);
+  display: flex;
+  justify-content: center;
 }
 
-.settings-container {
-  max-width: 600px;
-  margin: 0 auto;
+.settings-card {
+  width: 100%;
+  max-width: 595px;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
 }
 
-.settings-back {
+/* --- Header strip ------------------------------------------- */
+
+.settings-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 23px 33px;
+  gap: var(--space-md);
+}
+
+.settings-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+/* Tiny outlined "Back to Digest" pill — same primitive as the
+   live-badge / clear-row pill: 1px stroke, transparent fill,
+   4px radius, 10px Light. */
+.settings-back-pill {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-xs);
-  font-size: 13px;
-  color: var(--color-text-secondary);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: var(--space-xs) 0;
-  margin-bottom: var(--space-lg);
+  gap: 2px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-primary);
   font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
 }
 
-.settings-back:hover {
-  color: var(--color-text-primary);
+.settings-back-pill:hover {
+  border-color: var(--color-border-hover);
+  background: color-mix(in srgb, var(--color-bg-secondary) 60%, transparent);
 }
 
 .settings-title {
+  font-family: var(--font-display);
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
   color: var(--color-text-primary);
-  margin-bottom: var(--space-2xl);
-  letter-spacing: -0.02em;
+  margin: 0;
 }
 
-.settings-message {
-  padding: var(--space-sm) var(--space-md);
-  background: color-mix(in srgb, var(--color-success) 12%, transparent);
-  color: var(--color-success);
-  border-radius: var(--radius-md);
-  font-size: 13px;
-  margin-bottom: var(--space-lg);
+/* Glass close button — mirrors modal-close-btn pattern (8px
+   radius, --color-bg-secondary fill, --color-border stroke,
+   inset glow) but with a "Close" label alongside the X. */
+.settings-close-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.settings-close-btn:hover {
+  border-color: var(--color-border-hover);
+}
+
+.settings-header-divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 0;
+}
+
+/* --- Content + sections ------------------------------------- */
+
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 34px;
+  padding: 34px 0;
 }
 
 .settings-section {
-  margin-bottom: var(--space-2xl);
-  padding-bottom: var(--space-2xl);
-  border-bottom: 1px solid var(--color-border);
+  width: 527px;
+  max-width: calc(100% - 68px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.settings-section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .settings-section-title {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  font-size: 15px;
-  font-weight: 600;
+  gap: 8px;
+}
+
+.settings-section-title h2 {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.2;
   color: var(--color-text-primary);
-  margin-bottom: var(--space-xs);
+  margin: 0;
 }
 
 .settings-section-desc {
-  font-size: 13px;
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-md);
-  line-height: 1.5;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 18px;
+  color: var(--color-text-primary);
+  margin: 0;
 }
 
-.settings-select {
+/* Full-width section divider (sits inside the card, below
+   each section). */
+.settings-divider {
   width: 100%;
-  padding: var(--space-sm) var(--space-md);
-  font-size: 14px;
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 0;
 }
 
-.settings-toggles {
+/* Shared panel surface — every section's control container. */
+.settings-panel {
+  position: relative;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
+  overflow: hidden;
+}
+
+/* --- Default Repository (combo) ----------------------------- */
+
+.settings-panel--combo {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 11px;
+}
+
+.settings-combo-select {
+  flex: 1;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0 24px 0 0;
+}
+
+.settings-combo-chevron {
+  position: absolute;
+  right: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-secondary);
+  pointer-events: none;
+}
+
+/* --- Customize Digest (toggle list) ------------------------- */
+
+.settings-panel--toggles {
+  padding: 13px;
   display: flex;
   flex-direction: column;
+  gap: 14px;
 }
 
 .settings-toggle-row {
+  position: relative;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: var(--space-sm) 0;
-  border-bottom: 1px solid var(--color-border);
-  cursor: pointer;
-}
-
-.settings-toggle-row:last-child {
-  border-bottom: none;
+  align-items: flex-start;
 }
 
 .settings-toggle-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  flex: 1;
+  padding-right: 14px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 18px;
 }
 
 .settings-toggle-label {
-  font-size: 13px;
   font-weight: 500;
   color: var(--color-text-primary);
 }
 
 .settings-toggle-desc {
-  font-size: 12px;
-  color: var(--color-text-tertiary);
+  font-weight: 300;
+  color: var(--color-text-primary);
 }
 
-.settings-toggle {
-  appearance: none;
-  width: 36px;
-  height: 20px;
-  background: var(--color-bg-tertiary);
-  border-radius: var(--radius-full);
+/* In-panel row divider — sits inside the panel between rows.
+   Positioned absolutely so it can splay into the gap without
+   nudging the row layout. */
+.settings-row-divider {
+  position: absolute;
+  bottom: -7px;
+  left: 0;
+  right: 0;
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 0;
+}
+
+/* Switch (44x24, green when on) */
+.settings-switch {
   position: relative;
-  cursor: pointer;
-  transition: background 0.15s ease;
   flex-shrink: 0;
-  border: 1px solid var(--color-border);
+  width: 44px;
+  height: 24px;
+  cursor: pointer;
 }
 
-.settings-toggle::after {
-  content: "";
+.settings-switch input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.settings-switch-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 100px;
+  background: var(--color-bg-tertiary);
+  box-shadow: inset 0 0 14px 0 rgba(0, 0, 0, 0.5);
+  transition: background 0.18s ease;
+}
+
+.settings-switch-thumb {
   position: absolute;
   top: 2px;
   left: 2px;
-  width: 14px;
-  height: 14px;
-  background: var(--color-text-tertiary);
-  border-radius: 50%;
-  transition:
-    transform 0.15s ease,
-    background 0.15s ease;
+  width: 20px;
+  height: 20px;
+  border-radius: 100px;
+  background: var(--color-bg-primary);
+  box-shadow:
+    0 2px 4px 0 rgba(39, 39, 39, 0.14),
+    inset 0 0 10px 0 var(--color-inner-glow);
+  transition: transform 0.2s cubic-bezier(0.4, 0.2, 0.2, 1);
+  pointer-events: none;
 }
 
-.settings-toggle:checked {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
+.settings-switch input:checked ~ .settings-switch-track {
+  background: var(--color-success);
+  box-shadow: inset 0 0 14px 0 rgba(0, 0, 0, 0.3);
 }
 
-.settings-toggle:checked::after {
-  transform: translateX(16px);
-  background: var(--color-accent-text);
+.settings-switch input:checked ~ .settings-switch-thumb {
+  transform: translateX(20px);
+}
+
+/* --- Clear History (per-repo rows) -------------------------- */
+
+.settings-panel--repos {
+  padding: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .settings-repo-row {
+  position: relative;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-sm) 0;
-  border-bottom: 1px solid var(--color-border);
 }
 
 .settings-repo-name {
-  font-size: 13px;
   font-family: var(--font-sans);
-  color: var(--color-text-primary);
-}
-
-.settings-confirm {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  font-size: 13px;
-  color: var(--color-text-secondary);
-  flex-wrap: wrap;
-}
-
-.settings-danger-zone {
-  border-bottom: none;
-}
-
-.privacy-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
-}
-
-@media (max-width: 600px) {
-  .privacy-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.privacy-card {
-  padding: var(--space-md);
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-}
-
-.privacy-card-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-sm);
-}
-
-.privacy-card-items {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-}
-
-.privacy-item {
-  font-size: 13px;
-  padding-left: var(--space-md);
-  position: relative;
-}
-
-.privacy-item::before {
-  position: absolute;
-  left: 0;
   font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  color: var(--color-text-primary);
 }
 
-.privacy-item--safe {
-  color: var(--color-text-secondary);
+/* Clear pill — same primitive as the back pill, with a danger
+   tint on hover and the confirm state. */
+.settings-clear-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background 0.15s ease;
 }
 
-.privacy-item--safe::before {
-  content: "\2713";
-  color: var(--color-success);
-}
-
-.privacy-item--never {
-  color: var(--color-text-secondary);
-}
-
-.privacy-item--never::before {
-  content: "\2717";
+.settings-clear-pill:hover {
+  border-color: var(--color-danger);
   color: var(--color-danger);
 }
 
-.privacy-footer {
+.settings-clear-pill--confirm {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.settings-repo-confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.settings-empty {
+  font-family: var(--font-sans);
   font-size: 12px;
-  color: var(--color-text-tertiary);
-  line-height: 1.5;
+  color: var(--color-text-secondary);
+  margin: 0;
+  padding: 4px 0;
+}
+
+/* --- Privacy & Security ------------------------------------- */
+
+.settings-privacy-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  width: 100%;
+}
+
+.settings-privacy-card {
+  position: relative;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
+  padding: 13px;
+  min-height: 196px;
+}
+
+.settings-privacy-card-title {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  color: var(--color-text-primary);
+  margin: 0 0 14px;
+}
+
+.settings-privacy-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.settings-privacy-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 18px;
+  color: var(--color-text-primary);
+}
+
+.settings-privacy-icon {
+  flex-shrink: 0;
+}
+
+.settings-privacy-icon--safe {
+  color: var(--color-success);
+}
+
+.settings-privacy-icon--never {
+  color: var(--color-danger);
+}
+
+.settings-privacy-footer {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 18px;
+  color: var(--color-text-primary);
+  margin: 0;
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .settings-privacy-grid {
+    grid-template-columns: 1fr;
+  }
+  .settings-section,
+  .settings-privacy-footer {
+    max-width: calc(100% - 32px);
+  }
+  .settings-header {
+    padding: 18px 16px;
+  }
 }
 
 .btn-danger {
