@@ -3696,7 +3696,11 @@ a:hover {
 .settings-page {
   min-height: 100vh;
   background: var(--color-bg-secondary);
-  padding: 60px var(--space-lg);
+  /* 24px top/bottom matches the dashboard digest card's offset
+     against its page background (.app-main margin: 24px). Same
+     "card floats inside outer chrome" rhythm as the rest of the
+     product. */
+  padding: 24px var(--space-lg);
   display: flex;
   justify-content: center;
 }
