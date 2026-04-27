@@ -243,6 +243,7 @@ export default function SettingsPage() {
               onChange={(repo) => void saveDefaultRepo(repo)}
               variant="settings"
               hideActivityBadge
+              showDynamicDefault
               placeholder="Most recently pushed"
             />
           </section>

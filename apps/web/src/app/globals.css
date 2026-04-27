@@ -790,6 +790,33 @@ a:hover {
   flex-shrink: 0;
 }
 
+/* Dynamic-default row ("Most recently pushed"). Visually distinct
+   from real repo rows so users understand they're picking the
+   dynamic fallback rather than a specific repo: italic label,
+   leading clock icon, secondary text color when not active. */
+.repo-combobox-item--dynamic {
+  font-style: italic;
+}
+
+.repo-combobox-item--dynamic .repo-combobox-item-name {
+  color: var(--color-text-secondary);
+}
+
+.repo-combobox-item--dynamic.is-active .repo-combobox-item-name,
+.repo-combobox-item--dynamic.is-selected .repo-combobox-item-name {
+  color: var(--color-text-primary);
+}
+
+.repo-combobox-item-icon {
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+}
+
+.repo-combobox-item--dynamic.is-active .repo-combobox-item-icon,
+.repo-combobox-item--dynamic.is-selected .repo-combobox-item-icon {
+  color: var(--color-text-primary);
+}
+
 @media (max-width: 480px) {
   .repo-combobox-popover {
     /* Bottom-sheet style on phones — full width, anchored from the trigger

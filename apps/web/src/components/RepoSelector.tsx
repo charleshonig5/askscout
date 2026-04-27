@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, ChevronDown, Search } from "lucide-react";
+import { Check, ChevronDown, Clock, Search } from "lucide-react";
 
 interface RepoSelectorProps {
   repos: string[];
@@ -18,6 +18,12 @@ interface RepoSelectorProps {
   hideActivityBadge?: boolean;
   /** Override the empty-state trigger label. Defaults to "Select a repo". */
   placeholder?: string;
+  /** When true, prepend a "Most recently pushed" pseudo-option to the
+   *  dropdown that, when picked, commits an empty string — telling
+   *  callers "use the dynamic default" (typically `repos[0]`). Used by
+   *  the settings page so users can revert from a hard-pinned default
+   *  back to the most-recently-pushed fallback. */
+  showDynamicDefault?: boolean;
 }
 
 /**
@@ -35,6 +41,7 @@ export function RepoSelector({
   variant = "sidebar",
   hideActivityBadge = false,
   placeholder = "Select a repo",
+  showDynamicDefault = false,
 }: RepoSelectorProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -105,6 +112,17 @@ export function RepoSelector({
     }
   }, [open]);
 
+  // The list rendered in the popover. When showDynamicDefault is on AND
+  // there's no active search query, prepend the empty string as a
+  // sentinel for the "Most recently pushed" pseudo-option. Keyboard nav
+  // and click handling use indices into THIS array (not `ordered`).
+  const displayList = useMemo(() => {
+    if (showDynamicDefault && !query.trim()) {
+      return ["", ...ordered];
+    }
+    return ordered;
+  }, [ordered, showDynamicDefault, query]);
+
   // Keep the active item scrolled into view when moving by keyboard.
   useEffect(() => {
     if (!open) return;
@@ -116,8 +134,8 @@ export function RepoSelector({
 
   // Clamp activeIdx if the filtered list shrinks below it.
   useEffect(() => {
-    if (activeIdx >= ordered.length) setActiveIdx(Math.max(0, ordered.length - 1));
-  }, [ordered, activeIdx]);
+    if (activeIdx >= displayList.length) setActiveIdx(Math.max(0, displayList.length - 1));
+  }, [displayList, activeIdx]);
 
   // Close the popover AND return focus to the trigger button. Used for any
   // intentional close (Esc, Enter-select, click-select). For unintentional
@@ -130,7 +148,9 @@ export function RepoSelector({
   };
 
   const commit = (repo: string) => {
-    if (repo && repo !== selected) onChange(repo);
+    // Allow committing "" — that's the dynamic-default sentinel. Skip
+    // the redundant onChange when value is unchanged either way.
+    if (repo !== selected) onChange(repo);
     closeAndFocusTrigger();
   };
 
@@ -138,7 +158,7 @@ export function RepoSelector({
     if (!open) return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setActiveIdx((i) => Math.min(i + 1, Math.max(0, ordered.length - 1)));
+      setActiveIdx((i) => Math.min(i + 1, Math.max(0, displayList.length - 1)));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setActiveIdx((i) => Math.max(0, i - 1));
@@ -147,11 +167,11 @@ export function RepoSelector({
       setActiveIdx(0);
     } else if (e.key === "End") {
       e.preventDefault();
-      setActiveIdx(Math.max(0, ordered.length - 1));
+      setActiveIdx(Math.max(0, displayList.length - 1));
     } else if (e.key === "Enter") {
       e.preventDefault();
-      const choice = ordered[activeIdx];
-      if (choice) commit(choice);
+      const choice = displayList[activeIdx];
+      if (choice !== undefined) commit(choice);
     } else if (e.key === "Escape") {
       e.preventDefault();
       closeAndFocusTrigger();
@@ -230,12 +250,50 @@ export function RepoSelector({
           </div>
 
           <div id="repo-combobox-list" role="listbox" className="repo-combobox-list" ref={listRef}>
-            {ordered.length === 0 ? (
+            {displayList.length === 0 ? (
               <div className="repo-combobox-empty">
                 {query.trim() ? `No repos match "${query.trim()}"` : "No repos available"}
               </div>
             ) : (
-              ordered.map((repo, i) => {
+              displayList.map((repo, i) => {
+                // The "" sentinel = dynamic-default pseudo-option. Renders
+                // as a distinct row with a clock icon so users understand
+                // they're choosing the dynamic fallback rather than a
+                // specific repo.
+                if (repo === "") {
+                  const isSelected = selected === "";
+                  const isActive = i === activeIdx;
+                  return (
+                    <button
+                      key="__dynamic-default__"
+                      type="button"
+                      data-idx={i}
+                      role="option"
+                      aria-selected={isSelected}
+                      className={`repo-combobox-item repo-combobox-item--dynamic${
+                        isActive ? " is-active" : ""
+                      }${isSelected ? " is-selected" : ""}`}
+                      onMouseEnter={() => setActiveIdx(i)}
+                      onClick={() => commit("")}
+                    >
+                      <Clock
+                        size={16}
+                        strokeWidth={1}
+                        className="repo-combobox-item-icon"
+                        aria-hidden
+                      />
+                      <span className="repo-combobox-item-name">Most recently pushed</span>
+                      {isSelected && (
+                        <Check
+                          size={20}
+                          strokeWidth={1}
+                          className="repo-combobox-item-check"
+                          aria-hidden
+                        />
+                      )}
+                    </button>
+                  );
+                }
                 const isSelected = repo === selected;
                 const isActive = i === activeIdx;
                 const hasActivity = activeSet.has(repo);
