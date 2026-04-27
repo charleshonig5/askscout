@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useState, useEffect, useCallback } from "react";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, CircleX, Trash2, ShieldCheck, ShieldX } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
@@ -182,6 +183,22 @@ export default function SettingsPage() {
       /* silent */
     }
   }, [refreshRepos]);
+
+  /** Wipe the user's entire footprint in Scout — saved digests,
+   *  settings, check-ins, and the user row itself — then sign out
+   *  so they're back at the landing page. Required for both right-
+   *  to-erasure compliance (GDPR / CCPA) and basic trust: revoking
+   *  the GitHub OAuth grant on github.com only stops new reads, it
+   *  doesn't touch data already stored in Supabase. */
+  const [deleteAccountOpen, setDeleteAccountOpen] = useState(false);
+  const deleteAccount = useCallback(async () => {
+    try {
+      await fetch("/api/account?action=delete-account", { method: "DELETE" });
+      await signOut({ callbackUrl: "/" });
+    } catch {
+      /* silent */
+    }
+  }, []);
 
   const toggleSection = useCallback(
     async (key: string, enabled: boolean) => {
@@ -415,6 +432,35 @@ export default function SettingsPage() {
               No raw code is stored. Scout never writes to your repository.
             </p>
           </section>
+
+          <hr className="settings-divider" />
+
+          {/* Danger Zone — account deletion. Same section primitive
+              as the others: emoji + title + desc, with a right-aligned
+              danger action in the title row (mirrors Clear History).
+              Reuses .settings-clear-all-btn since the visual treatment
+              is identical (section-level danger pill). */}
+          <section className="settings-section">
+            <header className="settings-section-head">
+              <div className="settings-section-title-row">
+                <div className="settings-section-title">
+                  <Emoji name="dangerZone" size={20} />
+                  <h2>Danger Zone</h2>
+                </div>
+                <button
+                  type="button"
+                  className="settings-clear-all-btn"
+                  onClick={() => setDeleteAccountOpen(true)}
+                >
+                  <Trash2 size={16} strokeWidth={1} aria-hidden />
+                  Delete Account
+                </button>
+              </div>
+              <p className="settings-section-desc">
+                Permanently delete your account and all data. This cannot be undone.
+              </p>
+            </header>
+          </section>
         </div>
       </div>
 
@@ -468,6 +514,62 @@ export default function SettingsPage() {
                 onClick={() => void deleteAllHistory()}
               >
                 Yes, clear all
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Delete-Account confirm — same modal primitives as Clear All
+          but with stronger language since the action is heavier
+          scope (wipes data AND signs the user out). */}
+      {deleteAccountOpen && (
+        <>
+          <div
+            className="modal-overlay"
+            onClick={() => setDeleteAccountOpen(false)}
+            aria-hidden
+          />
+          <div
+            className="modal modal--confirm"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-account-title"
+          >
+            <div className="modal-top">
+              <div className="modal-identity">
+                <h2 id="delete-account-title" className="modal-title">
+                  Delete your account?
+                </h2>
+                <p className="modal-subtitle">
+                  This permanently deletes your account, all saved digests, settings, and
+                  history. You&apos;ll need to sign back in with GitHub to use Scout again.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="modal-close-btn"
+                onClick={() => setDeleteAccountOpen(false)}
+                aria-label="Close"
+              >
+                <CircleX size={20} strokeWidth={1} aria-hidden />
+              </button>
+            </div>
+            <div className="modal-divider" aria-hidden />
+            <div className="modal-footer modal-footer--split">
+              <button
+                type="button"
+                className="modal-action-btn"
+                onClick={() => setDeleteAccountOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="modal-action-btn modal-action-btn--danger"
+                onClick={() => void deleteAccount()}
+              >
+                Yes, delete account
               </button>
             </div>
           </div>

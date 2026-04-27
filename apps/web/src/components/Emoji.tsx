@@ -57,6 +57,7 @@ const EMOJI_MAP: Record<string, EmojiAsset> = {
   customize: { folder: "Gear", file: "gear_3d.png" },
   clearHistory: { folder: "Wastebasket", file: "wastebasket_3d.png" },
   privacy: { folder: "Locked", file: "locked_3d.png" },
+  dangerZone: { folder: "Warning", file: "warning_3d.png" },
 };
 
 export type EmojiName = keyof typeof EMOJI_MAP;
