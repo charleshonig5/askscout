@@ -83,9 +83,28 @@ const PRIVACY_NEVER = [
 export default function SettingsPage() {
   const router = useRouter();
   const [repos, setRepos] = useState<string[]>([]);
+  /** Subset of `repos` that have at least one saved digest — i.e. things to
+   *  actually clear. Drives the Clear History list so users don't see
+   *  "Clear" buttons next to repos that have nothing to clear. */
+  const [activeRepos, setActiveRepos] = useState<string[]>([]);
   const [defaultRepo, setDefaultRepo] = useState<string>("");
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [sectionPrefs, setSectionPrefs] = useState<Record<string, boolean>>(DEFAULT_SECTIONS);
+
+  /** Refresh /api/repos. Pulled out so the Clear button can call it
+   *  after a successful delete to drop the cleared repo from the list. */
+  const refreshRepos = useCallback(async () => {
+    try {
+      const res = await fetch("/api/repos");
+      if (res.ok) {
+        const data = (await res.json()) as { repos: string[]; activeRepos?: string[] };
+        setRepos(data.repos);
+        setActiveRepos(data.activeRepos ?? []);
+      }
+    } catch {
+      /* silent */
+    }
+  }, []);
 
   useEffect(() => {
     void (async () => {
@@ -95,8 +114,12 @@ export default function SettingsPage() {
           fetch("/api/settings"),
         ]);
         if (reposRes.ok) {
-          const data = (await reposRes.json()) as { repos: string[] };
+          const data = (await reposRes.json()) as {
+            repos: string[];
+            activeRepos?: string[];
+          };
           setRepos(data.repos);
+          setActiveRepos(data.activeRepos ?? []);
         }
         if (settingsRes.ok) {
           const data = (await settingsRes.json()) as {
@@ -127,16 +150,23 @@ export default function SettingsPage() {
     }
   }, []);
 
-  const deleteRepoHistory = useCallback(async (repo: string) => {
-    try {
-      await fetch(`/api/account?action=delete-repo-history&repo=${encodeURIComponent(repo)}`, {
-        method: "DELETE",
-      });
-      setConfirmDelete(null);
-    } catch {
-      /* silent */
-    }
-  }, []);
+  const deleteRepoHistory = useCallback(
+    async (repo: string) => {
+      try {
+        await fetch(`/api/account?action=delete-repo-history&repo=${encodeURIComponent(repo)}`, {
+          method: "DELETE",
+        });
+        setConfirmDelete(null);
+        // Refetch active repos so the cleared repo drops out of the
+        // Clear History list immediately. Without this, a row would
+        // sit there with a "Clear" button that does nothing.
+        void refreshRepos();
+      } catch {
+        /* silent */
+      }
+    },
+    [refreshRepos],
+  );
 
   const toggleSection = useCallback(
     async (key: string, enabled: boolean) => {
@@ -253,12 +283,14 @@ export default function SettingsPage() {
               </p>
             </header>
             <div className="settings-panel settings-panel--repos">
-              {repos.length === 0 ? (
-                <p className="settings-empty">No repos to clear.</p>
+              {activeRepos.length === 0 ? (
+                <p className="settings-empty">No digest history yet.</p>
               ) : (
-                repos.map((repo, i) => (
+                activeRepos.map((repo, i) => (
                   <div className="settings-repo-row" key={repo}>
-                    <span className="settings-repo-name">{repo}</span>
+                    <span className="settings-repo-name" title={repo}>
+                      {repo}
+                    </span>
                     {confirmDelete === `repo:${repo}` ? (
                       <span className="settings-repo-confirm">
                         <button
@@ -286,7 +318,7 @@ export default function SettingsPage() {
                         <Trash2 size={10} strokeWidth={1} aria-hidden />
                       </button>
                     )}
-                    {i < repos.length - 1 && (
+                    {i < activeRepos.length - 1 && (
                       <hr className="settings-row-divider" aria-hidden />
                     )}
                   </div>

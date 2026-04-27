@@ -3973,11 +3973,16 @@ a:hover {
 
 /* --- Clear History (per-repo rows) -------------------------- */
 
+/* Capped height matches Figma node 56:4506 (336px = ~8 rows of
+   activity); with more active repos than that, the panel
+   internally scrolls rather than ballooning the page. */
 .settings-panel--repos {
   padding: 13px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  max-height: 336px;
+  overflow-y: auto;
 }
 
 .settings-repo-row {
@@ -3986,9 +3991,18 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-md);
 }
 
+/* Long owner/repo slugs ellipsis instead of pushing the pill off
+   the row. flex:1 + min-width:0 unlocks the shrink behavior that
+   flex children otherwise refuse to do. */
 .settings-repo-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-family: var(--font-sans);
   font-size: 12px;
   font-weight: 500;
@@ -3997,8 +4011,10 @@ a:hover {
 }
 
 /* Clear pill — same primitive as the back pill, with a danger
-   tint on hover and the confirm state. */
+   tint on hover and the confirm state. flex-shrink: 0 keeps the
+   pill at full size when long repo names compress beside it. */
 .settings-clear-pill {
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   gap: 2px;
@@ -4029,6 +4045,7 @@ a:hover {
 }
 
 .settings-repo-confirm {
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   gap: 6px;
