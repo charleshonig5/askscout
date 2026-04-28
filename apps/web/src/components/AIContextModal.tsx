@@ -69,13 +69,37 @@ export function AIContextModal({ isOpen, onClose, content }: AIContextModalProps
 
   const sections = useMemo(() => (content ? parseResumePrompt(content) : []), [content]);
 
+  /** Build the copy payload from PARSED sections so the formatting
+   *  is the same shape the StandupModal copy uses — colon-suffixed
+   *  headers, plain `- ` bullets, blank line between sections. The
+   *  raw LLM output uses bullet glyphs (•) and bare headings; the
+   *  cleaned-up version reads cleaner whether pasted into an AI
+   *  coding tool, a doc, or a chat thread. */
   const handleCopy = useCallback(() => {
-    if (!content) return;
-    void navigator.clipboard.writeText(content).then(() => {
+    if (sections.length === 0) {
+      if (!content) return;
+      void navigator.clipboard.writeText(content).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      });
+      return;
+    }
+    const text = sections
+      .map((s) => {
+        const heading = s.heading ? `${s.heading}:` : "";
+        if (s.type === "prose") {
+          return heading ? `${heading}\n${s.body}` : s.body;
+        }
+        const items = s.items.map((i) => `- ${i}`).join("\n");
+        return heading ? `${heading}\n${items}` : items;
+      })
+      .filter(Boolean)
+      .join("\n\n");
+    void navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
-  }, [content]);
+  }, [content, sections]);
 
   if (!isOpen) return null;
 
