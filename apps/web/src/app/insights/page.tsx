@@ -141,27 +141,33 @@ function cellState(cell: Cell): "padding" | "empty" | "checkin" | "active" {
   return "empty";
 }
 
-/** Native-tooltip text for hovered cells. Padding cells get nothing
- *  so the user doesn't see a confusing "no data" hover for cells
- *  that aren't really days. Separator is the middle dot — matches
- *  the existing tooltip convention in the digest's bar-tooltips
- *  (e.g. "10:05am · 10:20am · 12:45pm"). */
-function cellTooltip(cell: Cell): string | undefined {
+/** Short calendar date for the tooltip label ("Apr 28"). */
+function shortDate(dateStr: string): string {
+  const d = new Date(dateStr + "T00:00:00");
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+/** Tooltip value text — count for digest days, "Quiet check-in" for
+ *  check-in-only days. Empty cells never reach this function. */
+function tooltipValue(cell: Cell): string {
+  if (cell.digests > 0) {
+    return `${cell.digests} ${cell.digests === 1 ? "digest" : "digests"}`;
+  }
+  return "Quiet check-in";
+}
+
+/** aria-label for cells. Padding + empty cells get nothing; active
+ *  + check-in cells get a descriptive label for screen readers. */
+function cellAriaLabel(cell: Cell): string | undefined {
   if (!cell.date) return undefined;
+  if (cell.digests === 0 && !cell.checkin) return undefined;
   const d = new Date(cell.date + "T00:00:00");
-  const formatted = d.toLocaleDateString("en-US", {
+  const fullDate = d.toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
   });
-  if (cell.digests > 0) {
-    const reposLabel = cell.repos.length > 0 ? ` in ${cell.repos.join(", ")}` : "";
-    return `${formatted} · ${cell.digests} ${cell.digests === 1 ? "digest" : "digests"}${reposLabel}`;
-  }
-  if (cell.checkin) {
-    return `${formatted} · Quiet day check-in`;
-  }
-  return `${formatted} · No activity`;
+  return `${fullDate}, ${tooltipValue(cell)}`;
 }
 
 /** Format a YYYY-MM-DD into a human-friendly relative string for the
@@ -263,7 +269,11 @@ function ActivityCalendar({ days }: { days: ActivityDay[] }) {
   } | null>(null);
 
   const onCellEnter = (cell: Cell, target: HTMLElement) => {
+    // Only trigger hover for cells with real activity. Empty days
+    // (no digest, no check-in) and padding cells stay silent —
+    // hovering them was just noise.
     if (!cell.date) return;
+    if (cell.digests === 0 && !cell.checkin) return;
     const rect = target.getBoundingClientRect();
     setHover({
       cell,
@@ -307,7 +317,7 @@ function ActivityCalendar({ days }: { days: ActivityDay[] }) {
                   data-state={state}
                   onMouseEnter={(e) => onCellEnter(cell, e.currentTarget)}
                   onMouseLeave={onCellLeave}
-                  aria-label={cellTooltip(cell) ?? undefined}
+                  aria-label={cellAriaLabel(cell)}
                 />
               );
             })}
@@ -315,16 +325,20 @@ function ActivityCalendar({ days }: { days: ActivityDay[] }) {
         ))}
       </div>
 
-      {/* Custom tooltip — appears immediately on hover (no native-
-          tooltip delay). Position: fixed escapes the panel's
-          overflow clipping; centered above the hovered cell. */}
+      {/* Custom tooltip — mirrors the .streak-tooltip pattern
+          exactly (10px Light label + Medium value, glass surface,
+          inset glow, 5px backdrop blur). Position: fixed escapes
+          the panel's overflow clipping; centered above the hovered
+          cell. Only triggers for active or check-in cells (see
+          onCellEnter). */}
       {hover && (
         <div
           className="insights-calendar-tooltip"
           role="tooltip"
           style={{ left: hover.x, top: hover.y }}
         >
-          {cellTooltip(hover.cell)}
+          <span className="insights-calendar-tooltip-label">{shortDate(hover.cell.date)}</span>
+          <span className="insights-calendar-tooltip-value">{tooltipValue(hover.cell)}</span>
         </div>
       )}
     </div>
