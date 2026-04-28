@@ -2,7 +2,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowDown, ArrowLeft, ArrowUp, ArrowUpRight, CircleX } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowUp,
+  ArrowUpRight,
+  ChevronsUpDown,
+  CircleX,
+} from "lucide-react";
 import { Emoji } from "@/components/Emoji";
 
 /**
@@ -273,8 +280,10 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
     );
   }
 
-  /** One header cell — click to sort by its column, click again to
-   *  flip direction. Active column shows an arrow indicator. */
+  /** One header cell — click to sort, click again to flip direction.
+   *  Always shows an icon: the active column gets a solid arrow
+   *  matching the current direction; inactive columns show a faded
+   *  ChevronsUpDown to signal "click to sort." */
   const SortHeader = ({ keyName, label }: { keyName: SortKey; label: string }) => {
     const isActive = sortKey === keyName;
     return (
@@ -285,13 +294,16 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
         aria-label={`Sort by ${label}`}
         aria-sort={isActive ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
       >
-        <span>{label}</span>
-        {isActive &&
-          (sortDir === "asc" ? (
+        <span className="insights-repos-sort-label">{label}</span>
+        {isActive ? (
+          sortDir === "asc" ? (
             <ArrowUp size={12} strokeWidth={1.5} aria-hidden />
           ) : (
             <ArrowDown size={12} strokeWidth={1.5} aria-hidden />
-          ))}
+          )
+        ) : (
+          <ChevronsUpDown size={12} strokeWidth={1.5} aria-hidden />
+        )}
       </button>
     );
   };

@@ -4510,13 +4510,14 @@ a:hover {
 }
 
 /* Repo column wider than the others; the three numeric columns
-   share equal weight. minmax(0, ...) keeps the columns shrinkable
-   so long repo names ellipsis instead of forcing horizontal
-   scroll. */
+   share equal weight. minmax(0, ...) keeps the repo column
+   shrinkable so long names ellipsis. The numeric columns get a
+   minimum content width so headers like "Current streak" don't
+   wrap to two lines on narrow viewports. */
 .insights-repos-header,
 .insights-repos-row {
   display: grid;
-  grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(min-content, 1fr));
   gap: 14px;
   padding: 12px 16px;
   align-items: center;
@@ -4535,9 +4536,11 @@ a:hover {
   border-bottom: 1px solid var(--color-border);
 }
 
-/* Sort header — looks like text but is a clickable button. The
-   active column gets darker text + an arrow icon; inactive
-   columns hover-darken to signal they're clickable. */
+/* Sort header — looks like text but is a clickable button. Every
+   column shows an icon at all times: active = solid arrow showing
+   direction; inactive = faded ChevronsUpDown signaling
+   "sortable, click to choose." Whole button is `nowrap` so headers
+   like "Current streak" never break onto a second line. */
 .insights-repos-sort {
   display: inline-flex;
   align-items: center;
@@ -4552,7 +4555,12 @@ a:hover {
   color: inherit;
   cursor: pointer;
   text-align: left;
+  white-space: nowrap;
   transition: color 0.12s ease;
+}
+
+.insights-repos-sort-label {
+  white-space: nowrap;
 }
 
 .insights-repos-sort:hover {
@@ -4561,6 +4569,18 @@ a:hover {
 
 .insights-repos-sort.is-active {
   color: var(--color-text-primary);
+}
+
+/* Inactive sort icon dimmed so the active column's solid arrow
+   reads as the prominent state. Hover bumps the dim icon up to
+   full strength so the affordance feels live. */
+.insights-repos-sort:not(.is-active) > svg {
+  opacity: 0.4;
+  transition: opacity 0.12s ease;
+}
+
+.insights-repos-sort:not(.is-active):hover > svg {
+  opacity: 0.8;
 }
 
 .insights-repos-row + .insights-repos-row {
