@@ -332,7 +332,7 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
       <div className="insights-repos-header" role="row">
         <span className="insights-repos-sort-static">Repo</span>
         <SortHeader keyName="digests" label="Digests" />
-        <SortHeader keyName="currentStreak" label="Current streak" />
+        <SortHeader keyName="currentStreak" label="Streak" />
         <SortHeader keyName="lastActive" label="Last active" />
       </div>
       {sorted.map((r) => (
@@ -348,7 +348,7 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
             <span className="insights-repos-cell-value">{r.digests}</span>
           </span>
           <span className="insights-repos-cell" data-col="current">
-            <span className="insights-repos-cell-label">Current streak</span>
+            <span className="insights-repos-cell-label">Streak</span>
             <span className="insights-repos-cell-value">
               {r.currentStreak} {r.currentStreak === 1 ? "day" : "days"}
             </span>
