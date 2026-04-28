@@ -31,6 +31,9 @@ page itself handles the empty state (see "Empty state" below).
 
 Click → routes to `/insights`.
 
+**Icon**: `ChartNoAxesCombined` from Lucide. Not used anywhere else in
+the codebase, so it's claimed for Insights.
+
 **Page title**: "Insights".
 
 ---
@@ -453,19 +456,17 @@ re-litigate them:
 
 ## Open questions
 
-- [ ] Entry-point Lucide icon — `BarChart3` / `Sparkles` / `Activity` /
-      other? Sits next to the existing settings gear in the header-right
-      icon group, same 20px / 1px-stroke treatment.
-- [ ] Engagement personality refresh cadence — every visit (live), or
-      cached for the session?
 - [ ] Mobile layout for the per-repo breakdown table — horizontal scroll,
       collapse to cards, or hide the secondary columns?
 
 ### Resolved
 
+- **Entry-point Lucide icon** — `ChartNoAxesCombined`. Sits next to the
+  settings gear, same 20px / 1px-stroke treatment.
 - **Page route + title** — `/insights`, page title "Insights".
 - **Empty state** — entry point always visible; page renders with zeros
   for brand-new accounts (see "Empty state" section).
+- **Personality refresh cadence** — live, recomputed on every visit.
 
 ---
 
