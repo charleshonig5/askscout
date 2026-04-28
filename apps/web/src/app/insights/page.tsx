@@ -447,18 +447,21 @@ export default function InsightsPage() {
               repos. Renders even on fresh accounts (full empty grid)
               so users see what they're working toward. */}
           {loaded && (
-            <section className="settings-section">
-              <header className="settings-section-head">
-                <div className="settings-section-title">
-                  <Emoji name="calendar" size={20} />
-                  <h2>Activity</h2>
+            <>
+              <hr className="settings-divider" />
+              <section className="settings-section">
+                <header className="settings-section-head">
+                  <div className="settings-section-title">
+                    <Emoji name="calendar" size={20} />
+                    <h2>Activity</h2>
+                  </div>
+                  <p className="settings-section-desc">Your last 365 days with Scout.</p>
+                </header>
+                <div className="settings-panel insights-calendar-panel">
+                  <ActivityCalendar days={data.activityDays} />
                 </div>
-                <p className="settings-section-desc">Your last 365 days with Scout.</p>
-              </header>
-              <div className="settings-panel insights-calendar-panel">
-                <ActivityCalendar days={data.activityDays} />
-              </div>
-            </section>
+              </section>
+            </>
           )}
 
           {/* PER-REPO BREAKDOWN — table on desktop, stacked cards on
@@ -468,20 +471,23 @@ export default function InsightsPage() {
               placeholder so the section still reads on day-1
               accounts. */}
           {loaded && (
-            <section className="settings-section">
-              <header className="settings-section-head">
-                <div className="settings-section-title">
-                  <Emoji name="perRepo" size={20} />
-                  <h2>Repos</h2>
+            <>
+              <hr className="settings-divider" />
+              <section className="settings-section">
+                <header className="settings-section-head">
+                  <div className="settings-section-title">
+                    <Emoji name="perRepo" size={20} />
+                    <h2>Repos</h2>
+                  </div>
+                  <p className="settings-section-desc">
+                    Every repo Scout has tracked, with its activity at a glance.
+                  </p>
+                </header>
+                <div className="settings-panel insights-repos-panel">
+                  <ReposBreakdown repoStats={data.repoStats} />
                 </div>
-                <p className="settings-section-desc">
-                  Every repo Scout has tracked, with its activity at a glance.
-                </p>
-              </header>
-              <div className="settings-panel insights-repos-panel">
-                <ReposBreakdown repoStats={data.repoStats} />
-              </div>
-            </section>
+              </section>
+            </>
           )}
 
           {/* ENGAGEMENT PERSONALITY — live-computed primary archetype
@@ -489,35 +495,38 @@ export default function InsightsPage() {
               with zero digests (state === "hidden") so the rest of
               the page still loads but this card waits for data. */}
           {loaded && data.personality.state !== "hidden" && (
-            <section className="settings-section">
-              <header className="settings-section-head">
-                <div className="settings-section-title">
-                  <Emoji name="personality" size={20} />
-                  <h2>Personality</h2>
-                </div>
-                <p className="settings-section-desc">
-                  How you show up on Scout, recomputed every visit.
-                </p>
-              </header>
-              <div
-                className={`settings-panel insights-personality${
-                  data.personality.state === "dormant" ? " is-dormant" : ""
-                }`}
-              >
-                <div className="insights-personality-emoji" aria-hidden>
-                  {data.personality.emoji}
-                </div>
-                <h3 className="insights-personality-name">{data.personality.archetype}</h3>
-                <p className="insights-personality-subheader">
-                  {data.personality.subheader}
-                </p>
-                {data.personality.modifiers.length > 0 && (
-                  <p className="insights-personality-modifiers">
-                    {data.personality.modifiers.join(" · ")}
+            <>
+              <hr className="settings-divider" />
+              <section className="settings-section">
+                <header className="settings-section-head">
+                  <div className="settings-section-title">
+                    <Emoji name="personality" size={20} />
+                    <h2>Personality</h2>
+                  </div>
+                  <p className="settings-section-desc">
+                    How you show up on Scout, recomputed every visit.
                   </p>
-                )}
-              </div>
-            </section>
+                </header>
+                <div
+                  className={`settings-panel insights-personality${
+                    data.personality.state === "dormant" ? " is-dormant" : ""
+                  }`}
+                >
+                  <div className="insights-personality-emoji" aria-hidden>
+                    {data.personality.emoji}
+                  </div>
+                  <h3 className="insights-personality-name">{data.personality.archetype}</h3>
+                  <p className="insights-personality-subheader">
+                    {data.personality.subheader}
+                  </p>
+                  {data.personality.modifiers.length > 0 && (
+                    <p className="insights-personality-modifiers">
+                      {data.personality.modifiers.join(" · ")}
+                    </p>
+                  )}
+                </div>
+              </section>
+            </>
           )}
         </div>
       </div>
