@@ -4358,6 +4358,18 @@ a:hover {
   max-width: 420px;
 }
 
+/* Secondary modal title override — 18px Pridi 400 instead of the
+   primary modals' 24px Pridi 500. Matches the .sidebar-brand-name
+   size already established in the system. Applied to both the
+   centered confirm modals (Clear All, Delete Account) and the
+   sidebar-anchored sign-out popover so all three secondary confirms
+   step down in lockstep from the heavier 24px content-modal title. */
+.modal--confirm .modal-title,
+.sidebar-signout-confirm .modal-title {
+  font-size: 18px;
+  font-weight: 400;
+}
+
 /* Header row: title identity block on the left + close button on the
    right, same vertical alignment. 23px interior padding per Figma. */
 .modal-top {
