@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, CircleX } from "lucide-react";
+import { Emoji } from "@/components/Emoji";
 
 /**
  * Insights page (`/insights`).
@@ -78,18 +79,45 @@ export default function InsightsPage() {
         <hr className="settings-header-divider" />
 
         <div className="settings-content">
-          {/* Sections land here, one at a time, per the plan doc. The
-              empty/loading state is intentional: each section will
-              render its own zeros / placeholder when data is missing,
-              not a global skeleton. */}
+          {/* SNAPSHOT — two top-tier stats per the plan: best streak
+              (with the repo it was achieved on) and total digests.
+              Section is gated on `loaded` so users with real data
+              don't see a brief flash of zeros before their numbers
+              come in. Once loaded, zeros are themselves the valid
+              empty state for fresh accounts. */}
           {loaded && (
-            <>
-              {/* Phase 1 placeholder — sections fill in subsequent
-                  phases. Render nothing visible while we scaffold. */}
-              <p className="settings-section-desc" style={{ visibility: "hidden" }}>
-                Stats: {data.totalDigests} digest(s), best streak {data.bestStreak.length} days.
-              </p>
-            </>
+            <section className="settings-section">
+              <header className="settings-section-head">
+                <div className="settings-section-title">
+                  <Emoji name="snapshot" size={20} />
+                  <h2>Snapshot</h2>
+                </div>
+                <p className="settings-section-desc">A quick look at your time with Scout.</p>
+              </header>
+              <div className="settings-panel insights-snapshot">
+                <div className="insights-stat-cell">
+                  <span className="insights-stat-label">Best streak</span>
+                  <div className="insights-stat-value-row">
+                    <span className="insights-stat-value">{data.bestStreak.length}</span>
+                    <span className="insights-stat-unit">
+                      {data.bestStreak.length === 1 ? "day" : "days"}
+                    </span>
+                  </div>
+                  {/* Repo line only renders once the user has at least
+                      one streak; on a fresh account it stays out of
+                      the way. */}
+                  {data.bestStreak.repo && (
+                    <span className="insights-stat-detail">on {data.bestStreak.repo}</span>
+                  )}
+                </div>
+                <div className="insights-stat-cell">
+                  <span className="insights-stat-label">Total digests</span>
+                  <div className="insights-stat-value-row">
+                    <span className="insights-stat-value">{data.totalDigests}</span>
+                  </div>
+                </div>
+              </div>
+            </section>
           )}
         </div>
       </div>

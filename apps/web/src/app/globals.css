@@ -4237,6 +4237,91 @@ a:hover {
   }
 }
 
+/* ============================================================
+   INSIGHTS PAGE
+   ------------------------------------------------------------
+   Sibling of the Settings page — uses the same .settings-* shell
+   primitives (page wall, card, header strip, section heads,
+   panels). The .insights-* classes are content-only: stat cells,
+   panel layouts, calendar, etc. Every color goes through tokens,
+   so light + dark resolve identically without overrides.
+   ============================================================ */
+
+/* --- Snapshot section ----------------------------------------
+   Two stat cells side by side inside the panel, divided by a 1px
+   token-driven hairline. On phones the columns stack vertically
+   and the divider becomes a horizontal hairline between cells. */
+
+.insights-snapshot {
+  display: flex;
+  align-items: stretch;
+}
+
+.insights-stat-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: 20px 18px;
+  min-width: 0;
+}
+
+.insights-stat-cell + .insights-stat-cell {
+  border-left: 1px solid var(--color-border);
+}
+
+.insights-stat-label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.insights-stat-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.insights-stat-value {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--color-text-primary);
+}
+
+.insights-stat-unit {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
+.insights-stat-detail {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 18px;
+  color: var(--color-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .insights-snapshot {
+    flex-direction: column;
+  }
+  .insights-stat-cell + .insights-stat-cell {
+    border-left: none;
+    border-top: 1px solid var(--color-border);
+  }
+}
+
 .btn-danger {
   display: inline-flex;
   align-items: center;
