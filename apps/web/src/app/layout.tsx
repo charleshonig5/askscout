@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { SessionProvider } from "next-auth/react";
 import { Pridi, Work_Sans } from "next/font/google";
 import "./globals.css";
@@ -30,22 +31,24 @@ export const metadata: Metadata = {
     "Scout sniffs through your repo and tells you what you built, what changed, and where you left off.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+/**
+ * Theme is server-rendered via a cookie. The HTML arrives with the
+ * correct data-theme attribute already set, so:
+ *   - no flash of the wrong theme on first paint
+ *   - no inline bootstrap script that can race with hydration
+ *   - no localStorage edge cases (private mode, preview-URL
+ *     scoping, browser-clears-on-close settings)
+ *
+ * The toggle (ThemeToggle.tsx) writes the cookie + updates the
+ * attribute on the live document. Default: dark, the brand default.
+ */
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const cookieStore = await cookies();
+  const stored = cookieStore.get("theme")?.value;
+  const theme = stored === "light" || stored === "dark" ? stored : "dark";
+
   return (
-    <html lang="en" suppressHydrationWarning className={`${workSans.variable} ${pridi.variable}`}>
-      <head>
-        {/* Pre-hydration theme bootstrap. Validates the stored value
-            before applying so a junk localStorage entry can't slip
-            through and silently fall back to the :root light styles
-            (any value other than "dark"/"light" coerces to "dark").
-            Dark is Scout's default — first-time visitors and users
-            with cleared storage land in dark mode every time. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme');if(t!=='dark'&&t!=='light')t='dark';document.documentElement.setAttribute('data-theme',t)}catch(e){document.documentElement.setAttribute('data-theme','dark')}})()`,
-          }}
-        />
-      </head>
+    <html lang="en" data-theme={theme} className={`${workSans.variable} ${pridi.variable}`}>
       <body>
         <SessionProvider>{children}</SessionProvider>
       </body>
