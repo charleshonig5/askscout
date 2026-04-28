@@ -195,6 +195,15 @@ function formatLastActive(dateStr: string | null): string {
   });
 }
 
+/** Strip the `owner/` prefix from a repo slug so the table only
+ *  shows the actual repo name. Long owner prefixes (e.g.
+ *  `some-org-name/`) ate column space and got truncated mid-name.
+ *  The full slug stays available via title attribute on hover. */
+function repoDisplayName(slug: string): string {
+  const slash = slug.lastIndexOf("/");
+  return slash === -1 ? slug : slug.slice(slash + 1);
+}
+
 function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
   // Empty state: zero repos with activity yet. Render a single
   // placeholder row so the section still has presence on day-1
@@ -214,8 +223,7 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
       <div className="insights-repos-header" aria-hidden>
         <span>Repo</span>
         <span>Digests</span>
-        <span>Current</span>
-        <span>Best</span>
+        <span>Current streak</span>
         <span>Last active</span>
       </div>
       {repoStats.map((r) => (
@@ -223,7 +231,7 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
           <span className="insights-repos-cell" data-col="repo">
             <span className="insights-repos-cell-label">Repo</span>
             <span className="insights-repos-cell-value insights-repos-name" title={r.repo}>
-              {r.repo}
+              {repoDisplayName(r.repo)}
             </span>
           </span>
           <span className="insights-repos-cell" data-col="digests">
@@ -234,12 +242,6 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
             <span className="insights-repos-cell-label">Current streak</span>
             <span className="insights-repos-cell-value">
               {r.currentStreak} {r.currentStreak === 1 ? "day" : "days"}
-            </span>
-          </span>
-          <span className="insights-repos-cell" data-col="best">
-            <span className="insights-repos-cell-label">Best streak</span>
-            <span className="insights-repos-cell-value">
-              {r.bestStreak} {r.bestStreak === 1 ? "day" : "days"}
             </span>
           </span>
           <span className="insights-repos-cell" data-col="last">

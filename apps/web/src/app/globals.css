@@ -4515,13 +4515,14 @@ a:hover {
   text-align: center;
 }
 
-/* Repo column wider than the others; the four numeric columns share
-   equal weight. minmax(0, ...) keeps the columns shrinkable so long
-   repo slugs ellipsis instead of forcing horizontal scroll. */
+/* Repo column wider than the others; the three numeric columns
+   share equal weight. minmax(0, ...) keeps the columns shrinkable
+   so long repo names ellipsis instead of forcing horizontal
+   scroll. */
 .insights-repos-header,
 .insights-repos-row {
   display: grid;
-  grid-template-columns: minmax(0, 1.6fr) repeat(4, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
   gap: 14px;
   padding: 12px 16px;
   align-items: center;
