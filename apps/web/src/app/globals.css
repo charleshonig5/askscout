@@ -4674,15 +4674,6 @@ a:hover {
   max-width: 100%;
 }
 
-.insights-personality-modifiers {
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 18px;
-  color: var(--color-text-secondary);
-  margin: 6px 0 0;
-}
-
 /* Dormant: mute the card so the user reads it as past-state
    instead of current. Opacity is the simplest theme-safe muting —
    no token swaps needed. */

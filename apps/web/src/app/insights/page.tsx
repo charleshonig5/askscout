@@ -37,7 +37,6 @@ interface Personality {
   archetype: string | null;
   emoji: string;
   subheader: string;
-  modifiers: string[];
 }
 
 interface InsightsData {
@@ -53,7 +52,6 @@ const EMPTY_PERSONALITY: Personality = {
   archetype: null,
   emoji: "",
   subheader: "",
-  modifiers: [],
 };
 
 const EMPTY_DATA: InsightsData = {
@@ -530,11 +528,6 @@ export default function InsightsPage() {
                   <p className="insights-personality-subheader">
                     {data.personality.subheader}
                   </p>
-                  {data.personality.modifiers.length > 0 && (
-                    <p className="insights-personality-modifiers">
-                      {data.personality.modifiers.join(" · ")}
-                    </p>
-                  )}
                 </div>
               </section>
             </>

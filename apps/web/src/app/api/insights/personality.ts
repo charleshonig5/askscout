@@ -41,7 +41,6 @@ export interface PersonalityResult {
   archetype: string | null;
   emoji: string;
   subheader: string;
-  modifiers: string[];
 }
 
 // ============================================================
@@ -63,8 +62,6 @@ interface SignalVector {
   tenureDays: number;
   currentStreak: number;
   bestStreak: number;
-  recentlyResumedFromGap: boolean;
-  streakCount5plus: number;
   // Repo portfolio
   totalRepos: number;
   activeRepos30: number;
@@ -263,40 +260,6 @@ function computeSignals(digests: DigestRow[], checkins: CheckinRow[], now: Date)
     }
   }
 
-  // Streak count of 5+ days for the Streak Hunter modifier.
-  let streakCount5plus = 0;
-  if (sortedAllDays.length > 0) {
-    let run = 1;
-    for (let i = 1; i < sortedAllDays.length; i++) {
-      const prev = new Date(sortedAllDays[i - 1]! + "T00:00:00").getTime();
-      const curr = new Date(sortedAllDays[i]! + "T00:00:00").getTime();
-      const diff = Math.round((curr - prev) / DAY_MS);
-      if (diff === 1) {
-        run += 1;
-      } else {
-        if (run >= 5) streakCount5plus += 1;
-        run = 1;
-      }
-    }
-    if (run >= 5) streakCount5plus += 1;
-  }
-
-  // Recently resumed: a 7+ day gap whose resume happened within the
-  // last 14 days.
-  let recentlyResumedFromGap = false;
-  for (let i = 1; i < sortedAllDays.length; i++) {
-    const prev = new Date(sortedAllDays[i - 1]! + "T00:00:00").getTime();
-    const curr = new Date(sortedAllDays[i]! + "T00:00:00").getTime();
-    const gapDays = Math.round((curr - prev) / DAY_MS);
-    if (gapDays >= 7) {
-      const sinceResume = Math.round((nowMs - curr) / DAY_MS);
-      if (sinceResume <= 14) {
-        recentlyResumedFromGap = true;
-        break;
-      }
-    }
-  }
-
   const tenureDays = Number.isFinite(firstDigestMs)
     ? Math.max(1, Math.round((nowMs - firstDigestMs) / DAY_MS) + 1)
     : 0;
@@ -345,8 +308,6 @@ function computeSignals(digests: DigestRow[], checkins: CheckinRow[], now: Date)
     tenureDays,
     currentStreak,
     bestStreak,
-    recentlyResumedFromGap,
-    streakCount5plus,
     totalRepos,
     activeRepos30,
     topRepo,
@@ -743,67 +704,6 @@ function pickArchetype(s: SignalVector): {
 }
 
 // ============================================================
-// Modifier tags
-// ============================================================
-
-interface Modifier {
-  key: string;
-  name: string;
-  applies: (s: SignalVector) => boolean;
-}
-
-const MODIFIERS: Modifier[] = [
-  { key: "on_fire", name: "On Fire", applies: (s) => s.currentStreak >= 7 },
-  { key: "comeback_kid", name: "Comeback Kid", applies: (s) => s.recentlyResumedFromGap },
-  {
-    key: "streak_hunter",
-    name: "Streak Hunter",
-    applies: (s) => s.streakCount5plus >= 3 && s.currentStreak < 5,
-  },
-  {
-    key: "slow_burn",
-    name: "Slow Burn",
-    applies: (s) =>
-      s.activeDays30 >= 16 && s.tenureDays >= 30 && s.avgCommitsPerDigest <= 5,
-  },
-  {
-    key: "just_getting_started",
-    name: "Just Getting Started",
-    applies: (s) => s.tenureDays > 0 && s.tenureDays <= 14,
-  },
-  { key: "veteran", name: "Veteran", applies: (s) => s.tenureDays >= 90 },
-  { key: "polyglot", name: "Polyglot", applies: (s) => s.activeRepos30 >= 3 },
-  {
-    key: "loyalist",
-    name: "Loyalist",
-    applies: (s) => s.topRepoShare >= 0.6 && s.tenureDays >= 60,
-  },
-];
-
-// Display priority for modifiers — used to pick the top 3 when more
-// than 3 apply.
-const MODIFIER_PRIORITY: string[] = [
-  "on_fire",
-  "comeback_kid",
-  "streak_hunter",
-  "polyglot",
-  "loyalist",
-  "veteran",
-  "slow_burn",
-  "just_getting_started",
-];
-
-function pickModifiers(s: SignalVector): string[] {
-  const applying = MODIFIERS.filter((m) => m.applies(s)).map((m) => m);
-  applying.sort((a, b) => {
-    const ap = MODIFIER_PRIORITY.indexOf(a.key);
-    const bp = MODIFIER_PRIORITY.indexOf(b.key);
-    return (ap < 0 ? 999 : ap) - (bp < 0 ? 999 : bp);
-  });
-  return applying.slice(0, 3).map((m) => m.name);
-}
-
-// ============================================================
 // Public entry point
 // ============================================================
 
@@ -819,7 +719,6 @@ export function computePersonality(
       archetype: null,
       emoji: "",
       subheader: "",
-      modifiers: [],
     };
   }
   // Placeholder state — fewer than 3 digests.
@@ -832,13 +731,12 @@ export function computePersonality(
         digests.length === 2
           ? "One more digest and your profile unlocks."
           : "A couple more digests and your profile unlocks.",
-      modifiers: [],
     };
   }
   const signals = computeSignals(digests, checkins, now);
 
   // Dormant state — last activity 7+ days ago. Show last-known
-  // archetype with a "get back in" subheader and no modifiers.
+  // archetype with a "get back in" subheader.
   if (signals.daysSinceLastActivity >= 7) {
     const archetype = pickArchetype(signals);
     return {
@@ -846,17 +744,14 @@ export function computePersonality(
       archetype: archetype.name,
       emoji: archetype.emoji,
       subheader: "Currently dormant. Get back in.",
-      modifiers: [],
     };
   }
 
   const archetype = pickArchetype(signals);
-  const modifiers = pickModifiers(signals);
   return {
     state: "real",
     archetype: archetype.name,
     emoji: archetype.emoji,
     subheader: archetype.subheader,
-    modifiers,
   };
 }

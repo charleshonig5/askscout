@@ -61,7 +61,6 @@ const EMPTY_PERSONALITY: PersonalityResult = {
   archetype: null,
   emoji: "",
   subheader: "",
-  modifiers: [],
 };
 
 const EMPTY: InsightsResponse = {
