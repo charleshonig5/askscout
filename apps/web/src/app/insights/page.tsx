@@ -422,16 +422,12 @@ export default function InsightsPage() {
                     <span className="insights-stat-unit">
                       {data.bestStreak.length === 1 ? "day" : "days"}
                     </span>
-                  </div>
-                  {/* Repo line only renders once the user has at least
-                      one streak; on a fresh account it stays out of
-                      the way. Repo rendered as a clickable
-                      .digest-repo-chip pill — same primitive used in
-                      the dashboard header — so the chip links out to
-                      GitHub and follows the established pattern. */}
-                  {data.bestStreak.repo && (
-                    <span className="insights-stat-detail">
-                      on{" "}
+                    {/* Repo chip sits inline with the value + unit
+                        ("47 days [chip]") — same .digest-repo-chip
+                        primitive used in the dashboard header,
+                        links out to GitHub. Only renders once the
+                        user actually has a streak. */}
+                    {data.bestStreak.repo && (
                       <a
                         href={`https://github.com/${data.bestStreak.repo}`}
                         target="_blank"
@@ -442,8 +438,8 @@ export default function InsightsPage() {
                         {repoDisplayName(data.bestStreak.repo)}
                         <ArrowUpRight size={10} strokeWidth={1} aria-hidden />
                       </a>
-                    </span>
-                  )}
+                    )}
+                  </div>
                 </div>
                 <div className="insights-stat-cell">
                   <span className="insights-stat-label">Total digests</span>

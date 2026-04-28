@@ -4317,17 +4317,6 @@ a:hover {
   color: var(--color-text-secondary);
 }
 
-.insights-stat-detail {
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 300;
-  line-height: 18px;
-  color: var(--color-text-secondary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 @media (max-width: 600px) {
   .insights-snapshot {
     flex-direction: column;
