@@ -4286,13 +4286,14 @@ a:hover {
   border-left: 1px solid var(--color-border);
 }
 
+/* Stat label — 12px Medium, plain case. Same treatment used by
+   the .stats-subsection-title / repo name in settings, so the
+   typography reads as one family across the app. */
 .insights-stat-label {
   font-family: var(--font-sans);
   font-size: 12px;
   font-weight: 500;
-  line-height: 1;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  line-height: 18px;
   color: var(--color-text-secondary);
 }
 
@@ -4300,11 +4301,15 @@ a:hover {
   display: flex;
   align-items: baseline;
   gap: 6px;
+  flex-wrap: wrap;
 }
 
+/* Stat value — Pridi 24px Medium, the established display size
+   used by modal titles and the Settings header. Was 32px (a new
+   size that didn't fit the scale). */
 .insights-stat-value {
   font-family: var(--font-display);
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 500;
   line-height: 1;
   color: var(--color-text-primary);
@@ -4312,8 +4317,8 @@ a:hover {
 
 .insights-stat-unit {
   font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: 400;
+  font-size: 13px;
+  font-weight: 300;
   color: var(--color-text-secondary);
 }
 
@@ -4368,7 +4373,7 @@ a:hover {
 .insights-calendar-month {
   font-family: var(--font-sans);
   font-size: 10px;
-  font-weight: 400;
+  font-weight: 300;
   line-height: 12px;
   color: var(--color-text-secondary);
   white-space: nowrap;
@@ -4517,12 +4522,15 @@ a:hover {
   align-items: center;
 }
 
+/* Header row — same 12px Medium treatment as .insights-stat-label
+   so column labels read as the same typographic family. No
+   uppercase / letter-spacing tricks; matches the rest of the
+   platform. */
 .insights-repos-header {
   font-family: var(--font-sans);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  line-height: 18px;
   color: var(--color-text-secondary);
   border-bottom: 1px solid var(--color-border);
 }
@@ -4547,7 +4555,7 @@ a:hover {
 .insights-repos-cell-value {
   font-family: var(--font-sans);
   font-size: 13px;
-  font-weight: 400;
+  font-weight: 300;
   color: var(--color-text-primary);
   line-height: 1.3;
   min-width: 0;
@@ -4643,18 +4651,22 @@ a:hover {
      glyph reads instantly. */
 }
 
+/* Pridi 24px Medium — matches modal titles and the Settings
+   header. Was 22px (off-scale). */
 .insights-personality-name {
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 500;
   line-height: 1.1;
   color: var(--color-text-primary);
   margin: 0;
 }
 
+/* 12px / 300 / line-height 18 — matches .settings-section-desc
+   exactly so subtitle copy reads as one body-text family. */
 .insights-personality-subheader {
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 300;
   line-height: 18px;
   color: var(--color-text-primary);
@@ -4669,7 +4681,6 @@ a:hover {
   line-height: 18px;
   color: var(--color-text-secondary);
   margin: 6px 0 0;
-  letter-spacing: 0.02em;
 }
 
 /* Dormant: mute the card so the user reads it as past-state
