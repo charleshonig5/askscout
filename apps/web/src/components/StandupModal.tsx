@@ -66,17 +66,26 @@ function FormattedStandup({ text }: { text: string }) {
       {sections.map((s, i) => (
         <div key={i} className="standup-section">
           {s.heading && <div className="standup-section-title">{s.heading}</div>}
-          {s.items.map((item, j) =>
-            item.bullet ? (
-              <div key={j} className="standup-item">
-                <span className="standup-item-bullet" aria-hidden />
-                <p className="standup-item-text">{item.text}</p>
-              </div>
-            ) : (
-              <div key={j} className="standup-text">
-                {item.text}
-              </div>
-            ),
+          {/* Items wrapped in a sub-container so the section's 8px gap
+              applies only between title and list, while items inside
+              the list have their own tighter rhythm. Mirrors the
+              .resume-section / .resume-section-list nesting so both
+              modals read with identical internal spacing. */}
+          {s.items.length > 0 && (
+            <div className="standup-section-list">
+              {s.items.map((item, j) =>
+                item.bullet ? (
+                  <div key={j} className="standup-item">
+                    <span className="standup-item-bullet" aria-hidden />
+                    <p className="standup-item-text">{item.text}</p>
+                  </div>
+                ) : (
+                  <div key={j} className="standup-text">
+                    {item.text}
+                  </div>
+                ),
+              )}
+            </div>
           )}
         </div>
       ))}

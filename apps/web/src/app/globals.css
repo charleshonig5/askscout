@@ -3348,7 +3348,7 @@ a:hover {
 .resume-sections {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .resume-section {
@@ -3441,14 +3441,24 @@ a:hover {
 .standup-formatted {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   color: var(--color-text-primary);
 }
 
+/* Section-internal: 8px between title and items list (matches
+   .resume-section). Items live in .standup-section-list which
+   handles its own tighter rhythm. */
 .standup-section {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+/* Items list — 4px between items, matches .resume-section-list. */
+.standup-section-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .standup-section-title {
