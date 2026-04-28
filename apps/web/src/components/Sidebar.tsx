@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
+  CircleX,
   FileText,
   GitCommitHorizontal,
   HelpCircle,
@@ -57,30 +58,21 @@ export function Sidebar({
   const { data: session } = useSession();
   const router = useRouter();
   const [signOutOpen, setSignOutOpen] = useState(false);
-  const footerRef = useRef<HTMLDivElement>(null);
 
   const avatarUrl = session?.user?.image;
   // Prefer the GitHub @handle. Fall back to display name, then generic "User".
   const userHandle = session?.user?.login ?? session?.user?.name ?? "User";
 
-  // Close the sign-out confirmation on outside click or Esc so it doesn't
-  // linger once the user has moved on.
+  // Close on Esc. Backdrop click is handled by the modal-overlay's
+  // onClick (no longer need a ref-scoped outside-click handler since
+  // the centered modal's backdrop covers the whole viewport).
   useEffect(() => {
     if (!signOutOpen) return;
-    const clickHandler = (e: MouseEvent) => {
-      if (footerRef.current && !footerRef.current.contains(e.target as Node)) {
-        setSignOutOpen(false);
-      }
-    };
     const keyHandler = (e: KeyboardEvent) => {
       if (e.key === "Escape") setSignOutOpen(false);
     };
-    document.addEventListener("mousedown", clickHandler);
     document.addEventListener("keydown", keyHandler);
-    return () => {
-      document.removeEventListener("mousedown", clickHandler);
-      document.removeEventListener("keydown", keyHandler);
-    };
+    return () => document.removeEventListener("keydown", keyHandler);
   }, [signOutOpen]);
 
   return (
@@ -196,43 +188,11 @@ export function Sidebar({
           </div>
         </div>
 
-        {/* FOOTER: divider + profile row. Sign-out confirmation floats above
-            the profile row, styled to match the site's modal design system
-            (glass surface, tertiary border, inner glow, Cancel + Sign out
-            footer-split buttons) but kept inline in the sidebar. */}
-        <div className="sidebar-bottom" ref={footerRef}>
-          {signOutOpen && (
-            <div
-              className="sidebar-signout-confirm"
-              role="dialog"
-              aria-modal="false"
-              aria-label="Sign out of Scout"
-            >
-              <div className="sidebar-signout-confirm-top">
-                <h3 className="modal-title sidebar-signout-confirm-title">Sign out of Scout?</h3>
-                <p className="modal-subtitle">
-                  You&apos;ll need to sign back in with GitHub to see new digests.
-                </p>
-              </div>
-              <div className="modal-footer modal-footer--split">
-                <button
-                  type="button"
-                  className="modal-action-btn"
-                  onClick={() => setSignOutOpen(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="modal-action-btn modal-action-btn--danger"
-                  onClick={() => void signOut({ callbackUrl: "/" })}
-                >
-                  Sign out
-                </button>
-              </div>
-            </div>
-          )}
-
+        {/* FOOTER: profile row. Sign-out confirmation now uses the
+            shared .modal-overlay / .modal--confirm primitives so the
+            three secondary modals (Sign out, Clear All History,
+            Delete Account) render identical structure end-to-end. */}
+        <div className="sidebar-bottom">
           <div className="sidebar-profile-row">
             <div className="sidebar-profile-identity">
               {avatarUrl ? (
@@ -257,7 +217,7 @@ export function Sidebar({
             <button
               type="button"
               className="sidebar-signout-btn"
-              onClick={() => setSignOutOpen((v) => !v)}
+              onClick={() => setSignOutOpen(true)}
               aria-label="Sign out"
               aria-haspopup="dialog"
               aria-expanded={signOutOpen}
@@ -267,6 +227,61 @@ export function Sidebar({
           </div>
         </div>
       </aside>
+
+      {/* Sign-out confirm — same .modal--confirm shell as Clear All
+          History and Delete Account so all three secondary modals
+          read identical end-to-end. */}
+      {signOutOpen && (
+        <>
+          <div
+            className="modal-overlay"
+            onClick={() => setSignOutOpen(false)}
+            aria-hidden
+          />
+          <div
+            className="modal modal--confirm"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="signout-title"
+          >
+            <div className="modal-top">
+              <div className="modal-identity">
+                <h2 id="signout-title" className="modal-title">
+                  Sign out of Scout?
+                </h2>
+                <p className="modal-subtitle">
+                  You&apos;ll need to sign back in with GitHub to see new digests.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="modal-close-btn"
+                onClick={() => setSignOutOpen(false)}
+                aria-label="Close"
+              >
+                <CircleX size={20} strokeWidth={1} aria-hidden />
+              </button>
+            </div>
+            <div className="modal-divider" aria-hidden />
+            <div className="modal-footer modal-footer--split">
+              <button
+                type="button"
+                className="modal-action-btn"
+                onClick={() => setSignOutOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="modal-action-btn modal-action-btn--danger"
+                onClick={() => void signOut({ callbackUrl: "/" })}
+              >
+                Sign out
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }
