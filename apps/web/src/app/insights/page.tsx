@@ -100,16 +100,15 @@ function buildWeeks(days: ActivityDay[]): Cell[][] {
   return weeks;
 }
 
-/** Month-label entries: emit a label for the first week-column where
- *  a new month appears, but only if that month has at least 2 weeks
- *  of visible data. Suppresses the leading-edge label (e.g. one week
- *  of last April that gets cut by the 365-day window) so it doesn't
- *  overlap with the second month's label, and keeps the full year's
- *  rhythm intact otherwise. The same month appearing at the trailing
- *  edge with multiple weeks (today's month) keeps its label. */
-function buildMonthLabels(weeks: Cell[][]): Array<{ col: number; label: string }> {
-  // First pass — collect month boundaries and how many weeks each
-  // month spans within the visible window.
+/** Month-label entries with full column range. Each label spans the
+ *  weeks that month occupies in the calendar so the rendered text
+ *  can be centered over its actual range — keeps months visually
+ *  even even though months have different week-counts. Sliver
+ *  months (<2 weeks visible) are dropped so the leading-edge cut
+ *  doesn't crowd the next label. */
+function buildMonthLabels(
+  weeks: Cell[][],
+): Array<{ startCol: number; weekCount: number; label: string }> {
   type Range = { month: number; startCol: number; weekCount: number };
   const ranges: Range[] = [];
   let currentMonth = -1;
@@ -125,11 +124,13 @@ function buildMonthLabels(weeks: Cell[][]): Array<{ col: number; label: string }
       last.weekCount += 1;
     }
   });
-  // Second pass — keep only ranges with ≥ 2 weeks of presence so
-  // sliver-months at the leading edge don't crowd the next label.
   return ranges
     .filter((r) => r.weekCount >= 2)
-    .map((r) => ({ col: r.startCol, label: MONTH_LABELS[r.month]! }));
+    .map((r) => ({
+      startCol: r.startCol,
+      weekCount: r.weekCount,
+      label: MONTH_LABELS[r.month]!,
+    }));
 }
 
 /** What state should this cell render as? */
@@ -249,16 +250,41 @@ function ActivityCalendar({ days }: { days: ActivityDay[] }) {
   const weeks = buildWeeks(days);
   const monthLabels = buildMonthLabels(weeks);
 
+  // Custom hover-tooltip state. Uses `position: fixed` for the
+  // tooltip so it escapes the panel's overflow-x: auto clipping
+  // (necessary for narrow viewports). Tracks the hovered cell and
+  // its on-screen anchor position; onMouseEnter sets, onMouseLeave
+  // clears. Padding cells (no date) intentionally don't trigger the
+  // tooltip — they're not real days.
+  const [hover, setHover] = useState<{
+    cell: Cell;
+    x: number;
+    y: number;
+  } | null>(null);
+
+  const onCellEnter = (cell: Cell, target: HTMLElement) => {
+    if (!cell.date) return;
+    const rect = target.getBoundingClientRect();
+    setHover({
+      cell,
+      x: rect.left + rect.width / 2,
+      y: rect.top,
+    });
+  };
+
+  const onCellLeave = () => setHover(null);
+
   return (
     <div className="insights-calendar">
-      {/* Month labels row — positioned to the column where each new
-          month first appears. */}
+      {/* Month labels row — each label spans its full month-of-weeks
+          range and centers within it, so the labels stay visually
+          even regardless of how many weeks each month occupies. */}
       <div className="insights-calendar-months" aria-hidden>
         {monthLabels.map((m) => (
           <span
-            key={`${m.col}-${m.label}`}
+            key={`${m.startCol}-${m.label}`}
             className="insights-calendar-month"
-            style={{ gridColumn: m.col + 1 }}
+            style={{ gridColumn: `${m.startCol + 1} / span ${m.weekCount}` }}
           >
             {m.label}
           </span>
@@ -267,27 +293,40 @@ function ActivityCalendar({ days }: { days: ActivityDay[] }) {
 
       {/* The grid itself: 53 week-columns × 7 day-rows. Day-of-week
           labels were dropped — the panel is too narrow to spend
-          ~26px on them, and the per-cell tooltip ("Tuesday, April 28
-          · 2 digests") already names the day on hover for anyone
-          who needs it. */}
+          ~26px on them, and the custom tooltip below names the day
+          on hover for anyone who needs it. */}
       <div className="insights-calendar-grid">
         {weeks.map((week, wi) => (
           <div key={wi} className="insights-calendar-week">
             {week.map((cell, di) => {
               const state = cellState(cell);
-              const tooltip = cellTooltip(cell);
               return (
                 <div
                   key={di}
                   className="insights-calendar-cell"
                   data-state={state}
-                  title={tooltip}
+                  onMouseEnter={(e) => onCellEnter(cell, e.currentTarget)}
+                  onMouseLeave={onCellLeave}
+                  aria-label={cellTooltip(cell) ?? undefined}
                 />
               );
             })}
           </div>
         ))}
       </div>
+
+      {/* Custom tooltip — appears immediately on hover (no native-
+          tooltip delay). Position: fixed escapes the panel's
+          overflow clipping; centered above the hovered cell. */}
+      {hover && (
+        <div
+          className="insights-calendar-tooltip"
+          role="tooltip"
+          style={{ left: hover.x, top: hover.y }}
+        >
+          {cellTooltip(hover.cell)}
+        </div>
+      )}
     </div>
   );
 }

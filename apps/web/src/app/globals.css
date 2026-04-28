@@ -4406,8 +4406,49 @@ a:hover {
   flex: 1;
   aspect-ratio: 1;
   border-radius: 2px;
+  position: relative;
   /* Default = empty (no activity). Tokens carry the theme. */
   background: var(--color-bg-tertiary);
+  cursor: default;
+}
+
+/* Visual hover state — 1px ring around the cell so users get
+   immediate feedback that the cell is interactive (the custom
+   tooltip below appears in parallel). Padding cells (no real day)
+   skip the ring since they aren't hoverable as data. */
+.insights-calendar-cell:hover {
+  outline: 1px solid var(--color-text-primary);
+  outline-offset: 1px;
+  z-index: 1;
+}
+
+.insights-calendar-cell[data-state="padding"]:hover {
+  outline: none;
+}
+
+/* Custom hover tooltip — replaces the native title-attribute
+   tooltip (which has a ~1.5s delay). position: fixed so it
+   escapes the panel's overflow clipping. Centered above the
+   hovered cell via translate(-50%, -100%). All theme-aware
+   tokens; identical light/dark behavior. */
+.insights-calendar-tooltip {
+  position: fixed;
+  transform: translate(-50%, calc(-100% - 8px));
+  padding: 6px 10px;
+  background: var(--color-tooltip-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 100;
+  box-shadow: var(--shadow-md);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
 }
 
 .insights-calendar-cell[data-state="padding"] {
