@@ -87,9 +87,28 @@ function FormattedStandup({ text }: { text: string }) {
 export function StandupModal({ isOpen, onClose, content }: StandupModalProps) {
   const [copied, setCopied] = useState(false);
 
+  /** Build the copy payload from PARSED sections rather than the
+   *  raw LLM content. The LLM emits Slack-bold `*Header*` markers,
+   *  which render bold in Slack but italic in Teams, asterisks in
+   *  email, and italic in GitHub/Linear — none of those dest-
+   *  specific markdown styles work everywhere. Switching to plain
+   *  text with colon-suffixed section headers gives a single output
+   *  that reads cleanly across every paste destination. Sections
+   *  separate with a blank line; bullets stay as `- `. */
   const handleCopy = useCallback(() => {
     if (!content) return;
-    void navigator.clipboard.writeText(content).then(() => {
+    const sections = parseStandup(content);
+    const text = sections
+      .map((s) => {
+        const heading = s.heading ? `${s.heading}:` : "";
+        const items = s.items
+          .map((item) => (item.bullet ? `- ${item.text}` : item.text))
+          .join("\n");
+        return heading ? `${heading}\n${items}` : items;
+      })
+      .filter(Boolean)
+      .join("\n\n");
+    void navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
