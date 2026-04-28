@@ -60,6 +60,7 @@ const EMOJI_MAP: Record<string, EmojiAsset> = {
   dangerZone: { folder: "Warning", file: "warning_3d.png" },
   // Insights page section headers
   snapshot: { folder: "Trophy", file: "trophy_3d.png" },
+  calendar: { folder: "Spiral calendar", file: "spiral_calendar_3d.png" },
 };
 
 export type EmojiName = keyof typeof EMOJI_MAP;

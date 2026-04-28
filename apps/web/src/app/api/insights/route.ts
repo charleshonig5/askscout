@@ -20,14 +20,29 @@ interface BestStreakResult {
   repo: string | null;
 }
 
+interface ActivityDay {
+  /** YYYY-MM-DD in the server's local-time interpretation. */
+  date: string;
+  /** Number of digests generated on this day. */
+  digests: number;
+  /** True if there was a quiet-day check-in on this day. */
+  checkin: boolean;
+  /** Distinct repos with any activity on this day. */
+  repos: string[];
+}
+
 interface InsightsResponse {
   bestStreak: BestStreakResult;
   totalDigests: number;
+  /** Last 365 days, oldest first. Always exactly 365 entries — days
+   *  with no activity render as zero-cell placeholders. */
+  activityDays: ActivityDay[];
 }
 
 const EMPTY: InsightsResponse = {
   bestStreak: { length: 0, repo: null },
   totalDigests: 0,
+  activityDays: [],
 };
 
 /** YYYY-MM-DD from a date or timestamp string. */
@@ -120,9 +135,39 @@ export async function GET() {
     }
   }
 
+  // Calendar — build a 365-day window ending today. Initialize with
+  // empty days so the client always gets a complete grid (even days
+  // with zero activity render as placeholder cells). Then layer in
+  // digests and check-ins.
+  const today = new Date();
+  const dayMap = new Map<string, ActivityDay>();
+  for (let i = 364; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const key = dayKey(d);
+    dayMap.set(key, { date: key, digests: 0, checkin: false, repos: [] });
+  }
+  for (const row of digests) {
+    if (!row.repo || !row.created_at) continue;
+    const key = dayKey(row.created_at);
+    const day = dayMap.get(key);
+    if (!day) continue; // outside the 365-day window — fine
+    day.digests += 1;
+    if (!day.repos.includes(row.repo)) day.repos.push(row.repo);
+  }
+  for (const row of checkins) {
+    if (!row.repo || !row.date) continue;
+    const day = dayMap.get(row.date);
+    if (!day) continue;
+    day.checkin = true;
+    if (!day.repos.includes(row.repo)) day.repos.push(row.repo);
+  }
+  const activityDays = Array.from(dayMap.values());
+
   const payload: InsightsResponse = {
     bestStreak: { length: bestRun, repo: bestRepo },
     totalDigests,
+    activityDays,
   };
 
   return Response.json(payload);

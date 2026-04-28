@@ -4322,6 +4322,120 @@ a:hover {
   }
 }
 
+/* --- Activity calendar ---------------------------------------
+   GitHub-style 365-day rolling grid. 53 week-columns × 7 day-
+   rows. Empty cells use --color-bg-tertiary; quiet-day check-ins
+   use a tinted blend of success-green into bg-tertiary; full
+   activity days use --color-success solid. All tones are theme-
+   aware — light/dark resolve via the same tokens.
+
+   Cell footprint is intentionally small (10×10 with 2px gaps) so
+   the full year fits inside the 527px section panel without
+   horizontal scroll on desktop. The panel does have overflow-x:
+   auto so narrow viewports can swipe through the grid. */
+
+.insights-calendar-panel {
+  /* Override .settings-panel padding here so we can let the grid
+     reach close to the panel edges and scroll cleanly. The 13px
+     vertical breathing room matches the standard panel padding. */
+  padding: 13px 12px;
+  overflow-x: auto;
+}
+
+.insights-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  /* Min-width forces horizontal scroll if the grid itself is wider
+     than the panel — prevents the cells from squeezing. */
+  min-width: max-content;
+}
+
+.insights-calendar-months {
+  display: grid;
+  grid-template-columns: repeat(53, 12px);
+  height: 12px;
+  /* Offset by the day-labels column width + its right gap so month
+     labels line up over the correct grid column. */
+  margin-left: 28px;
+}
+
+.insights-calendar-month {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 12px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.insights-calendar-body {
+  display: flex;
+  gap: 4px;
+}
+
+.insights-calendar-day-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 24px;
+}
+
+.insights-calendar-day-label {
+  height: 10px;
+  display: flex;
+  align-items: center;
+  font-family: var(--font-sans);
+  font-size: 9px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--color-text-secondary);
+}
+
+.insights-calendar-grid {
+  display: flex;
+  gap: 2px;
+}
+
+.insights-calendar-week {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.insights-calendar-cell {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  /* Default = empty (no activity). Tokens carry the theme. */
+  background: var(--color-bg-tertiary);
+}
+
+.insights-calendar-cell[data-state="padding"] {
+  /* Cells before the first real day or after today — invisible. */
+  background: transparent;
+}
+
+.insights-calendar-cell[data-state="checkin"] {
+  /* Quiet-day check-in: 30% success-green tinted into the empty
+     bg-tertiary. Reads as "something happened, but lighter than a
+     full digest day" in both themes. */
+  background: color-mix(in srgb, var(--color-success) 30%, var(--color-bg-tertiary));
+}
+
+.insights-calendar-cell[data-state="active"] {
+  background: var(--color-success);
+}
+
+@media (max-width: 600px) {
+  /* Panel still scrolls on phones — the grid stays at full size so
+     Sun/Sat aren't squeezed below readable. */
+  .insights-calendar-panel {
+    padding: 13px 12px;
+  }
+}
+
 .btn-danger {
   display: inline-flex;
   align-items: center;
