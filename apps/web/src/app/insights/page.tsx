@@ -108,7 +108,9 @@ function cellState(cell: Cell): "padding" | "empty" | "checkin" | "active" {
 
 /** Native-tooltip text for hovered cells. Padding cells get nothing
  *  so the user doesn't see a confusing "no data" hover for cells
- *  that aren't really days. */
+ *  that aren't really days. Separator is the middle dot — matches
+ *  the existing tooltip convention in the digest's bar-tooltips
+ *  (e.g. "10:05am · 10:20am · 12:45pm"). */
 function cellTooltip(cell: Cell): string | undefined {
   if (!cell.date) return undefined;
   const d = new Date(cell.date + "T00:00:00");
@@ -119,12 +121,12 @@ function cellTooltip(cell: Cell): string | undefined {
   });
   if (cell.digests > 0) {
     const reposLabel = cell.repos.length > 0 ? ` in ${cell.repos.join(", ")}` : "";
-    return `${formatted} — ${cell.digests} ${cell.digests === 1 ? "digest" : "digests"}${reposLabel}`;
+    return `${formatted} · ${cell.digests} ${cell.digests === 1 ? "digest" : "digests"}${reposLabel}`;
   }
   if (cell.checkin) {
-    return `${formatted} — Quiet day check-in`;
+    return `${formatted} · Quiet day check-in`;
   }
-  return `${formatted} — No activity`;
+  return `${formatted} · No activity`;
 }
 
 function ActivityCalendar({ days }: { days: ActivityDay[] }) {
