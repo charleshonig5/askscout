@@ -125,21 +125,22 @@ export function PlanModal({ isOpen, onClose, content }: PlanModalProps) {
   );
 
   /** Build the copy payload from PARSED tasks (not raw LLM content) so:
-   *   - the user's check state lands as `- [x]` vs `- [ ]`
+   *   - the user's check state lands as ☑ vs ☐ (Unicode glyphs that
+   *     render visually in every paste destination — Slack, email,
+   *     Notes, Discord, GitHub — without depending on markdown
+   *     checkbox support)
    *   - reason text sits on its own indented line under the task,
    *     instead of running together as one sentence
    *   - tasks separate with blank lines for scannability
-   * The 6-space reason indent visually aligns under the task text in
-   * proportional fonts (matches the width of `- [ ] `). Markdown
-   * checkboxes render natively in GitHub / Linear / Notion / Slack
-   * (with markdown enabled) while remaining readable as plain text. */
+   * The 2-space reason indent visually aligns under the task text
+   * (matches the width of `☐ `). */
   const handleCopy = useCallback(() => {
     if (tasks.length === 0) return;
     const text = tasks
       .map((t) => {
-        const mark = checked[t.id] ? "x" : " ";
-        const head = `- [${mark}] ${t.task}`;
-        return t.reason ? `${head}\n      ${t.reason}` : head;
+        const mark = checked[t.id] ? "☑" : "☐";
+        const head = `${mark} ${t.task}`;
+        return t.reason ? `${head}\n  ${t.reason}` : head;
       })
       .join("\n\n");
     void navigator.clipboard.writeText(text).then(() => {
