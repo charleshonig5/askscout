@@ -122,6 +122,11 @@ want to drill into one.
 
 Sortable by any column. Default sort: last active, descending.
 
+**Mobile (≤ 768px)**: each table row collapses to a stacked card. The
+repo name becomes the card title and the four stats render as labeled
+rows underneath. Reuses the `.settings-panel` surface treatment so the
+cards feel like the rest of the page.
+
 ---
 
 ## 4. Engagement personality
@@ -456,8 +461,7 @@ re-litigate them:
 
 ## Open questions
 
-- [ ] Mobile layout for the per-repo breakdown table — horizontal scroll,
-      collapse to cards, or hide the secondary columns?
+_(none — all called)_
 
 ### Resolved
 
@@ -467,6 +471,12 @@ re-litigate them:
 - **Empty state** — entry point always visible; page renders with zeros
   for brand-new accounts (see "Empty state" section).
 - **Personality refresh cadence** — live, recomputed on every visit.
+- **Mobile layout for the per-repo table** — collapse each row to a
+  stacked card. Repo name as the card title, the four stats (Digests /
+  Current streak / Best streak / Last active) as labeled rows
+  underneath. Reuses the existing `.settings-panel` surface treatment.
+  Standard breakpoint (`max-width: 768px` matching the existing
+  responsive cutoffs).
 
 ---
 
