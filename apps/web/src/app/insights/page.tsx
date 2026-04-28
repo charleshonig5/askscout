@@ -69,14 +69,6 @@ const MONTH_LABELS = [
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
 
-const DAY_LABEL_AT_ROW: Record<number, string> = {
-  // Sun (0) and Sat (6) blank to keep the column tight. Mon/Wed/Fri
-  // are the GitHub convention.
-  1: "Mon",
-  3: "Wed",
-  5: "Fri",
-};
-
 interface Cell {
   /** YYYY-MM-DD or "" for padding cells (placeholders before the
    *  first day or after the last day in the rendered grid). */
@@ -273,36 +265,28 @@ function ActivityCalendar({ days }: { days: ActivityDay[] }) {
         ))}
       </div>
 
-      <div className="insights-calendar-body">
-        {/* Day-of-week labels on the left. Mon / Wed / Fri only —
-            standard GitHub-style spacing. */}
-        <div className="insights-calendar-day-labels" aria-hidden>
-          {[0, 1, 2, 3, 4, 5, 6].map((row) => (
-            <span key={row} className="insights-calendar-day-label">
-              {DAY_LABEL_AT_ROW[row] ?? ""}
-            </span>
-          ))}
-        </div>
-
-        {/* The grid itself: 53 week-columns × 7 day-rows. */}
-        <div className="insights-calendar-grid">
-          {weeks.map((week, wi) => (
-            <div key={wi} className="insights-calendar-week">
-              {week.map((cell, di) => {
-                const state = cellState(cell);
-                const tooltip = cellTooltip(cell);
-                return (
-                  <div
-                    key={di}
-                    className="insights-calendar-cell"
-                    data-state={state}
-                    title={tooltip}
-                  />
-                );
-              })}
-            </div>
-          ))}
-        </div>
+      {/* The grid itself: 53 week-columns × 7 day-rows. Day-of-week
+          labels were dropped — the panel is too narrow to spend
+          ~26px on them, and the per-cell tooltip ("Tuesday, April 28
+          · 2 digests") already names the day on hover for anyone
+          who needs it. */}
+      <div className="insights-calendar-grid">
+        {weeks.map((week, wi) => (
+          <div key={wi} className="insights-calendar-week">
+            {week.map((cell, di) => {
+              const state = cellState(cell);
+              const tooltip = cellTooltip(cell);
+              return (
+                <div
+                  key={di}
+                  className="insights-calendar-cell"
+                  data-state={state}
+                  title={tooltip}
+                />
+              );
+            })}
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -4374,10 +4374,6 @@ a:hover {
   /* Match the grid's gap so column boundaries align exactly. */
   column-gap: 1px;
   height: 12px;
-  /* Offset by the day-labels column width + its right gap so the
-     53-column months grid shares horizontal extents with the 53
-     weeks below. */
-  margin-left: 26px;
 }
 
 .insights-calendar-month {
@@ -4389,37 +4385,9 @@ a:hover {
   white-space: nowrap;
 }
 
-.insights-calendar-body {
-  display: flex;
-  gap: 4px;
-}
-
-.insights-calendar-day-labels {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  width: 22px;
-  flex-shrink: 0;
-}
-
-.insights-calendar-day-label {
-  /* Match a single day-cell row inside the grid. flex: 1 with
-     aspect-ratio: 1 lets the cells size dynamically; the day-
-     label cells follow that height via flex: 1 too. */
-  flex: 1;
-  display: flex;
-  align-items: center;
-  font-family: var(--font-sans);
-  font-size: 9px;
-  font-weight: 400;
-  line-height: 1;
-  color: var(--color-text-secondary);
-}
-
 .insights-calendar-grid {
   display: flex;
   gap: 1px;
-  flex: 1;
   min-width: 0;
 }
 
