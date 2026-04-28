@@ -4536,11 +4536,12 @@ a:hover {
   border-bottom: 1px solid var(--color-border);
 }
 
-/* Sort header — looks like text but is a clickable button. Every
-   column shows an icon at all times: active = solid arrow showing
-   direction; inactive = faded ChevronsUpDown signaling
-   "sortable, click to choose." Whole button is `nowrap` so headers
-   like "Current streak" never break onto a second line. */
+/* Sort header — looks like text but is a clickable button. Each
+   column shows a stacked chevron pair (the standard data-grid
+   pattern): both visible at all times, the active half lights up
+   to indicate sort direction. Same shape in every state — no
+   icon shape-shifting between sorted / unsorted. White-space:
+   nowrap so labels like "Current streak" never wrap. */
 .insights-repos-sort {
   display: inline-flex;
   align-items: center;
@@ -4571,16 +4572,41 @@ a:hover {
   color: var(--color-text-primary);
 }
 
-/* Inactive sort icon dimmed so the active column's solid arrow
-   reads as the prominent state. Hover bumps the dim icon up to
-   full strength so the affordance feels live. */
-.insights-repos-sort:not(.is-active) > svg {
-  opacity: 0.4;
-  transition: opacity 0.12s ease;
+/* Stacked chevron pair — tightly stacked so the two arrows read
+   as a single split-arrow indicator. The active half (current
+   sort direction) renders at full text-primary color; the
+   inactive half stays dim. Hover bumps the dim half slightly so
+   the column reads as live-clickable. */
+.insights-repos-sort-icon {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 0;
+  margin-left: 2px;
 }
 
-.insights-repos-sort:not(.is-active):hover > svg {
-  opacity: 0.8;
+.insights-repos-sort-icon > svg {
+  display: block;
+  color: var(--color-text-secondary);
+  opacity: 0.35;
+  transition:
+    opacity 0.12s ease,
+    color 0.12s ease;
+}
+
+/* Tighten the gap between the two chevrons so they read as one
+   indicator rather than two stacked arrows. */
+.insights-repos-sort-icon > svg:first-child {
+  margin-bottom: -3px;
+}
+
+.insights-repos-sort:hover .insights-repos-sort-icon > svg {
+  opacity: 0.6;
+}
+
+.insights-repos-sort-icon > svg.is-on {
+  color: var(--color-text-primary);
+  opacity: 1;
 }
 
 .insights-repos-row + .insights-repos-row {

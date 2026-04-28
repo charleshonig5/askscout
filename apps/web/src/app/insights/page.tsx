@@ -3,11 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  ArrowDown,
   ArrowLeft,
-  ArrowUp,
   ArrowUpRight,
-  ChevronsUpDown,
+  ChevronDown,
+  ChevronUp,
   CircleX,
 } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
@@ -281,11 +280,14 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
   }
 
   /** One header cell — click to sort, click again to flip direction.
-   *  Always shows an icon: the active column gets a solid arrow
-   *  matching the current direction; inactive columns show a faded
-   *  ChevronsUpDown to signal "click to sort." */
+   *  Two stacked chevrons (standard data-grid pattern, à la Material
+   *  UI / AG Grid). Both visible at all times; the active half lights
+   *  up to indicate direction. Same shape in every state — no icon
+   *  shape-shifting between sorted and unsorted. */
   const SortHeader = ({ keyName, label }: { keyName: SortKey; label: string }) => {
     const isActive = sortKey === keyName;
+    const upActive = isActive && sortDir === "asc";
+    const downActive = isActive && sortDir === "desc";
     return (
       <button
         type="button"
@@ -295,15 +297,18 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
         aria-sort={isActive ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
       >
         <span className="insights-repos-sort-label">{label}</span>
-        {isActive ? (
-          sortDir === "asc" ? (
-            <ArrowUp size={12} strokeWidth={1.5} aria-hidden />
-          ) : (
-            <ArrowDown size={12} strokeWidth={1.5} aria-hidden />
-          )
-        ) : (
-          <ChevronsUpDown size={12} strokeWidth={1.5} aria-hidden />
-        )}
+        <span className="insights-repos-sort-icon" aria-hidden>
+          <ChevronUp
+            size={10}
+            strokeWidth={2}
+            className={upActive ? "is-on" : ""}
+          />
+          <ChevronDown
+            size={10}
+            strokeWidth={2}
+            className={downActive ? "is-on" : ""}
+          />
+        </span>
       </button>
     );
   };
