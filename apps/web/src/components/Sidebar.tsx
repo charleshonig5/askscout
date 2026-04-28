@@ -5,6 +5,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
+  ChartNoAxesCombined,
   CircleX,
   FileText,
   GitCommitHorizontal,
@@ -98,6 +99,13 @@ export function Sidebar({
             </div>
             <div className="sidebar-top-actions">
               <ThemeToggle />
+              <button
+                className="header-icon-btn"
+                onClick={() => router.push("/insights")}
+                aria-label="Insights"
+              >
+                <ChartNoAxesCombined size={20} strokeWidth={1} />
+              </button>
               <button
                 className="header-icon-btn"
                 onClick={() => router.push("/settings")}
