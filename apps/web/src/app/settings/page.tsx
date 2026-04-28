@@ -303,13 +303,17 @@ export default function SettingsPage() {
               <p className="settings-section-desc">The repo that loads when you open askscout.</p>
             </header>
             <RepoSelector
+              // When no default is saved (new user), fall back to
+              // repos[0] — the most-recently-pushed repo from
+              // /api/repos. The dashboard's own fallback uses the
+              // same value, so the trigger label always reflects
+              // what would actually load. As soon as the user picks
+              // something explicit it saves and locks in.
               repos={repos}
-              selected={defaultRepo}
+              selected={defaultRepo || repos[0] || ""}
               onChange={(repo) => void saveDefaultRepo(repo)}
               variant="settings"
               hideActivityBadge
-              showDynamicDefault
-              placeholder="Most recently pushed"
             />
           </section>
 
