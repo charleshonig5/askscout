@@ -109,21 +109,35 @@ function buildWeeks(days: ActivityDay[]): Cell[][] {
 }
 
 /** Month-label entries: emit a label for the first week-column where
- *  a new month appears. The leftmost cell of that column drives the
- *  position. */
+ *  a new month appears, but only if that month has at least 2 weeks
+ *  of visible data. Suppresses the leading-edge label (e.g. one week
+ *  of last April that gets cut by the 365-day window) so it doesn't
+ *  overlap with the second month's label, and keeps the full year's
+ *  rhythm intact otherwise. The same month appearing at the trailing
+ *  edge with multiple weeks (today's month) keeps its label. */
 function buildMonthLabels(weeks: Cell[][]): Array<{ col: number; label: string }> {
-  const labels: Array<{ col: number; label: string }> = [];
-  let lastMonth = -1;
+  // First pass — collect month boundaries and how many weeks each
+  // month spans within the visible window.
+  type Range = { month: number; startCol: number; weekCount: number };
+  const ranges: Range[] = [];
+  let currentMonth = -1;
   weeks.forEach((week, col) => {
     const firstReal = week.find((c) => c.date);
     if (!firstReal) return;
     const month = new Date(firstReal.date + "T00:00:00").getMonth();
-    if (month !== lastMonth) {
-      labels.push({ col, label: MONTH_LABELS[month]! });
-      lastMonth = month;
+    if (month !== currentMonth) {
+      ranges.push({ month, startCol: col, weekCount: 1 });
+      currentMonth = month;
+    } else {
+      const last = ranges[ranges.length - 1]!;
+      last.weekCount += 1;
     }
   });
-  return labels;
+  // Second pass — keep only ranges with ≥ 2 weeks of presence so
+  // sliver-months at the leading edge don't crowd the next label.
+  return ranges
+    .filter((r) => r.weekCount >= 2)
+    .map((r) => ({ col: r.startCol, label: MONTH_LABELS[r.month]! }));
 }
 
 /** What state should this cell render as? */

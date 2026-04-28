@@ -4345,19 +4345,15 @@ a:hover {
    activity days use --color-success solid. All tones are theme-
    aware — light/dark resolve via the same tokens.
 
-   Sized to fit the 527px section panel with comfortable
-   breathing room on desktop. Math: panel inner = 527 - 2 (1px
-   border each side) - 24 (12px padding each side) = 501px. Grid
-   available = 501 - 22 (day labels) - 4 (body gap) = 475px. 53
-   columns × (7px cell + 1px gap) - 1px final = 423px. Leaves
-   ~52px of slack so subpixel rounding can't push us into a
-   scrollbar. Cells are smaller than GitHub's 11×11/3px default
-   but stay readable, and the panel keeps overflow-x: auto so
-   very narrow phone viewports still scroll instead of clipping. */
+   Layout strategy: weeks flex-grow to fill the panel's available
+   width, with each cell holding a 1:1 aspect ratio. Months row
+   uses a 53-column grid that stretches to the same total width
+   so labels stay aligned to the columns underneath even as the
+   container resizes. min-width on each week ensures cells stay
+   readable on phones; the panel scrolls horizontally below that
+   threshold rather than clipping. */
 
 .insights-calendar-panel {
-  /* Symmetric 12px horizontal padding so the grid gets the most
-     room possible inside the 527px section. */
   padding: 13px 12px;
   overflow-x: auto;
 }
@@ -4366,20 +4362,21 @@ a:hover {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  /* Min-width forces horizontal scroll if the grid itself is wider
-     than the panel — prevents the cells from squeezing on narrow
-     screens. At desktop section width the grid fits cleanly so no
-     scroll fires. */
-  min-width: max-content;
+  /* Block layout — children stretch to the panel's full content
+     width, which is what we want for the months row + grid body. */
 }
 
 .insights-calendar-months {
   display: grid;
-  /* 8px = 7px cell + 1px gap (matches the grid stride below). */
-  grid-template-columns: repeat(53, 8px);
+  /* 53 fluid columns matching the grid below — labels stay aligned
+     to their week-column even as the calendar resizes. */
+  grid-template-columns: repeat(53, 1fr);
+  /* Match the grid's gap so column boundaries align exactly. */
+  column-gap: 1px;
   height: 12px;
-  /* Offset by the day-labels column width + its right gap so month
-     labels line up over the correct grid column. */
+  /* Offset by the day-labels column width + its right gap so the
+     53-column months grid shares horizontal extents with the 53
+     weeks below. */
   margin-left: 26px;
 }
 
@@ -4402,10 +4399,14 @@ a:hover {
   flex-direction: column;
   gap: 1px;
   width: 22px;
+  flex-shrink: 0;
 }
 
 .insights-calendar-day-label {
-  height: 7px;
+  /* Match a single day-cell row inside the grid. flex: 1 with
+     aspect-ratio: 1 lets the cells size dynamically; the day-
+     label cells follow that height via flex: 1 too. */
+  flex: 1;
   display: flex;
   align-items: center;
   font-family: var(--font-sans);
@@ -4418,19 +4419,25 @@ a:hover {
 .insights-calendar-grid {
   display: flex;
   gap: 1px;
+  flex: 1;
+  min-width: 0;
 }
 
 .insights-calendar-week {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 1px;
+  /* Floor for narrow phone viewports — once the grid would shrink
+     each week below 8px, the panel's overflow-x kicks in and the
+     calendar scrolls horizontally instead of squeezing further. */
+  min-width: 8px;
 }
 
 .insights-calendar-cell {
-  width: 7px;
-  height: 7px;
+  flex: 1;
+  aspect-ratio: 1;
   border-radius: 2px;
-  flex-shrink: 0;
   /* Default = empty (no activity). Tokens carry the theme. */
   background: var(--color-bg-tertiary);
 }
