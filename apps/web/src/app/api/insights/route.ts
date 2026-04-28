@@ -1,5 +1,6 @@
 import { auth, getUserId } from "@/auth";
 import { supabase } from "@/lib/supabase";
+import { computePersonality, type PersonalityResult } from "./personality";
 
 /**
  * Insights API — aggregates everything the /insights page needs into one
@@ -50,13 +51,25 @@ interface InsightsResponse {
   /** One entry per repo the user has touched (digest or check-in).
    *  Sorted by lastActive descending. */
   repoStats: RepoStat[];
+  /** Live-computed engagement personality. State drives whether the
+   *  client renders the block at all (see `personality.ts`). */
+  personality: PersonalityResult;
 }
+
+const EMPTY_PERSONALITY: PersonalityResult = {
+  state: "hidden",
+  archetype: null,
+  emoji: "",
+  subheader: "",
+  modifiers: [],
+};
 
 const EMPTY: InsightsResponse = {
   bestStreak: { length: 0, repo: null },
   totalDigests: 0,
   activityDays: [],
   repoStats: [],
+  personality: EMPTY_PERSONALITY,
 };
 
 /** YYYY-MM-DD from a date or timestamp string. */
@@ -128,16 +141,18 @@ export async function GET() {
     return Response.json(EMPTY);
   }
 
-  // Pull the minimum data needed for snapshot stats. Both queries are
-  // scoped to user_id.
+  // Pull the minimum data needed for snapshot + calendar + personality.
+  // Stats blob is included so personality.ts can compute style/session
+  // signals from recent digests. Both queries scoped to user_id.
   const [digestsRes, checkinsRes] = await Promise.all([
-    supabase.from("digests").select("repo, created_at").eq("user_id", userId),
+    supabase.from("digests").select("repo, created_at, stats").eq("user_id", userId),
     supabase.from("daily_checkins").select("repo, date").eq("user_id", userId),
   ]);
 
   const digests = (digestsRes.data ?? []) as Array<{
     repo: string | null;
     created_at: string | null;
+    stats: Record<string, unknown> | null;
   }>;
   const checkins = (checkinsRes.data ?? []) as Array<{
     repo: string | null;
@@ -232,11 +247,17 @@ export async function GET() {
   }
   const activityDays = Array.from(dayMap.values());
 
+  // Engagement personality — live-computed every visit per the plan.
+  // Pure function over the same data we already pulled above; nothing
+  // about the user leaves this server boundary.
+  const personality = computePersonality(digests, checkins, new Date());
+
   const payload: InsightsResponse = {
     bestStreak: { length: bestRun, repo: bestRepo },
     totalDigests,
     activityDays,
     repoStats,
+    personality,
   };
 
   return Response.json(payload);

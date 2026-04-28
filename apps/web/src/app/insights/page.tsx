@@ -32,18 +32,36 @@ interface RepoStat {
   lastActive: string | null;
 }
 
+interface Personality {
+  state: "hidden" | "placeholder" | "real" | "dormant";
+  archetype: string | null;
+  emoji: string;
+  subheader: string;
+  modifiers: string[];
+}
+
 interface InsightsData {
   bestStreak: { length: number; repo: string | null };
   totalDigests: number;
   activityDays: ActivityDay[];
   repoStats: RepoStat[];
+  personality: Personality;
 }
+
+const EMPTY_PERSONALITY: Personality = {
+  state: "hidden",
+  archetype: null,
+  emoji: "",
+  subheader: "",
+  modifiers: [],
+};
 
 const EMPTY_DATA: InsightsData = {
   bestStreak: { length: 0, repo: null },
   totalDigests: 0,
   activityDays: [],
   repoStats: [],
+  personality: EMPTY_PERSONALITY,
 };
 
 const MONTH_LABELS = [
@@ -409,6 +427,42 @@ export default function InsightsPage() {
               </header>
               <div className="settings-panel insights-repos-panel">
                 <ReposBreakdown repoStats={data.repoStats} />
+              </div>
+            </section>
+          )}
+
+          {/* ENGAGEMENT PERSONALITY — live-computed primary archetype
+              + 2–3 modifier tags. Block hides entirely on accounts
+              with zero digests (state === "hidden") so the rest of
+              the page still loads but this card waits for data. */}
+          {loaded && data.personality.state !== "hidden" && (
+            <section className="settings-section">
+              <header className="settings-section-head">
+                <div className="settings-section-title">
+                  <Emoji name="personality" size={20} />
+                  <h2>Personality</h2>
+                </div>
+                <p className="settings-section-desc">
+                  How you show up on Scout, recomputed every visit.
+                </p>
+              </header>
+              <div
+                className={`settings-panel insights-personality${
+                  data.personality.state === "dormant" ? " is-dormant" : ""
+                }`}
+              >
+                <div className="insights-personality-emoji" aria-hidden>
+                  {data.personality.emoji}
+                </div>
+                <h3 className="insights-personality-name">{data.personality.archetype}</h3>
+                <p className="insights-personality-subheader">
+                  {data.personality.subheader}
+                </p>
+                {data.personality.modifiers.length > 0 && (
+                  <p className="insights-personality-modifiers">
+                    {data.personality.modifiers.join(" · ")}
+                  </p>
+                )}
               </div>
             </section>
           )}

@@ -4591,6 +4591,74 @@ a:hover {
   }
 }
 
+/* --- Personality block ----------------------------------------
+   Centerpiece card. Big emoji + Pridi archetype name + descriptive
+   subheader + modifier row. Lives inside the standard panel
+   surface so it inherits theme-aware bg/border/glow without
+   inventing new ones. The dormant state mutes the whole block via
+   opacity so the user sees their last-known archetype but
+   understands they're not currently active. */
+
+.insights-personality {
+  padding: 28px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  text-align: left;
+}
+
+.insights-personality-emoji {
+  font-size: 40px;
+  line-height: 1;
+  margin-bottom: 4px;
+  /* Native Unicode emoji rendering — no fluent-image fetch here
+     since each archetype has a different emoji and a static font
+     glyph reads instantly. */
+}
+
+.insights-personality-name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.insights-personality-subheader {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 18px;
+  color: var(--color-text-primary);
+  margin: 0;
+  max-width: 100%;
+}
+
+.insights-personality-modifiers {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  color: var(--color-text-secondary);
+  margin: 6px 0 0;
+  letter-spacing: 0.02em;
+}
+
+/* Dormant: mute the card so the user reads it as past-state
+   instead of current. Opacity is the simplest theme-safe muting —
+   no token swaps needed. */
+.insights-personality.is-dormant .insights-personality-emoji,
+.insights-personality.is-dormant .insights-personality-name {
+  opacity: 0.55;
+}
+
+.insights-personality.is-dormant .insights-personality-subheader {
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
 .btn-danger {
   display: inline-flex;
   align-items: center;

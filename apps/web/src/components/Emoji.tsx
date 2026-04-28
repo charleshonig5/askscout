@@ -62,6 +62,7 @@ const EMOJI_MAP: Record<string, EmojiAsset> = {
   snapshot: { folder: "Trophy", file: "trophy_3d.png" },
   calendar: { folder: "Spiral calendar", file: "spiral_calendar_3d.png" },
   perRepo: { folder: "Card index dividers", file: "card_index_dividers_3d.png" },
+  personality: { folder: "Performing arts", file: "performing_arts_3d.png" },
 };
 
 export type EmojiName = keyof typeof EMOJI_MAP;
