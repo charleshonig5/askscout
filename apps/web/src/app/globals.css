@@ -614,6 +614,15 @@ a:hover {
   max-width: none;
 }
 
+/* The settings popover is much wider than the dashboard sidebar's,
+   which made the same 43px-tall selected fill read as a flat bar
+   instead of the chunky block it looks like in the sidebar. Bumping
+   item height here so the selected/hover fill keeps a block-shaped
+   feel proportional to the wider popover. */
+.repo-combobox--settings .repo-combobox-item {
+  height: 52px;
+}
+
 .repo-combobox-trigger-label {
   flex: 1;
   min-width: 0;
