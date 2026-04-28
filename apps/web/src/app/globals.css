@@ -3441,7 +3441,7 @@ a:hover {
 .standup-formatted {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--space-md);
   color: var(--color-text-primary);
 }
 
