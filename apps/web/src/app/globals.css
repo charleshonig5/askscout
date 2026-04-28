@@ -4522,10 +4522,10 @@ a:hover {
   align-items: center;
 }
 
-/* Header row — same 12px Medium treatment as .insights-stat-label
-   so column labels read as the same typographic family. No
-   uppercase / letter-spacing tricks; matches the rest of the
-   platform. */
+/* Header row — column labels are click-to-sort buttons. 12px
+   Medium type matches .insights-stat-label / .stats-subsection-
+   title so the table header reads as the same typographic family
+   used elsewhere. No uppercase / letter-spacing tricks. */
 .insights-repos-header {
   font-family: var(--font-sans);
   font-size: 12px;
@@ -4533,6 +4533,34 @@ a:hover {
   line-height: 18px;
   color: var(--color-text-secondary);
   border-bottom: 1px solid var(--color-border);
+}
+
+/* Sort header — looks like text but is a clickable button. The
+   active column gets darker text + an arrow icon; inactive
+   columns hover-darken to signal they're clickable. */
+.insights-repos-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.12s ease;
+}
+
+.insights-repos-sort:hover {
+  color: var(--color-text-primary);
+}
+
+.insights-repos-sort.is-active {
+  color: var(--color-text-primary);
 }
 
 .insights-repos-row + .insights-repos-row {

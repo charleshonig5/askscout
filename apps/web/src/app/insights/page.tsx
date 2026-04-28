@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowUpRight, CircleX } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowUp, ArrowUpRight, CircleX } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
 
 /**
@@ -202,7 +202,64 @@ function repoDisplayName(slug: string): string {
   return slash === -1 ? slug : slug.slice(slash + 1);
 }
 
+type SortKey = "name" | "digests" | "currentStreak" | "lastActive";
+type SortDir = "asc" | "desc";
+
+/** Default sort direction for a given column when the user clicks it
+ *  for the first time. Name is alphabetical (A→Z); numeric/date
+ *  columns default to "highest first" since that's what users want
+ *  when ranking. */
+const DEFAULT_DIR: Record<SortKey, SortDir> = {
+  name: "asc",
+  digests: "desc",
+  currentStreak: "desc",
+  lastActive: "desc",
+};
+
 function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
+  const [sortKey, setSortKey] = useState<SortKey>("lastActive");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
+
+  const sorted = useMemo(() => {
+    const list = [...repoStats];
+    list.sort((a, b) => {
+      let cmp = 0;
+      switch (sortKey) {
+        case "name":
+          // localeCompare on full slug so users see consistent A-Z
+          // ordering across owners. Keep it case-insensitive too.
+          cmp = a.repo.localeCompare(b.repo, undefined, { sensitivity: "base" });
+          break;
+        case "digests":
+          cmp = a.digests - b.digests;
+          break;
+        case "currentStreak":
+          cmp = a.currentStreak - b.currentStreak;
+          break;
+        case "lastActive":
+          // Null lastActive sorts to the bottom regardless of dir.
+          if (a.lastActive === b.lastActive) cmp = 0;
+          else if (!a.lastActive) cmp = 1;
+          else if (!b.lastActive) cmp = -1;
+          else cmp = a.lastActive.localeCompare(b.lastActive);
+          break;
+      }
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+    return list;
+  }, [repoStats, sortKey, sortDir]);
+
+  const handleSort = (key: SortKey) => {
+    if (key === sortKey) {
+      // Same column → flip direction.
+      setSortDir(sortDir === "asc" ? "desc" : "asc");
+    } else {
+      // New column → reset to that column's natural default.
+      setSortKey(key);
+      setSortDir(DEFAULT_DIR[key]);
+    }
+  };
+
   // Empty state: zero repos with activity yet. Render a single
   // placeholder row so the section still has presence on day-1
   // accounts but doesn't show a misleading empty table.
@@ -215,16 +272,42 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
       </div>
     );
   }
+
+  /** One header cell — click to sort by its column, click again to
+   *  flip direction. Active column shows an arrow indicator. */
+  const SortHeader = ({ keyName, label }: { keyName: SortKey; label: string }) => {
+    const isActive = sortKey === keyName;
+    return (
+      <button
+        type="button"
+        className={`insights-repos-sort${isActive ? " is-active" : ""}`}
+        onClick={() => handleSort(keyName)}
+        aria-label={`Sort by ${label}`}
+        aria-sort={isActive ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
+      >
+        <span>{label}</span>
+        {isActive &&
+          (sortDir === "asc" ? (
+            <ArrowUp size={12} strokeWidth={1.5} aria-hidden />
+          ) : (
+            <ArrowDown size={12} strokeWidth={1.5} aria-hidden />
+          ))}
+      </button>
+    );
+  };
+
   return (
     <div className="insights-repos">
-      {/* Header row — desktop only. Hides on mobile (cards take over). */}
-      <div className="insights-repos-header" aria-hidden>
-        <span>Repo</span>
-        <span>Digests</span>
-        <span>Current streak</span>
-        <span>Last active</span>
+      {/* Header row — desktop only. Hides on mobile (cards take over).
+          Each header is a button that sorts the table by that column;
+          clicking the active column flips direction. */}
+      <div className="insights-repos-header" role="row">
+        <SortHeader keyName="name" label="Repo" />
+        <SortHeader keyName="digests" label="Digests" />
+        <SortHeader keyName="currentStreak" label="Current streak" />
+        <SortHeader keyName="lastActive" label="Last active" />
       </div>
-      {repoStats.map((r) => (
+      {sorted.map((r) => (
         <div className="insights-repos-row" key={r.repo}>
           <span className="insights-repos-cell" data-col="repo">
             <span className="insights-repos-cell-label">Repo</span>
