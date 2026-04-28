@@ -5,7 +5,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
-  ChartNoAxesCombined,
+  ChartPie,
   CircleX,
   FileText,
   GitCommitHorizontal,
@@ -104,7 +104,7 @@ export function Sidebar({
                 onClick={() => router.push("/insights")}
                 aria-label="Insights"
               >
-                <ChartNoAxesCombined size={20} strokeWidth={1} />
+                <ChartPie size={20} strokeWidth={1} />
               </button>
               <button
                 className="header-icon-btn"

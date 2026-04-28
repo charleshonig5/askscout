@@ -31,8 +31,8 @@ page itself handles the empty state (see "Empty state" below).
 
 Click → routes to `/insights`.
 
-**Icon**: `ChartNoAxesCombined` from Lucide. Not used anywhere else in
-the codebase, so it's claimed for Insights.
+**Icon**: `ChartPie` from Lucide. Not used anywhere else in the codebase,
+so it's claimed for Insights.
 
 **Page title**: "Insights".
 
@@ -465,8 +465,8 @@ _(none — all called)_
 
 ### Resolved
 
-- **Entry-point Lucide icon** — `ChartNoAxesCombined`. Sits next to the
-  settings gear, same 20px / 1px-stroke treatment.
+- **Entry-point Lucide icon** — `ChartPie`. Sits next to the settings
+  gear, same 20px / 1px-stroke treatment.
 - **Page route + title** — `/insights`, page title "Insights".
 - **Empty state** — entry point always visible; page renders with zeros
   for brand-new accounts (see "Empty state" section).
