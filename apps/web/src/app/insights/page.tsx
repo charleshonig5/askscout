@@ -24,16 +24,26 @@ interface ActivityDay {
   repos: string[];
 }
 
+interface RepoStat {
+  repo: string;
+  digests: number;
+  currentStreak: number;
+  bestStreak: number;
+  lastActive: string | null;
+}
+
 interface InsightsData {
   bestStreak: { length: number; repo: string | null };
   totalDigests: number;
   activityDays: ActivityDay[];
+  repoStats: RepoStat[];
 }
 
 const EMPTY_DATA: InsightsData = {
   bestStreak: { length: 0, repo: null },
   totalDigests: 0,
   activityDays: [],
+  repoStats: [],
 };
 
 const MONTH_LABELS = [
@@ -127,6 +137,88 @@ function cellTooltip(cell: Cell): string | undefined {
     return `${formatted} · Quiet day check-in`;
   }
   return `${formatted} · No activity`;
+}
+
+/** Format a YYYY-MM-DD into a human-friendly relative string for the
+ *  per-repo "Last active" column. Today / Yesterday / N days ago for
+ *  the recent past, then a short calendar date for older entries. */
+function formatLastActive(dateStr: string | null): string {
+  if (!dateStr) return "Never";
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const target = new Date(dateStr + "T00:00:00");
+  target.setHours(0, 0, 0, 0);
+  const diffMs = today.getTime() - target.getTime();
+  const diffDays = Math.round(diffMs / (24 * 60 * 60 * 1000));
+  if (diffDays === 0) return "Today";
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays > 1 && diffDays < 7) return `${diffDays} days ago`;
+  // Older than a week — show the actual date. Include the year only
+  // when it's a different calendar year from today, to keep the
+  // common case compact.
+  const sameYear = target.getFullYear() === today.getFullYear();
+  return target.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: sameYear ? undefined : "numeric",
+  });
+}
+
+function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
+  // Empty state: zero repos with activity yet. Render a single
+  // placeholder row so the section still has presence on day-1
+  // accounts but doesn't show a misleading empty table.
+  if (repoStats.length === 0) {
+    return (
+      <div className="insights-repos">
+        <p className="insights-repos-empty">
+          No repos with activity yet. Generate a digest to start filling this in.
+        </p>
+      </div>
+    );
+  }
+  return (
+    <div className="insights-repos">
+      {/* Header row — desktop only. Hides on mobile (cards take over). */}
+      <div className="insights-repos-header" aria-hidden>
+        <span>Repo</span>
+        <span>Digests</span>
+        <span>Current</span>
+        <span>Best</span>
+        <span>Last active</span>
+      </div>
+      {repoStats.map((r) => (
+        <div className="insights-repos-row" key={r.repo}>
+          <span className="insights-repos-cell" data-col="repo">
+            <span className="insights-repos-cell-label">Repo</span>
+            <span className="insights-repos-cell-value insights-repos-name" title={r.repo}>
+              {r.repo}
+            </span>
+          </span>
+          <span className="insights-repos-cell" data-col="digests">
+            <span className="insights-repos-cell-label">Digests</span>
+            <span className="insights-repos-cell-value">{r.digests}</span>
+          </span>
+          <span className="insights-repos-cell" data-col="current">
+            <span className="insights-repos-cell-label">Current streak</span>
+            <span className="insights-repos-cell-value">
+              {r.currentStreak} {r.currentStreak === 1 ? "day" : "days"}
+            </span>
+          </span>
+          <span className="insights-repos-cell" data-col="best">
+            <span className="insights-repos-cell-label">Best streak</span>
+            <span className="insights-repos-cell-value">
+              {r.bestStreak} {r.bestStreak === 1 ? "day" : "days"}
+            </span>
+          </span>
+          <span className="insights-repos-cell" data-col="last">
+            <span className="insights-repos-cell-label">Last active</span>
+            <span className="insights-repos-cell-value">{formatLastActive(r.lastActive)}</span>
+          </span>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 function ActivityCalendar({ days }: { days: ActivityDay[] }) {
@@ -294,6 +386,29 @@ export default function InsightsPage() {
               </header>
               <div className="settings-panel insights-calendar-panel">
                 <ActivityCalendar days={data.activityDays} />
+              </div>
+            </section>
+          )}
+
+          {/* PER-REPO BREAKDOWN — table on desktop, stacked cards on
+              mobile (≤ 768px) per the plan doc. Sorted by last
+              active descending so the most recently touched repos
+              surface first. Empty repo lists render an in-panel
+              placeholder so the section still reads on day-1
+              accounts. */}
+          {loaded && (
+            <section className="settings-section">
+              <header className="settings-section-head">
+                <div className="settings-section-title">
+                  <Emoji name="perRepo" size={20} />
+                  <h2>Repos</h2>
+                </div>
+                <p className="settings-section-desc">
+                  Every repo Scout has tracked, with its activity at a glance.
+                </p>
+              </header>
+              <div className="settings-panel insights-repos-panel">
+                <ReposBreakdown repoStats={data.repoStats} />
               </div>
             </section>
           )}

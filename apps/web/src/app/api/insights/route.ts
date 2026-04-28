@@ -31,18 +31,32 @@ interface ActivityDay {
   repos: string[];
 }
 
+interface RepoStat {
+  repo: string;
+  digests: number;
+  currentStreak: number;
+  bestStreak: number;
+  /** YYYY-MM-DD of the most recent activity (digest or check-in),
+   *  null only if neither exists for this repo. */
+  lastActive: string | null;
+}
+
 interface InsightsResponse {
   bestStreak: BestStreakResult;
   totalDigests: number;
   /** Last 365 days, oldest first. Always exactly 365 entries — days
    *  with no activity render as zero-cell placeholders. */
   activityDays: ActivityDay[];
+  /** One entry per repo the user has touched (digest or check-in).
+   *  Sorted by lastActive descending. */
+  repoStats: RepoStat[];
 }
 
 const EMPTY: InsightsResponse = {
   bestStreak: { length: 0, repo: null },
   totalDigests: 0,
   activityDays: [],
+  repoStats: [],
 };
 
 /** YYYY-MM-DD from a date or timestamp string. */
@@ -52,6 +66,31 @@ function dayKey(input: string | Date): string {
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
+}
+
+/** Current consecutive-day run counting backward from today. Mirrors
+ *  the dashboard's streak logic exactly: if today itself is empty,
+ *  the streak picks up from yesterday and continues until the first
+ *  break. Returns 0 for empty inputs. */
+function currentRun(daySet: Set<string>, todayKey: string): number {
+  if (daySet.size === 0) return 0;
+  const today = new Date(todayKey + "T00:00:00");
+  let count = 0;
+  for (let i = 0; i < 365; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const key = dayKey(d);
+    if (daySet.has(key)) {
+      count += 1;
+    } else if (i === 0) {
+      // Today itself doesn't have to be active for a "current" streak
+      // to be alive — keep walking back.
+      continue;
+    } else {
+      break;
+    }
+  }
+  return count;
 }
 
 /** Longest consecutive-day run over a sorted array of YYYY-MM-DD strings. */
@@ -124,16 +163,45 @@ export async function GET() {
     daysByRepo.set(row.repo, set);
   }
 
+  // Per-repo digest counts (cheaper to do in one pass than re-walk).
+  const digestCountByRepo = new Map<string, number>();
+  for (const row of digests) {
+    if (!row.repo) continue;
+    digestCountByRepo.set(row.repo, (digestCountByRepo.get(row.repo) ?? 0) + 1);
+  }
+
+  // For each repo: compute bestStreak, currentStreak, lastActive, and
+  // digest count. Track best-across-all-repos for the snapshot row.
+  const todayKey = dayKey(new Date());
+  const repoStats: RepoStat[] = [];
   let bestRun = 0;
   let bestRepo: string | null = null;
   for (const [repo, days] of daysByRepo) {
     const sorted = [...days].sort();
-    const run = longestRun(sorted);
-    if (run > bestRun) {
-      bestRun = run;
+    const bestStreak = longestRun(sorted);
+    const repoCurrent = currentRun(days, todayKey);
+    const lastActive = sorted.length > 0 ? sorted[sorted.length - 1]! : null;
+    repoStats.push({
+      repo,
+      digests: digestCountByRepo.get(repo) ?? 0,
+      currentStreak: repoCurrent,
+      bestStreak,
+      lastActive,
+    });
+    if (bestStreak > bestRun) {
+      bestRun = bestStreak;
       bestRepo = repo;
     }
   }
+  // Sort by lastActive descending — most recently touched repos first.
+  // Repos with no lastActive (shouldn't happen given how we built the
+  // map, but defensive) sort to the bottom.
+  repoStats.sort((a, b) => {
+    if (a.lastActive === b.lastActive) return 0;
+    if (!a.lastActive) return 1;
+    if (!b.lastActive) return -1;
+    return b.lastActive.localeCompare(a.lastActive);
+  });
 
   // Calendar — build a 365-day window ending today. Initialize with
   // empty days so the client always gets a complete grid (even days
@@ -168,6 +236,7 @@ export async function GET() {
     bestStreak: { length: bestRun, repo: bestRepo },
     totalDigests,
     activityDays,
+    repoStats,
   };
 
   return Response.json(payload);
