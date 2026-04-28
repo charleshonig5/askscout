@@ -4536,12 +4536,10 @@ a:hover {
   border-bottom: 1px solid var(--color-border);
 }
 
-/* Sort header — looks like text but is a clickable button. Each
-   column shows a stacked chevron pair (the standard data-grid
-   pattern): both visible at all times, the active half lights up
-   to indicate sort direction. Same shape in every state — no
-   icon shape-shifting between sorted / unsorted. White-space:
-   nowrap so labels like "Current streak" never wrap. */
+/* Sort header — looks like text but is a clickable button.
+   Active column shows a single chevron (up/down by direction);
+   inactive columns show just the label. Standard pattern across
+   GitHub, Stripe, and Linear. */
 .insights-repos-sort {
   display: inline-flex;
   align-items: center;
@@ -4560,15 +4558,15 @@ a:hover {
   transition: color 0.12s ease;
 }
 
-/* Plain non-sortable header — used by the Repo column. Same type
-   treatment as .insights-repos-sort but no button affordances
-   since clicking it does nothing. */
-.insights-repos-sort-static {
+.insights-repos-sort-label {
   white-space: nowrap;
 }
 
-.insights-repos-sort-label {
-  white-space: nowrap;
+/* Inactive columns render in secondary text color so the active
+   column reads as the sorted one at a glance. Hover lifts the
+   inactive ones to primary to telegraph clickability. */
+.insights-repos-sort {
+  color: var(--color-text-secondary);
 }
 
 .insights-repos-sort:hover {
@@ -4579,41 +4577,19 @@ a:hover {
   color: var(--color-text-primary);
 }
 
-/* Stacked chevron pair — tightly stacked so the two arrows read
-   as a single split-arrow indicator. The active half (current
-   sort direction) renders at full text-primary color; the
-   inactive half stays dim. Hover bumps the dim half slightly so
-   the column reads as live-clickable. */
+/* Single chevron — only rendered when the column is the active
+   sort. Matches GitHub / Stripe / Linear: one indicator, on the
+   active column only. */
 .insights-repos-sort-icon {
   display: inline-flex;
-  flex-direction: column;
   align-items: center;
   line-height: 0;
   margin-left: 2px;
+  color: var(--color-text-primary);
 }
 
 .insights-repos-sort-icon > svg {
   display: block;
-  color: var(--color-text-secondary);
-  opacity: 0.35;
-  transition:
-    opacity 0.12s ease,
-    color 0.12s ease;
-}
-
-/* Tighten the gap between the two chevrons so they read as one
-   indicator rather than two stacked arrows. */
-.insights-repos-sort-icon > svg:first-child {
-  margin-bottom: -3px;
-}
-
-.insights-repos-sort:hover .insights-repos-sort-icon > svg {
-  opacity: 0.6;
-}
-
-.insights-repos-sort-icon > svg.is-on {
-  color: var(--color-text-primary);
-  opacity: 1;
 }
 
 .insights-repos-row + .insights-repos-row {

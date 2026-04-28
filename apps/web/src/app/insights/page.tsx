@@ -208,37 +208,37 @@ function repoDisplayName(slug: string): string {
   return slash === -1 ? slug : slug.slice(slash + 1);
 }
 
-type SortKey = "digests" | "currentStreak" | "lastActive";
+type SortKey = "name" | "digests" | "currentStreak" | "lastActive";
 type SortDir = "asc" | "desc";
 
 /** Default sort direction for a given column when the user clicks it
- *  for the first time. All sortable columns default to descending
- *  ("highest / most recent first") since that's what users want when
- *  ranking. The Repo column isn't sortable — it's an identifier,
- *  not a metric. */
+ *  for the first time. Numeric/date columns default to descending
+ *  ("highest / most recent first"); the text Repo column defaults to
+ *  ascending (A→Z) — both are the expected first-click behavior in
+ *  every standard data table (GitHub, Stripe, Linear). */
 const DEFAULT_DIR: Record<SortKey, SortDir> = {
+  name: "asc",
   digests: "desc",
   currentStreak: "desc",
   lastActive: "desc",
 };
 
 function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
-  // sortKey === null means "no active sort" — table renders in the
-  // app default (lastActive desc) and no column header is
-  // highlighted. Three-state cycle: inactive → default direction →
-  // flipped → back to inactive (clear).
-  const [sortKey, setSortKey] = useState<SortKey | null>(null);
+  // The table is always sorted — no "cleared" state. Initial sort is
+  // lastActive desc (most recently touched repos first). Two-state
+  // cycle on click: same column flips direction, new column jumps to
+  // its default direction. Matches GitHub / Stripe / Linear behavior.
+  const [sortKey, setSortKey] = useState<SortKey>("lastActive");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
 
   const sorted = useMemo(() => {
     const list = [...repoStats];
-    // When no explicit sort is active, fall back to the page default
-    // so the table never renders in arbitrary order.
-    const effectiveKey: SortKey = sortKey ?? "lastActive";
-    const effectiveDir: SortDir = sortKey ? sortDir : "desc";
     list.sort((a, b) => {
       let cmp = 0;
-      switch (effectiveKey) {
+      switch (sortKey) {
+        case "name":
+          cmp = repoDisplayName(a.repo).localeCompare(repoDisplayName(b.repo));
+          break;
         case "digests":
           cmp = a.digests - b.digests;
           break;
@@ -252,28 +252,22 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
           else cmp = a.lastActive.localeCompare(b.lastActive);
           break;
       }
-      return effectiveDir === "asc" ? cmp : -cmp;
+      return sortDir === "asc" ? cmp : -cmp;
     });
     return list;
   }, [repoStats, sortKey, sortDir]);
 
-  /** Three-state cycle on click: inactive → default direction →
-   *  flipped → back to inactive. Standard data-grid behavior so
-   *  users can return to the page default by clicking the active
-   *  column a third time. */
+  /** Two-state cycle on click: clicking a different column jumps to
+   *  its default direction; clicking the active column flips
+   *  direction. There's no "clear" state — the table is always
+   *  sorted, which is the standard pattern. */
   const handleSort = (key: SortKey) => {
     if (key !== sortKey) {
       setSortKey(key);
       setSortDir(DEFAULT_DIR[key]);
       return;
     }
-    if (sortDir === DEFAULT_DIR[key]) {
-      // Same column, on default direction → flip.
-      setSortDir(sortDir === "asc" ? "desc" : "asc");
-    } else {
-      // Same column, on flipped direction → clear sort.
-      setSortKey(null);
-    }
+    setSortDir(sortDir === "asc" ? "desc" : "asc");
   };
 
   // Empty state: zero repos with activity yet. Render a single
@@ -290,14 +284,11 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
   }
 
   /** One header cell — click to sort, click again to flip direction.
-   *  Two stacked chevrons (standard data-grid pattern, à la Material
-   *  UI / AG Grid). Both visible at all times; the active half lights
-   *  up to indicate direction. Same shape in every state — no icon
-   *  shape-shifting between sorted and unsorted. */
+   *  Single chevron icon, only rendered for the active column (matches
+   *  GitHub / Stripe / Linear). Inactive columns show just the label,
+   *  so the table reads as "this is the sorted column" at a glance. */
   const SortHeader = ({ keyName, label }: { keyName: SortKey; label: string }) => {
     const isActive = sortKey === keyName;
-    const upActive = isActive && sortDir === "asc";
-    const downActive = isActive && sortDir === "desc";
     return (
       <button
         type="button"
@@ -307,18 +298,15 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
         aria-sort={isActive ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
       >
         <span className="insights-repos-sort-label">{label}</span>
-        <span className="insights-repos-sort-icon" aria-hidden>
-          <ChevronUp
-            size={10}
-            strokeWidth={2}
-            className={upActive ? "is-on" : ""}
-          />
-          <ChevronDown
-            size={10}
-            strokeWidth={2}
-            className={downActive ? "is-on" : ""}
-          />
-        </span>
+        {isActive && (
+          <span className="insights-repos-sort-icon" aria-hidden>
+            {sortDir === "asc" ? (
+              <ChevronUp size={12} strokeWidth={2} />
+            ) : (
+              <ChevronDown size={12} strokeWidth={2} />
+            )}
+          </span>
+        )}
       </button>
     );
   };
@@ -326,11 +314,11 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
   return (
     <div className="insights-repos">
       {/* Header row — desktop only. Hides on mobile (cards take over).
-          Repo column is a plain label (not sortable — it's an
-          identifier, not a metric). The three numeric/date columns
-          are click-to-sort with a three-state cycle. */}
+          All four columns are sortable (alphabetical for Repo,
+          numeric/date for the others). Two-state cycle: clicking the
+          active column flips direction, new column jumps to default. */}
       <div className="insights-repos-header" role="row">
-        <span className="insights-repos-sort-static">Repo</span>
+        <SortHeader keyName="name" label="Repo" />
         <SortHeader keyName="digests" label="Digests" />
         <SortHeader keyName="currentStreak" label="Streak" />
         <SortHeader keyName="lastActive" label="Last active" />
