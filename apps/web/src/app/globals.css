@@ -4345,18 +4345,19 @@ a:hover {
    activity days use --color-success solid. All tones are theme-
    aware — light/dark resolve via the same tokens.
 
-   Sized to fit the 527px section panel without horizontal scroll
-   on desktop. Math: panel inner = 527 - 24px (12px each side
-   padding) = 503px. Grid available = 503 - 22 (day labels) - 4
-   (body gap) = 477px. 53 columns × (8px cell + 1px gap) - 1px
-   final-gap = 476px → fits with 1px breathing room. The panel
-   keeps overflow-x: auto for very narrow viewports (mobile)
-   which still scrolls naturally. */
+   Sized to fit the 527px section panel with comfortable
+   breathing room on desktop. Math: panel inner = 527 - 2 (1px
+   border each side) - 24 (12px padding each side) = 501px. Grid
+   available = 501 - 22 (day labels) - 4 (body gap) = 475px. 53
+   columns × (7px cell + 1px gap) - 1px final = 423px. Leaves
+   ~52px of slack so subpixel rounding can't push us into a
+   scrollbar. Cells are smaller than GitHub's 11×11/3px default
+   but stay readable, and the panel keeps overflow-x: auto so
+   very narrow phone viewports still scroll instead of clipping. */
 
 .insights-calendar-panel {
-  /* Symmetric 12px horizontal padding to gain 2px back over the
-     default 13px each side. Vertical 13px matches the standard
-     panel padding. */
+  /* Symmetric 12px horizontal padding so the grid gets the most
+     room possible inside the 527px section. */
   padding: 13px 12px;
   overflow-x: auto;
 }
@@ -4374,8 +4375,8 @@ a:hover {
 
 .insights-calendar-months {
   display: grid;
-  /* 9px = 8px cell + 1px gap (matches the grid stride below). */
-  grid-template-columns: repeat(53, 9px);
+  /* 8px = 7px cell + 1px gap (matches the grid stride below). */
+  grid-template-columns: repeat(53, 8px);
   height: 12px;
   /* Offset by the day-labels column width + its right gap so month
      labels line up over the correct grid column. */
@@ -4404,7 +4405,7 @@ a:hover {
 }
 
 .insights-calendar-day-label {
-  height: 8px;
+  height: 7px;
   display: flex;
   align-items: center;
   font-family: var(--font-sans);
@@ -4426,8 +4427,8 @@ a:hover {
 }
 
 .insights-calendar-cell {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 2px;
   flex-shrink: 0;
   /* Default = empty (no activity). Tokens carry the theme. */
