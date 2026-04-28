@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CircleX } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, CircleX } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
 
 /**
@@ -425,9 +425,24 @@ export default function InsightsPage() {
                   </div>
                   {/* Repo line only renders once the user has at least
                       one streak; on a fresh account it stays out of
-                      the way. */}
+                      the way. Repo rendered as a clickable
+                      .digest-repo-chip pill — same primitive used in
+                      the dashboard header — so the chip links out to
+                      GitHub and follows the established pattern. */}
                   {data.bestStreak.repo && (
-                    <span className="insights-stat-detail">on {data.bestStreak.repo}</span>
+                    <span className="insights-stat-detail">
+                      on{" "}
+                      <a
+                        href={`https://github.com/${data.bestStreak.repo}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="digest-repo-chip"
+                        aria-label={`Open ${data.bestStreak.repo} on GitHub`}
+                      >
+                        {repoDisplayName(data.bestStreak.repo)}
+                        <ArrowUpRight size={10} strokeWidth={1} aria-hidden />
+                      </a>
+                    </span>
                   )}
                 </div>
                 <div className="insights-stat-cell">
