@@ -3715,19 +3715,6 @@ a:hover {
   border-color: var(--color-success);
 }
 
-.standup-section {
-  margin-bottom: var(--space-lg);
-}
-
-.standup-label {
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-text-tertiary);
-  margin-bottom: var(--space-sm);
-}
-
 /* ============================================
    Settings Page
    ============================================ */
