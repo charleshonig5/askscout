@@ -124,22 +124,23 @@ export function PlanModal({ isOpen, onClose, content }: PlanModalProps) {
     [storageKey],
   );
 
-  /** Build the copy payload from PARSED tasks (not raw LLM content) so:
-   *   - the user's check state lands as ☑ vs ☐ (Unicode glyphs that
-   *     render visually in every paste destination — Slack, email,
-   *     Notes, Discord, GitHub — without depending on markdown
-   *     checkbox support)
-   *   - reason text sits on its own indented line under the task,
-   *     instead of running together as one sentence
-   *   - tasks separate with blank lines for scannability
-   * The 2-space reason indent visually aligns under the task text
-   * (matches the width of `☐ `). */
+  /** Build the copy payload from PARSED tasks (not raw LLM content):
+   *   - Only OPEN tasks land in the paste. Completed items are
+   *     elided — the paste is meant to be "what I still need to do
+   *     today," not a status summary. State persists in the modal
+   *     UI, which is where the user actually marks things done.
+   *   - Reason text sits on its own indented line under the task,
+   *     instead of running together as one sentence.
+   *   - Tasks separate with blank lines for scannability.
+   *   - Plain `- ` bullet keeps the paste universally readable —
+   *     no Unicode glyph or markdown checkbox notation to render
+   *     inconsistently across Slack / email / Notes / Linear. */
   const handleCopy = useCallback(() => {
-    if (tasks.length === 0) return;
-    const text = tasks
+    const openTasks = tasks.filter((t) => !checked[t.id]);
+    if (openTasks.length === 0) return;
+    const text = openTasks
       .map((t) => {
-        const mark = checked[t.id] ? "☑" : "☐";
-        const head = `${mark} ${t.task}`;
+        const head = `- ${t.task}`;
         return t.reason ? `${head}\n  ${t.reason}` : head;
       })
       .join("\n\n");
@@ -222,6 +223,7 @@ export function PlanModal({ isOpen, onClose, content }: PlanModalProps) {
               type="button"
               className={`modal-copy-btn${copied ? " is-copied" : ""}`}
               onClick={handleCopy}
+              disabled={tasks.length > 0 && tasks.every((t) => checked[t.id])}
             >
               {copied ? (
                 <>

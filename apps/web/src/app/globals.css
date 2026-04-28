@@ -4473,8 +4473,13 @@ a:hover {
   transition: background 0.12s ease;
 }
 
-.modal-copy-btn:hover {
+.modal-copy-btn:hover:not(:disabled) {
   background: var(--color-bg-tertiary);
+}
+
+.modal-copy-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .modal-copy-btn.is-copied {
