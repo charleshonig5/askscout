@@ -43,49 +43,76 @@ function buildFullMarkdown(
 ): string {
   const isVisible = (key: string) => !visibleSections || visibleSections[key] !== false;
 
-  // 1. Take only the digest portion. parseSections strips ---STANDUP---,
-  //    ---PLAN---, ---AI_CONTEXT---, ---SUMMARY--- and everything after.
+  // 1. Strip private sections (---STANDUP---, ---PLAN---, etc).
   const digestOnly = parseSections(text).digest;
 
-  // 2. Split digest at Key Takeaways so we can move it to the end (it renders
-  //    LAST in the UI, after all computed sections).
-  const takeawayHeader = "\u{1F511} Key Takeaways";
-  let mainDigest = digestOnly;
-  let keyTakeaways = "";
-  const tIdx = digestOnly.indexOf(takeawayHeader);
-  if (tIdx !== -1) {
-    mainDigest = digestOnly.slice(0, tIdx).trimEnd();
-    keyTakeaways = digestOnly.slice(tIdx).trim();
-  }
+  // 2. Parse the narrative into structured sections so we can filter
+  //    out anything the user has toggled off in settings, then
+  //    reconstruct in the same order the UI renders. Without the
+  //    filter, hidden sections (e.g. "Shipped" off) would still
+  //    appear in the paste — UI hides, copy shows, mismatch.
+  //    Key Takeaways is pulled out so we can place it AFTER the
+  //    sidebar stats block to match the linearized read order
+  //    (narrative → sidebar stats → takeaway).
+  const parsedNarrative = parseStreamingSections(digestOnly);
+  const narrativeBlocks: string[] = [];
+  let keyTakeawaysBlock: string | null = null;
 
-  if (!stats) {
-    // No computed stats to append. Still put Key Takeaways at the end.
-    return keyTakeaways && isVisible("oneTakeaway")
-      ? `${mainDigest}\n\n${keyTakeaways}`
-      : mainDigest;
+  for (const sec of parsedNarrative) {
+    const settingsKey = sectionKeyMap[sec.key] ?? sec.key;
+    if (!isVisible(settingsKey)) continue;
+    const block = `${sec.emoji} ${sec.label}\n${sec.content}`;
+    if (sec.key === "takeaway") {
+      keyTakeawaysBlock = block;
+    } else if (sec.key === "stats") {
+      // Dead path — the LLM is instructed not to emit a stats
+      // narrative section; computed stats live in the sidebar.
+      continue;
+    } else {
+      narrativeBlocks.push(block);
+    }
   }
 
   const fmt = (n: number) => n.toLocaleString("en-US");
-  const blocks: string[] = [];
+  // Collect sub-section blocks under the umbrella in UI render order.
+  const subSections: string[] = [];
+  // Cards line — the umbrella's first content (no sub-section label,
+  // it sits directly under "📊 Statistics").
+  const cardsLine =
+    stats && isVisible("statistics") && stats.commits != null
+      ? `+${fmt(stats.linesAdded ?? 0)} lines · -${fmt(stats.linesRemoved ?? 0)} lines · ${fmt(stats.commits)} commits · ${fmt(stats.filesChanged ?? 0)} files`
+      : null;
 
-  if (isVisible("statistics") && stats.commits != null) {
-    blocks.push(
-      [
-        "\u{1F4CA} Statistics",
-        `+${fmt(stats.linesAdded ?? 0)} lines \u00b7 -${fmt(stats.linesRemoved ?? 0)} lines \u00b7 ${fmt(stats.commits)} commits \u00b7 ${fmt(stats.filesChanged ?? 0)} files`,
-      ].join("\n"),
-    );
-  }
-
-  if (isVisible("mostActiveFiles") && (stats.topFiles?.length ?? 0) > 0) {
+  // Sub-sections in UI render order: Most Active Files →
+  // Codebase Health → Coding Timeline → Pace Check. Plain-text
+  // labels (no emoji) match the UI's .stats-subsection-title.
+  if (stats && isVisible("mostActiveFiles") && (stats.topFiles?.length ?? 0) > 0) {
     const rows = stats.topFiles!.map(
       (f, i) =>
         `${i + 1}. ${f.file} (+${fmt(f.added ?? 0)} / -${fmt(f.removed ?? 0)}, ${f.commits} ${f.commits === 1 ? "commit" : "commits"})`,
     );
-    blocks.push(["\u{1F4C1} Most Active Files", ...rows].join("\n"));
+    subSections.push(["Most Active Files", ...rows].join("\n"));
   }
 
-  if (isVisible("whenYouCoded") && stats.timeline && stats.timeline.points.length > 0) {
+  if (
+    stats &&
+    isVisible("codebaseHealth") &&
+    stats.health?.growth?.level &&
+    stats.health.focus?.level &&
+    stats.health.churn?.level
+  ) {
+    const h = stats.health;
+    subSections.push(
+      [
+        "Codebase Health",
+        `Growth: ${h.growth.level} (+${fmt(h.growth.added)} / -${fmt(h.growth.removed)})`,
+        `Focus: ${h.focus.level} (${h.focus.filesPerCommit} files per commit)`,
+        `Churn: ${h.churn.level} (${h.churn.files} ${h.churn.files === 1 ? "file" : "files"} reworked)`,
+      ].join("\n"),
+    );
+  }
+
+  if (stats && isVisible("whenYouCoded") && stats.timeline && stats.timeline.points.length > 0) {
     const fmtT = (ms: number) =>
       new Date(ms)
         .toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })
@@ -96,38 +123,41 @@ function buildFullMarkdown(
       stats.timeline.startMs === stats.timeline.endMs
         ? fmtT(stats.timeline.startMs)
         : `${fmtT(stats.timeline.startMs)} to ${fmtT(stats.timeline.endMs)}`;
-    blocks.push(["\u{1F550} Coding Timeline", `${timeRange} \u00b7 ${commitsLabel}`].join("\n"));
+    subSections.push(["Coding Timeline", `${timeRange} · ${commitsLabel}`].join("\n"));
   }
 
-  if (isVisible("paceCheck") && stats.pace) {
-    blocks.push(
+  if (stats && isVisible("paceCheck") && stats.pace && typeof stats.pace.multiplier === "number") {
+    subSections.push(
       [
-        "\u26A1 Pace Check",
-        `${stats.pace.multiplier}x \u00b7 ${stats.pace.label}`,
-        `${stats.pace.todayCommits} commits today \u00b7 ${stats.pace.avgCommits}-commit average`,
+        "Pace Check",
+        `${stats.pace.multiplier}x · ${stats.pace.label}`,
+        `${stats.pace.todayCommits} commits today · ${stats.pace.avgCommits}-commit average`,
       ].join("\n"),
     );
   }
 
-  if (isVisible("codebaseHealth") && stats.health) {
-    const h = stats.health;
-    blocks.push(
-      [
-        "\u{1FA7A} Codebase Health",
-        `Growth: ${h.growth.level} (+${fmt(h.growth.added)} / -${fmt(h.growth.removed)})`,
-        `Focus: ${h.focus.level} (${h.focus.filesPerCommit} files per commit)`,
-        `Churn: ${h.churn.level} (${h.churn.files} ${h.churn.files === 1 ? "file" : "files"} reworked)`,
-      ].join("\n"),
-    );
+  // Build the umbrella block ("\u{1F4CA} Statistics" header + cards
+  // line + sub-sections) only when there's something to put in it.
+  let sidebarBlock = "";
+  if (cardsLine || subSections.length > 0) {
+    const parts: string[] = ["\u{1F4CA} Statistics"];
+    if (cardsLine) parts.push(cardsLine);
+    if (subSections.length > 0) {
+      // Blank line between umbrella content and the first sub-
+      // section; sub-sections themselves separated by blank lines.
+      parts.push("", subSections.join("\n\n"));
+    }
+    sidebarBlock = parts.join("\n");
   }
 
-  // 3. Final assembly. Main digest first, computed blocks in render order,
-  //    Key Takeaways last to match the UI.
-  const parts: string[] = [mainDigest];
-  if (blocks.length > 0) parts.push(blocks.join("\n\n"));
-  if (keyTakeaways && isVisible("oneTakeaway")) parts.push(keyTakeaways);
+  // Final paste payload in linearized UI order:
+  //   narrative (filtered) → sidebar stats → key takeaways
+  const allBlocks: string[] = [];
+  if (narrativeBlocks.length > 0) allBlocks.push(narrativeBlocks.join("\n\n"));
+  if (sidebarBlock) allBlocks.push(sidebarBlock);
+  if (keyTakeawaysBlock) allBlocks.push(keyTakeawaysBlock);
 
-  return parts.join("\n\n").trim();
+  return allBlocks.join("\n\n").trim();
 }
 
 function DownloadBtn({
