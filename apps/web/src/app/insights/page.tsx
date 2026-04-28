@@ -223,17 +223,23 @@ const DEFAULT_DIR: Record<SortKey, SortDir> = {
 };
 
 function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
-  const [sortKey, setSortKey] = useState<SortKey>("lastActive");
+  // sortKey === null means "no active sort" — table renders in the
+  // app default (lastActive desc) and no column header is
+  // highlighted. Three-state cycle: inactive → default direction →
+  // flipped → back to inactive (clear).
+  const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("desc");
 
   const sorted = useMemo(() => {
     const list = [...repoStats];
+    // When no explicit sort is active, fall back to the page default
+    // so the table never renders in arbitrary order.
+    const effectiveKey: SortKey = sortKey ?? "lastActive";
+    const effectiveDir: SortDir = sortKey ? sortDir : "desc";
     list.sort((a, b) => {
       let cmp = 0;
-      switch (sortKey) {
+      switch (effectiveKey) {
         case "name":
-          // localeCompare on full slug so users see consistent A-Z
-          // ordering across owners. Keep it case-insensitive too.
           cmp = a.repo.localeCompare(b.repo, undefined, { sensitivity: "base" });
           break;
         case "digests":
@@ -243,26 +249,33 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
           cmp = a.currentStreak - b.currentStreak;
           break;
         case "lastActive":
-          // Null lastActive sorts to the bottom regardless of dir.
           if (a.lastActive === b.lastActive) cmp = 0;
           else if (!a.lastActive) cmp = 1;
           else if (!b.lastActive) cmp = -1;
           else cmp = a.lastActive.localeCompare(b.lastActive);
           break;
       }
-      return sortDir === "asc" ? cmp : -cmp;
+      return effectiveDir === "asc" ? cmp : -cmp;
     });
     return list;
   }, [repoStats, sortKey, sortDir]);
 
+  /** Three-state cycle on click: inactive → default direction →
+   *  flipped → back to inactive. Standard data-grid behavior so
+   *  users can return to the page default by clicking the active
+   *  column a third time. */
   const handleSort = (key: SortKey) => {
-    if (key === sortKey) {
-      // Same column → flip direction.
-      setSortDir(sortDir === "asc" ? "desc" : "asc");
-    } else {
-      // New column → reset to that column's natural default.
+    if (key !== sortKey) {
       setSortKey(key);
       setSortDir(DEFAULT_DIR[key]);
+      return;
+    }
+    if (sortDir === DEFAULT_DIR[key]) {
+      // Same column, on default direction → flip.
+      setSortDir(sortDir === "asc" ? "desc" : "asc");
+    } else {
+      // Same column, on flipped direction → clear sort.
+      setSortKey(null);
     }
   };
 
