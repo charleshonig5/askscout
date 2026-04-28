@@ -4345,15 +4345,18 @@ a:hover {
    activity days use --color-success solid. All tones are theme-
    aware — light/dark resolve via the same tokens.
 
-   Cell footprint is intentionally small (10×10 with 2px gaps) so
-   the full year fits inside the 527px section panel without
-   horizontal scroll on desktop. The panel does have overflow-x:
-   auto so narrow viewports can swipe through the grid. */
+   Sized to fit the 527px section panel without horizontal scroll
+   on desktop. Math: panel inner = 527 - 24px (12px each side
+   padding) = 503px. Grid available = 503 - 22 (day labels) - 4
+   (body gap) = 477px. 53 columns × (8px cell + 1px gap) - 1px
+   final-gap = 476px → fits with 1px breathing room. The panel
+   keeps overflow-x: auto for very narrow viewports (mobile)
+   which still scrolls naturally. */
 
 .insights-calendar-panel {
-  /* Override .settings-panel padding here so we can let the grid
-     reach close to the panel edges and scroll cleanly. The 13px
-     vertical breathing room matches the standard panel padding. */
+  /* Symmetric 12px horizontal padding to gain 2px back over the
+     default 13px each side. Vertical 13px matches the standard
+     panel padding. */
   padding: 13px 12px;
   overflow-x: auto;
 }
@@ -4363,17 +4366,20 @@ a:hover {
   flex-direction: column;
   gap: 4px;
   /* Min-width forces horizontal scroll if the grid itself is wider
-     than the panel — prevents the cells from squeezing. */
+     than the panel — prevents the cells from squeezing on narrow
+     screens. At desktop section width the grid fits cleanly so no
+     scroll fires. */
   min-width: max-content;
 }
 
 .insights-calendar-months {
   display: grid;
-  grid-template-columns: repeat(53, 12px);
+  /* 9px = 8px cell + 1px gap (matches the grid stride below). */
+  grid-template-columns: repeat(53, 9px);
   height: 12px;
   /* Offset by the day-labels column width + its right gap so month
      labels line up over the correct grid column. */
-  margin-left: 28px;
+  margin-left: 26px;
 }
 
 .insights-calendar-month {
@@ -4393,12 +4399,12 @@ a:hover {
 .insights-calendar-day-labels {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  width: 24px;
+  gap: 1px;
+  width: 22px;
 }
 
 .insights-calendar-day-label {
-  height: 10px;
+  height: 8px;
   display: flex;
   align-items: center;
   font-family: var(--font-sans);
@@ -4410,18 +4416,18 @@ a:hover {
 
 .insights-calendar-grid {
   display: flex;
-  gap: 2px;
+  gap: 1px;
 }
 
 .insights-calendar-week {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .insights-calendar-cell {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 2px;
   flex-shrink: 0;
   /* Default = empty (no activity). Tokens carry the theme. */
