@@ -98,7 +98,6 @@ export function Sidebar({
               <span className="sidebar-brand-name">AskScout</span>
             </div>
             <div className="sidebar-top-actions">
-              <ThemeToggle />
               <button
                 className="header-icon-btn"
                 onClick={() => router.push("/insights")}
@@ -278,16 +277,24 @@ export function Sidebar({
                 <span className="sidebar-profile-provider">GitHub</span>
               </div>
             </div>
-            <button
-              type="button"
-              className="sidebar-signout-btn"
-              onClick={() => setSignOutOpen((v) => !v)}
-              aria-label="Sign out"
-              aria-haspopup="dialog"
-              aria-expanded={signOutOpen}
-            >
-              <LogOut size={20} strokeWidth={1} />
-            </button>
+            {/* Bottom icon cluster: ThemeToggle + Sign out, mirrors
+                the top cluster's two-icon layout (Insights + Settings).
+                Same 14px gap between icons. Sign out sits at the
+                rightmost edge — destructive action at the boundary,
+                matching how Settings anchors the top cluster. */}
+            <div className="sidebar-profile-actions">
+              <ThemeToggle />
+              <button
+                type="button"
+                className="sidebar-signout-btn"
+                onClick={() => setSignOutOpen((v) => !v)}
+                aria-label="Sign out"
+                aria-haspopup="dialog"
+                aria-expanded={signOutOpen}
+              >
+                <LogOut size={20} strokeWidth={1} />
+              </button>
+            </div>
           </div>
         </div>
       </aside>

@@ -2184,11 +2184,27 @@ a:hover {
 
 /* Override the generic header-icon-btn sizing for the sidebar's 20×20
    inline-icon look. No background box — just the icon. */
-.sidebar-top-actions .header-icon-btn {
+.sidebar-top-actions .header-icon-btn,
+.sidebar-profile-actions .header-icon-btn {
   width: 20px;
   height: 20px;
   border-radius: 0;
   color: var(--color-text-primary);
+}
+
+.sidebar-top-actions .header-icon-btn:hover,
+.sidebar-profile-actions .header-icon-btn:hover {
+  background: transparent;
+  opacity: 0.7;
+}
+
+/* Bottom-row icon cluster — mirrors .sidebar-top-actions for the
+   sign-out + theme toggle pair. Same 14px gap so the visual
+   weight balances top vs. bottom. */
+.sidebar-profile-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
 .sidebar-top-actions .header-icon-btn:hover {
