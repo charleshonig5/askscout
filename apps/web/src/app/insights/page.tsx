@@ -208,15 +208,15 @@ function repoDisplayName(slug: string): string {
   return slash === -1 ? slug : slug.slice(slash + 1);
 }
 
-type SortKey = "name" | "digests" | "currentStreak" | "lastActive";
+type SortKey = "digests" | "currentStreak" | "lastActive";
 type SortDir = "asc" | "desc";
 
 /** Default sort direction for a given column when the user clicks it
- *  for the first time. Name is alphabetical (A→Z); numeric/date
- *  columns default to "highest first" since that's what users want
- *  when ranking. */
+ *  for the first time. All sortable columns default to descending
+ *  ("highest / most recent first") since that's what users want when
+ *  ranking. The Repo column isn't sortable — it's an identifier,
+ *  not a metric. */
 const DEFAULT_DIR: Record<SortKey, SortDir> = {
-  name: "asc",
   digests: "desc",
   currentStreak: "desc",
   lastActive: "desc",
@@ -239,9 +239,6 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
     list.sort((a, b) => {
       let cmp = 0;
       switch (effectiveKey) {
-        case "name":
-          cmp = a.repo.localeCompare(b.repo, undefined, { sensitivity: "base" });
-          break;
         case "digests":
           cmp = a.digests - b.digests;
           break;
@@ -329,10 +326,11 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
   return (
     <div className="insights-repos">
       {/* Header row — desktop only. Hides on mobile (cards take over).
-          Each header is a button that sorts the table by that column;
-          clicking the active column flips direction. */}
+          Repo column is a plain label (not sortable — it's an
+          identifier, not a metric). The three numeric/date columns
+          are click-to-sort with a three-state cycle. */}
       <div className="insights-repos-header" role="row">
-        <SortHeader keyName="name" label="Repo" />
+        <span className="insights-repos-sort-static">Repo</span>
         <SortHeader keyName="digests" label="Digests" />
         <SortHeader keyName="currentStreak" label="Current streak" />
         <SortHeader keyName="lastActive" label="Last active" />
