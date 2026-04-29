@@ -200,7 +200,7 @@ export async function scan(options: ScanOptions): Promise<void> {
       }
     } else {
       console.log(formatDigest(result.digest, formatOpts));
-      console.log(formatCodebaseHealth(commits));
+      console.log(formatCodebaseHealth(commits, diffs));
       const timeline = formatCodingTimeline(commits);
       if (timeline) console.log(`\n${timeline}`);
       // Pace Check uses prior runs from .askscout/state.json. The

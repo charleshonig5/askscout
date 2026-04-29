@@ -94,9 +94,7 @@ export async function runSetup(): Promise<void> {
 
 /** Inline setup — called during first run when no key exists. Returns config or null. */
 export async function inlineSetup(): Promise<CliConfig | null> {
-  console.error(
-    "\ud83d\udc15 Hey! Scout here. Your daily digest for what's happening in your repo.\n",
-  );
+  console.error("Hey! Scout here. Your daily digest for what's happening in your repo.\n");
   console.error("   I need an API key to get started. Pick a provider:\n");
   console.error("   1. Anthropic, get a key at console.anthropic.com");
   console.error("   2. OpenAI,    get a key at platform.openai.com\n");

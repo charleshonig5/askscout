@@ -18,17 +18,12 @@ function isRichOutput(): boolean {
   return true;
 }
 
-/** Terminal column width. 80 is the safe legacy default; modern
- *  terminals report 100+. Used to decide whether to render
- *  decorative bars in the Most Active Files block. */
-function getTerminalWidth(): number {
-  if (typeof process === "undefined") return 80;
-  return process.stdout?.columns ?? 80;
-}
-
-/** Plain-text fallbacks for emoji section headers. Bracketed labels
- *  read clearly when output is piped to a file or CI log — easier to
- *  grep than emoji glyphs and never breaks in a non-unicode terminal. */
+/** Plain-text fallbacks for the LLM-narrative section headers. These
+ *  fire when stdout isn't a TTY or NO_COLOR is set — bracketed
+ *  labels read clearly in pipes/CI logs. Sub-section headers
+ *  (Coding Timeline, Pace Check, Most Active Files, Codebase
+ *  Health) intentionally use plain prose without brackets in both
+ *  modes, matching the web's stats-subsection convention. */
 const PLAIN_HEADERS = {
   vibe: "[Vibe Check]",
   shipped: "[Shipped]",
@@ -36,8 +31,6 @@ const PLAIN_HEADERS = {
   unstable: "[Still Shifting]",
   leftOff: "[Left Off]",
   takeaways: "[Key Takeaways]",
-  timeline: "[Coding Timeline]",
-  pace: "[Pace Check]",
 };
 
 export interface FormatOptions {
@@ -72,11 +65,12 @@ export function formatDigest(digest: Digest, options: FormatOptions): string {
     sections.push(`${header}\n${digest.vibeCheck}`);
   }
 
-  // Stats inline
+  // Stats inline. Mirrors the web's copy-markdown exactly: always
+  // shows the -lines half even when zero (DigestView.tsx:83). Keeps
+  // the +/- pair symmetric so users always see both halves of the
+  // line-change count.
   sections.push(
-    `   +${fmt(s.linesAdded)} lines${
-      s.linesRemoved > 0 ? `${sep}-${fmt(s.linesRemoved)} lines` : ""
-    }${sep}${fmt(s.commits)} commits${sep}${fmt(s.filesChanged)} files`,
+    `   +${fmt(s.linesAdded)} lines${sep}-${fmt(s.linesRemoved)} lines${sep}${fmt(s.commits)} commits${sep}${fmt(s.filesChanged)} files`,
   );
 
   // Shipped
@@ -120,9 +114,14 @@ export function formatDigest(digest: Digest, options: FormatOptions): string {
   return sections.join("\n\n") + "\n";
 }
 
-/** Format codebase health for the terminal */
+/** Format codebase health for the terminal. Optional `diffs`
+ *  parameter unlocks per-file +/- line stats in the Most Active
+ *  Files block (matching the web's copy-markdown format). When
+ *  diffs aren't supplied we fall back to a count-only listing
+ *  (older callers continue to work). */
 export function formatCodebaseHealth(
   commits: { filesChanged: string[]; additions: number; deletions: number }[],
+  diffs?: { file: string; additions: number; deletions: number }[],
 ): string {
   // Compute metrics
   const fileFrequency = new Map<string, number>();
@@ -148,22 +147,25 @@ export function formatCodebaseHealth(
 
   const sections: string[] = [];
 
-  // Top files section. Bar rendering is gated on rich output AND
-  // terminal width \u2014 narrow terminals (<60 cols) and non-TTY pipes
-  // get a clean count-only fallback that won't wrap or break
-  // grep/jq pipelines downstream.
+  // Top files block \u2014 rendered as a numbered list with per-file
+  // additions/deletions and commit count, matching the web copy
+  // markdown exactly (DigestView.tsx:92):
+  //   "1. path/to/file (+47 / -12, 3 commits)"
+  // Drops the previous bar visualization \u2014 web doesn't show bars
+  // here, so keeping them caused visual drift between surfaces.
+  // When `diffs` aren't supplied (older callers), per-file +/-
+  // collapses to zero gracefully rather than throwing.
   if (topFiles.length > 0) {
-    const maxCount = topFiles[0]![1];
-    const useBars = isRichOutput() && getTerminalWidth() >= 60;
+    const diffByFile = new Map<string, { additions: number; deletions: number }>(
+      (diffs ?? []).map((d) => [d.file, { additions: d.additions, deletions: d.deletions }]),
+    );
     const fileLines = topFiles
-      .map(([file, count]) => {
-        const name = file.split("/").pop() ?? file;
-        if (useBars) {
-          const barLen = Math.round((count / maxCount) * 10);
-          const bar = "\u2588".repeat(barLen) + "\u2591".repeat(10 - barLen);
-          return `  ${name.padEnd(24)} ${bar} ${count} commits`;
-        }
-        return `  ${name} (${count} commits)`;
+      .map(([file, count], i) => {
+        const d = diffByFile.get(file);
+        const added = d?.additions ?? 0;
+        const removed = d?.deletions ?? 0;
+        const commitLabel = count === 1 ? "commit" : "commits";
+        return `${i + 1}. ${file} (+${fmt(added)} / -${fmt(removed)}, ${count} ${commitLabel})`;
       })
       .join("\n");
     sections.push(`Most Active Files\n${fileLines}`);
@@ -214,18 +216,23 @@ export function formatCodebaseHealth(
   return sections.join("\n\n");
 }
 
-/** Format a Coding Timeline section from commit timestamps. Renders
- *  as a session breakdown — consecutive commits with no gap >30 min
- *  cluster into one session, surfacing the *structure* of the day
- *  rather than a bar histogram (which is the right format on web but
- *  reads as line noise in a terminal).
+/** Format a Coding Timeline section from commit timestamps.
+ *  Mirrors the web's copy-markdown exactly (DigestView.tsx:115–126):
+ *  one summary line spanning the first to last commit of the
+ *  timeline, with lowercase 12-hour times and a "·" separator
+ *  between range and count:
  *
- *  Same data source as the web's bar chart — both ultimately mirror
- *  the user's commit timestamps — but the CLI presentation is plain
- *  English ranges + counts so it reads cleanly in a pipe or log.
+ *    Coding Timeline
+ *    9:14 am to 4:30 pm · 12 commits
  *
- *  Returns "" for empty commit lists so callers can safely skip the
- *  section without checking length themselves. */
+ *  Single-point days (one commit, or all commits at the same
+ *  minute) collapse the range to a single time:
+ *
+ *    Coding Timeline
+ *    3:30 pm · 1 commit
+ *
+ *  Returns "" for empty commit lists so callers can safely skip
+ *  the section without checking length themselves. */
 export function formatCodingTimeline(commits: { timestamp: Date | string }[]): string {
   if (commits.length === 0) return "";
 
@@ -239,39 +246,24 @@ export function formatCodingTimeline(commits: { timestamp: Date | string }[]): s
 
   if (sorted.length === 0) return "";
 
-  // Cluster into sessions. A 30-minute idle gap closes the current
-  // session and opens a new one — the same threshold most coding-
-  // tracker tools use ("focused work block" boundary).
-  const SESSION_GAP_MS = 30 * 60 * 1000;
-  const sessions: Array<{ start: Date; end: Date; count: number }> = [];
-  let cur: { start: Date; end: Date; count: number } | null = null;
-  for (const t of sorted) {
-    if (!cur || t.getTime() - cur.end.getTime() > SESSION_GAP_MS) {
-      if (cur) sessions.push(cur);
-      cur = { start: t, end: t, count: 1 };
-    } else {
-      cur.end = t;
-      cur.count += 1;
-    }
-  }
-  if (cur) sessions.push(cur);
-
+  // Lowercase to match the web's .toLowerCase() at DigestView.tsx:119.
   const fmtTime = (d: Date) =>
-    d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+    d
+      .toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })
+      .toLowerCase();
 
-  const rich = isRichOutput();
-  const dash = rich ? "–" : "-";
-  const lines = sessions.map((s) => {
-    const range =
-      s.start.getTime() === s.end.getTime()
-        ? fmtTime(s.start)
-        : `${fmtTime(s.start)} ${dash} ${fmtTime(s.end)}`;
-    const label = s.count === 1 ? "commit" : "commits";
-    return `  ${range} (${s.count} ${label})`;
-  });
+  const start = sorted[0]!;
+  const end = sorted[sorted.length - 1]!;
+  const range =
+    start.getTime() === end.getTime() ? fmtTime(start) : `${fmtTime(start)} to ${fmtTime(end)}`;
+  const count = sorted.length;
+  const commitLabel = count === 1 ? "commit" : "commits";
+  const sep = isRichOutput() ? " · " : " | ";
 
-  const header = rich ? "🕐 Coding Timeline" : PLAIN_HEADERS.timeline;
-  return `${header}\n${lines.join("\n")}`;
+  // Plain "Coding Timeline" header with no emoji prefix — matches
+  // the web subsection title which uses .stats-subsection-title
+  // (no emoji) per DigestView.tsx:88.
+  return `Coding Timeline\n${range}${sep}${count} ${commitLabel}`;
 }
 
 /** Pick the editorial label for a pace multiplier. Bands and copy
@@ -290,8 +282,12 @@ function paceLabel(multiplier: number): string {
 }
 
 /** Format a Pace Check section from today's commit count + recent
- *  digest history. Mirrors the web's pace block (multiplier + label
- *  + "today vs avg" stats row) but rendered in plain text.
+ *  digest history. Mirrors the web's copy-markdown exactly
+ *  (DigestView.tsx:129–135) — two lines under a plain header:
+ *
+ *    Pace Check
+ *    1.7x · {label}
+ *    12 commits today · 7-commit avg
  *
  *  Pre-conditions for any output:
  *    - At least 3 prior digest runs in `history` (matches the web
@@ -318,21 +314,15 @@ export function formatPaceCheck(opts: {
   const multiplier = Math.round((todayCommits / avgCommits) * 10) / 10;
   const roundedAvg = Math.round(avgCommits);
   const label = paceLabel(multiplier);
+  const sep = isRichOutput() ? " · " : " | ";
 
-  const rich = isRichOutput();
-  const sep = rich ? " · " : " | ";
-  const header = rich ? "⚡ Pace Check" : PLAIN_HEADERS.pace;
-
-  // Layout mirrors the web hero card: multiplier + "your normal
-  // pace" anchor on one line, editorial message beneath, raw
-  // numbers on the third line. Same information, same reading
-  // order, format-appropriate density.
-  const lines = [
-    `  ${multiplier.toFixed(1)}x your normal pace`,
-    `  ${label}`,
-    `  ${todayCommits} commits today${sep}${roundedAvg} commit avg`,
-  ];
-  return `${header}\n${lines.join("\n")}`;
+  // Plain "Pace Check" header with no emoji prefix to match the
+  // web sub-section convention (DigestView.tsx:132).
+  return [
+    "Pace Check",
+    `${multiplier}x${sep}${label}`,
+    `${todayCommits} commits today${sep}${roundedAvg}-commit avg`,
+  ].join("\n");
 }
 
 /** Format a resume prompt from digest data */
