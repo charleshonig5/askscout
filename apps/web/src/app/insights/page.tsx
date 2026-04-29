@@ -455,6 +455,78 @@ function ActivityCalendar({ days }: { days: ActivityDay[] }) {
   );
 }
 
+/* ===========================================================
+   Loading-state skeletons
+   ===========================================================
+   The /api/insights fetch can take a beat (Supabase round-trip
+   for digests + check-ins, plus the personality compute). Showing
+   the section headers immediately with shimmering placeholder
+   bodies — instead of an empty page — mirrors the digest
+   pre-generation pattern (see PreGeneration.tsx). Each skeleton
+   matches the SHAPE of its real section so the layout doesn't
+   jump on swap.
+
+   Visual primitives reuse the same CSS variables and animation
+   keyframes as the digest skeletons (`.pregen-shimmer`,
+   `.pregen-line-breathe`) — see globals.css `.insights-skel-*`. */
+
+function SnapshotSkeleton() {
+  return (
+    <div className="insights-snapshot">
+      {[0, 1].map((i) => (
+        <div key={i} className="settings-panel insights-stat-cell insights-skel-stat-cell">
+          <div className="insights-skel" style={{ height: 12, width: "55%" }} />
+          <div className="insights-skel" style={{ height: 22, width: "70%" }} />
+          <div className="insights-skel" style={{ height: 12, width: "65%" }} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function PersonalitySkeleton() {
+  return (
+    <div className="settings-panel insights-personality">
+      <div
+        className="insights-skel"
+        style={{ width: 40, height: 40, borderRadius: "50%", marginBottom: 4 }}
+        aria-hidden
+      />
+      <div className="insights-skel" style={{ height: 22, width: 180 }} />
+      <div className="insights-skel" style={{ height: 12, width: 280, marginTop: 4 }} />
+      <div className="insights-skel" style={{ height: 12, width: 220 }} />
+    </div>
+  );
+}
+
+function ReposSkeleton() {
+  // 4 placeholder rows. Column widths match the real .insights-repos
+  // grid (Repo wider, three numeric columns equal) so the swap to real
+  // content doesn't reflow.
+  return (
+    <div className="settings-panel insights-repos-panel">
+      <div className="insights-skel-table">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="insights-skel-row">
+            <div className="insights-skel" style={{ height: 14 }} />
+            <div className="insights-skel" style={{ height: 14 }} />
+            <div className="insights-skel" style={{ height: 14 }} />
+            <div className="insights-skel" style={{ height: 14 }} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ActivitySkeleton() {
+  return (
+    <div className="settings-panel insights-calendar-panel">
+      <div className="insights-skel insights-skel--calendar" aria-hidden />
+    </div>
+  );
+}
+
 export default function InsightsPage() {
   const router = useRouter();
   const [data, setData] = useState<InsightsData>(EMPTY_DATA);
@@ -509,19 +581,20 @@ export default function InsightsPage() {
         <div className="settings-content">
           {/* SNAPSHOT — two top-tier stats per the plan: best streak
               (with the repo it was achieved on) and total digests.
-              Section is gated on `loaded` so users with real data
-              don't see a brief flash of zeros before their numbers
-              come in. Once loaded, zeros are themselves the valid
-              empty state for fresh accounts. */}
-          {loaded && (
-            <section className="settings-section">
-              <header className="settings-section-head">
-                <div className="settings-section-title">
-                  <Emoji name="snapshot" size={20} />
-                  <h2>Snapshot</h2>
-                </div>
-                <p className="settings-section-desc">A quick look at your time with Scout.</p>
-              </header>
+              During the /api/insights fetch we render shimmer
+              placeholders that match the section's shape so the
+              layout doesn't reflow when real data arrives. Zeros
+              themselves are the valid empty state for fresh
+              accounts (no skeleton needed once loaded). */}
+          <section className="settings-section">
+            <header className="settings-section-head">
+              <div className="settings-section-title">
+                <Emoji name="snapshot" size={20} />
+                <h2>Snapshot</h2>
+              </div>
+              <p className="settings-section-desc">A quick look at your time with Scout.</p>
+            </header>
+            {loaded ? (
               <div className="insights-snapshot">
                 <div className="settings-panel insights-stat-cell">
                   <span className="insights-stat-label">Best streak</span>
@@ -561,20 +634,17 @@ export default function InsightsPage() {
                   </div>
                 </div>
               </div>
-            </section>
-          )}
+            ) : (
+              <SnapshotSkeleton />
+            )}
+          </section>
 
-          {/* ACTIVITY CALENDAR — rolling 365-day grid, GitHub-style.
-              Aggregated across all repos. Empty cells = no activity;
-              tinted = quiet-day check-in only; full-color = at least
-              one digest that day. Hover any cell for date + count +
-              repos. Renders even on fresh accounts (full empty grid)
-              so users see what they're working toward. */}
           {/* ENGAGEMENT PERSONALITY — live-computed primary archetype.
-              Block hides entirely on accounts with zero digests
-              (state === "hidden") so the rest of the page still
-              loads but this card waits for data. */}
-          {loaded && data.personality.state !== "hidden" && (
+              During loading we always render the skeleton (we don't
+              yet know the state); after loading, accounts whose
+              personality.state === "hidden" drop the section + its
+              divider entirely. */}
+          {(!loaded || data.personality.state !== "hidden") && (
             <>
               <hr className="settings-divider" />
               <section className="settings-section">
@@ -587,19 +657,23 @@ export default function InsightsPage() {
                     How you show up on Scout, recomputed every visit.
                   </p>
                 </header>
-                <div
-                  className={`settings-panel insights-personality${
-                    data.personality.state === "dormant" ? " is-dormant" : ""
-                  }`}
-                >
-                  <div className="insights-personality-emoji" aria-hidden>
-                    {data.personality.emoji}
+                {loaded ? (
+                  <div
+                    className={`settings-panel insights-personality${
+                      data.personality.state === "dormant" ? " is-dormant" : ""
+                    }`}
+                  >
+                    <div className="insights-personality-emoji" aria-hidden>
+                      {data.personality.emoji}
+                    </div>
+                    <h3 className="insights-personality-name">{data.personality.archetype}</h3>
+                    <p className="insights-personality-subheader">
+                      {data.personality.subheader}
+                    </p>
                   </div>
-                  <h3 className="insights-personality-name">{data.personality.archetype}</h3>
-                  <p className="insights-personality-subheader">
-                    {data.personality.subheader}
-                  </p>
-                </div>
+                ) : (
+                  <PersonalitySkeleton />
+                )}
               </section>
             </>
           )}
@@ -610,45 +684,45 @@ export default function InsightsPage() {
               surface first. Empty repo lists render an in-panel
               placeholder so the section still reads on day-1
               accounts. */}
-          {loaded && (
-            <>
-              <hr className="settings-divider" />
-              <section className="settings-section">
-                <header className="settings-section-head">
-                  <div className="settings-section-title">
-                    <Emoji name="perRepo" size={20} />
-                    <h2>Repos</h2>
-                  </div>
-                  <p className="settings-section-desc">
-                    Every repo Scout has tracked, with its activity at a glance.
-                  </p>
-                </header>
-                <div className="settings-panel insights-repos-panel">
-                  <ReposBreakdown repoStats={data.repoStats} />
-                </div>
-              </section>
-            </>
-          )}
+          <hr className="settings-divider" />
+          <section className="settings-section">
+            <header className="settings-section-head">
+              <div className="settings-section-title">
+                <Emoji name="perRepo" size={20} />
+                <h2>Repos</h2>
+              </div>
+              <p className="settings-section-desc">
+                Every repo Scout has tracked, with its activity at a glance.
+              </p>
+            </header>
+            {loaded ? (
+              <div className="settings-panel insights-repos-panel">
+                <ReposBreakdown repoStats={data.repoStats} />
+              </div>
+            ) : (
+              <ReposSkeleton />
+            )}
+          </section>
 
           {/* ACTIVITY CALENDAR — rolling 365-day grid, GitHub-style.
               Lives at the bottom as the deep-detail view. */}
-          {loaded && (
-            <>
-              <hr className="settings-divider" />
-              <section className="settings-section">
-                <header className="settings-section-head">
-                  <div className="settings-section-title">
-                    <Emoji name="calendar" size={20} />
-                    <h2>Activity</h2>
-                  </div>
-                  <p className="settings-section-desc">Your last 365 days with Scout.</p>
-                </header>
-                <div className="settings-panel insights-calendar-panel">
-                  <ActivityCalendar days={data.activityDays} />
-                </div>
-              </section>
-            </>
-          )}
+          <hr className="settings-divider" />
+          <section className="settings-section">
+            <header className="settings-section-head">
+              <div className="settings-section-title">
+                <Emoji name="calendar" size={20} />
+                <h2>Activity</h2>
+              </div>
+              <p className="settings-section-desc">Your last 365 days with Scout.</p>
+            </header>
+            {loaded ? (
+              <div className="settings-panel insights-calendar-panel">
+                <ActivityCalendar days={data.activityDays} />
+              </div>
+            ) : (
+              <ActivitySkeleton />
+            )}
+          </section>
         </div>
       </div>
     </div>

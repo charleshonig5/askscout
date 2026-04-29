@@ -3359,6 +3359,76 @@ a:hover {
   animation-delay: 0s, 3s;
 }
 
+/* --- Insights skeletons -----------------------------------------
+   Loading-state placeholders for /insights. Same shimmer + breathe
+   motion as the digest skeletons so the two surfaces feel like
+   one product. Heights/widths are passed inline at the call site
+   so each placeholder can match the SHAPE of its real section.
+   Theme-aware via the same --color-skeleton-base / --shimmer
+   tokens used by .pregen-skeleton-line. */
+.insights-skel {
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--color-skeleton-base) 0%,
+    var(--color-skeleton-shimmer) 50%,
+    var(--color-skeleton-base) 100%
+  );
+  background-size: 200% 100%;
+  transform-origin: left center;
+  animation:
+    pregen-shimmer 1.8s linear infinite,
+    pregen-line-breathe 4.5s ease-in-out infinite;
+}
+
+/* Snapshot stat-cell skeleton needs an explicit min-height because
+   the real cell sizes itself by its 24px Pridi value; without this
+   the skeleton (just shimmer lines) collapses shorter than the
+   real cell and the layout pops 12-ish px taller on swap. */
+.insights-skel-stat-cell {
+  min-height: 102px;
+}
+
+/* Repos skeleton: 4 placeholder rows in a grid that mirrors the
+   real .insights-repos-row column proportions (Repo wider, three
+   numeric columns equal). 14px gap between rows, 18px horizontal
+   padding matches the panel's content rhythm. */
+.insights-skel-table {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+}
+
+.insights-skel-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 18px;
+  align-items: center;
+}
+
+/* Stagger the breathe (second animation) on consecutive rows so
+   the wave reads as a gentle vertical pulse, matching the digest
+   .pregen-skeleton-line stagger pattern. Shimmer (first
+   animation) stays synchronized at 0s. */
+.insights-skel-row:nth-child(2) .insights-skel {
+  animation-delay: 0s, 0.5s;
+}
+.insights-skel-row:nth-child(3) .insights-skel {
+  animation-delay: 0s, 1s;
+}
+.insights-skel-row:nth-child(4) .insights-skel {
+  animation-delay: 0s, 1.5s;
+}
+
+/* Calendar skeleton — single tall block sized to match the real
+   GitHub-style grid (53 cols × 7 rows of ~14px cells with gaps).
+   Margin matches the panel's natural inner padding. */
+.insights-skel--calendar {
+  height: 140px;
+  margin: 16px 18px;
+}
+
 .digest-error {
   text-align: center;
   padding: var(--space-2xl) var(--space-lg);
