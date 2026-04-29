@@ -1315,7 +1315,10 @@ a:hover {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--color-text-primary);
+  /* Secondary gray so the dot reads as a marker, not a competing
+     accent. Token-driven so the value flips correctly between
+     themes (#616161 light / #a0a0a0 dark). */
+  background: var(--color-text-secondary);
   transform: translate(-50%, -50%);
 }
 
@@ -3542,7 +3545,7 @@ a:hover {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--color-text-primary);
+  background: var(--color-text-secondary);
   transform: translate(-50%, -50%);
 }
 
@@ -3632,7 +3635,7 @@ a:hover {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--color-text-primary);
+  background: var(--color-text-secondary);
   transform: translate(-50%, -50%);
 }
 
