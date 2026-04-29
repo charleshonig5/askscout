@@ -650,19 +650,26 @@ function PaceCard({
   const isAbove = pace.multiplier >= 1.0;
   return (
     <div className="pace stats-reveal-item" style={{ animationDelay }}>
+      {/* Hero row: number + static context. The multiplier needs to
+          read as "X your normal pace" so users know what the
+          baseline is — without the suffix, "1.1x" floats unmoored. */}
       <div className="pace-hero">
         <span className={`pace-multiplier${isAbove ? " pace-multiplier--up" : ""}`}>
           {multiplier.toFixed(1)}x
         </span>
-        <span className="pace-label">{pace.label}</span>
+        <span className="pace-context">your normal pace</span>
       </div>
+      {/* Editorial message sits on its own line beneath the hero,
+          so the static context above and the dynamic copy here
+          don't blur into one phrase. */}
+      <p className="pace-message">{pace.label}</p>
       <div className="pace-stats">
         <span className="pace-stat">
           <GitCommitHorizontal size={16} strokeWidth={1} className="commit-icon" aria-hidden />
           {pace.todayCommits} commits today
         </span>
         <span className="pace-stat">
-          <TrendingUp size={16} strokeWidth={1} aria-hidden />
+          <TrendingUp size={16} strokeWidth={1} className="commit-icon" aria-hidden />
           {pace.avgCommits} commit average
         </span>
       </div>

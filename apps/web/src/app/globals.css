@@ -1705,13 +1705,28 @@ a:hover {
   color: var(--color-success);
 }
 
-.pace-label {
+/* Static context phrase ("your normal pace") sitting inline next
+   to the multiplier. Quieter than the hero number so it reads as
+   the unit, not the headline. */
+.pace-context {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-text-secondary);
+}
+
+/* Editorial message — full-width sub-line beneath the hero row
+   ("Right in your groove. Steady as always."). Primary text so
+   it carries the personality, separate line so it doesn't blur
+   into the static unit phrase above. */
+.pace-message {
   font-family: var(--font-sans);
   font-weight: 300;
   font-size: 12px;
   line-height: 18px;
   color: var(--color-text-primary);
-  max-width: 240px;
+  margin: 0;
 }
 
 .pace-stats {
