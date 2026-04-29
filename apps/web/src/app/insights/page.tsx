@@ -530,13 +530,12 @@ export default function InsightsPage() {
                     <span className="insights-stat-unit">
                       {data.bestStreak.length === 1 ? "day" : "days"}
                     </span>
-                  </div>
-                  {/* Context row — sits below the hero number so the
-                      stat reads as: label / number / context. Repo
-                      chip uses the same .digest-repo-chip primitive
-                      as the dashboard header and links out to GitHub. */}
-                  {data.bestStreak.repo && (
-                    <div className="insights-stat-context-row">
+                    {/* Repo chip sits inline with the value + unit
+                        ("47 days [chip]") — same .digest-repo-chip
+                        primitive used in the dashboard header,
+                        links out to GitHub. Only renders once the
+                        user actually has a streak. */}
+                    {data.bestStreak.repo && (
                       <a
                         href={`https://github.com/${data.bestStreak.repo}`}
                         target="_blank"
@@ -547,21 +546,19 @@ export default function InsightsPage() {
                         {repoDisplayName(data.bestStreak.repo)}
                         <ArrowUpRight size={10} strokeWidth={1} aria-hidden />
                       </a>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
                 <div className="insights-stat-cell">
                   <span className="insights-stat-label">Total digests</span>
                   <div className="insights-stat-value-row">
                     <span className="insights-stat-value">{data.totalDigests}</span>
-                  </div>
-                  {data.digestsPerWeek != null && (
-                    <div className="insights-stat-context-row">
+                    {data.digestsPerWeek != null && (
                       <span className="insights-stat-caption">
                         Averaging {formatPerWeek(data.digestsPerWeek)} per week
                       </span>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             </section>
