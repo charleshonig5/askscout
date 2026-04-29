@@ -6,6 +6,7 @@ import {
   formatResume,
   formatStandup,
   formatCodebaseHealth,
+  formatCodingTimeline,
   getCommits,
   getDiffs,
   getRepoName,
@@ -199,6 +200,8 @@ export async function scan(options: ScanOptions): Promise<void> {
     } else {
       console.log(formatDigest(result.digest, formatOpts));
       console.log(formatCodebaseHealth(commits));
+      const timeline = formatCodingTimeline(commits);
+      if (timeline) console.log(`\n${timeline}`);
     }
 
     // 12. Update state
