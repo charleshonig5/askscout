@@ -1,4 +1,4 @@
-import type { Digest, ResumePrompt, Standup } from "./types.js";
+import type { Digest, DigestRunSummary, ResumePrompt, Standup } from "./types.js";
 
 function fmt(n: number): string {
   return n.toLocaleString("en-US");
@@ -37,6 +37,7 @@ const PLAIN_HEADERS = {
   leftOff: "[Left Off]",
   takeaways: "[Key Takeaways]",
   timeline: "[Coding Timeline]",
+  pace: "[Pace Check]",
 };
 
 export interface FormatOptions {
@@ -270,6 +271,67 @@ export function formatCodingTimeline(commits: { timestamp: Date | string }[]): s
   });
 
   const header = rich ? "🕐 Coding Timeline" : PLAIN_HEADERS.timeline;
+  return `${header}\n${lines.join("\n")}`;
+}
+
+/** Pick the editorial label for a pace multiplier. Bands and copy
+ *  match the web side exactly — see
+ *  apps/web/src/app/api/digest/stream/route.ts:343–351 — so users
+ *  reading both surfaces see the same characterizations of the same
+ *  multiplier. */
+function paceLabel(multiplier: number): string {
+  if (multiplier >= 4) return "Whatever's in that water, keep drinking it.";
+  if (multiplier >= 3) return "You tripled your usual output. Scout is genuinely impressed.";
+  if (multiplier >= 2) return "Twice your usual pace. That's not a fluke, that's focus.";
+  if (multiplier >= 1.3) return "A little faster than usual. Good rhythm today.";
+  if (multiplier >= 0.8) return "Right in your groove. Steady as always.";
+  if (multiplier >= 0.5) return "Lighter day. Not every day needs to be a marathon.";
+  return "Quiet one. Not much shipped today.";
+}
+
+/** Format a Pace Check section from today's commit count + recent
+ *  digest history. Mirrors the web's pace block (multiplier + label
+ *  + "today vs avg" stats row) but rendered in plain text.
+ *
+ *  Pre-conditions for any output:
+ *    - At least 3 prior digest runs in `history` (matches the web
+ *      threshold — anything less and the multiplier is statistical
+ *      noise)
+ *    - Average prior commit count > 0
+ *
+ *  When pre-conditions aren't met, returns "" so callers can safely
+ *  skip the section without checking themselves. */
+export function formatPaceCheck(opts: {
+  todayCommits: number;
+  history: DigestRunSummary[];
+}): string {
+  const { todayCommits, history } = opts;
+  if (history.length < 3) return "";
+
+  // Use the most recent 3 entries — same as the web (route.ts:332).
+  // Slicing from the end means we always get the freshest baseline
+  // even if STATE_HISTORY_CAP grew the window beyond 3.
+  const recent = history.slice(-3);
+  const avgCommits = recent.reduce((sum, r) => sum + r.commits, 0) / recent.length;
+  if (avgCommits <= 0) return "";
+
+  const multiplier = Math.round((todayCommits / avgCommits) * 10) / 10;
+  const roundedAvg = Math.round(avgCommits);
+  const label = paceLabel(multiplier);
+
+  const rich = isRichOutput();
+  const sep = rich ? " · " : " | ";
+  const header = rich ? "⚡ Pace Check" : PLAIN_HEADERS.pace;
+
+  // Layout mirrors the web hero card: multiplier + "your normal
+  // pace" anchor on one line, editorial message beneath, raw
+  // numbers on the third line. Same information, same reading
+  // order, format-appropriate density.
+  const lines = [
+    `  ${multiplier.toFixed(1)}x your normal pace`,
+    `  ${label}`,
+    `  ${todayCommits} commits today${sep}${roundedAvg} commit avg`,
+  ];
   return `${header}\n${lines.join("\n")}`;
 }
 

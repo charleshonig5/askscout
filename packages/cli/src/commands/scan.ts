@@ -7,6 +7,8 @@ import {
   formatStandup,
   formatCodebaseHealth,
   formatCodingTimeline,
+  formatPaceCheck,
+  appendDigestRun,
   getCommits,
   getDiffs,
   getRepoName,
@@ -127,7 +129,7 @@ export async function scan(options: ScanOptions): Promise<void> {
     if (options.dryRun) {
       spinner.stop();
       console.log(`[DRY RUN] ${repoName} \u00b7 ${commits.length} commits \u00b7 ${timeLabel}\n`);
-      console.log(`Files changed: ${new Set(diffs.map((d) => d.file)).size}`);
+      console.log(`Files changed: ${new Set(diffs.map((d: GitDiff) => d.file)).size}`);
       console.log(
         `Lines: +${diffs.reduce((s: number, d: GitDiff) => s + d.additions, 0)} / -${diffs.reduce((s: number, d: GitDiff) => s + d.deletions, 0)}`,
       );
@@ -202,15 +204,32 @@ export async function scan(options: ScanOptions): Promise<void> {
       console.log(formatCodebaseHealth(commits));
       const timeline = formatCodingTimeline(commits);
       if (timeline) console.log(`\n${timeline}`);
+      // Pace Check uses prior runs from .askscout/state.json. The
+      // formatter handles the threshold (>=3 history entries) and
+      // returns "" when there isn't enough baseline yet, so we just
+      // render whatever it gives us.
+      const pace = formatPaceCheck({
+        todayCommits: result.digest.stats.commits,
+        history: state?.digestHistory ?? [],
+      });
+      if (pace) console.log(`\n${pace}`);
     }
 
-    // 12. Update state
+    // 12. Update state. digestHistory grows by one per run, capped
+    // at STATE_HISTORY_CAP via appendDigestRun, so future Pace Checks
+    // can compare against an up-to-date baseline.
     const newRunCount = (state?.runCount ?? 0) + 1;
+    const nowIso = new Date().toISOString();
+    const newHistory = appendDigestRun(state?.digestHistory ?? [], {
+      runAt: nowIso,
+      commits: result.digest.stats.commits,
+    });
     await writeState(projectRoot, {
-      version: 1,
-      lastRunAt: new Date().toISOString(),
+      version: 2,
+      lastRunAt: nowIso,
       runCount: newRunCount,
       summary: result.updatedSummary,
+      digestHistory: newHistory,
     });
 
     // 13. Show tip for first 5 runs (discoverability)

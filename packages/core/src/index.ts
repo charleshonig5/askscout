@@ -16,14 +16,16 @@ export {
   formatStandup,
   formatCodebaseHealth,
   formatCodingTimeline,
+  formatPaceCheck,
 } from "./format.js";
 export type { FormatOptions } from "./format.js";
-export { readState, writeState } from "./state.js";
+export { readState, writeState, appendDigestRun, STATE_HISTORY_CAP } from "./state.js";
 export type {
   AiConfig,
   AiProvider,
   Digest,
   DigestItem,
+  DigestRunSummary,
   DigestStats,
   GitCommit,
   GitDiff,

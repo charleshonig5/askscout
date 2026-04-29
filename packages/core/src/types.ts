@@ -97,11 +97,29 @@ export interface GitDiff {
 }
 
 /** Persistent project state stored in .askscout/state.json */
+/** A single past digest's stats — just the fields Pace Check needs.
+ *  Stored locally in .askscout/state.json so the CLI can compute the
+ *  same "vs your normal pace" multiplier the web shows, with zero
+ *  network dependency. */
+export interface DigestRunSummary {
+  /** ISO timestamp of when the digest was generated. */
+  runAt: string;
+  /** Number of commits in that digest. Compared against today's
+   *  count to compute the pace multiplier. */
+  commits: number;
+}
+
 export interface ProjectState {
   version: number;
   lastRunAt: string;
   runCount: number;
   summary: string; // AI-maintained project summary, rewritten each run
+  /** Rolling window of recent digest runs (newest last, capped at
+   *  STATE_HISTORY_CAP). Pace Check uses the last 3 entries to
+   *  compute a baseline. Empty array on first run, on migration
+   *  from older state files, or when fewer than 3 prior digests
+   *  have been generated. */
+  digestHistory: DigestRunSummary[];
 }
 
 /** Configuration for the AI provider */
