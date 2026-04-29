@@ -48,6 +48,9 @@ interface Personality {
 interface InsightsData {
   bestStreak: { length: number; repo: string | null };
   totalDigests: number;
+  /** Avg digests/week since first digest. Null = not enough data
+   *  to compute a meaningful pace; suppress the caption when null. */
+  digestsPerWeek: number | null;
   activityDays: ActivityDay[];
   repoStats: RepoStat[];
   personality: Personality;
@@ -63,6 +66,7 @@ const EMPTY_PERSONALITY: Personality = {
 const EMPTY_DATA: InsightsData = {
   bestStreak: { length: 0, repo: null },
   totalDigests: 0,
+  digestsPerWeek: null,
   activityDays: [],
   repoStats: [],
   personality: EMPTY_PERSONALITY,
@@ -203,6 +207,16 @@ function formatLastActive(dateStr: string | null): string {
  *  shows the actual repo name. Long owner prefixes (e.g.
  *  `some-org-name/`) ate column space and got truncated mid-name.
  *  The full slug stays available via title attribute on hover. */
+/** Format the pace caption next to Total digests. Rounding rules
+ *  picked to keep the number readable: <1 collapses to "<1" so we
+ *  never render "0.4"; >=10 drops the decimal; otherwise show one
+ *  decimal. The leading "~" reads as "approximately." */
+function formatPerWeek(perWeek: number): string {
+  if (perWeek < 1) return "<1";
+  if (perWeek >= 10) return `~${Math.round(perWeek)}`;
+  return `~${perWeek.toFixed(1)}`;
+}
+
 function repoDisplayName(slug: string): string {
   const slash = slug.lastIndexOf("/");
   return slash === -1 ? slug : slug.slice(slash + 1);
@@ -542,6 +556,15 @@ export default function InsightsPage() {
                   <span className="insights-stat-label">Total digests</span>
                   <div className="insights-stat-value-row">
                     <span className="insights-stat-value">{data.totalDigests}</span>
+                    {/* Pace caption — sits inline with the value
+                        like the repo chip on Best streak. Only
+                        renders when the API returned a meaningful
+                        number (>= 4 digests, >= 1 week of data). */}
+                    {data.digestsPerWeek != null && (
+                      <span className="insights-stat-caption">
+                        {formatPerWeek(data.digestsPerWeek)} per week
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>

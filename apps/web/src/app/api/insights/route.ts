@@ -45,6 +45,10 @@ interface RepoStat {
 interface InsightsResponse {
   bestStreak: BestStreakResult;
   totalDigests: number;
+  /** Average digests per week since the user's first digest. Null
+   *  when there isn't enough data to compute a meaningful pace
+   *  (fewer than 4 total digests or less than 7 days of history). */
+  digestsPerWeek: number | null;
   /** Last 365 days, oldest first. Always exactly 365 entries — days
    *  with no activity render as zero-cell placeholders. */
   activityDays: ActivityDay[];
@@ -66,6 +70,7 @@ const EMPTY_PERSONALITY: PersonalityResult = {
 const EMPTY: InsightsResponse = {
   bestStreak: { length: 0, repo: null },
   totalDigests: 0,
+  digestsPerWeek: null,
   activityDays: [],
   repoStats: [],
   personality: EMPTY_PERSONALITY,
@@ -251,9 +256,27 @@ export async function GET() {
   // about the user leaves this server boundary.
   const personality = computePersonality(digests, checkins, new Date());
 
+  // Pace context for the Total digests stat — average per week since
+  // the user's first digest. Suppressed for low-signal accounts (<4
+  // digests or <1 week of history) where the average is misleading.
+  let digestsPerWeek: number | null = null;
+  if (totalDigests >= 4) {
+    const timestamps = digests
+      .map((d) => (d.created_at ? new Date(d.created_at).getTime() : NaN))
+      .filter((t) => !Number.isNaN(t));
+    if (timestamps.length > 0) {
+      const first = Math.min(...timestamps);
+      const spanDays = (Date.now() - first) / (24 * 60 * 60 * 1000);
+      if (spanDays >= 7) {
+        digestsPerWeek = totalDigests / (spanDays / 7);
+      }
+    }
+  }
+
   const payload: InsightsResponse = {
     bestStreak: { length: bestRun, repo: bestRepo },
     totalDigests,
+    digestsPerWeek,
     activityDays,
     repoStats,
     personality,

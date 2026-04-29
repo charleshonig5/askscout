@@ -4325,6 +4325,17 @@ a:hover {
   color: var(--color-text-secondary);
 }
 
+/* Pace caption next to Total digests — visual parallel to the repo
+   chip on Best streak. Slightly lighter than the unit text so the
+   hero number still leads the eye. */
+.insights-stat-caption {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 18px;
+  color: var(--color-text-secondary);
+}
+
 @media (max-width: 600px) {
   .insights-snapshot {
     flex-direction: column;
