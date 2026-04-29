@@ -715,38 +715,56 @@ export default function DashboardPage() {
                 )}
                 <h1 className="digest-page-name">
                   <span className="digest-page-title-text">{pageTitle}</span>
-                  {(repoName ||
-                    (!noNewCommits && !emptyRepo && !isViewingHistory && streak >= 2)) && (
-                    <span className="digest-page-pills">
-                      {repoName && selectedRepo && (
-                        <a
-                          href={`https://github.com/${selectedRepo}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="digest-repo-chip"
-                          aria-label={`Open ${selectedRepo} on GitHub`}
-                        >
-                          {repoName}
-                          <ArrowUpRight size={10} strokeWidth={1} aria-hidden />
-                        </a>
-                      )}
-                      {!noNewCommits && !emptyRepo && !isViewingHistory && streak >= 2 && (
-                        <span
-                          ref={streakTap.ref}
-                          className={`digest-streak${streakTap.open ? " tap-open" : ""}`}
-                          onClick={streakTap.toggle}
-                        >
-                          <Emoji name="streak" size={14} /> {streak} Day Streak
-                          <span className="streak-tooltip" role="tooltip">
-                            <span className="streak-tooltip-label">Personal best</span>
-                            <span className="streak-tooltip-value">
-                              {personalBest} {personalBest === 1 ? "day" : "days"}
+                  {(() => {
+                    // Gate the streak badge on whether the history we have
+                    // matches the currently selected repo. Without this, when
+                    // the user switches from a streaked repo to a different
+                    // one, React renders one frame with the new repo title
+                    // but the old repo's historyRecords (state hasn't been
+                    // cleared yet — that runs in the effect after this
+                    // render), and a stale badge flashes through the
+                    // "scanning the horizon" loading state.
+                    const historyMatchesRepo =
+                      historyFetchedForRef.current === selectedRepo;
+                    const showStreakBadge =
+                      !noNewCommits &&
+                      !emptyRepo &&
+                      !isViewingHistory &&
+                      streak >= 2 &&
+                      historyMatchesRepo;
+                    if (!repoName && !showStreakBadge) return null;
+                    return (
+                      <span className="digest-page-pills">
+                        {repoName && selectedRepo && (
+                          <a
+                            href={`https://github.com/${selectedRepo}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="digest-repo-chip"
+                            aria-label={`Open ${selectedRepo} on GitHub`}
+                          >
+                            {repoName}
+                            <ArrowUpRight size={10} strokeWidth={1} aria-hidden />
+                          </a>
+                        )}
+                        {showStreakBadge && (
+                          <span
+                            ref={streakTap.ref}
+                            className={`digest-streak${streakTap.open ? " tap-open" : ""}`}
+                            onClick={streakTap.toggle}
+                          >
+                            <Emoji name="streak" size={14} /> {streak} Day Streak
+                            <span className="streak-tooltip" role="tooltip">
+                              <span className="streak-tooltip-label">Personal best</span>
+                              <span className="streak-tooltip-value">
+                                {personalBest} {personalBest === 1 ? "day" : "days"}
+                              </span>
                             </span>
                           </span>
-                        </span>
-                      )}
-                    </span>
-                  )}
+                        )}
+                      </span>
+                    );
+                  })()}
                 </h1>
                 <p className="digest-page-date">{displayDate}</p>
               </div>
