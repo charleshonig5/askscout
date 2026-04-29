@@ -629,11 +629,10 @@ export default function InsightsPage() {
                     <span className="insights-stat-value">{data.totalDigests}</span>
                     {/* Unit phrase mirrors Best streak's "days" so
                         the two cells share the same number/unit/chip
-                        rhythm. Singular branch is defensive (a
-                        first-day account with exactly 1 digest). */}
-                    <span className="insights-stat-unit">
-                      {data.totalDigests === 1 ? "digest" : "digests"}
-                    </span>
+                        rhythm. "generated" reads as the action that
+                        produced the count, avoiding the echo of
+                        "digests" already in the label above. */}
+                    <span className="insights-stat-unit">generated</span>
                     {/* Pace pill — same .digest-repo-chip primitive
                         as the Best streak repo chip, just non-link
                         (--static modifier). TrendingUp matches the
