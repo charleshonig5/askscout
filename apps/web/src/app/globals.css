@@ -1516,12 +1516,8 @@ a:hover {
    bin. The negative margin centers the bar on `left: X%` from JSX. */
 .timeline-bar {
   position: absolute;
-  /* 8px reads as a real histogram bar, not a pin. On a typical
-     ~390px track with 16 bins (~24.5px per slot), this leaves
-     ~16px of clear gap between bars — full visual presence with
-     no crowding. */
-  width: 8px;
-  margin-left: -4px;
+  width: 4px;
+  margin-left: -2px;
   background: var(--color-text-primary);
   border-radius: 60px;
   cursor: default;
