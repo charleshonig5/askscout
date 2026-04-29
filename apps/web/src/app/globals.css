@@ -945,6 +945,18 @@ a:hover {
   background: color-mix(in srgb, var(--color-text-primary) 8%, var(--color-bg-tertiary));
 }
 
+/* Non-interactive variant — same visual chrome but used as an
+   informational pill (e.g. "X per week avg" on the Insights
+   Total digests stat). Disables the pointer + hover treatment
+   since the chip isn't actionable. */
+.digest-repo-chip--static {
+  cursor: default;
+}
+
+.digest-repo-chip--static:hover {
+  background: var(--color-bg-tertiary);
+}
+
 /* "Back to Today" button — appears above the digest title when the
    user is viewing a past digest (history click) or has expanded the
    quiet-day view to read their last digest. Same small bordered-pill
@@ -4429,17 +4441,6 @@ a:hover {
   font-family: var(--font-sans);
   font-size: 13px;
   font-weight: 300;
-  color: var(--color-text-secondary);
-}
-
-/* Pace caption next to Total digests — sits inline with the value
-   like the repo chip on Best streak. Quieter than the hero number
-   so the eye lands on the value first. */
-.insights-stat-caption {
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 300;
-  line-height: 18px;
   color: var(--color-text-secondary);
 }
 

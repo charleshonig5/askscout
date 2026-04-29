@@ -8,6 +8,7 @@ import {
   ChevronDown,
   ChevronUp,
   CircleX,
+  TrendingUp,
 } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
 
@@ -626,8 +627,15 @@ export default function InsightsPage() {
                   <span className="insights-stat-label">Total digests</span>
                   <div className="insights-stat-value-row">
                     <span className="insights-stat-value">{data.totalDigests}</span>
+                    {/* Pace pill — same .digest-repo-chip primitive
+                        as the Best streak repo chip, just non-link
+                        (--static modifier). TrendingUp matches the
+                        icon used in Pace Check's "commit avg" line
+                        so the "average" signal reads the same in
+                        both places. */}
                     {data.digestsPerWeek != null && (
-                      <span className="insights-stat-caption">
+                      <span className="digest-repo-chip digest-repo-chip--static">
+                        <TrendingUp size={10} strokeWidth={1} aria-hidden />
                         {formatPerWeek(data.digestsPerWeek)} per week avg
                       </span>
                     )}
