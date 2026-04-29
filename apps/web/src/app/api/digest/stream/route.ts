@@ -348,7 +348,7 @@ export async function POST(req: Request) {
         else if (multiplier >= 1.3) label = "A little faster than usual. Good rhythm today.";
         else if (multiplier >= 0.8) label = "Right in your groove. Steady as always.";
         else if (multiplier >= 0.5) label = "Lighter day. Not every day needs to be a marathon.";
-        else label = "Quiet one. Scout barely had anything to sniff.";
+        else label = "Quiet one. Not much shipped today.";
         pace = { multiplier, label, todayCommits: stats.commits, avgCommits: roundedAvg };
       }
     }
