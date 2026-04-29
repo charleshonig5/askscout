@@ -522,8 +522,8 @@ export default function InsightsPage() {
                 </div>
                 <p className="settings-section-desc">A quick look at your time with Scout.</p>
               </header>
-              <div className="settings-panel insights-snapshot">
-                <div className="insights-stat-cell">
+              <div className="insights-snapshot">
+                <div className="settings-panel insights-stat-cell">
                   <span className="insights-stat-label">Best streak</span>
                   <div className="insights-stat-value-row">
                     <span className="insights-stat-value">{data.bestStreak.length}</span>
@@ -549,7 +549,7 @@ export default function InsightsPage() {
                     )}
                   </div>
                 </div>
-                <div className="insights-stat-cell">
+                <div className="settings-panel insights-stat-cell">
                   <span className="insights-stat-label">Total digests</span>
                   <div className="insights-stat-value-row">
                     <span className="insights-stat-value">{data.totalDigests}</span>

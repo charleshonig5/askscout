@@ -4267,13 +4267,15 @@ a:hover {
    ============================================================ */
 
 /* --- Snapshot section ----------------------------------------
-   Two stat cells side by side inside the panel, divided by a 1px
-   token-driven hairline. On phones the columns stack vertically
-   and the divider becomes a horizontal hairline between cells. */
+   Two separate cards side by side, each its own .settings-panel.
+   12px gap matches the spacing between Codebase Health cards so
+   the page reads as one consistent grid. On phones the cards
+   stack vertically. */
 
 .insights-snapshot {
   display: flex;
   align-items: stretch;
+  gap: 12px;
 }
 
 .insights-stat-cell {
@@ -4283,10 +4285,6 @@ a:hover {
   gap: var(--space-sm);
   padding: 20px 18px;
   min-width: 0;
-}
-
-.insights-stat-cell + .insights-stat-cell {
-  border-left: 1px solid var(--color-border);
 }
 
 /* Stat label — 12px Medium, plain case. Same treatment used by
@@ -4339,10 +4337,6 @@ a:hover {
 @media (max-width: 600px) {
   .insights-snapshot {
     flex-direction: column;
-  }
-  .insights-stat-cell + .insights-stat-cell {
-    border-left: none;
-    border-top: 1px solid var(--color-border);
   }
 }
 
