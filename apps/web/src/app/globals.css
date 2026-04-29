@@ -1676,25 +1676,41 @@ a:hover {
 .pace {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  /* 14px between the hero card and the meta group — matches
+     Figma node 156:254. */
+  gap: 14px;
 }
 
-.pace-hero {
+/* Hero card — bordered inner panel containing the multiplier and
+   the static unit phrase. All chrome is token-driven so light /
+   dark themes adapt without changes:
+     bg     = --color-bg-secondary  (Figma #121212 in dark)
+     border = --color-border
+     glow   = --color-inner-glow    (Figma rgba(255,255,255,0.04) in dark)
+   align-self: flex-start hugs the card to its content width
+   instead of stretching across the column. */
+.pace-hero-card {
   display: flex;
-  /* Baseline so the label reads as bottom-aligned to the multiplier
-     instead of vertically centered on a 24px line. */
-  align-items: baseline;
-  gap: 8px;
-  /* Wrap on narrow viewports so a long label drops below the
-     multiplier rather than overflowing the column. */
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  align-self: flex-start;
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-secondary);
+  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
+  white-space: nowrap;
 }
 
 .pace-multiplier {
   font-family: var(--font-sans);
   font-weight: 500;
   font-size: 24px;
-  line-height: 1;
+  /* 'normal' line-height per Figma node 156:257 — gives the
+     multiplier a touch of vertical breathing room over the
+     unit phrase below. */
+  line-height: normal;
   color: var(--color-text-primary);
   letter-spacing: 0;
 }
@@ -1705,21 +1721,27 @@ a:hover {
   color: var(--color-success);
 }
 
-/* Static context phrase ("your normal pace") sitting inline next
-   to the multiplier. Quieter than the hero number so it reads as
-   the unit, not the headline. */
+/* Static unit phrase ("Your normal pace") sitting beneath the
+   multiplier inside the hero card. Primary text per Figma
+   node 156:258 — full-strength so the unit reads clearly. */
 .pace-context {
   font-family: var(--font-sans);
   font-weight: 300;
   font-size: 12px;
   line-height: 18px;
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
 }
 
-/* Editorial message — full-width sub-line beneath the hero row
-   ("Right in your groove. Steady as always."). Primary text so
-   it carries the personality, separate line so it doesn't blur
-   into the static unit phrase above. */
+/* Group wrapper for the editorial message + stats row beneath
+   the hero card. 8px internal gap per Figma node 156:259. */
+.pace-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Editorial message — full-width sub-line beneath the hero card
+   ("Right in your groove. Steady as always."). */
 .pace-message {
   font-family: var(--font-sans);
   font-weight: 300;

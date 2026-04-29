@@ -131,7 +131,7 @@ function buildFullMarkdown(
       [
         "Pace Check",
         `${stats.pace.multiplier}x · ${stats.pace.label}`,
-        `${stats.pace.todayCommits} commits today · ${stats.pace.avgCommits}-commit average`,
+        `${stats.pace.todayCommits} commits today · ${stats.pace.avgCommits}-commit avg`,
       ].join("\n"),
     );
   }
@@ -650,28 +650,37 @@ function PaceCard({
   const isAbove = pace.multiplier >= 1.0;
   return (
     <div className="pace stats-reveal-item" style={{ animationDelay }}>
-      {/* Hero row: number + static context. The multiplier needs to
-          read as "X your normal pace" so users know what the
-          baseline is — without the suffix, "1.1x" floats unmoored. */}
-      <div className="pace-hero">
+      {/* Hero card — Figma node 156:255. Bordered inner panel with
+          the multiplier stacked over the static unit phrase. Same
+          panel chrome as .settings-panel (border, bg, inset glow)
+          but tighter padding so it reads as a "stat callout"
+          rather than a section card. Width hugs content. */}
+      <div className="pace-hero-card">
         <span className={`pace-multiplier${isAbove ? " pace-multiplier--up" : ""}`}>
           {multiplier.toFixed(1)}x
         </span>
-        <span className="pace-context">your normal pace</span>
+        <span className="pace-context">Your normal pace</span>
       </div>
-      {/* Editorial message sits on its own line beneath the hero,
-          so the static context above and the dynamic copy here
-          don't blur into one phrase. */}
-      <p className="pace-message">{pace.label}</p>
-      <div className="pace-stats">
-        <span className="pace-stat">
-          <GitCommitHorizontal size={16} strokeWidth={1} className="commit-icon" aria-hidden />
-          {pace.todayCommits} commits today
-        </span>
-        <span className="pace-stat">
-          <TrendingUp size={16} strokeWidth={1} className="commit-icon" aria-hidden />
-          {pace.avgCommits} commit average
-        </span>
+      {/* Editorial message + stats row group beneath the hero card.
+          Tighter 8px gap inside the group; outer 14px gap between
+          group and hero card matches Figma 156:254. */}
+      <div className="pace-meta">
+        <p className="pace-message">{pace.label}</p>
+        <div className="pace-stats">
+          <span className="pace-stat">
+            <GitCommitHorizontal
+              size={16}
+              strokeWidth={1}
+              className="commit-icon"
+              aria-hidden
+            />
+            {pace.todayCommits} commits today
+          </span>
+          <span className="pace-stat">
+            <TrendingUp size={16} strokeWidth={1} className="commit-icon" aria-hidden />
+            {pace.avgCommits} commit avg
+          </span>
+        </div>
       </div>
     </div>
   );
