@@ -1683,6 +1683,9 @@ a:hover {
   display: flex;
   align-items: center;
   gap: 8px;
+  /* Wrap on narrow viewports so a long label drops below the
+     multiplier rather than overflowing the column. */
+  flex-wrap: wrap;
 }
 
 .pace-multiplier {
@@ -1706,7 +1709,7 @@ a:hover {
   font-size: 12px;
   line-height: 18px;
   color: var(--color-text-primary);
-  max-width: 160px;
+  max-width: 240px;
 }
 
 .pace-stats {
