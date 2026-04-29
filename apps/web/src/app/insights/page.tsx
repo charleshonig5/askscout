@@ -555,7 +555,7 @@ export default function InsightsPage() {
                     <span className="insights-stat-value">{data.totalDigests}</span>
                     {data.digestsPerWeek != null && (
                       <span className="insights-stat-caption">
-                        Averaging {formatPerWeek(data.digestsPerWeek)} per week
+                        {formatPerWeek(data.digestsPerWeek)} per week avg
                       </span>
                     )}
                   </div>
