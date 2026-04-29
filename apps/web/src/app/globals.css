@@ -4325,9 +4325,19 @@ a:hover {
   color: var(--color-text-secondary);
 }
 
-/* Pace caption next to Total digests — visual parallel to the repo
-   chip on Best streak. Slightly lighter than the unit text so the
-   hero number still leads the eye. */
+/* Context row — sits below the value-row inside .insights-stat-cell.
+   Holds the repo chip on Best streak and the pace caption on Total
+   digests, so the cell reads top-down: label / number / context. */
+.insights-stat-context-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+/* Pace caption — quieter than the hero number so the eye still
+   lands on the value first. */
 .insights-stat-caption {
   font-family: var(--font-sans);
   font-size: 12px;
