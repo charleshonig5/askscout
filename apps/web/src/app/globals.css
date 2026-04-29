@@ -1681,7 +1681,9 @@ a:hover {
 
 .pace-hero {
   display: flex;
-  align-items: center;
+  /* Baseline so the label reads as bottom-aligned to the multiplier
+     instead of vertically centered on a 24px line. */
+  align-items: baseline;
   gap: 8px;
   /* Wrap on narrow viewports so a long label drops below the
      multiplier rather than overflowing the column. */
