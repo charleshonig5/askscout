@@ -2,14 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  ArrowLeft,
-  ArrowUpRight,
-  ChevronDown,
-  ChevronUp,
-  CircleX,
-  TrendingUp,
-} from "lucide-react";
+import { ArrowLeft, ArrowUpRight, ChevronDown, ChevronUp, CircleX, TrendingUp } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
 
 /**
@@ -74,8 +67,18 @@ const EMPTY_DATA: InsightsData = {
 };
 
 const MONTH_LABELS = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 interface Cell {
@@ -681,9 +684,7 @@ export default function InsightsPage() {
                       {data.personality.emoji}
                     </div>
                     <h3 className="insights-personality-name">{data.personality.archetype}</h3>
-                    <p className="insights-personality-subheader">
-                      {data.personality.subheader}
-                    </p>
+                    <p className="insights-personality-subheader">{data.personality.subheader}</p>
                   </div>
                 ) : (
                   <PersonalitySkeleton />

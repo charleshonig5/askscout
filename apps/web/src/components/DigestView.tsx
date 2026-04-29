@@ -668,12 +668,7 @@ function PaceCard({
         <p className="pace-message">{pace.label}</p>
         <div className="pace-stats">
           <span className="pace-stat">
-            <GitCommitHorizontal
-              size={16}
-              strokeWidth={1}
-              className="commit-icon"
-              aria-hidden
-            />
+            <GitCommitHorizontal size={16} strokeWidth={1} className="commit-icon" aria-hidden />
             {pace.todayCommits} commits today
           </span>
           <span className="pace-stat">

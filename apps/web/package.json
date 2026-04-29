@@ -1,8 +1,23 @@
 {
   "name": "@askscout/web",
   "version": "0.1.0",
+  "description": "askscout web app — Next.js application deployed at askscout.dev. Not published to npm.",
+  "license": "MIT",
+  "author": "Charles Honig <charleshonigdesign@gmail.com>",
+  "homepage": "https://askscout.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/charleshonig5/askscout.git",
+    "directory": "apps/web"
+  },
+  "bugs": {
+    "url": "https://github.com/charleshonig5/askscout/issues"
+  },
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "build": "pnpm --filter @askscout/core build && next build",
     "dev": "next dev",

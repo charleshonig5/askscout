@@ -375,16 +375,10 @@ export default function SettingsPage() {
                   <Emoji name="clearHistory" size={20} />
                   <h2>Clear History</h2>
                 </div>
-                <p className="settings-section-desc">
-                  Delete past digests. This cannot be undone.
-                </p>
+                <p className="settings-section-desc">Delete past digests. This cannot be undone.</p>
               </div>
               {activeRepos.length > 0 && (
-                <button
-                  type="button"
-                  className="settings-clear-all-btn"
-                  onClick={openClearAll}
-                >
+                <button type="button" className="settings-clear-all-btn" onClick={openClearAll}>
                   <Trash2 size={16} strokeWidth={1} aria-hidden />
                   Clear All History
                 </button>
@@ -509,11 +503,7 @@ export default function SettingsPage() {
               </p>
             </header>
             <div className="settings-section-action-row">
-              <button
-                type="button"
-                className="settings-clear-all-btn"
-                onClick={openDeleteAccount}
-              >
+              <button type="button" className="settings-clear-all-btn" onClick={openDeleteAccount}>
                 <Trash2 size={16} strokeWidth={1} aria-hidden />
                 Delete Account
               </button>
@@ -600,8 +590,8 @@ export default function SettingsPage() {
                   Delete your account?
                 </h2>
                 <p className="modal-subtitle">
-                  This permanently deletes your account, all saved digests, settings, and
-                  history. You&apos;ll need to sign back in with GitHub to use Scout again.
+                  This permanently deletes your account, all saved digests, settings, and history.
+                  You&apos;ll need to sign back in with GitHub to use Scout again.
                 </p>
               </div>
               <button

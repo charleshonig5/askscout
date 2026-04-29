@@ -1,6 +1,27 @@
 {
   "name": "@askscout/core",
   "version": "0.1.0",
+  "description": "Shared library powering askscout — git reading, LLM digest summarization, output formatting, and project state management.",
+  "license": "MIT",
+  "author": "Charles Honig <charleshonigdesign@gmail.com>",
+  "homepage": "https://askscout.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/charleshonig5/askscout.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/charleshonig5/askscout/issues"
+  },
+  "keywords": [
+    "askscout",
+    "git",
+    "digest",
+    "llm",
+    "anthropic",
+    "openai",
+    "developer-tools"
+  ],
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -18,8 +39,12 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",

@@ -851,8 +851,8 @@ export default function DashboardPage() {
                 <div className="quiet-day-text">
                   <h2 className="quiet-day-title">No New Digest Today for {repoName}</h2>
                   <p className="quiet-day-subtitle">
-                    {repoName} has been quiet since your last digest on{" "}
-                    {noNewCommits.dateDisplay}. Nothing new to report.
+                    {repoName} has been quiet since your last digest on {noNewCommits.dateDisplay}.
+                    Nothing new to report.
                   </p>
                 </div>
                 <button

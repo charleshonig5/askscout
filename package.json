@@ -1,5 +1,16 @@
 {
   "name": "askscout-monorepo",
+  "description": "askscout monorepo — CLI (askscout), shared library (@askscout/core), and web app (@askscout/web).",
+  "license": "MIT",
+  "author": "Charles Honig <charleshonigdesign@gmail.com>",
+  "homepage": "https://askscout.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/charleshonig5/askscout.git"
+  },
+  "bugs": {
+    "url": "https://github.com/charleshonig5/askscout/issues"
+  },
   "private": true,
   "scripts": {
     "build": "pnpm -r run build",

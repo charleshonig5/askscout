@@ -77,11 +77,13 @@ Two stats only (decided after considering and rejecting "Days using Scout"
 and "Repos Scoutified" as not interesting enough).
 
 **Best streak**
+
 - Longest consecutive run of active days, computed across all repos with
   per-repo dedup (a day counts if any repo had activity).
 - Display: `47 days` + the repo it was achieved on (e.g., "on `askscout`").
 
 **Total digests**
+
 - Lifetime count of digests this user has generated, across all repos.
 - Display: `73 digests`.
 
@@ -95,6 +97,7 @@ deferred — two is fine.
 GitHub-contributions-style 365-day heatmap, aggregated across **all repos**.
 
 **Cell states:**
+
 - **Empty** — no Scout activity that day
 - **Light shade** — quiet-day check-in only
 - **Full shade** — at least one digest generated that day
@@ -112,13 +115,13 @@ want to drill into one.
 
 **Columns:**
 
-| Column          | Source                                                         |
-| --------------- | -------------------------------------------------------------- |
-| Repo            | distinct values of `digests.repo` for this user                |
-| Digests         | count of digests for this user + repo                          |
-| Current streak  | as currently computed in the dashboard, scoped per-repo        |
-| Best streak     | longest historical run for this user + repo                    |
-| Last active     | max(`digests.created_at`, `daily_checkins.date`) per user/repo |
+| Column         | Source                                                         |
+| -------------- | -------------------------------------------------------------- |
+| Repo           | distinct values of `digests.repo` for this user                |
+| Digests        | count of digests for this user + repo                          |
+| Current streak | as currently computed in the dashboard, scoped per-repo        |
+| Best streak    | longest historical run for this user + repo                    |
+| Last active    | max(`digests.created_at`, `daily_checkins.date`) per user/repo |
 
 Sortable by any column. Default sort: last active, descending.
 
@@ -162,6 +165,7 @@ Every archetype's signature is derived from these signals. All come from
 existing data (`digests` rows + their `stats` JSONB blob + `daily_checkins`).
 
 **Time / when**
+
 - Hour-of-day distribution of `digests.created_at` → dominant bucket
 - Hour spread (concentrated vs. flat distribution)
 - Day-of-week distribution
@@ -169,6 +173,7 @@ existing data (`digests` rows + their `stats` JSONB blob + `daily_checkins`).
 - Single-day-of-week dominance (e.g., 70%+ on one DOW)
 
 **Frequency / consistency**
+
 - Active days in last 30 (digests or check-ins)
 - Active days lifetime
 - Current streak length
@@ -178,6 +183,7 @@ existing data (`digests` rows + their `stats` JSONB blob + `daily_checkins`).
 - Total tenure (days since first digest)
 
 **Repo portfolio**
+
 - Distinct repos with any digest activity, lifetime
 - Active repos (digest in last 30 days)
 - Top-repo concentration (% of digests in #1 repo)
@@ -185,6 +191,7 @@ existing data (`digests` rows + their `stats` JSONB blob + `daily_checkins`).
 - Number of "abandoned" repos (no activity 30+ days)
 
 **Coding style** (averaged across digests' `stats` blob)
+
 - avg `linesAdded` / avg `linesRemoved` ratio (build vs. refactor)
 - avg `commits` per digest (light vs. heavy shipper)
 - avg `filesChanged` per commit (surgical vs. broad)
@@ -194,11 +201,13 @@ existing data (`digests` rows + their `stats` JSONB blob + `daily_checkins`).
 - avg `pace.multiplier`
 
 **Sessions** (from `stats.timeline.points`)
+
 - avg session length per day
 - avg gap between commits within a day
 - single-session vs. multi-session days
 
 **State** (right now)
+
 - Current streak status
 - Days since last activity
 - Whether they recently resumed after a gap
@@ -216,29 +225,29 @@ represents as an identity. The **Subheader** column is the templated line
 shown directly under the archetype name on the page (with `X` and `[repo]`
 filled in from real data).
 
-| Archetype                     | Definition                                                                  | Subheader (shown to user)                                          |
-| ----------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| 🌅 **Dawn Patrol**            | Codes before the rest of the world wakes up.                                | You generate most digests between 5 and 9 am.                      |
-| ☀️ **The 9-to-5er**           | Stays in the work-hours lane. Mostly weekdays, mostly daytime.              | Most of your digests land during work hours on weekdays.           |
-| 🌇 **The Sundowner**          | Winds down the day with code. Late afternoon and evening peaks.             | Your digests peak between 5 and 10 pm.                             |
-| 🌙 **Night Owl**              | Pushes most code while the city sleeps.                                     | Most of your digests land between 10 pm and 2 am.                  |
-| 🦇 **The Insomniac**          | Wee-hours coder with an irregular schedule.                                 | Your digests cluster between 2 and 5 am.                           |
-| 🌗 **The Moonlighter**        | Day job and side project. Codes at lunch and again at night.                | Bimodal pattern. Peaks around midday and again in the evening.     |
-| 🏖 **Weekend Warrior**        | Saves the real work for Saturdays and Sundays.                              | X% of your digests land on weekends.                               |
-| 🎯 **The Specialist**         | One repo holds your attention, deeply.                                      | X% of your digests are in `[repo]`.                                |
-| 🤹 **The Juggler**            | Working in 4+ repos simultaneously, no clear favorite.                      | Active across X repos. None holding the majority.                  |
-| 🪂 **The Drifter**            | Moves between many repos, none for very long.                               | X repos touched lifetime. High turnover, low retention.            |
-| 🛠 **The Builder**            | Adds way more than you remove. Net new code is the mode.                    | About X lines added for every 1 removed.                           |
-| 🪞 **The Polisher**           | Refactoring is your default. Removes nearly as much as you add.             | Net additions stay low. You keep things clean.                     |
-| 🔬 **The Surgeon**            | Small precise commits, 1 to 2 files at a time. Surgical changes.            | Average X files per commit. Focused, precise work.                 |
-| 🌋 **The Earthquake**         | Big multi-file commits, high churn. When you ship, the codebase moves.      | Average X files per commit. Every change has reach.                |
-| 🏗 **The Architect**          | Long sessions, few commits, dense changes. Thinks before committing.        | Sessions average X minutes. Slow, considered, big swings.          |
-| ⚡ **The Sprinter**           | Tight loops. Many small commits per session, quick iterations.              | X commits per digest on average. Small, fast, frequent.            |
-| 🏴‍☠️ **The Pirate**            | Many repos, chaotic hours, bursts of activity. No two days look alike.      | Across X repos at all hours. Chaos by design.                      |
-| ⛪ **The Cathedral Builder**  | Single repo, long focused sessions, building something significant.         | Building `[repo]` over long sessions. Net additions, low churn.    |
-| 🔧 **The Garage Tinkerer**    | Late-night solo grind on one project. Slow, steady, persistent.             | Late hours in `[repo]`. Patient daily progress.                    |
-| 🥷 **The Stealth Shipper**    | Quiet stretches punctuated by big single-day pushes.                        | Long quiet runs, then bursts. Episodic shipping.                   |
-| 🐢 **The Marathoner**         | 90+ days in, still consistent. Tortoise wins this race.                     | X days in, active most weeks, low variance.                        |
+| Archetype                    | Definition                                                             | Subheader (shown to user)                                       |
+| ---------------------------- | ---------------------------------------------------------------------- | --------------------------------------------------------------- |
+| 🌅 **Dawn Patrol**           | Codes before the rest of the world wakes up.                           | You generate most digests between 5 and 9 am.                   |
+| ☀️ **The 9-to-5er**          | Stays in the work-hours lane. Mostly weekdays, mostly daytime.         | Most of your digests land during work hours on weekdays.        |
+| 🌇 **The Sundowner**         | Winds down the day with code. Late afternoon and evening peaks.        | Your digests peak between 5 and 10 pm.                          |
+| 🌙 **Night Owl**             | Pushes most code while the city sleeps.                                | Most of your digests land between 10 pm and 2 am.               |
+| 🦇 **The Insomniac**         | Wee-hours coder with an irregular schedule.                            | Your digests cluster between 2 and 5 am.                        |
+| 🌗 **The Moonlighter**       | Day job and side project. Codes at lunch and again at night.           | Bimodal pattern. Peaks around midday and again in the evening.  |
+| 🏖 **Weekend Warrior**       | Saves the real work for Saturdays and Sundays.                         | X% of your digests land on weekends.                            |
+| 🎯 **The Specialist**        | One repo holds your attention, deeply.                                 | X% of your digests are in `[repo]`.                             |
+| 🤹 **The Juggler**           | Working in 4+ repos simultaneously, no clear favorite.                 | Active across X repos. None holding the majority.               |
+| 🪂 **The Drifter**           | Moves between many repos, none for very long.                          | X repos touched lifetime. High turnover, low retention.         |
+| 🛠 **The Builder**           | Adds way more than you remove. Net new code is the mode.               | About X lines added for every 1 removed.                        |
+| 🪞 **The Polisher**          | Refactoring is your default. Removes nearly as much as you add.        | Net additions stay low. You keep things clean.                  |
+| 🔬 **The Surgeon**           | Small precise commits, 1 to 2 files at a time. Surgical changes.       | Average X files per commit. Focused, precise work.              |
+| 🌋 **The Earthquake**        | Big multi-file commits, high churn. When you ship, the codebase moves. | Average X files per commit. Every change has reach.             |
+| 🏗 **The Architect**         | Long sessions, few commits, dense changes. Thinks before committing.   | Sessions average X minutes. Slow, considered, big swings.       |
+| ⚡ **The Sprinter**          | Tight loops. Many small commits per session, quick iterations.         | X commits per digest on average. Small, fast, frequent.         |
+| 🏴‍☠️ **The Pirate**            | Many repos, chaotic hours, bursts of activity. No two days look alike. | Across X repos at all hours. Chaos by design.                   |
+| ⛪ **The Cathedral Builder** | Single repo, long focused sessions, building something significant.    | Building `[repo]` over long sessions. Net additions, low churn. |
+| 🔧 **The Garage Tinkerer**   | Late-night solo grind on one project. Slow, steady, persistent.        | Late hours in `[repo]`. Patient daily progress.                 |
+| 🥷 **The Stealth Shipper**   | Quiet stretches punctuated by big single-day pushes.                   | Long quiet runs, then bursts. Episodic shipping.                |
+| 🐢 **The Marathoner**        | 90+ days in, still consistent. Tortoise wins this race.                | X days in, active most weeks, low variance.                     |
 
 ---
 
@@ -248,32 +257,33 @@ This is the actual matching logic. Every threshold is on existing data;
 nothing new to track.
 
 **Bands used below:**
+
 - Hour bands: Dawn (5–9am) · Day (9am–5pm) · Evening (5–10pm) · Night (10pm–2am) · Wee Hours (2–5am)
 - "Top band %" = % of digests falling in the user's most-used hour band
 
-| Archetype                     | Tier   | All criteria must hold                                                                                          |
-| ----------------------------- | ------ | --------------------------------------------------------------------------------------------------------------- |
-| 🌅 Dawn Patrol                | single | top band = Dawn AND Dawn % ≥ 40%                                                                                |
-| ☀️ The 9-to-5er               | single | top band = Day AND Day % ≥ 40% AND weekday % ≥ 70%                                                              |
-| 🌇 The Sundowner              | single | top band = Evening AND Evening % ≥ 40%                                                                          |
-| 🌙 Night Owl                  | single | top band = Night AND Night % ≥ 40%                                                                              |
-| 🦇 The Insomniac              | single | top band = Wee Hours AND Wee Hours % ≥ 30%                                                                      |
-| 🌗 The Moonlighter            | single | Day % ≥ 25% AND (Evening % + Night %) ≥ 25% AND no single band > 50%                                            |
-| 🏖 Weekend Warrior            | single | weekend % (Sat + Sun) ≥ 60%                                                                                     |
-| 🎯 The Specialist             | single | top-repo share ≥ 80% AND active repos in last 30d ≤ 2                                                           |
-| 🤹 The Juggler                | single | active repos in last 30d ≥ 4 AND top-repo share < 40%                                                           |
-| 🪂 The Drifter                | single | total lifetime repos ≥ 5 AND top-repo share < 40% AND avg streak per repo < 3 days                              |
-| 🛠 The Builder                | single | avg(linesAdded) / avg(linesRemoved) ≥ 2.0 AND ≥ 50% of digests have growth.level = "high"                       |
-| 🪞 The Polisher               | single | avg(linesRemoved) / avg(linesAdded) ≥ 0.8 AND ≥ 40% of digests have churn.level = "high"                        |
-| 🔬 The Surgeon                | single | avg files per commit ≤ 1.5 AND avg lines per commit ≤ 50                                                        |
-| 🌋 The Earthquake             | single | avg files per commit ≥ 5 AND ≥ 40% of digests have churn.level = "high"                                         |
-| 🏗 The Architect              | single | avg session length ≥ 90 min AND avg commits per digest ≤ 3 AND avg lines per commit ≥ 80                        |
-| ⚡ The Sprinter               | single | avg commits per digest ≥ 8 AND avg lines per commit ≤ 30                                                        |
-| 🏴‍☠️ The Pirate                | combo  | total lifetime repos ≥ 4 AND top band % < 40% (high hour spread) AND avg streak per repo < 5 days               |
-| ⛪ The Cathedral Builder      | combo  | Specialist criteria met AND Architect criteria met AND Builder criteria met                                     |
-| 🔧 The Garage Tinkerer        | combo  | Night Owl criteria met AND Specialist criteria met AND active 4–24 days/30 (Steady Hand or Slow Burn frequency) |
-| 🥷 The Stealth Shipper        | combo  | (max daily-commit-count / median daily-commit-count) ≥ 4 AND has had ≥ 1 quiet stretch of 7+ days               |
-| 🐢 The Marathoner             | combo  | tenure ≥ 90 days AND active days / total days ≥ 0.5 AND coefficient of variation in weekly digest count < 0.5   |
+| Archetype                | Tier   | All criteria must hold                                                                                          |
+| ------------------------ | ------ | --------------------------------------------------------------------------------------------------------------- |
+| 🌅 Dawn Patrol           | single | top band = Dawn AND Dawn % ≥ 40%                                                                                |
+| ☀️ The 9-to-5er          | single | top band = Day AND Day % ≥ 40% AND weekday % ≥ 70%                                                              |
+| 🌇 The Sundowner         | single | top band = Evening AND Evening % ≥ 40%                                                                          |
+| 🌙 Night Owl             | single | top band = Night AND Night % ≥ 40%                                                                              |
+| 🦇 The Insomniac         | single | top band = Wee Hours AND Wee Hours % ≥ 30%                                                                      |
+| 🌗 The Moonlighter       | single | Day % ≥ 25% AND (Evening % + Night %) ≥ 25% AND no single band > 50%                                            |
+| 🏖 Weekend Warrior       | single | weekend % (Sat + Sun) ≥ 60%                                                                                     |
+| 🎯 The Specialist        | single | top-repo share ≥ 80% AND active repos in last 30d ≤ 2                                                           |
+| 🤹 The Juggler           | single | active repos in last 30d ≥ 4 AND top-repo share < 40%                                                           |
+| 🪂 The Drifter           | single | total lifetime repos ≥ 5 AND top-repo share < 40% AND avg streak per repo < 3 days                              |
+| 🛠 The Builder           | single | avg(linesAdded) / avg(linesRemoved) ≥ 2.0 AND ≥ 50% of digests have growth.level = "high"                       |
+| 🪞 The Polisher          | single | avg(linesRemoved) / avg(linesAdded) ≥ 0.8 AND ≥ 40% of digests have churn.level = "high"                        |
+| 🔬 The Surgeon           | single | avg files per commit ≤ 1.5 AND avg lines per commit ≤ 50                                                        |
+| 🌋 The Earthquake        | single | avg files per commit ≥ 5 AND ≥ 40% of digests have churn.level = "high"                                         |
+| 🏗 The Architect         | single | avg session length ≥ 90 min AND avg commits per digest ≤ 3 AND avg lines per commit ≥ 80                        |
+| ⚡ The Sprinter          | single | avg commits per digest ≥ 8 AND avg lines per commit ≤ 30                                                        |
+| 🏴‍☠️ The Pirate            | combo  | total lifetime repos ≥ 4 AND top band % < 40% (high hour spread) AND avg streak per repo < 5 days               |
+| ⛪ The Cathedral Builder | combo  | Specialist criteria met AND Architect criteria met AND Builder criteria met                                     |
+| 🔧 The Garage Tinkerer   | combo  | Night Owl criteria met AND Specialist criteria met AND active 4–24 days/30 (Steady Hand or Slow Burn frequency) |
+| 🥷 The Stealth Shipper   | combo  | (max daily-commit-count / median daily-commit-count) ≥ 4 AND has had ≥ 1 quiet stretch of 7+ days               |
+| 🐢 The Marathoner        | combo  | tenure ≥ 90 days AND active days / total days ≥ 0.5 AND coefficient of variation in weekly digest count < 0.5   |
 
 ---
 
@@ -306,11 +316,12 @@ exactly one primary archetype using this order:
    library above.
 
 **Combo priority (most-specific first):**
-1. The Cathedral Builder *(3 single-archetype criteria all met)*
-2. The Pirate *(3 multi-axis criteria)*
-3. The Garage Tinkerer *(3 criteria, narrower)*
-4. The Stealth Shipper *(2 criteria, distinctive variance)*
-5. The Marathoner *(tenure-gated)*
+
+1. The Cathedral Builder _(3 single-archetype criteria all met)_
+2. The Pirate _(3 multi-axis criteria)_
+3. The Garage Tinkerer _(3 criteria, narrower)_
+4. The Stealth Shipper _(2 criteria, distinctive variance)_
+5. The Marathoner _(tenure-gated)_
 
 **Single tie-break priority:**
 
@@ -329,17 +340,17 @@ clear winner.
 
 ### Empty state for the personality block
 
-| Lifetime digests | Personality display                                                                                                       |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| **0**            | **Personality block does not render.** Insights page still loads, but this section is hidden until first digest.          |
-| **1 – 2**        | "🐣 **Just Getting Started**" placeholder. Subheader: "One more digest and your profile unlocks." No modifier tags.       |
-| **3 +**          | Run the full selection algorithm above. Show a real archetype with modifier tags.                                         |
+| Lifetime digests | Personality display                                                                                                 |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **0**            | **Personality block does not render.** Insights page still loads, but this section is hidden until first digest.    |
+| **1 – 2**        | "🐣 **Just Getting Started**" placeholder. Subheader: "One more digest and your profile unlocks." No modifier tags. |
+| **3 +**          | Run the full selection algorithm above. Show a real archetype with modifier tags.                                   |
 
 3 digests is the unlock point. Lower than that, the time-of-day pattern is
 effectively random and the archetype would feel arbitrary. With 3+, the
 user gets a real label — early labels may be noisy, but that's part of
 the appeal: the personality shifts as patterns clarify, and watching it
-move from "Dawn Patrol" to "Night Owl" as habits solidify *is* the
+move from "Dawn Patrol" to "Night Owl" as habits solidify _is_ the
 engagement hook.
 
 No tenure-day requirement. If a user generates 3 digests in their first
@@ -352,16 +363,16 @@ day, they get a real archetype that day.
 Smaller fixed set. These layer on dynamic state info that isn't covered by
 the primary archetype.
 
-| Modifier                | Condition                                                    |
-| ----------------------- | ------------------------------------------------------------ |
-| **On Fire**             | Current streak ≥ 7 days                                      |
-| **Comeback Kid**        | Resumed after a 7+ day gap within the last 14 days           |
-| **Streak Hunter**       | ≥ 3 distinct streaks of 5+ days, but current streak < 5      |
-| **Slow Burn**           | Active 4+ days/week consistently for 30+ days, low volume    |
-| **Just Getting Started**| First 14 days of using Scout                                 |
-| **Veteran**             | 90+ days using Scout                                         |
-| **Polyglot**            | 3+ actively-used repos in last 30 days                       |
-| **Loyalist**            | Single repo active for 60+ continuous days                   |
+| Modifier                 | Condition                                                 |
+| ------------------------ | --------------------------------------------------------- |
+| **On Fire**              | Current streak ≥ 7 days                                   |
+| **Comeback Kid**         | Resumed after a 7+ day gap within the last 14 days        |
+| **Streak Hunter**        | ≥ 3 distinct streaks of 5+ days, but current streak < 5   |
+| **Slow Burn**            | Active 4+ days/week consistently for 30+ days, low volume |
+| **Just Getting Started** | First 14 days of using Scout                              |
+| **Veteran**              | 90+ days using Scout                                      |
+| **Polyglot**             | 3+ actively-used repos in last 30 days                    |
+| **Loyalist**             | Single repo active for 60+ continuous days                |
 
 The display picks the **2–3 most distinctive** modifiers for the user (i.e.
 the ones whose conditions fire least often across the user base, or fall
@@ -414,11 +425,11 @@ Insights page — entry point is always visible, page always renders. Each
 section degrades to a "zero" state rather than disappearing, so the user
 can see what they're working toward.
 
-| Section                | Empty-state behavior                                                                                                  |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| Snapshot row           | Best streak shows `0 days` (no repo line). Total digests shows `0`.                                                   |
-| Activity calendar      | Full 365-day grid renders, every cell empty (no activity color). Hover still works ("No activity").                   |
-| Per-repo breakdown     | Table renders with the columns and a single empty row reading "No repos with digests yet."                            |
+| Section                | Empty-state behavior                                                                                                        |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Snapshot row           | Best streak shows `0 days` (no repo line). Total digests shows `0`.                                                         |
+| Activity calendar      | Full 365-day grid renders, every cell empty (no activity color). Hover still works ("No activity").                         |
+| Per-repo breakdown     | Table renders with the columns and a single empty row reading "No repos with digests yet."                                  |
 | Engagement personality | Special "Just Getting Started" card — primary trait + subtitle "Generate your first digest to start your profile." No tags. |
 
 Critically: the user **must be able to navigate to and inspect this page
@@ -432,15 +443,15 @@ feature) sets up the "fill these in" mental model that drives engagement.
 All from existing tables. **No schema changes**, no new tracking, no new
 permissions.
 
-| Need                  | Source                                              |
-| --------------------- | --------------------------------------------------- |
-| Streaks               | `digests` (created_at) + `daily_checkins` (date)    |
-| Total digests         | `digests` count by user                             |
-| Time-of-day pattern   | `digests.created_at` hour                           |
-| Active days (30d)     | union of digest dates + check-in dates              |
-| Repo focus            | `digests.repo` distribution                         |
-| Trajectory            | streak math on the same active-days set             |
-| Activity calendar     | union of digest dates + check-in dates per day      |
+| Need                | Source                                           |
+| ------------------- | ------------------------------------------------ |
+| Streaks             | `digests` (created_at) + `daily_checkins` (date) |
+| Total digests       | `digests` count by user                          |
+| Time-of-day pattern | `digests.created_at` hour                        |
+| Active days (30d)   | union of digest dates + check-in dates           |
+| Repo focus          | `digests.repo` distribution                      |
+| Trajectory          | streak math on the same active-days set          |
+| Activity calendar   | union of digest dates + check-in dates per day   |
 
 ---
 

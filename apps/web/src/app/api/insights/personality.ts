@@ -96,10 +96,9 @@ function pickTopBand(shares: SignalVector["bandShares"]): {
 } {
   let bestBand: SignalVector["topBand"] = null;
   let bestShare = 0;
-  for (const [band, share] of Object.entries(shares) as Array<[
-    keyof SignalVector["bandShares"],
-    number,
-  ]>) {
+  for (const [band, share] of Object.entries(shares) as Array<
+    [keyof SignalVector["bandShares"], number]
+  >) {
     if (share > bestShare) {
       bestShare = share;
       bestBand = band;
@@ -290,12 +289,10 @@ function computeSignals(digests: DigestRow[], checkins: CheckinRow[], now: Date)
   const avgLinesRemoved = recentDigestCount > 0 ? sumLinesRemoved / recentDigestCount : 0;
   const avgCommitsPerDigest = recentDigestCount > 0 ? sumCommits / recentDigestCount : 0;
   const avgFilesPerCommit = sumCommits > 0 ? sumFilesChanged / sumCommits : 0;
-  const avgLinesPerCommit =
-    sumCommits > 0 ? (sumLinesAdded + sumLinesRemoved) / sumCommits : 0;
+  const avgLinesPerCommit = sumCommits > 0 ? (sumLinesAdded + sumLinesRemoved) / sumCommits : 0;
   const highGrowthShare = recentDigestCount > 0 ? highGrowth / recentDigestCount : 0;
   const highChurnShare = recentDigestCount > 0 ? highChurn / recentDigestCount : 0;
-  const avgSessionMinutes =
-    sessionCountWithData > 0 ? sumSessionMinutes / sessionCountWithData : 0;
+  const avgSessionMinutes = sessionCountWithData > 0 ? sumSessionMinutes / sessionCountWithData : 0;
 
   return {
     totalDigests: digests.length,
@@ -356,9 +353,7 @@ const ARCHETYPES: Archetype[] = [
     evaluate: (s) => {
       const specialist = s.topRepoShare >= 0.8 && s.activeRepos30 <= 2;
       const architect =
-        s.avgSessionMinutes >= 90 &&
-        s.avgCommitsPerDigest <= 3 &&
-        s.avgLinesPerCommit >= 80;
+        s.avgSessionMinutes >= 90 && s.avgCommitsPerDigest <= 3 && s.avgLinesPerCommit >= 80;
       const builder =
         s.avgLinesRemoved > 0 &&
         s.avgLinesAdded / Math.max(1, s.avgLinesRemoved) >= 2.0 &&
@@ -381,8 +376,7 @@ const ARCHETYPES: Archetype[] = [
       if (s.currentStreak >= 5) return 0; // bursty, not steady
       return 1;
     },
-    subheader: (s) =>
-      `Across ${s.totalRepos} repos at all hours. Chaos by design.`,
+    subheader: (s) => `Across ${s.totalRepos} repos at all hours. Chaos by design.`,
   },
   {
     key: "garage_tinkerer",
@@ -430,8 +424,7 @@ const ARCHETYPES: Archetype[] = [
       if (s.activeDays30 < 15) return 0;
       return 1;
     },
-    subheader: (s) =>
-      `${s.tenureDays} days in, active most weeks, low variance.`,
+    subheader: (s) => `${s.tenureDays} days in, active most weeks, low variance.`,
   },
 
   // ---------- SINGLE TIER ----------
@@ -493,8 +486,7 @@ const ARCHETYPES: Archetype[] = [
         s.topBandShare <= 0.5;
       return bimodal ? 0.7 : 0;
     },
-    subheader: () =>
-      "Bimodal pattern. Peaks around midday and again in the evening.",
+    subheader: () => "Bimodal pattern. Peaks around midday and again in the evening.",
   },
   {
     key: "weekend_warrior",
@@ -502,8 +494,7 @@ const ARCHETYPES: Archetype[] = [
     emoji: "🏖",
     tier: "single",
     evaluate: (s) => (s.weekendShare >= 0.6 ? rampScore(s.weekendShare, 0.6) : 0),
-    subheader: (s) =>
-      `${Math.round(s.weekendShare * 100)}% of your digests land on weekends.`,
+    subheader: (s) => `${Math.round(s.weekendShare * 100)}% of your digests land on weekends.`,
   },
   // Portfolio
   {
@@ -545,8 +536,7 @@ const ARCHETYPES: Archetype[] = [
       if (s.bestStreak >= 5) return 0;
       return Math.min(1, (s.totalRepos - 4) / 6);
     },
-    subheader: (s) =>
-      `${s.totalRepos} repos touched lifetime. High turnover, low retention.`,
+    subheader: (s) => `${s.totalRepos} repos touched lifetime. High turnover, low retention.`,
   },
   // Style
   {

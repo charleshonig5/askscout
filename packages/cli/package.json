@@ -1,13 +1,40 @@
 {
   "name": "askscout",
   "version": "0.1.0",
+  "description": "The daily digest for vibe coders. Scout reads through your repo and tells you what you built, what changed, and where you left off.",
+  "license": "MIT",
+  "author": "Charles Honig <charleshonigdesign@gmail.com>",
+  "homepage": "https://askscout.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/charleshonig5/askscout.git",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/charleshonig5/askscout/issues"
+  },
+  "keywords": [
+    "cli",
+    "git",
+    "digest",
+    "standup",
+    "developer-tools",
+    "ai",
+    "anthropic",
+    "openai",
+    "productivity"
+  ],
   "type": "module",
   "bin": {
     "askscout": "./dist/index.cjs"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",

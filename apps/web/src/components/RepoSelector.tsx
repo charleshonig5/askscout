@@ -210,11 +210,7 @@ export function RepoSelector({
       : placeholder;
 
   return (
-    <div
-      className={`repo-combobox repo-combobox--${variant}`}
-      ref={rootRef}
-      onBlur={onRootBlur}
-    >
+    <div className={`repo-combobox repo-combobox--${variant}`} ref={rootRef} onBlur={onRootBlur}>
       <button
         ref={triggerRef}
         type="button"

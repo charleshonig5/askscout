@@ -1,0 +1,82 @@
+# Release workflow — automated npm publishing via Changesets.
+#
+# Flow:
+#   1. PRs add changeset entries (`pnpm changeset`) describing their
+#      version bump intent (patch / minor / major) per package.
+#   2. When changesets land on main, this workflow runs and either:
+#       (a) opens or updates a "Version Packages" PR that bumps
+#           versions + regenerates CHANGELOG entries, or
+#       (b) if such a PR has been merged, publishes the bumped
+#           versions to npm.
+#
+# Required repository secret:
+#   NPM_TOKEN — automation token from npm with publish access to the
+#   `askscout` and `@askscout/core` packages. Generate at
+#   https://www.npmjs.com/settings/<your-user>/tokens (type:
+#   "Automation"; do not use a "Publish" token without 2FA bypass).
+#
+# Optional: GITHUB_TOKEN is provided automatically by Actions; the
+# changesets/action uses it to push the version PR.
+
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+# Cancel in-flight runs when a newer push lands so we don't race
+# two version PRs against each other.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Version PR or publish
+    runs-on: ubuntu-latest
+    # Required for changesets/action to push the Version Packages PR
+    # and create release tags.
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full history so changeset can compute version bumps
+          # against the previous release tag.
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+          # Configures npm to authenticate with the registry using
+          # NODE_AUTH_TOKEN below.
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Create Version PR or publish
+        uses: changesets/action@v1
+        with:
+          # `pnpm release` runs `pnpm build && changeset publish` —
+          # see root package.json. Build runs again here as a safety
+          # net so we never publish stale dist/.
+          publish: pnpm release
+          # Title shown on the auto-generated version PR.
+          title: "chore: version packages"
+          commit: "chore: version packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

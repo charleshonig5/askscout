@@ -1,0 +1,3 @@
+# Default owner for everything in the repo. GitHub will request review
+# from this account on every pull request.
+*       @charleshonig5

@@ -248,9 +248,7 @@ export function formatCodingTimeline(commits: { timestamp: Date | string }[]): s
 
   // Lowercase to match the web's .toLowerCase() at DigestView.tsx:119.
   const fmtTime = (d: Date) =>
-    d
-      .toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })
-      .toLowerCase();
+    d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).toLowerCase();
 
   const start = sorted[0]!;
   const end = sorted[sorted.length - 1]!;
