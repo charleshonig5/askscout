@@ -570,34 +570,10 @@ export default function InsightsPage() {
               one digest that day. Hover any cell for date + count +
               repos. Renders even on fresh accounts (full empty grid)
               so users see what they're working toward. */}
-          {loaded && (
-            <>
-              <hr className="settings-divider" />
-              <section className="settings-section">
-                <header className="settings-section-head">
-                  <div className="settings-section-title">
-                    <Emoji name="calendar" size={20} />
-                    <h2>Activity</h2>
-                  </div>
-                  <p className="settings-section-desc">Your last 365 days with Scout.</p>
-                </header>
-                <div className="settings-panel insights-calendar-panel">
-                  <ActivityCalendar days={data.activityDays} />
-                </div>
-              </section>
-            </>
-          )}
-
-          {/* PER-REPO BREAKDOWN — table on desktop, stacked cards on
-              mobile (≤ 768px) per the plan doc. Sorted by last
-              active descending so the most recently touched repos
-              surface first. Empty repo lists render an in-panel
-              placeholder so the section still reads on day-1
-              accounts. */}
-          {/* ENGAGEMENT PERSONALITY — live-computed primary archetype
-              + 2–3 modifier tags. Block hides entirely on accounts
-              with zero digests (state === "hidden") so the rest of
-              the page still loads but this card waits for data. */}
+          {/* ENGAGEMENT PERSONALITY — live-computed primary archetype.
+              Block hides entirely on accounts with zero digests
+              (state === "hidden") so the rest of the page still
+              loads but this card waits for data. */}
           {loaded && data.personality.state !== "hidden" && (
             <>
               <hr className="settings-divider" />
@@ -628,6 +604,12 @@ export default function InsightsPage() {
             </>
           )}
 
+          {/* PER-REPO BREAKDOWN — table on desktop, stacked cards on
+              mobile (≤ 768px) per the plan doc. Sorted by last
+              active descending so the most recently touched repos
+              surface first. Empty repo lists render an in-panel
+              placeholder so the section still reads on day-1
+              accounts. */}
           {loaded && (
             <>
               <hr className="settings-divider" />
@@ -643,6 +625,26 @@ export default function InsightsPage() {
                 </header>
                 <div className="settings-panel insights-repos-panel">
                   <ReposBreakdown repoStats={data.repoStats} />
+                </div>
+              </section>
+            </>
+          )}
+
+          {/* ACTIVITY CALENDAR — rolling 365-day grid, GitHub-style.
+              Lives at the bottom as the deep-detail view. */}
+          {loaded && (
+            <>
+              <hr className="settings-divider" />
+              <section className="settings-section">
+                <header className="settings-section-head">
+                  <div className="settings-section-title">
+                    <Emoji name="calendar" size={20} />
+                    <h2>Activity</h2>
+                  </div>
+                  <p className="settings-section-desc">Your last 365 days with Scout.</p>
+                </header>
+                <div className="settings-panel insights-calendar-panel">
+                  <ActivityCalendar days={data.activityDays} />
                 </div>
               </section>
             </>
