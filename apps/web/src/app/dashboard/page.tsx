@@ -128,6 +128,12 @@ export default function DashboardPage() {
   // to the empty-repo branch." Without this gate, an empty-history repo would
   // hang on the post-opener UI forever.
   const historyFetchedForRef = useRef<string | null>(null);
+  // STATE-backed mirror of historyFetchedForRef. The ref alone is not enough
+  // to drive UI gates because mutating a ref doesn't trigger a re-render —
+  // we need React to actually re-evaluate the streak badge gate when this
+  // flips. The two stay in lockstep: every place that updates the ref also
+  // updates the state immediately after.
+  const [historyLoadedForRepo, setHistoryLoadedForRepo] = useState<string | null>(null);
   const [digestSectionPrefs, setDigestSectionPrefs] = useState<Record<string, boolean> | null>(
     null,
   );
@@ -189,6 +195,7 @@ export default function DashboardPage() {
         };
         setHistoryRecords(data.history);
         historyFetchedForRef.current = repo;
+        setHistoryLoadedForRepo(repo);
         setCheckinDates(data.checkinDates ?? []);
         setHistory(
           data.history.map((h) => {
@@ -315,6 +322,7 @@ export default function DashboardPage() {
       setEmptyRepo(false);
       // Clear history so the no-commits effect can't use the previous repo's data
       historyFetchedForRef.current = null;
+      setHistoryLoadedForRepo(null);
       setHistoryRecords([]);
       setCheckinDates([]);
       setHistory([]);
@@ -598,7 +606,15 @@ export default function DashboardPage() {
   // A day counts as "active" if a digest was generated OR a check-in recorded.
   // Personal best is the longest consecutive-days run found anywhere in the
   // active set (always >= current streak, since current is part of that set).
+  //
+  // First-line short-circuit: if the history we have loaded doesn't match the
+  // currently selected repo, return zero so no stale streak from a previous
+  // repo's data can leak through any consumer (badge, accessibility tree,
+  // future copy, etc.). The render-site gate exists too, but defending here
+  // means there's no path where a non-zero streak number can come from
+  // mismatched data.
   const { streak, personalBest } = (() => {
+    if (historyLoadedForRepo !== selectedRepo) return { streak: 0, personalBest: 0 };
     const pad = (n: number) => String(n).padStart(2, "0");
     const fmtKey = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
     const activeDays = new Set<string>();
@@ -717,15 +733,16 @@ export default function DashboardPage() {
                   <span className="digest-page-title-text">{pageTitle}</span>
                   {(() => {
                     // Gate the streak badge on whether the history we have
-                    // matches the currently selected repo. Without this, when
-                    // the user switches from a streaked repo to a different
-                    // one, React renders one frame with the new repo title
-                    // but the old repo's historyRecords (state hasn't been
-                    // cleared yet — that runs in the effect after this
-                    // render), and a stale badge flashes through the
-                    // "scanning the horizon" loading state.
-                    const historyMatchesRepo =
-                      historyFetchedForRef.current === selectedRepo;
+                    // loaded matches the currently selected repo. The gate
+                    // is state-backed (historyLoadedForRepo) rather than
+                    // ref-backed so React actually re-renders when it
+                    // flips. Combined with the streak-computation short-
+                    // circuit above (which returns 0 on mismatch), this
+                    // guarantees no stale streak leaks during the gap
+                    // between picking a new repo and its history finishing
+                    // loading — including the entire digest-generation
+                    // window for the new repo.
+                    const historyMatchesRepo = historyLoadedForRepo === selectedRepo;
                     const showStreakBadge =
                       !noNewCommits &&
                       !emptyRepo &&
