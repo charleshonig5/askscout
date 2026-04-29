@@ -594,26 +594,6 @@ export default function InsightsPage() {
               surface first. Empty repo lists render an in-panel
               placeholder so the section still reads on day-1
               accounts. */}
-          {loaded && (
-            <>
-              <hr className="settings-divider" />
-              <section className="settings-section">
-                <header className="settings-section-head">
-                  <div className="settings-section-title">
-                    <Emoji name="perRepo" size={20} />
-                    <h2>Repos</h2>
-                  </div>
-                  <p className="settings-section-desc">
-                    Every repo Scout has tracked, with its activity at a glance.
-                  </p>
-                </header>
-                <div className="settings-panel insights-repos-panel">
-                  <ReposBreakdown repoStats={data.repoStats} />
-                </div>
-              </section>
-            </>
-          )}
-
           {/* ENGAGEMENT PERSONALITY — live-computed primary archetype
               + 2–3 modifier tags. Block hides entirely on accounts
               with zero digests (state === "hidden") so the rest of
@@ -643,6 +623,26 @@ export default function InsightsPage() {
                   <p className="insights-personality-subheader">
                     {data.personality.subheader}
                   </p>
+                </div>
+              </section>
+            </>
+          )}
+
+          {loaded && (
+            <>
+              <hr className="settings-divider" />
+              <section className="settings-section">
+                <header className="settings-section-head">
+                  <div className="settings-section-title">
+                    <Emoji name="perRepo" size={20} />
+                    <h2>Repos</h2>
+                  </div>
+                  <p className="settings-section-desc">
+                    Every repo Scout has tracked, with its activity at a glance.
+                  </p>
+                </header>
+                <div className="settings-panel insights-repos-panel">
+                  <ReposBreakdown repoStats={data.repoStats} />
                 </div>
               </section>
             </>
