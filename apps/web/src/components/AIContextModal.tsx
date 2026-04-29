@@ -3,6 +3,7 @@
 import { Fragment, useCallback, useMemo, useState } from "react";
 import { CircleX, Copy, Check } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
+import { useBodyScrollLock } from "@/lib/useBodyScrollLock";
 
 interface AIContextModalProps {
   isOpen: boolean;
@@ -66,6 +67,8 @@ function parseResumePrompt(text: string): Section[] {
 
 export function AIContextModal({ isOpen, onClose, content }: AIContextModalProps) {
   const [copied, setCopied] = useState(false);
+  // Lock body scroll while the modal is open.
+  useBodyScrollLock(isOpen);
 
   const sections = useMemo(() => (content ? parseResumePrompt(content) : []), [content]);
 

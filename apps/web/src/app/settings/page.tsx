@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, CircleX, Trash2, ShieldCheck, ShieldX } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
 import { RepoSelector } from "@/components/RepoSelector";
+import { useBodyScrollLock } from "@/lib/useBodyScrollLock";
 
 /**
  * Settings page (Figma node 56:4092).
@@ -214,6 +215,10 @@ export default function SettingsPage() {
   const [deleteAccountOpen, setDeleteAccountOpen] = useState(false);
   const [deleteAccountSubmitting, setDeleteAccountSubmitting] = useState(false);
   const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
+
+  // Lock body scroll while either confirm modal is open so the
+  // background page can't scroll behind the overlay.
+  useBodyScrollLock(clearAllOpen || deleteAccountOpen);
 
   const openDeleteAccount = useCallback(() => {
     setDeleteAccountError(null);

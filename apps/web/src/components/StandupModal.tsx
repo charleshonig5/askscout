@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { CircleX, Copy, Check } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
+import { useBodyScrollLock } from "@/lib/useBodyScrollLock";
 
 interface StandupModalProps {
   isOpen: boolean;
@@ -95,6 +96,9 @@ function FormattedStandup({ text }: { text: string }) {
 
 export function StandupModal({ isOpen, onClose, content }: StandupModalProps) {
   const [copied, setCopied] = useState(false);
+  // Lock body scroll while the modal is open so users can't
+  // scroll the underlying page through the overlay.
+  useBodyScrollLock(isOpen);
 
   /** Build the copy payload from PARSED sections rather than the
    *  raw LLM content. The LLM emits Slack-bold `*Header*` markers,

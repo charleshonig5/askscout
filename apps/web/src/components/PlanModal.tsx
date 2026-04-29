@@ -3,6 +3,7 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { CircleX, Copy, Check } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
+import { useBodyScrollLock } from "@/lib/useBodyScrollLock";
 
 interface PlanModalProps {
   isOpen: boolean;
@@ -79,6 +80,8 @@ function hashString(s: string): string {
 export function PlanModal({ isOpen, onClose, content }: PlanModalProps) {
   const [copied, setCopied] = useState(false);
   const [checked, setChecked] = useState<Record<string, boolean>>({});
+  // Lock body scroll while the modal is open.
+  useBodyScrollLock(isOpen);
 
   const tasks = useMemo(() => (content ? parseTasks(content) : []), [content]);
 
