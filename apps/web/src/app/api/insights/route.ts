@@ -46,8 +46,8 @@ interface InsightsResponse {
   bestStreak: BestStreakResult;
   totalDigests: number;
   /** Average digests per week since the user's first digest. Null
-   *  when there isn't enough data to compute a meaningful pace
-   *  (fewer than 4 total digests or less than 7 days of history). */
+   *  only when the user has fewer than 2 total digests (a single
+   *  digest can't produce a "per week" reading). */
   digestsPerWeek: number | null;
   /** Last 365 days, oldest first. Always exactly 365 entries — days
    *  with no activity render as zero-cell placeholders. */
@@ -257,19 +257,19 @@ export async function GET() {
   const personality = computePersonality(digests, checkins, new Date());
 
   // Pace context for the Total digests stat — average per week since
-  // the user's first digest. Suppressed for low-signal accounts (<4
-  // digests or <1 week of history) where the average is misleading.
+  // the user's first digest. Suppressed only for the truly low-signal
+  // case: fewer than 2 digests or zero span (avoids divide-by-zero).
+  // For 2 digests on the same day we still need a span floor of 1 day
+  // so the per-week math doesn't explode.
   let digestsPerWeek: number | null = null;
-  if (totalDigests >= 4) {
+  if (totalDigests >= 2) {
     const timestamps = digests
       .map((d) => (d.created_at ? new Date(d.created_at).getTime() : NaN))
       .filter((t) => !Number.isNaN(t));
     if (timestamps.length > 0) {
       const first = Math.min(...timestamps);
-      const spanDays = (Date.now() - first) / (24 * 60 * 60 * 1000);
-      if (spanDays >= 7) {
-        digestsPerWeek = totalDigests / (spanDays / 7);
-      }
+      const spanDays = Math.max(1, (Date.now() - first) / (24 * 60 * 60 * 1000));
+      digestsPerWeek = totalDigests / (spanDays / 7);
     }
   }
 
