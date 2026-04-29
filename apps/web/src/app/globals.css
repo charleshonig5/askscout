@@ -4580,19 +4580,30 @@ a:hover {
   color: var(--color-text-primary);
 }
 
-/* Single chevron — only rendered when the column is the active
-   sort. Matches GitHub / Stripe / Linear: one indicator, on the
-   active column only. */
+/* Single chevron — always rendered. Active column shows it solid;
+   inactive columns hide it until hover (faint), telegraphing
+   "this column is sortable" without cluttering the resting state.
+   Matches GitHub / Stripe affordance pattern. */
 .insights-repos-sort-icon {
   display: inline-flex;
   align-items: center;
   line-height: 0;
   margin-left: 2px;
   color: var(--color-text-primary);
+  opacity: 0;
+  transition: opacity 0.12s ease;
 }
 
 .insights-repos-sort-icon > svg {
   display: block;
+}
+
+.insights-repos-sort:hover .insights-repos-sort-icon {
+  opacity: 0.5;
+}
+
+.insights-repos-sort.is-active .insights-repos-sort-icon {
+  opacity: 1;
 }
 
 .insights-repos-row + .insights-repos-row {

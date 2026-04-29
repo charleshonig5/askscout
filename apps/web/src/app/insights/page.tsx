@@ -284,11 +284,13 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
   }
 
   /** One header cell — click to sort, click again to flip direction.
-   *  Single chevron icon, only rendered for the active column (matches
-   *  GitHub / Stripe / Linear). Inactive columns show just the label,
-   *  so the table reads as "this is the sorted column" at a glance. */
+   *  Active column shows a solid chevron in the current direction.
+   *  Inactive columns show a faint chevron on hover (matching the
+   *  column's default direction) to telegraph "this is sortable" —
+   *  same affordance pattern as GitHub / Stripe. */
   const SortHeader = ({ keyName, label }: { keyName: SortKey; label: string }) => {
     const isActive = sortKey === keyName;
+    const dir = isActive ? sortDir : DEFAULT_DIR[keyName];
     return (
       <button
         type="button"
@@ -298,15 +300,13 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
         aria-sort={isActive ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
       >
         <span className="insights-repos-sort-label">{label}</span>
-        {isActive && (
-          <span className="insights-repos-sort-icon" aria-hidden>
-            {sortDir === "asc" ? (
-              <ChevronUp size={12} strokeWidth={2} />
-            ) : (
-              <ChevronDown size={12} strokeWidth={2} />
-            )}
-          </span>
-        )}
+        <span className="insights-repos-sort-icon" aria-hidden>
+          {dir === "asc" ? (
+            <ChevronUp size={12} strokeWidth={2} />
+          ) : (
+            <ChevronDown size={12} strokeWidth={2} />
+          )}
+        </span>
       </button>
     );
   };
