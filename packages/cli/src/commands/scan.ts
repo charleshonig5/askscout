@@ -83,8 +83,9 @@ export async function scan(options: ScanOptions): Promise<void> {
   // 1. Find project root
   const projectRoot = await findProjectRoot();
 
-  // 2. Start spinner
-  let spinner = startSpinner("\ud83d\udc15 Scout is sniffing through your commits...");
+  // 2. Start spinner. Verb matches the digest intro line ("Scout
+  // scanned\u2026") to keep the brand voice consistent across the run.
+  let spinner = startSpinner("Scout is scanning your commits...");
 
   try {
     // 3. Read project state + repo name
@@ -111,12 +112,10 @@ export async function scan(options: ScanOptions): Promise<void> {
     if (commits.length === 0) {
       spinner.stop();
       if (isFirstRun) {
-        console.log(
-          `\ud83d\udc15 Scout checked out ${repoName} but didn't find any recent commits.`,
-        );
+        console.log(`Scout scanned ${repoName} but didn't find any recent commits.`);
         console.log("   Is this a brand new repo? Make some commits and come back!");
       } else {
-        console.log(`\ud83d\udc15 Scout didn't find any new commits ${timeLabel}.`);
+        console.log(`Scout didn't find any new commits ${timeLabel}.`);
         console.log("   Try: askscout --week");
       }
       return;
@@ -156,7 +155,7 @@ export async function scan(options: ScanOptions): Promise<void> {
         }
         // Resume spinner for the LLM call
         console.error("   Generating your first digest...\n");
-        spinner = startSpinner("\ud83d\udc15 Scout is crunching the numbers...");
+        spinner = startSpinner("Scout is generating your digest...");
       } else {
         // Non-interactive (piped, CI) — can't prompt
         console.error("\u2717 No API key found. Run: askscout --setup");
