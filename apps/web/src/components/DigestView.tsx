@@ -834,14 +834,19 @@ function WhenYouCoded({
   // each segment's leftPct/rightPct so bins stay inside their day's visual
   // range — and the midnight gap between segments stays visually clean.
   //
-  // TOTAL_BINS is tuned so that even when every bin is populated, adjacent
-  // 4px bars have a clear visible gap. On a typical ~390px track:
-  //   24 bins → ~16.25px per slot → ~12.25px gap between bars
-  // Bumping further trades resolution for crowding. 24 is the
-  // comfortable middle ground — denser than the original 16 (which
-  // left ~20.5px of dead air between bars and read as sparse) but
-  // still well clear of bars touching.
-  const TOTAL_BINS = 24;
+  // TOTAL_BINS controls the chart's temporal resolution. On a typical
+  // ~390px track with 4px bars:
+  //   16 bins → ~20.5px gap (sparse, "pin dots")
+  //   24 bins → ~12.25px gap (moderate, clearly discrete)
+  //   32 bins → ~8.2px gap (dense, reads as a real histogram) ← here
+  //   40 bins → ~5.75px gap (continuous waveform, ruler-row risk)
+  // 32 is the sweet spot: bursts isolate as tall spikes against
+  // shorter neighbors (instead of averaging within wider bins), the
+  // silhouette reads as a profile of the day, and we're still well
+  // clear of the ruler-row threshold for typical workdays
+  // (10–50 commits). Multi-day digests stay safe — 32 bins across
+  // 3 days is ~10 bins/day after midnight gaps.
+  const TOTAL_BINS = 32;
 
   type Bin = {
     startMs: number;
