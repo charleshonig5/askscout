@@ -593,7 +593,7 @@ const ARCHETYPES: Archetype[] = [
       return 0.85;
     },
     subheader: (s) =>
-      `Average ${s.avgFilesPerCommit.toFixed(1)} files per commit. Focused, precise work.`,
+      `Average ${s.avgFilesPerCommit.toFixed(1)} files touched per commit. Focused, precise work.`,
   },
   {
     key: "earthquake",
@@ -606,7 +606,7 @@ const ARCHETYPES: Archetype[] = [
       return rampScore(s.avgFilesPerCommit, 5, 12);
     },
     subheader: (s) =>
-      `Average ${s.avgFilesPerCommit.toFixed(1)} files per commit. Every change has reach.`,
+      `Average ${s.avgFilesPerCommit.toFixed(1)} files touched per commit. Every change has reach.`,
   },
   {
     key: "architect",

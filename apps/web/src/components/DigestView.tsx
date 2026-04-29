@@ -106,7 +106,7 @@ function buildFullMarkdown(
       [
         "Codebase Health",
         `Growth: ${h.growth.level} (+${fmt(h.growth.added)} / -${fmt(h.growth.removed)})`,
-        `Focus: ${h.focus.level} (${h.focus.filesPerCommit} files per commit)`,
+        `Focus: ${h.focus.level} (${h.focus.filesPerCommit} files touched per commit)`,
         `Churn: ${h.churn.level} (${h.churn.files} ${h.churn.files === 1 ? "file" : "files"} reworked)`,
       ].join("\n"),
     );
@@ -1341,7 +1341,7 @@ function CodebaseHealth({ health }: { health: HealthData }) {
     {
       label: "Focus" as const,
       level: health.focus.level,
-      stat: `${health.focus.filesPerCommit} files per commit`,
+      stat: `${health.focus.filesPerCommit} files touched per commit`,
       detail: FOCUS_DETAIL[health.focus.level] ?? "",
     },
     {
