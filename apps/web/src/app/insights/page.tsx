@@ -207,14 +207,11 @@ function formatLastActive(dateStr: string | null): string {
  *  shows the actual repo name. Long owner prefixes (e.g.
  *  `some-org-name/`) ate column space and got truncated mid-name.
  *  The full slug stays available via title attribute on hover. */
-/** Format the pace caption next to Total digests. Rounding rules
- *  picked to keep the number readable: <1 collapses to "<1" so we
- *  never render "0.4"; >=10 drops the decimal; otherwise show one
- *  decimal. The leading "~" reads as "approximately." */
+/** Format the pace caption next to Total digests. Rounded to a
+ *  whole number with a floor of 1 — fractional pace ("0.4 per
+ *  week") reads as noise next to a hero stat. */
 function formatPerWeek(perWeek: number): string {
-  if (perWeek < 1) return "<1";
-  if (perWeek >= 10) return `~${Math.round(perWeek)}`;
-  return `~${perWeek.toFixed(1)}`;
+  return String(Math.max(1, Math.round(perWeek)));
 }
 
 function repoDisplayName(slug: string): string {
@@ -562,7 +559,7 @@ export default function InsightsPage() {
                         number (>= 4 digests, >= 1 week of data). */}
                     {data.digestsPerWeek != null && (
                       <span className="insights-stat-caption">
-                        {formatPerWeek(data.digestsPerWeek)} per week
+                        Averaging {formatPerWeek(data.digestsPerWeek)} per week
                       </span>
                     )}
                   </div>
