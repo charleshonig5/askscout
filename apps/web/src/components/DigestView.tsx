@@ -807,8 +807,9 @@ function WhenYouCoded({
   // What changed is the data model underneath — instead of one column per
   // commit (which bunched into overlapping dots on busy days), we render
   // one bar per time bin and scale its HEIGHT by total lines changed in
-  // that bin. Bar WIDTH is fixed at 14px in CSS so every bar is visually
-  // identical in thickness across every digest and viewport.
+  // that bin. Bar WIDTH is fixed at 8px in CSS (.timeline-bar) so every
+  // bar is visually identical in thickness across every digest and
+  // viewport.
   //
   // Multi-day rule: bins NEVER cross midnight. Each day segment gets its
   // own set of bins allocated proportional to the segment's share of the
@@ -818,8 +819,8 @@ function WhenYouCoded({
   // range — and the midnight gap between segments stays visually clean.
   //
   // TOTAL_BINS is tuned so that even when every bin is populated, adjacent
-  // 14px bars have a clear visible gap. On a typical ~390px track:
-  //   16 bins → ~24.5px per slot → ~10.5px gap between bars
+  // 8px bars have a clear visible gap. On a typical ~390px track:
+  //   16 bins → ~24.5px per slot → ~16.5px gap between bars
   // Bumping this number trades resolution for crowding. 16 is the
   // comfortable middle ground for a workday view.
   const TOTAL_BINS = 16;
@@ -968,7 +969,7 @@ function WhenYouCoded({
         ])}
         {activeBins.map((bin, i) => {
           // Bar is positioned at bin.centerPct (its slot center within the
-          // track). Width is locked at 14px by CSS (.timeline-bar) so all
+          // track). Width is locked at 8px by CSS (.timeline-bar) so all
           // bars have identical thickness — only height encodes data.
           const h = barHeight(bin.totalLines);
           const barKey = `bin-${i}-${bin.startMs}`;
