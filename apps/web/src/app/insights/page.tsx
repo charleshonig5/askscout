@@ -522,7 +522,7 @@ function ReposSkeleton() {
 
 function ActivitySkeleton() {
   return (
-    <div className="settings-panel insights-calendar-panel">
+    <div className="settings-panel insights-calendar-panel scroll-soft">
       <div className="insights-skel insights-skel--calendar" aria-hidden />
     </div>
   );
@@ -730,7 +730,7 @@ export default function InsightsPage() {
               <p className="settings-section-desc">Your last 365 days with Scout.</p>
             </header>
             {loaded ? (
-              <div className="settings-panel insights-calendar-panel">
+              <div className="settings-panel insights-calendar-panel scroll-soft">
                 <ActivityCalendar days={data.activityDays} />
               </div>
             ) : (
