@@ -732,23 +732,33 @@ export default function DashboardPage() {
                 <h1 className="digest-page-name">
                   <span className="digest-page-title-text">{pageTitle}</span>
                   {(() => {
-                    // Gate the streak badge on whether the history we have
-                    // loaded matches the currently selected repo. The gate
-                    // is state-backed (historyLoadedForRepo) rather than
-                    // ref-backed so React actually re-renders when it
-                    // flips. Combined with the streak-computation short-
-                    // circuit above (which returns 0 on mismatch), this
-                    // guarantees no stale streak leaks during the gap
-                    // between picking a new repo and its history finishing
-                    // loading — including the entire digest-generation
-                    // window for the new repo.
+                    // Gate the streak badge on:
+                    //   1. History loaded for the CURRENT repo (state-backed
+                    //      so React re-renders when it flips)
+                    //   2. Digest is settled — not still streaming or
+                    //      checking cache. Without this, when the user
+                    //      switches repos, the new repo's history fetch
+                    //      completes mid-generation and the badge pops in
+                    //      while the digest is still streaming. If the new
+                    //      repo also has its own streak >= 2, that pop-in
+                    //      reads as if the previous repo's badge "persisted"
+                    //      — even though it's the new repo's legitimate
+                    //      streak. Holding the badge until the digest is
+                    //      done makes its arrival feel intentional.
+                    //
+                    // Combined with the streak-computation short-circuit
+                    // above (returns 0 on history mismatch), there's no
+                    // path where a stale streak from the previous repo
+                    // can render at any frame.
                     const historyMatchesRepo = historyLoadedForRepo === selectedRepo;
+                    const digestSettled = !digestStream.isStreaming && !isCheckingCache;
                     const showStreakBadge =
                       !noNewCommits &&
                       !emptyRepo &&
                       !isViewingHistory &&
                       streak >= 2 &&
-                      historyMatchesRepo;
+                      historyMatchesRepo &&
+                      digestSettled;
                     if (!repoName && !showStreakBadge) return null;
                     return (
                       <span className="digest-page-pills">
