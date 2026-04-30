@@ -1,6 +1,6 @@
 {
   "name": "askscout",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The daily digest for vibe coders. Scout reads through your repo and tells you what you built, what changed, and where you left off.",
   "license": "MIT",
   "author": "Charles Honig <charleshonigdesign@gmail.com>",

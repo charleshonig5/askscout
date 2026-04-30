@@ -1,6 +1,6 @@
 {
   "name": "askscout-core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Shared library powering askscout — git reading, LLM digest summarization, output formatting, and project state management.",
   "license": "MIT",
   "author": "Charles Honig <charleshonigdesign@gmail.com>",
