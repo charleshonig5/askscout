@@ -2486,8 +2486,22 @@ a:hover {
   justify-content: center;
   width: 20px;
   height: 20px;
+  /* Primary color on inactive items so the arrow advertises that
+     the row is clickable. The .active variant below dims it to
+     secondary because the user is already viewing this digest —
+     "click me to open" is no longer the right signal. */
   color: var(--color-text-primary);
   flex-shrink: 0;
+}
+
+/* When the item is the currently-selected digest, the arrow drops
+   to secondary text color. The row is still focusable / clickable
+   (e.g. to navigate away and back), but the arrow stops loudly
+   advertising that — there's nowhere new for it to take you.
+   Both color tokens are theme-aware, so this works in light and
+   dark modes without per-mode rules. */
+.sidebar-item.active .sidebar-item-open {
+  color: var(--color-text-secondary);
 }
 
 /* FOOTER: divider + profile row. Pinned to the bottom. */
