@@ -1166,7 +1166,9 @@ a:hover {
 .live-badge {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  /* 6px gap matches the digest-repo-chip / streak-badge rhythm so
+     the "Live" pill reads as part of the same spacing language. */
+  gap: 6px;
   margin-left: var(--space-sm);
   padding: 4px 6px;
   border-radius: 4px;
@@ -1185,8 +1187,11 @@ a:hover {
 }
 
 .live-badge-dot {
-  width: 6px;
-  height: 6px;
+  /* 5px reads as proportional to the 10px label without
+     dominating the pill. Theme-aware via --color-success
+     (#4ac321 light / #57d32e dark) so contrast holds in both. */
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: var(--color-success);
   box-shadow: 0 0 6px 0 color-mix(in srgb, var(--color-success) 45%, transparent);
