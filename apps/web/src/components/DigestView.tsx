@@ -829,6 +829,18 @@ function WhenYouCoded({
   // each segment's leftPct/rightPct so bins stay inside their day's visual
   // range — and the midnight gap between segments stays visually clean.
   //
+  // Baseline-gap percent for midnight breaks in multi-day digests.
+  // Declared up here (not at the bottom near the segment-build loop)
+  // because the bin-allocation forEach below reads `half` to clamp
+  // bins inside the rendered baseline edges. Reading `half` before
+  // its declaration site triggers a Temporal Dead Zone error at
+  // runtime — keep these declarations ABOVE the first forEach that
+  // uses them.
+  // 7% reads as ~22px on the stats-column width: clear breathing
+  // room with the labels cleanly on the baseline side of the break.
+  const GAP_PCT = 7;
+  const half = GAP_PCT / 2;
+
   // TOTAL_BINS controls the chart's temporal resolution. On a typical
   // ~390px track with 4px bars:
   //   16 bins → ~20.5px gap (sparse, "pin dots")
@@ -952,15 +964,14 @@ function WhenYouCoded({
     return Math.max(MIN_BAR_HEIGHT, ratio * MAX_BAR_HEIGHT);
   };
 
-  // Split the baseline at each midnight so day-changes show as a visible
-  // gap. Time labels anchor to the edges of their segment (flex
-  // space-between) — AND their segment container is also clamped to the
-  // baseline edge below — so this gap doubles as the minimum distance
-  // between the end-of-day-N label and the start-of-day-(N+1) label.
-  // 7% reads as ~22px on the stats-column width: clear breathing room
-  // with the labels cleanly on the baseline side of the break.
-  const GAP_PCT = 7;
-  const half = GAP_PCT / 2;
+  // Split the baseline at each midnight so day-changes show as a
+  // visible gap. Time labels anchor to the edges of their segment
+  // (flex space-between) — AND their segment container is clamped
+  // to the baseline edge above — so this gap doubles as the minimum
+  // distance between the end-of-day-N label and the start-of-day-
+  // (N+1) label. GAP_PCT and `half` are declared near the top of the
+  // function (above the bin-allocation forEach that also reads
+  // `half`); see the comment up there for the TDZ rationale.
   const baselineSegments: Array<{ left: number; right: number }> = [];
   let prev = 0;
   for (const bp of breakPercents) {
