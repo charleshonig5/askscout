@@ -2734,15 +2734,31 @@ a:hover {
 }
 
 /* ---------- NAV ---------- */
+/* Sticky glass header. Same translucency recipe used by tooltips,
+   modals, and the v2 feature cards (--color-modal-surface +
+   12px backdrop-blur + subtle border). On a long-scroll
+   marketing page this keeps the nav reachable from any depth.
+ *
+ * Implementation note: the nav is full-width so the glass spans
+ * the whole viewport edge-to-edge. Horizontal padding uses
+ * max(32px, calc((100% - 1200px) / 2)) so the inner content
+ * (logo + links) stays centered around the same 1200px max-
+ * width as the rest of the page sections, without needing a
+ * second wrapper element in the JSX. On viewports < 1264px the
+ * 32px floor takes over, giving nav content sensible inset
+ * spacing on small screens. */
 .home-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 32px;
-  max-width: 1200px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 10;
+  padding: 14px max(32px, calc((100% - 1200px) / 2));
+  background: var(--color-modal-surface);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .home-nav-logo {
