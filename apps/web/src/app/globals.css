@@ -2875,19 +2875,91 @@ a:hover {
   letter-spacing: -0.01em;
 }
 
-/* ---- Manifesto page (long-form essay) ----
+/* ---- Articles index ----
+   Listing of long-form posts at /articles. One row per post —
+   date / title / one-line description, all wrapped in a single
+   link so the whole row is clickable. Hover bumps title to
+   primary color so the affordance reads. */
+.article-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.article-list-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  padding: var(--space-md) 0;
+  border-top: 1px solid var(--color-border);
+  transition: opacity 0.15s ease;
+}
+
+.article-list-item:last-child .article-list-link {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.article-list-link:hover {
+  opacity: 0.85;
+}
+
+.article-list-date {
+  display: block;
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.article-list-title {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 6px 0;
+  color: var(--color-text-primary);
+}
+
+.article-list-description {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+  margin: 0;
+  max-width: 580px;
+}
+
+/* ---- Single article (long-form essay) ----
    Tighter title rhythm than the standard public page (the deck
    line replaces the usual page-title-only spacing) and a few
-   article-specific elements: the deck, the bolded close pull-
-   quote, and the closing CTA row. */
-.manifesto .public-title {
+   article-specific elements: back link, deck, the bolded close
+   pull-quote, and the closing CTA row. */
+.article .public-title {
   margin-bottom: var(--space-md);
+}
+
+/* "← All articles" breadcrumb at the top of an article. Quiet
+   color so it doesn't compete with the title; hover bumps to
+   primary as the affordance. */
+.article-back-link {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  margin-bottom: var(--space-lg);
+  transition: color 0.15s ease;
+}
+
+.article-back-link:hover {
+  color: var(--color-text-primary);
 }
 
 /* Deck — the short subtitle directly under the H1 that frames the
    piece in 1-2 sentences. Larger than body, secondary color so it
    reads as introduction, not body. */
-.manifesto-deck {
+.article-deck {
   font-size: 18px;
   line-height: 1.55;
   color: var(--color-text-secondary);
@@ -2899,7 +2971,7 @@ a:hover {
    set apart with extra space and a stronger weight. The text
    itself is wrapped in <strong>, so we just need the spacing
    and slightly larger size. */
-.manifesto-close .public-text {
+.article-close .public-text {
   font-size: 17px;
   line-height: 1.6;
   color: var(--color-text-primary);
@@ -2909,21 +2981,21 @@ a:hover {
 }
 
 /* Closing CTA — primary button + secondary link side-by-side. */
-.manifesto-cta {
+.article-cta {
   display: flex;
   align-items: center;
   gap: var(--space-md);
   flex-wrap: wrap;
 }
 
-.manifesto-cta-secondary {
+.article-cta-secondary {
   font-size: 14px;
   color: var(--color-text-secondary);
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
-.manifesto-cta-secondary:hover {
+.article-cta-secondary:hover {
   color: var(--color-text-primary);
 }
 

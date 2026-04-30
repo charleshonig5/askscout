@@ -14,7 +14,7 @@ export default async function LandingPage() {
   return (
     <main className="landing">
       <nav className="landing-nav">
-        <Link href="/manifesto">Manifesto</Link>
+        <Link href="/articles">Articles</Link>
         <Link href="/docs">Docs</Link>
         <Link href="/privacy">Privacy</Link>
       </nav>
@@ -45,7 +45,9 @@ export default async function LandingPage() {
           your secrets.
         </p>
         <p className="landing-manifesto-link">
-          <Link href="/manifesto">Read the manifesto: The hidden cost of vibe coding →</Link>
+          <Link href="/articles/the-hidden-cost-of-vibe-coding">
+            Read: The hidden cost of vibe coding →
+          </Link>
         </p>
       </div>
       <div className="landing-preview">

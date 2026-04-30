@@ -26,15 +26,18 @@ export default function ManifestoPage() {
           askscout
         </Link>
         <div className="public-nav-links">
-          <Link href="/manifesto">Manifesto</Link>
+          <Link href="/articles">Articles</Link>
           <Link href="/docs">Docs</Link>
           <Link href="/privacy">Privacy</Link>
         </div>
       </nav>
 
-      <article className="public-content manifesto">
+      <article className="public-content article">
+        <Link href="/articles" className="article-back-link">
+          ← All articles
+        </Link>
         <h1 className="public-title">The Hidden Cost of Vibe Coding</h1>
-        <p className="manifesto-deck">
+        <p className="article-deck">
           AI coding tools made us faster. They also made it harder to remember what we actually
           built. Here&apos;s the case for a daily digest in the vibe-coding era.
         </p>
@@ -133,18 +136,18 @@ export default function ManifestoPage() {
           </p>
         </section>
 
-        <section className="public-section manifesto-close">
+        <section className="public-section article-close">
           <p className="public-text">
             <strong>If AI helped you write the code, AI should help you remember it.</strong>
           </p>
         </section>
 
         <section className="public-section">
-          <div className="manifesto-cta">
+          <div className="article-cta">
             <Link href="/" className="btn btn-primary">
               Try askscout
             </Link>
-            <Link href="/docs" className="manifesto-cta-secondary">
+            <Link href="/docs" className="article-cta-secondary">
               Or read the docs →
             </Link>
           </div>
