@@ -2809,6 +2809,715 @@ a:hover {
 }
 
 /* ============================================
+   Home v2 (Raycast-inspired, monochrome, both themes)
+   ============================================
+   Long-scroll marketing home. All values are token-driven so
+   light + dark inherit cleanly. No new brand colors introduced —
+   palette is exactly what the rest of the app uses. The
+   orbital-star CTA at the top + the matching final CTA at the
+   bottom are the showcase visuals.
+
+   Notes for future tuning in Figma:
+     - Section vertical rhythm = 120px / 96px / 72px depending
+       on the section's role (hero gets the most air; final CTA
+       gets less because it's the closer)
+     - Eyebrow type uses uppercase tracking for a "stamp" feel
+     - Demo card mirrors the mac-window chrome treatment but
+       monochrome — no traffic-light colors
+     - Footer uses the same tokens as cards, just at a smaller
+       scale
+*/
+
+.home {
+  min-height: 100vh;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  /* Override the monorepo-wide max-width so the home has its own
+     hero container rules. Each section sets its own inner width. */
+}
+
+/* ---------- NAV ---------- */
+.home-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+.home-nav-logo {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+
+.home-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.home-nav-links a {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.home-nav-links a:hover {
+  color: var(--color-text-primary);
+}
+
+/* ---------- HERO ---------- */
+.home-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 80px 32px 120px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.home-hero-inner {
+  max-width: 720px;
+  margin-bottom: 64px;
+}
+
+/* Eyebrow text — small uppercase label that introduces the title.
+   Used here as the brand tagline. The home-eyebrow class below
+   is the same treatment applied to all section eyebrows. */
+.home-hero-eyebrow {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-text-secondary);
+  margin-bottom: 24px;
+}
+
+.home-hero-title {
+  font-family: var(--font-display);
+  font-size: 64px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--color-text-primary);
+  margin-bottom: 20px;
+}
+
+.home-hero-title em {
+  font-style: italic;
+  font-weight: 500;
+}
+
+.home-hero-subtitle {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 300;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+  margin-bottom: 36px;
+  max-width: 580px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.home-hero-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.home-hero-meta {
+  font-size: 12px;
+  color: var(--color-text-tertiary, var(--color-text-secondary));
+  margin: 0;
+}
+
+/* ---------- ORBITAL CTA ---------- */
+/* The primary CTA on the page. A small bright "star" orbits the
+   button's perimeter via offset-path, plays into the Scout
+   brand metaphor (telescope / observation). Pure mono — the
+   star is white in dark mode and black in light mode (it pulls
+   --color-text-primary), so no new brand color is introduced. */
+.home-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 8px;
+  background: var(--color-text-primary);
+  color: var(--color-bg-primary);
+  border: 1px solid var(--color-text-primary);
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+  /* Margin / overflow lets the orbiting star travel just outside
+     the button's box without clipping. */
+  isolation: isolate;
+}
+
+.home-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px -8px var(--color-text-primary);
+}
+
+.home-cta-label {
+  position: relative;
+  z-index: 1;
+}
+
+/* The "star". A 6px dot with a soft glow that orbits the button.
+   The path is the button's own bounding rectangle (rounded 8px to
+   match the border-radius). offset-distance animates from 0% to
+   100% in a continuous loop — the dot returns to its origin
+   smoothly because the path closes back on itself.
+
+   Uses --color-text-primary so:
+     - Dark mode: a near-white dot tracing the dark button
+       (button is also near-white though, so the star reads
+       against the page background)
+     - Light mode: inverts naturally
+
+   The trick: in both modes the button is the inverse of the
+   page (primary text bg). The star is the same color as the
+   button. So when the star is "outside" the button (along the
+   path's edges), it shows against the page background and
+   reads. When it touches the button corners, it's invisible
+   for a frame — that's actually fine, it adds a sparkle quality. */
+.home-cta-orbit {
+  position: absolute;
+  /* Place the orbit one pixel outside the button so the star
+     traces a slightly larger rectangle than the button itself.
+     This makes the orbit visible as a clear "around the button"
+     motion rather than running along the button's edge. */
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.home-cta-orbit::before {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-text-primary);
+  /* Soft glow so the star reads as a moving point of light, not
+     just a tiny dot. Glow color matches text-primary so it
+     adapts per-theme. */
+  box-shadow:
+    0 0 8px 2px var(--color-text-primary),
+    0 0 16px 4px color-mix(in srgb, var(--color-text-primary) 40%, transparent);
+  /* Path the dot follows. rect() with round corners traces a
+     rounded rectangle path — this is the modern CSS replacement
+     for the older path() string. The rect arguments are
+     top right bottom left from the element's edges, with a
+     uniform 11px radius so it matches the button's 8px radius
+     plus the 3px outset (top/left/right/bottom = -3px). */
+  offset-path: rect(0% 100% 100% 0% round 11px);
+  offset-distance: 0%;
+  /* anchor centers the dot on the path */
+  offset-anchor: center;
+  animation: home-cta-orbit 3.6s linear infinite;
+}
+
+@keyframes home-cta-orbit {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-cta-orbit::before {
+    animation: none;
+    /* Park the star at the top-left so it's still visible as
+       a static highlight even with motion off. */
+    offset-distance: 0%;
+  }
+}
+
+.home-cta--inline {
+  display: inline-flex;
+  padding: 10px 18px;
+  font-size: 14px;
+  background: transparent;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  text-decoration: none;
+}
+
+.home-cta--inline:hover {
+  background: var(--color-bg-secondary);
+  transform: translateY(-1px);
+}
+
+/* ---------- HERO DEMO CARD ---------- */
+/* Mac-window-style chrome around a streaming digest preview.
+   Monochrome — no traffic-light dot colors, just three
+   secondary-tinted dots that read as window-chrome. */
+.home-hero-demo {
+  width: 100%;
+  max-width: 880px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  box-shadow:
+    inset 0 0 60px 0 var(--color-inner-glow),
+    0 24px 48px -16px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  text-align: left;
+}
+
+.home-hero-demo-chrome {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-primary);
+}
+
+.home-hero-demo-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--color-border);
+}
+
+.home-hero-demo-label {
+  margin-left: 12px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--color-text-tertiary, var(--color-text-secondary));
+}
+
+.home-hero-demo-body {
+  padding: 24px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  white-space: pre-wrap;
+  margin: 0;
+  /* Crop tall demo content with a soft fade so the card never
+     dominates the hero — readers still see "this is digest
+     output" without scrolling. */
+  max-height: 280px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
+}
+
+/* ---------- SHARED SECTION SCAFFOLDING ---------- */
+.home-section {
+  padding: 96px 32px;
+  position: relative;
+}
+
+.home-section--quiet {
+  background: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.home-section--cta {
+  padding: 120px 32px;
+  text-align: center;
+}
+
+.home-section-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.home-section-inner--narrow {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.home-eyebrow {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-text-secondary);
+  margin-bottom: 16px;
+}
+
+.home-section-title {
+  font-family: var(--font-display);
+  font-size: 44px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: var(--color-text-primary);
+  margin: 0 0 32px;
+  max-width: 680px;
+}
+
+.home-section-title--cta {
+  font-size: 52px;
+  margin-bottom: 36px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.home-section-deck {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 300;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+  margin-bottom: 48px;
+  max-width: 580px;
+}
+
+.home-section-prose {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  max-width: 640px;
+}
+
+.home-section-prose-narrow {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.home-section-prose p {
+  margin: 0 0 16px;
+}
+
+.home-section-prose p:last-child {
+  margin-bottom: 0;
+}
+
+.home-prose-link {
+  color: var(--color-text-primary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-text-secondary);
+  transition: border-color 0.15s ease;
+}
+
+.home-prose-link:hover {
+  border-color: var(--color-text-primary);
+}
+
+.home-inline-code {
+  font-family: var(--font-mono, ui-monospace, "SF Mono", Menlo, monospace);
+  font-size: 0.9em;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+}
+
+/* ---------- HOW IT WORKS — 3 STEPS ---------- */
+.home-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 24px;
+}
+
+.home-step {
+  padding: 32px 24px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg-secondary);
+  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
+  transition: transform 0.2s ease;
+}
+
+.home-step:hover {
+  transform: translateY(-2px);
+}
+
+.home-step-num {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary);
+  display: block;
+  margin-bottom: 18px;
+}
+
+.home-step-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 10px;
+  color: var(--color-text-primary);
+}
+
+.home-step-text {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.home-step code {
+  font-family: var(--font-mono, ui-monospace, "SF Mono", Menlo, monospace);
+  background: var(--color-bg-tertiary);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+/* ---------- DIGEST ANATOMY — 6 TILE GRID ---------- */
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.home-tile {
+  padding: 24px 22px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-bg-primary);
+  transition: border-color 0.15s ease;
+}
+
+.home-tile:hover {
+  border-color: var(--color-text-secondary);
+}
+
+.home-tile-title {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0 0 8px;
+  color: var(--color-text-primary);
+}
+
+.home-tile-text {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* ---------- CLI OR WEB — SPLIT TILE ---------- */
+.home-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.home-split-tile {
+  padding: 36px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg-secondary);
+  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
+  display: flex;
+  flex-direction: column;
+}
+
+.home-split-tile-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0 0 14px;
+  color: var(--color-text-primary);
+}
+
+.home-split-tile-text {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  margin: 0 0 24px;
+  flex-grow: 1;
+}
+
+.home-split-tile-code {
+  font-family: var(--font-mono, ui-monospace, "SF Mono", Menlo, monospace);
+  font-size: 13px;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 16px 18px;
+  color: var(--color-text-secondary);
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.7;
+}
+
+.home-split-tile-cta {
+  margin-top: auto;
+}
+
+/* ---------- FINAL CTA ---------- */
+.home-final-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ---------- FOOTER ---------- */
+.home-footer {
+  border-top: 1px solid var(--color-border);
+  padding: 48px 32px 32px;
+  background: var(--color-bg-secondary);
+}
+
+.home-footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 48px;
+}
+
+.home-footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.home-footer-logo {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+
+.home-footer-tagline {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.home-footer-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.home-footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.home-footer-col-title {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-text-tertiary, var(--color-text-secondary));
+  margin-bottom: 4px;
+}
+
+.home-footer-col a {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.home-footer-col a:hover {
+  color: var(--color-text-primary);
+}
+
+.home-footer-copy {
+  max-width: 1100px;
+  margin: 32px auto 0;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
+  font-size: 12px;
+  color: var(--color-text-tertiary, var(--color-text-secondary));
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 880px) {
+  .home-hero-title {
+    font-size: 44px;
+  }
+  .home-section-title {
+    font-size: 32px;
+  }
+  .home-section-title--cta {
+    font-size: 36px;
+  }
+  .home-steps,
+  .home-grid {
+    grid-template-columns: 1fr;
+  }
+  .home-split {
+    grid-template-columns: 1fr;
+  }
+  .home-footer-inner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .home-footer-cols {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 540px) {
+  .home-hero {
+    padding: 48px 20px 80px;
+  }
+  .home-hero-title {
+    font-size: 36px;
+  }
+  .home-section {
+    padding: 64px 20px;
+  }
+  .home-section-title {
+    font-size: 28px;
+  }
+  .home-footer-cols {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
    Public Pages (About, Resources)
    ============================================ */
 
