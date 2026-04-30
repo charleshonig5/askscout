@@ -14,8 +14,8 @@ export default async function LandingPage() {
   return (
     <main className="landing">
       <nav className="landing-nav">
-        <Link href="/about">About</Link>
-        <Link href="/resources">Resources</Link>
+        <Link href="/docs">Docs</Link>
+        <Link href="/privacy">Privacy</Link>
       </nav>
       <h1 className="landing-title">askscout</h1>
       <p className="landing-subtitle">

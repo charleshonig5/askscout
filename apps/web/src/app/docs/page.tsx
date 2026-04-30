@@ -1,11 +1,11 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Resources | askscout",
+  title: "Docs | askscout",
   description: "Guides, setup instructions, and documentation for askscout.",
 };
 
-export default function ResourcesPage() {
+export default function DocsPage() {
   return (
     <main className="public-page">
       <nav className="public-nav">
@@ -13,13 +13,13 @@ export default function ResourcesPage() {
           askscout
         </Link>
         <div className="public-nav-links">
-          <Link href="/about">About</Link>
-          <Link href="/resources">Resources</Link>
+          <Link href="/docs">Docs</Link>
+          <Link href="/privacy">Privacy</Link>
         </div>
       </nav>
 
       <div className="public-content">
-        <h1 className="public-title">Resources</h1>
+        <h1 className="public-title">Docs</h1>
 
         <section className="public-section">
           <h2 className="public-section-title">Getting Started (Web)</h2>

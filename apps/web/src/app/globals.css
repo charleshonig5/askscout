@@ -2835,6 +2835,26 @@ a:hover {
   margin-bottom: 0;
 }
 
+/* Bulleted list inside a public-section. Same type treatment as
+   .public-text so prose and list items read as one voice. Used on
+   the Privacy page for itemized "what we collect / your rights"
+   blocks. */
+.public-list {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-md);
+  padding-left: 1.25rem;
+}
+
+.public-list li + li {
+  margin-top: 6px;
+}
+
+.public-list:last-child {
+  margin-bottom: 0;
+}
+
 .public-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
