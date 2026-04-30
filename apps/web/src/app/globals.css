@@ -2706,109 +2706,6 @@ a:hover {
 }
 
 /* ============================================
-   Landing Page
-   ============================================ */
-
-.landing {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-2xl);
-  text-align: center;
-  position: relative;
-}
-
-.landing-nav {
-  position: absolute;
-  top: var(--space-md);
-  right: var(--space-xl);
-  display: flex;
-  gap: var(--space-md);
-}
-
-.landing-nav a {
-  font-size: 13px;
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-
-.landing-nav a:hover {
-  color: var(--color-text-primary);
-}
-
-.landing-title {
-  font-family: var(--font-sans);
-  font-size: 32px;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  margin-bottom: var(--space-sm);
-}
-
-/* Brand tagline that anchors the page on its primary keyword
-   (vibe coders / vibe coding). Sits between the wordmark and
-   the longer descriptive subtitle so first-glance readers get
-   the elevator pitch without scanning a paragraph. */
-.landing-tagline {
-  font-family: var(--font-sans);
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-md);
-  letter-spacing: -0.01em;
-}
-
-.landing-subtitle {
-  font-size: 16px;
-  color: var(--color-text-secondary);
-  max-width: 540px;
-  margin-bottom: var(--space-xl);
-  line-height: 1.6;
-}
-
-.landing-cta {
-  margin-bottom: var(--space-2xl);
-}
-
-.landing-security {
-  font-size: 12px;
-  color: var(--color-text-tertiary);
-  margin-top: var(--space-sm);
-}
-
-/* "Read the manifesto" link under the CTA — quieter than the
-   primary button, but discoverable. Underline on hover so it
-   reads as a real link, not body text. */
-.landing-manifesto-link {
-  font-size: 13px;
-  margin-top: var(--space-md);
-}
-
-.landing-manifesto-link a {
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-
-.landing-manifesto-link a:hover {
-  color: var(--color-text-primary);
-  text-decoration: underline;
-}
-
-.landing-preview {
-  max-width: var(--max-width);
-  width: 100%;
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
-  text-align: left;
-  box-shadow: var(--shadow-md);
-}
-
-/* ============================================
    Home v2 (Raycast-inspired, monochrome, both themes)
    ============================================
    Long-scroll marketing home. All values are token-driven so
@@ -3685,48 +3582,12 @@ a:hover {
   }
 }
 
-.public-page {
-  min-height: 100vh;
-  background: var(--color-bg-primary);
-}
-
-.public-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-md) var(--space-xl);
-  border-bottom: 1px solid var(--color-border);
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.public-nav-logo {
-  font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  text-decoration: none;
-}
-
-.public-nav-links {
-  display: flex;
-  gap: var(--space-md);
-}
-
-.public-nav-links a {
-  font-size: 13px;
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-
-.public-nav-links a:hover {
-  color: var(--color-text-primary);
-}
-
-/* .public-content + .public-title rules now live above near the
-   subpage scaffolding (lines ~2810-2920). Removing the duplicates
-   here so the cascade lets the new typography stick. */
+/* .public-page / .public-nav* rules used to live here. Removed
+   when articles / docs / privacy migrated to the new .home-nav
+   chrome — none of them reference these classes anymore. The
+   .public-section / .public-section-title / .public-text /
+   .public-text strong rules below are STILL in use inside the
+   subpage bodies (privacy policy, docs sections), so they stay. */
 
 .public-section {
   margin-bottom: var(--space-2xl);
