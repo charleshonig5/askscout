@@ -19,9 +19,6 @@
     "digest",
     "standup",
     "developer-tools",
-    "ai",
-    "anthropic",
-    "openai",
     "productivity"
   ],
   "type": "module",

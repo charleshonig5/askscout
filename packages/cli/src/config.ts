@@ -27,7 +27,7 @@ export function detectProvider(apiKey: string): AiProvider {
   }
   if (apiKey.startsWith("sk-ant-")) return "anthropic";
   if (apiKey.startsWith("sk-")) return "openai";
-  throw new Error("Invalid API key format. Expected sk-ant-* (Anthropic) or sk-* (OpenAI).");
+  throw new Error("Invalid API key format. Expected a key starting with sk-ant- or sk-.");
 }
 
 /** Load CLI config from ~/.askscout/config.json */

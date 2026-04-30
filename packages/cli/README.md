@@ -47,16 +47,16 @@ A typical digest includes:
 
 ## Privacy
 
-The CLI runs **100% locally**. Your code never leaves your machine, except the diffs sent to your chosen LLM provider (Anthropic or OpenAI). API keys are stored in `~/.askscout/config.json` with file mode 0600 (owner read/write only).
+The CLI runs **100% locally**. Your code never leaves your machine, except the diffs sent to your chosen LLM provider. API keys are stored in `~/.askscout/config.json` with file mode 0600 (owner read/write only).
 
-## Provider
+## API keys
 
-askscout auto-detects the provider from your API key format:
+askscout supports two LLM providers, auto-detected from your API key format:
 
-- **Anthropic** — keys starting with `sk-ant-` (recommended; slightly cheaper)
-- **OpenAI** — keys starting with `sk-`
+- Keys starting with `sk-ant-` use one provider (typically slightly cheaper per digest)
+- Keys starting with `sk-` use the other
 
-Get a key at [console.anthropic.com](https://console.anthropic.com) or [platform.openai.com](https://platform.openai.com).
+Either works. Sign up with the LLM provider of your choice and paste the key during `askscout --setup`.
 
 ## Environment variables
 

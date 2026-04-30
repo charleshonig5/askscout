@@ -63,10 +63,9 @@ export default function ResourcesPage() {
             <code>npx askscout</code>
           </div>
           <p className="public-text">
-            Run it in any git repository. First run prompts for your API key (Anthropic or OpenAI).
-            The key is stored locally in{" "}
-            <code className="inline-code">~/.askscout/config.json</code> and never leaves your
-            machine.
+            Run it in any git repository. First run prompts for your LLM API key. The key is stored
+            locally in <code className="inline-code">~/.askscout/config.json</code> and never leaves
+            your machine.
           </p>
           <div className="resource-commands">
             <div className="resource-command">
@@ -103,17 +102,17 @@ export default function ResourcesPage() {
         <section className="public-section">
           <h2 className="public-section-title">API Keys</h2>
           <p className="public-text">
-            The CLI uses your own API key (BYOK). Scout supports both Anthropic and OpenAI. The key
-            format is auto-detected:
+            The CLI uses your own API key (BYOK). Two LLM providers are supported, auto-detected
+            from the key format:
           </p>
           <div className="resource-commands">
             <div className="resource-command">
               <code className="inline-code">sk-ant-...</code>
-              <span className="resource-command-desc">Anthropic (Claude Haiku)</span>
+              <span className="resource-command-desc">First provider</span>
             </div>
             <div className="resource-command">
               <code className="inline-code">sk-...</code>
-              <span className="resource-command-desc">OpenAI (GPT-4o-mini)</span>
+              <span className="resource-command-desc">Second provider</span>
             </div>
           </div>
           <p className="public-text">

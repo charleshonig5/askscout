@@ -4,7 +4,7 @@
 
 askscout has two user-facing surfaces — a CLI published to npm and a web app deployed at askscout.dev — that share a common engine for reading git history, calling an LLM, and rendering a digest. The shared engine is the `askscout-core` package.
 
-This document explains how the pieces fit together. For workflow / onboarding info (commands, conventions, contribution flow), see [CLAUDE.md](../CLAUDE.md) and [CONTRIBUTING.md](../CONTRIBUTING.md).
+This document explains how the pieces fit together. For workflow / onboarding info (commands, conventions, contribution flow), see [AGENTS.md](../AGENTS.md) and [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ---
 
@@ -46,8 +46,8 @@ getDiffs()         via execFile() with size limits + truncation
     │
     ▼
 summarize()        packages/core/src/summarize.ts
-    │              builds system + user prompts; calls Anthropic or OpenAI
-    │              based on AiConfig.provider; parses JSON response
+    │              builds system + user prompts; dispatches to the
+    │              configured LLM provider; parses JSON response
     ▼
 Digest             structured object — typed in packages/core/src/types.ts
     │
@@ -80,7 +80,7 @@ custom user prompt            apps/web/src/app/api/digest/stream/route.ts
                                churn data, sanitized patches)
     │
     ▼
-Anthropic streaming API
+LLM streaming API
     │
     ▼
 Server-sent events to the browser
@@ -109,14 +109,14 @@ After streaming, the web persists the digest into Supabase (`digests` table) and
 
 The library exposes a single ESM/CJS entry point at `packages/core/src/index.ts` that re-exports everything from these modules:
 
-| File           | Responsibility                                                                                                                                                                                                                                                                          |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `git.ts`       | Local-git access. `getCommits`, `getDiffs`, `getRepoName`. Uses `execFile` against the `git` binary, NUL-delimited record format, max-buffer + truncation safeguards. CLI-only in practice — the web doesn't call these                                                                 |
-| `summarize.ts` | System and user prompts (`buildSystemPrompt`, `buildUnifiedSystemPrompt`, `buildAIContextSystemPrompt`, `buildStandupSystemPrompt`, `buildUserPrompt`); `summarize()` orchestrator that calls Anthropic or OpenAI and parses the JSON response into a `Digest`; `computeStats()` helper |
-| `format.ts`    | Terminal output renderers — `formatDigest`, `formatCodebaseHealth`, `formatCodingTimeline`, `formatPaceCheck`, `formatResume`, `formatStandup`. TTY/`NO_COLOR` aware                                                                                                                    |
-| `state.ts`     | `.askscout/state.json` reader/writer with v1 → v2 migration, `appendDigestRun` helper, `STATE_HISTORY_CAP` constant                                                                                                                                                                     |
-| `types.ts`     | All shared types — `Digest`, `DigestStats`, `DigestItem`, `UnstableItem`, `HealthIndicator`, `GitCommit`, `GitDiff`, `ProjectState`, `DigestRunSummary`, `AiConfig`, etc.                                                                                                               |
-| `index.ts`     | Barrel — public surface area                                                                                                                                                                                                                                                            |
+| File           | Responsibility                                                                                                                                                                                                                                                                                          |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `git.ts`       | Local-git access. `getCommits`, `getDiffs`, `getRepoName`. Uses `execFile` against the `git` binary, NUL-delimited record format, max-buffer + truncation safeguards. CLI-only in practice — the web doesn't call these                                                                                 |
+| `summarize.ts` | System and user prompts (`buildSystemPrompt`, `buildUnifiedSystemPrompt`, `buildAIContextSystemPrompt`, `buildStandupSystemPrompt`, `buildUserPrompt`); `summarize()` orchestrator that dispatches to the configured LLM provider and parses the JSON response into a `Digest`; `computeStats()` helper |
+| `format.ts`    | Terminal output renderers — `formatDigest`, `formatCodebaseHealth`, `formatCodingTimeline`, `formatPaceCheck`, `formatResume`, `formatStandup`. TTY/`NO_COLOR` aware                                                                                                                                    |
+| `state.ts`     | `.askscout/state.json` reader/writer with v1 → v2 migration, `appendDigestRun` helper, `STATE_HISTORY_CAP` constant                                                                                                                                                                                     |
+| `types.ts`     | All shared types — `Digest`, `DigestStats`, `DigestItem`, `UnstableItem`, `HealthIndicator`, `GitCommit`, `GitDiff`, `ProjectState`, `DigestRunSummary`, `AiConfig`, etc.                                                                                                                               |
+| `index.ts`     | Barrel — public surface area                                                                                                                                                                                                                                                                            |
 
 **Stability:** the library is pre-1.0. The barrel is the public API; anything not re-exported is internal and may move without notice.
 
@@ -180,7 +180,7 @@ interface AiConfig {
 }
 ```
 
-`summarize()` dispatches to `callAnthropic()` or `callOpenAI()` based on `provider`. The CLI auto-detects from the key format (`sk-ant-*` → Anthropic, `sk-*` → OpenAI) during `--setup`. The web app uses a hosted API key from environment variables (`ANTHROPIC_API_KEY` or `OPENAI_API_KEY`) and bypasses the user-side BYOK flow.
+`summarize()` dispatches to one of two provider-specific call functions (`callAnthropic()` or `callOpenAI()`) based on the `provider` field. The CLI auto-detects the provider from the API key prefix during `--setup` (the type literals shown above match each provider's key format). The web app uses a hosted API key from server-side environment variables and bypasses the user-side BYOK flow.
 
 Both providers are asked to return the same JSON shape, defined implicitly by the parsing logic at the bottom of `summarize()`. If the LLM returns malformed JSON, `summarize()` throws with a truncated raw-response excerpt for debugging.
 

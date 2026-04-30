@@ -9,7 +9,7 @@
 
 askscout turns your git history into a digest you can actually read — what shipped, what's still shifting, where you left off, and what you're spending your time on. Two surfaces, one engine:
 
-- **CLI** — `askscout` on npm. Runs locally, reads your repo, prints to your terminal. Bring your own API key (Anthropic or OpenAI).
+- **CLI** — `askscout` on npm. Runs locally, reads your repo, prints to your terminal. Bring your own LLM API key.
 - **Web** — [askscout.dev](https://askscout.dev). GitHub OAuth, hosted API key, persistent history.
 
 ---
@@ -88,7 +88,7 @@ pnpm --filter askscout-web dev
 - **Language:** TypeScript (strict mode across all packages)
 - **CLI:** [yargs](https://yargs.js.org/), [tsup](https://tsup.egoist.dev/) for bundling
 - **Web:** [Next.js 15](https://nextjs.org/) (App Router), [NextAuth](https://next-auth.js.org/) for GitHub OAuth, [Supabase](https://supabase.com/) for storage
-- **AI:** Claude (Anthropic) or GPT-4o-mini (OpenAI) — auto-detected from the API key
+- **AI:** two LLM providers supported, auto-detected from the API key prefix
 - **Tooling:** [pnpm](https://pnpm.io/) workspaces, [vitest](https://vitest.dev/), [ESLint](https://eslint.org/), [Prettier](https://prettier.io/), [Changesets](https://github.com/changesets/changesets)
 
 ## Contributing

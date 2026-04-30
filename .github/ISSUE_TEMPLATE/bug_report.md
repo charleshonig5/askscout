@@ -28,7 +28,7 @@ assignees: ""
 - Surface: <!-- CLI / web -->
 - Node version (CLI only): <!-- node --version -->
 - OS: <!-- macOS 14, Ubuntu 22.04, Windows 11, ... -->
-- LLM provider (if relevant): <!-- Anthropic / OpenAI -->
+- LLM provider (if relevant): <!-- which key prefix you use: sk-ant- or sk- -->
 
 ## Logs / output
 

@@ -56,7 +56,7 @@ Out of scope:
 
 ## Hardening notes (for users)
 
-- The CLI sends git diffs to your chosen LLM provider (Anthropic or OpenAI). Treat that as you would any code-sharing tool: don't run askscout on repos containing secrets you wouldn't paste into an LLM
+- The CLI sends git diffs to your chosen LLM provider. Treat that as you would any code-sharing tool: don't run askscout on repos containing secrets you wouldn't paste into an LLM
 - API keys are stored in `~/.askscout/config.json` with file mode 0600. Don't commit this file or share screenshots of it
 - The web app uses GitHub OAuth for auth. Revoke access at any time via [GitHub's authorized OAuth apps page](https://github.com/settings/applications)
 

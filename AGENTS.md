@@ -52,7 +52,7 @@ This order matters because `cli` and `web` consume core's compiled output — ad
 
 ## Key product decisions
 
-- **AI providers:** Claude (Anthropic) or GPT-4o-mini (OpenAI) — auto-detected from API key prefix
+- **AI providers:** two LLM providers supported (auto-detected from API key prefix)
 - **CLI:** BYOK (bring your own key), stored in `~/.askscout/config.json` with file mode 0600
 - **Web:** GitHub OAuth for auth, Supabase for storage, hosted API key (no user-side key needed)
 - **Three output modes:** digest (default), resume prompt (`--resume`), standup (`--standup`)

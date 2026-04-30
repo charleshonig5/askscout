@@ -1,6 +1,6 @@
 # Scout — Project Context for New Sessions
 
-Comprehensive briefing for any new Claude Code session continuing work on Scout. Read this before doing anything else. Captures product vision, architecture, brand system, recent decisions, and where we left off. Pairs with `CLAUDE.md` (which is the short version).
+Comprehensive briefing for any new agent or contributor continuing work on Scout. Read this before doing anything else. Captures product vision, architecture, brand system, recent decisions, and where we left off. Pairs with [`AGENTS.md`](./AGENTS.md) (which is the short version).
 
 ---
 
@@ -10,7 +10,7 @@ Comprehensive briefing for any new Claude Code session continuing work on Scout.
 
 ### Target user
 
-Solo devs and small teams using AI coding tools (Cursor, Claude Code, Windsurf) who want a clear daily summary of their progress without writing standups themselves.
+Solo devs and small teams who want a clear daily summary of their progress without writing standups themselves.
 
 ### Voice and tone
 
@@ -56,7 +56,7 @@ apps/
 - **next-auth v5 beta** (GitHub OAuth, JWT sessions)
 - **Supabase** (PostgreSQL) for persistence
 - **Server-Sent Events** for streaming digest generation
-- **Claude Haiku 4.5** or **GPT-5.4-nano** (cheapest models that work)
+- Cost-efficient model on each supported provider (auto-detected from key prefix)
 - **vitest** for tests · **eslint** + **prettier** for code quality
 - **lucide-react** for ALL utility icons (exclusively — no other icon libs)
 - **Microsoft Fluent 3D emoji** for emoji rendering (via jsdelivr CDN)
@@ -312,7 +312,6 @@ Plus computed stat sections (no LLM, rendered in stats sidebar): 📊 Statistics
 - **Pixel-perfect when Figma is involved.** Read the Figma source via MCP, cross-reference screenshots, match every measurement.
 - **Run `pnpm typecheck`, `pnpm format`, `pnpm lint` before commits.** Build pipeline must stay green.
 - **Commit + push after every meaningful change** unless told otherwise. User wants to see results live on Vercel quickly.
-- **Co-author git commits with:** `Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>`
 - **Don't use TodoWrite for trivial work.** Reserve it for genuinely multi-step tasks.
 
 ---

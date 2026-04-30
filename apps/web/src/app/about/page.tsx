@@ -69,9 +69,9 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="public-card">
-              <h3 className="public-card-title">Resume with AI</h3>
+              <h3 className="public-card-title">Resume where you left off</h3>
               <p className="public-card-text">
-                A context prompt you paste into Cursor, Claude Code, or Copilot to pick up exactly
+                A context prompt you paste into your AI coding tool of choice to pick up exactly
                 where you stopped. Saves 20 minutes every morning.
               </p>
             </div>
