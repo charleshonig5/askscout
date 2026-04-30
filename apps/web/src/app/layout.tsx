@@ -26,9 +26,32 @@ const pridi = Pridi({
 });
 
 export const metadata: Metadata = {
-  title: "askscout | The daily digest for vibe coders",
+  title: "askscout — the daily digest for vibe coders",
   description:
-    "Scout sniffs through your repo and tells you what you built, what changed, and where you left off.",
+    "askscout reads your git history and tells you, in plain English, what you built, what changed, and where you left off. The daily digest tool for vibe coding.",
+  keywords: [
+    "vibe coding",
+    "vibe coders",
+    "vibe coding digest",
+    "ai coding tools",
+    "git digest",
+    "developer productivity",
+    "daily standup",
+  ],
+  openGraph: {
+    title: "askscout — the daily digest for vibe coders",
+    description:
+      "Vibe coding made you faster. It also made it harder to remember what you actually shipped. askscout fixes that.",
+    url: "https://askscout.dev",
+    siteName: "askscout",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "askscout — the daily digest for vibe coders",
+    description:
+      "Vibe coding made you faster. It also made it harder to remember what you actually shipped. askscout fixes that.",
+  },
 };
 
 /**

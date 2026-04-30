@@ -14,6 +14,7 @@ export default function PrivacyPage() {
           askscout
         </Link>
         <div className="public-nav-links">
+          <Link href="/manifesto">Manifesto</Link>
           <Link href="/docs">Docs</Link>
           <Link href="/privacy">Privacy</Link>
         </div>

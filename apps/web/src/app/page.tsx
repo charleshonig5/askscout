@@ -14,13 +14,16 @@ export default async function LandingPage() {
   return (
     <main className="landing">
       <nav className="landing-nav">
+        <Link href="/manifesto">Manifesto</Link>
         <Link href="/docs">Docs</Link>
         <Link href="/privacy">Privacy</Link>
       </nav>
       <h1 className="landing-title">askscout</h1>
+      <p className="landing-tagline">The daily digest for vibe coders.</p>
       <p className="landing-subtitle">
-        The daily digest for vibe coders. Scout sniffs through your repo and tells you what you
-        built, what changed, and where you left off.
+        You ship 200 commits a week with your AI coding tools. By Friday you can&apos;t remember
+        what you actually built. askscout reads your git history and tells you, in plain English,
+        what shipped, what changed, and where you left off.
       </p>
       <div className="landing-cta">
         <form
@@ -38,8 +41,11 @@ export default async function LandingPage() {
           </button>
         </form>
         <p className="landing-security">
-          Read-only. Scout reads your commit history and diffs. Never your source code, never your
-          secrets.
+          Read-only. askscout reads your commit history and diffs. Never your source code, never
+          your secrets.
+        </p>
+        <p className="landing-manifesto-link">
+          <Link href="/manifesto">Read the manifesto: The hidden cost of vibe coding →</Link>
         </p>
       </div>
       <div className="landing-preview">

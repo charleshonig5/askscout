@@ -2744,13 +2744,26 @@ a:hover {
   font-size: 32px;
   font-weight: 700;
   letter-spacing: -0.03em;
+  margin-bottom: var(--space-sm);
+}
+
+/* Brand tagline that anchors the page on its primary keyword
+   (vibe coders / vibe coding). Sits between the wordmark and
+   the longer descriptive subtitle so first-glance readers get
+   the elevator pitch without scanning a paragraph. */
+.landing-tagline {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-text-primary);
   margin-bottom: var(--space-md);
+  letter-spacing: -0.01em;
 }
 
 .landing-subtitle {
   font-size: 16px;
   color: var(--color-text-secondary);
-  max-width: 480px;
+  max-width: 540px;
   margin-bottom: var(--space-xl);
   line-height: 1.6;
 }
@@ -2763,6 +2776,25 @@ a:hover {
   font-size: 12px;
   color: var(--color-text-tertiary);
   margin-top: var(--space-sm);
+}
+
+/* "Read the manifesto" link under the CTA — quieter than the
+   primary button, but discoverable. Underline on hover so it
+   reads as a real link, not body text. */
+.landing-manifesto-link {
+  font-size: 13px;
+  margin-top: var(--space-md);
+}
+
+.landing-manifesto-link a {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.landing-manifesto-link a:hover {
+  color: var(--color-text-primary);
+  text-decoration: underline;
 }
 
 .landing-preview {
@@ -2841,6 +2873,58 @@ a:hover {
   font-weight: 600;
   margin-bottom: var(--space-md);
   letter-spacing: -0.01em;
+}
+
+/* ---- Manifesto page (long-form essay) ----
+   Tighter title rhythm than the standard public page (the deck
+   line replaces the usual page-title-only spacing) and a few
+   article-specific elements: the deck, the bolded close pull-
+   quote, and the closing CTA row. */
+.manifesto .public-title {
+  margin-bottom: var(--space-md);
+}
+
+/* Deck — the short subtitle directly under the H1 that frames the
+   piece in 1-2 sentences. Larger than body, secondary color so it
+   reads as introduction, not body. */
+.manifesto-deck {
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2xl);
+  max-width: 580px;
+}
+
+/* Close pull-quote — the takeaway line at the end of the essay,
+   set apart with extra space and a stronger weight. The text
+   itself is wrapped in <strong>, so we just need the spacing
+   and slightly larger size. */
+.manifesto-close .public-text {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-xl);
+  margin-top: var(--space-md);
+}
+
+/* Closing CTA — primary button + secondary link side-by-side. */
+.manifesto-cta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.manifesto-cta-secondary {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.manifesto-cta-secondary:hover {
+  color: var(--color-text-primary);
 }
 
 .public-text {
