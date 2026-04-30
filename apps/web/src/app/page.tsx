@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth, signIn } from "@/auth";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { InstallChip } from "@/components/InstallChip";
 import { MOCK_STREAMING_TEXT } from "@/lib/mock-data";
 
 export default async function LandingPage() {
@@ -48,23 +49,29 @@ export default async function LandingPage() {
             English, what shipped, what changed, and where you left off.
           </p>
           <div className="home-hero-cta">
-            <form
-              action={async () => {
-                "use server";
-                await signIn("github", { redirectTo: "/dashboard" });
-              }}
-            >
-              {/* Orbital star button — a small bright dot orbits the
-                  perimeter of the button via offset-path. Plays on
-                  the Scout brand metaphor without introducing brand
-                  color: pure mono on mono, with a bright highlight
-                  that traces the outline. */}
-              <button type="submit" className="home-cta home-cta--orbital">
-                <span className="home-cta-label">Sign in with GitHub</span>
-                <span className="home-cta-orbit" aria-hidden />
-              </button>
-            </form>
-            <p className="home-hero-meta">Free. Read-only. We never see your source code.</p>
+            <div className="home-cta-row">
+              {/* Primary CTA: web app sign-in. Orbital star traces
+                  the perimeter via offset-path, plays into the
+                  Scout brand metaphor without adding brand color. */}
+              <form
+                action={async () => {
+                  "use server";
+                  await signIn("github", { redirectTo: "/dashboard" });
+                }}
+              >
+                <button type="submit" className="home-cta home-cta--orbital">
+                  <span className="home-cta-label">Try askscout free</span>
+                  <span className="home-cta-orbit" aria-hidden />
+                </button>
+              </form>
+              {/* Secondary CTA: install command chip. One click copies
+                  `npm install -g askscout` to the clipboard. Power
+                  users skip the sign-in flow entirely. */}
+              <InstallChip />
+            </div>
+            <p className="home-hero-meta">
+              Free. Read-only. Sign in with GitHub. We never see your source code.
+            </p>
           </div>
         </div>
 
@@ -231,7 +238,7 @@ export default async function LandingPage() {
             <div className="home-split-tile">
               <h3 className="home-split-tile-title">Web app</h3>
               <p className="home-split-tile-text">
-                Sign in with GitHub. Hosted API key — no setup. Persistent history across sessions.
+                Sign in with GitHub. Hosted API key, no setup. Persistent history across sessions.
                 Insights, streaks, and per-repo activity over time.
               </p>
               <div className="home-split-tile-cta">
@@ -276,17 +283,20 @@ export default async function LandingPage() {
             Stop forgetting what you shipped.
           </h2>
           <div className="home-final-cta">
-            <form
-              action={async () => {
-                "use server";
-                await signIn("github", { redirectTo: "/dashboard" });
-              }}
-            >
-              <button type="submit" className="home-cta home-cta--orbital">
-                <span className="home-cta-label">Sign in with GitHub</span>
-                <span className="home-cta-orbit" aria-hidden />
-              </button>
-            </form>
+            <div className="home-cta-row">
+              <form
+                action={async () => {
+                  "use server";
+                  await signIn("github", { redirectTo: "/dashboard" });
+                }}
+              >
+                <button type="submit" className="home-cta home-cta--orbital">
+                  <span className="home-cta-label">Try askscout free</span>
+                  <span className="home-cta-orbit" aria-hidden />
+                </button>
+              </form>
+              <InstallChip />
+            </div>
             <p className="home-hero-meta">Free. No credit card. No tracking.</p>
           </div>
         </div>

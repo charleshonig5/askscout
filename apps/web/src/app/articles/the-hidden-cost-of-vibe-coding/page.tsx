@@ -46,7 +46,7 @@ export default function ManifestoPage() {
 
         <section className="public-section">
           <p className="public-text">
-            Friday, 5&nbsp;PM. You close your laptop. You shipped a lot this week — 200+ commits, a
+            Friday, 5&nbsp;PM. You close your laptop. You shipped a lot this week. 200+ commits, a
             handful of features, a refactor or two. You can feel the velocity in your bones.
           </p>
           <p className="public-text">
@@ -69,7 +69,7 @@ export default function ManifestoPage() {
           </p>
           <p className="public-text">
             This is the shape of vibe coding. Fluid, fast, generative. And it has a hidden cost
-            nobody talks about — because the cost only shows up when you stop typing.
+            nobody talks about, because the cost only shows up when you stop typing.
           </p>
         </section>
 
@@ -81,9 +81,9 @@ export default function ManifestoPage() {
             don&apos;t fully remember what&apos;s in it.
           </p>
           <p className="public-text">
-            <strong>Your git log becomes static.</strong> Auto-generated commit messages —
-            <code className="inline-code">wip</code>, <code className="inline-code">fix</code>,{" "}
-            <code className="inline-code">update X</code> — don&apos;t tell you what happened. A
+            <strong>Your git log becomes static.</strong> Auto-generated commit messages like{" "}
+            <code className="inline-code">wip</code>, <code className="inline-code">fix</code>, and{" "}
+            <code className="inline-code">update X</code> don&apos;t tell you what happened. A
             normal week now produces 50 illegible commits per day. The signal-to-noise ratio of your
             history is on the floor.
           </p>
@@ -94,8 +94,8 @@ export default function ManifestoPage() {
           </p>
           <p className="public-text">
             <strong>Standup paralysis.</strong> Your team asks what you&apos;ve been working on. You
-            actually have to think about it. The honest answer — &ldquo;I don&apos;t really
-            remember&rdquo; — feels bad to say, so you make something up.
+            actually have to think about it. The honest answer (&ldquo;I don&apos;t really
+            remember&rdquo;) feels bad to say, so you make something up.
           </p>
           <p className="public-text">
             <strong>You can&apos;t onboard yourself.</strong> The codebase grew faster than your
@@ -113,10 +113,10 @@ export default function ManifestoPage() {
           <p className="public-text">
             Project trackers like Linear and Jira track <em>plans</em>, not actual{" "}
             <em>built work</em>. The disconnect between what you intended and what the AI actually
-            shipped is now significant — and the trackers can&apos;t see the difference.
+            shipped is now significant, and the trackers can&apos;t see the difference.
           </p>
           <p className="public-text">
-            &ldquo;Just ask the AI to summarize&rdquo; — but the AI doesn&apos;t see your commits.
+            &ldquo;Just ask the AI to summarize.&rdquo; But the AI doesn&apos;t see your commits.
             You&apos;d have to paste in diffs every day. Nobody does that.
           </p>
         </section>
@@ -128,7 +128,7 @@ export default function ManifestoPage() {
             If AI helped you write the code, AI should help you remember it. A daily summary, in
             plain English, of what your AI-assisted self actually shipped. Not a list of file paths.
             Not a reformatted git log. A read of the day, the way a thoughtful engineer would write
-            it up — Vibe Check, what shipped, what changed, what kept shifting, where you left off.
+            it up: Vibe Check, what shipped, what changed, what kept shifting, where you left off.
           </p>
           <p className="public-text">
             That&apos;s askscout. Run it as a CLI in your repo, or sign in to the web app at{" "}

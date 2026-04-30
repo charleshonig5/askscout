@@ -2988,6 +2988,82 @@ a:hover {
   transform: translateY(-1px);
 }
 
+/* Row container that puts the primary CTA + install-chip side by
+   side on wide viewports and stacks them vertically on small. */
+.home-cta-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ---------- INSTALL CHIP ---------- */
+/* Secondary CTA: a copy-to-clipboard chip showing the install
+   command in a mono pill. Pattern mirrors what the indie dev-tool
+   space (Raycast, Linear, Vercel, Bun) puts next to its primary
+   CTA — power users see the command, click to copy, run in the
+   terminal. Zero round-trip.
+
+   Visual: outlined pill on a transparent surface so it sits as
+   the dev-friendly counterpart to the solid orbital primary
+   button. The "$" prompt prefix is rendered separately with a
+   muted color so the actual command reads cleanly. The icon
+   on the right (Copy / Check) is the affordance + feedback. */
+.home-cta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--color-text-primary);
+  background: transparent;
+  border: 1px solid var(--color-border-hover);
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.18s ease;
+}
+
+.home-cta-chip:hover {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-text-tertiary);
+  transform: translateY(-1px);
+}
+
+.home-cta-chip:focus-visible {
+  outline: 2px solid var(--color-text-primary);
+  outline-offset: 2px;
+}
+
+.home-cta-chip-prompt {
+  color: var(--color-text-tertiary);
+}
+
+.home-cta-chip-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-text-secondary);
+  margin-left: 2px;
+  transition: color 0.15s ease;
+}
+
+.home-cta-chip:hover .home-cta-chip-icon {
+  color: var(--color-text-primary);
+}
+
+/* Copied state — icon flips to a checkmark in success green for
+   the brief feedback window (~1.5s, set by the JS). Token is
+   theme-aware so the green reads in both modes. */
+.home-cta-chip.is-copied .home-cta-chip-icon {
+  color: var(--color-success);
+}
+
 /* ---------- HERO DEMO CARD ---------- */
 /* Mac-window-style chrome around a streaming digest preview.
    Monochrome — no traffic-light dot colors, just three

@@ -34,7 +34,7 @@ export default function PrivacyPage() {
         <section className="public-section">
           <p className="public-text">
             This page covers the askscout web app at askscout.dev. The askscout CLI is a separate
-            tool that runs on your machine and follows different rules — see the{" "}
+            tool that runs on your machine and follows different rules. See the{" "}
             <Link href="/docs">Docs</Link> page for the CLI&apos;s privacy notes.
           </p>
         </section>
@@ -58,7 +58,7 @@ export default function PrivacyPage() {
           </ul>
           <p className="public-text">
             The OAuth scope we request is <code className="inline-code">read:user repo</code>. The{" "}
-            <code className="inline-code">repo</code> portion of that scope is broad — GitHub
+            <code className="inline-code">repo</code> portion of that scope is broad. GitHub
             doesn&apos;t offer a read-only repository scope, so granting access necessarily includes
             permissions we don&apos;t use (like writing to repos). askscout only ever reads commits
             and diffs; it does not create, modify, or delete anything in your repos.
@@ -80,20 +80,20 @@ export default function PrivacyPage() {
           <h2 className="public-section-title">What we collect while you use the app</h2>
           <ul className="public-list">
             <li>
-              <strong>Digest content</strong> — the daily/weekly summaries Scout generates from your
+              <strong>Digest content</strong>: the daily/weekly summaries Scout generates from your
               git history, plus the underlying stats (commit count, files changed, lines added /
               removed)
             </li>
             <li>
-              <strong>Per-repo settings</strong> — your default repo, which digest sections you
+              <strong>Per-repo settings</strong>: your default repo, which digest sections you
               choose to show or hide
             </li>
             <li>
-              <strong>Quiet-day check-ins</strong> — a small record (date + repo) when you visit on
-              a day with no commits, so your streaks stay alive
+              <strong>Quiet-day check-ins</strong>: a small record (date + repo) when you visit on a
+              day with no commits, so your streaks stay alive
             </li>
             <li>
-              <strong>Project summary</strong> — a short rolling description of each repo we track,
+              <strong>Project summary</strong>: a short rolling description of each repo we track,
               regenerated each run, used to give the next digest context
             </li>
           </ul>
@@ -134,16 +134,15 @@ export default function PrivacyPage() {
           <h2 className="public-section-title">Where data is stored</h2>
           <ul className="public-list">
             <li>
-              <strong>User account, digests, settings, check-ins, project summaries</strong> —
-              stored in our Supabase database, scoped to your user ID. Other users cannot read your
-              data
+              <strong>User account, digests, settings, check-ins, project summaries</strong>: stored
+              in our Supabase database, scoped to your user ID. Other users cannot read your data
             </li>
             <li>
-              <strong>Session</strong> — handled by NextAuth via an HTTP-only cookie that holds your
+              <strong>Session</strong>: handled by NextAuth via an HTTP-only cookie that holds your
               GitHub access token. The cookie expires when your session does
             </li>
             <li>
-              <strong>API keys (LLM providers)</strong> — held server-side as environment variables.
+              <strong>API keys (LLM providers)</strong>: held server-side as environment variables.
               Never written to the browser or shared with users
             </li>
           </ul>
@@ -156,17 +155,17 @@ export default function PrivacyPage() {
           </p>
           <ul className="public-list">
             <li>
-              <strong>GitHub</strong> — sign-in, repository access, commit and diff fetches
+              <strong>GitHub</strong>: sign-in, repository access, commit and diff fetches
             </li>
             <li>
-              <strong>Supabase</strong> — database hosting for the data described above
+              <strong>Supabase</strong>: database hosting for the data described above
             </li>
             <li>
-              <strong>Vercel</strong> — web hosting and edge delivery
+              <strong>Vercel</strong>: web hosting and edge delivery
             </li>
             <li>
               <strong>An LLM provider</strong> (Anthropic or OpenAI, depending on which API key the
-              app is configured with) — receives the commit / diff payload during digest generation
+              app is configured with). Receives the commit / diff payload during digest generation
               and returns the summary text
             </li>
           </ul>
@@ -178,8 +177,8 @@ export default function PrivacyPage() {
         <section className="public-section">
           <h2 className="public-section-title">Cookies</h2>
           <p className="public-text">
-            askscout sets one essential cookie — the NextAuth session cookie — used solely to keep
-            you signed in. It is HTTP-only and Secure-flagged. We do not set marketing or analytics
+            askscout sets one essential cookie, the NextAuth session cookie, used solely to keep you
+            signed in. It is HTTP-only and Secure-flagged. We do not set marketing or analytics
             cookies.
           </p>
         </section>
@@ -188,20 +187,20 @@ export default function PrivacyPage() {
           <h2 className="public-section-title">Your rights and controls</h2>
           <ul className="public-list">
             <li>
-              <strong>See your data</strong> — everything we have on you is rendered in the app on
+              <strong>See your data</strong>: everything we have on you is rendered in the app on
               the Dashboard, Insights, and Settings pages
             </li>
             <li>
-              <strong>Clear individual digests</strong> — Settings → Clear History (per repo or all
+              <strong>Clear individual digests</strong>: Settings → Clear History (per repo or all
               at once)
             </li>
             <li>
-              <strong>Delete your account</strong> — Settings → Danger Zone → Delete Account. This
+              <strong>Delete your account</strong>: Settings → Danger Zone → Delete Account. This
               removes every record tied to your user ID from our database. You&apos;ll need to sign
               in with GitHub again to use askscout afterwards
             </li>
             <li>
-              <strong>Revoke GitHub access</strong> — at{" "}
+              <strong>Revoke GitHub access</strong>: at{" "}
               <a
                 href="https://github.com/settings/applications"
                 target="_blank"
@@ -210,11 +209,11 @@ export default function PrivacyPage() {
                 github.com/settings/applications
               </a>
               . This stops us from making any further reads but doesn&apos;t delete data already
-              stored — use the account-deletion option above to remove that
+              stored. Use the account-deletion option above to remove that
             </li>
             <li>
-              <strong>Other requests</strong> — for anything not covered by the in-app controls
-              (data export, specific edits, restrictions on processing), email{" "}
+              <strong>Other requests</strong>: for anything not covered by the in-app controls (data
+              export, specific edits, restrictions on processing), email{" "}
               <strong>charleshonigdesign@gmail.com</strong>. We aim to respond within seven days
             </li>
           </ul>
