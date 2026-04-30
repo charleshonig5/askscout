@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const metadata = {
   title: "The Hidden Cost of Vibe Coding | askscout",
@@ -20,23 +21,24 @@ export const metadata = {
 
 export default function ManifestoPage() {
   return (
-    <main className="public-page">
-      <nav className="public-nav">
-        <Link href="/" className="public-nav-logo">
+    <main className="page">
+      <nav className="home-nav" aria-label="Site">
+        <Link href="/" className="home-nav-logo">
           askscout
         </Link>
-        <div className="public-nav-links">
+        <div className="home-nav-links">
           <Link href="/articles">Articles</Link>
           <Link href="/docs">Docs</Link>
           <Link href="/privacy">Privacy</Link>
+          <ThemeToggle />
         </div>
       </nav>
 
-      <article className="public-content article">
+      <article className="page-body page-body--reading article">
         <Link href="/articles" className="article-back-link">
           ← All articles
         </Link>
-        <h1 className="public-title">The Hidden Cost of Vibe Coding</h1>
+        <h1 className="page-title page-title--article">The Hidden Cost of Vibe Coding</h1>
         <p className="article-deck">
           AI coding tools made us faster. They also made it harder to remember what we actually
           built. Here&apos;s the case for a daily digest in the vibe-coding era.

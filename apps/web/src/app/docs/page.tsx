@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const metadata = {
   title: "Docs | askscout",
@@ -7,21 +8,31 @@ export const metadata = {
 
 export default function DocsPage() {
   return (
-    <main className="public-page">
-      <nav className="public-nav">
-        <Link href="/" className="public-nav-logo">
+    <main className="page">
+      <nav className="home-nav" aria-label="Site">
+        <Link href="/" className="home-nav-logo">
           askscout
         </Link>
-        <div className="public-nav-links">
+        <div className="home-nav-links">
           <Link href="/articles">Articles</Link>
           <Link href="/docs">Docs</Link>
           <Link href="/privacy">Privacy</Link>
+          <ThemeToggle />
         </div>
       </nav>
 
-      <div className="public-content">
-        <h1 className="public-title">Docs</h1>
+      <header className="page-header">
+        <div className="page-header-inner">
+          <p className="home-eyebrow">Get started</p>
+          <h1 className="page-title">Docs</h1>
+          <p className="page-deck">
+            Setup, commands, API keys, privacy. Everything you need to install askscout and use it
+            daily.
+          </p>
+        </div>
+      </header>
 
+      <div className="page-body">
         <section className="public-section">
           <h2 className="public-section-title">Getting Started (Web)</h2>
           <div className="resource-steps">

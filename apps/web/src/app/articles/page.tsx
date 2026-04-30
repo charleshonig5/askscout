@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const metadata = {
   title: "Articles | askscout",
@@ -48,25 +49,34 @@ function formatDate(iso: string): string {
 
 export default function ArticlesIndexPage() {
   return (
-    <main className="public-page">
-      <nav className="public-nav">
-        <Link href="/" className="public-nav-logo">
+    <main className="page">
+      <nav className="home-nav" aria-label="Site">
+        <Link href="/" className="home-nav-logo">
           askscout
         </Link>
-        <div className="public-nav-links">
+        <div className="home-nav-links">
           <Link href="/articles">Articles</Link>
           <Link href="/docs">Docs</Link>
           <Link href="/privacy">Privacy</Link>
+          <ThemeToggle />
         </div>
       </nav>
 
-      <div className="public-content">
-        <h1 className="public-title">Articles</h1>
-        <p className="public-text">
-          Writing on vibe coding, AI-assisted development, and how we think about the daily-digest
-          workflow.
-        </p>
+      {/* Hero header — same eyebrow + display-font H1 treatment as the
+          home page's section titles, just smaller (64px) since this
+          isn't a marketing landing surface. */}
+      <header className="page-header">
+        <div className="page-header-inner">
+          <p className="home-eyebrow">Writing</p>
+          <h1 className="page-title">Articles</h1>
+          <p className="page-deck">
+            Writing on vibe coding, AI-assisted development, and how we think about the daily-digest
+            workflow.
+          </p>
+        </div>
+      </header>
 
+      <div className="page-body">
         <ul className="article-list">
           {ARTICLES.map((article) => (
             <li key={article.slug} className="article-list-item">

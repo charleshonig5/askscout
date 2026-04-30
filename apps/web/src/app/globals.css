@@ -3549,8 +3549,141 @@ a:hover {
 }
 
 /* ============================================
-   Public Pages (About, Resources)
-   ============================================ */
+   Subpages (Articles index, individual articles, Docs, Privacy)
+   ============================================
+   Same chrome as the home (.home-nav with theme toggle), same
+   typography scale, same monochrome palette. Subpages get a
+   smaller display H1 than the home (64px instead of 80px) since
+   they're not the marketing landing surface — they're reading
+   destinations and the title shouldn't dominate.
+
+   Layout: nav → page-header (eyebrow + title + deck) → page-body
+   (the actual content). page-body comes in two widths:
+   default for index / structured pages, and a narrow
+   reading-column variant for long-form prose (essay, privacy
+   policy). */
+
+.page {
+  min-height: 100vh;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+.page-header {
+  padding: 56px 32px 40px;
+}
+
+.page-header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-size: 64px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--color-text-primary);
+  margin: 0 0 18px;
+  max-width: 760px;
+}
+
+/* Single-article variant — the article H1 is paired with a
+   "← All articles" back-link sitting above it, plus a deck
+   below, so it carries less weight than the index/landing
+   titles. Slightly smaller + slightly less aggressive
+   tracking gives it a "first heading inside an article"
+   feel rather than a hero feel. */
+.page-title--article {
+  font-size: 52px;
+  letter-spacing: -0.025em;
+}
+
+.page-deck {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+  margin: 0;
+  max-width: 640px;
+}
+
+.page-body {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 32px 96px;
+}
+
+/* Reading-column variant for long-form essays and policies —
+   tighter line length improves readability and matches what
+   editorial sites do for prose. */
+.page-body--reading {
+  max-width: 720px;
+}
+
+/* ---- Subpage typography (overrides on existing .public-* used
+       inside the legacy article + privacy + docs body markup). The
+       .public-* classes were already in use; bumping them once
+       upgrades all subpages without rewriting their bodies. */
+.public-content {
+  max-width: 720px;
+  margin: 0 auto;
+  /* The page-header now provides the top spacing — drop the
+     2xl top padding the old layout used to add. */
+  padding: 32px 32px 96px;
+}
+
+.public-title {
+  font-family: var(--font-display);
+  font-size: 64px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 32px;
+}
+
+/* ---- Responsive — subpage titles scale with the same breakpoints
+       as the home page so long pages stay readable on phones. ---- */
+@media (max-width: 880px) {
+  .page-title,
+  .public-title {
+    font-size: 44px;
+  }
+  .page-title--article {
+    font-size: 38px;
+  }
+  .page-header {
+    padding: 40px 24px 32px;
+  }
+  .page-body {
+    padding: 24px 24px 64px;
+  }
+  .public-section-title {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 540px) {
+  .page-title,
+  .public-title {
+    font-size: 34px;
+    letter-spacing: -0.02em;
+  }
+  .page-title--article {
+    font-size: 30px;
+  }
+  .page-header {
+    padding: 32px 20px 24px;
+  }
+  .page-body {
+    padding: 20px 20px 56px;
+  }
+  .public-section-title {
+    font-size: 20px;
+  }
+}
 
 .public-page {
   min-height: 100vh;
@@ -3591,28 +3724,22 @@ a:hover {
   color: var(--color-text-primary);
 }
 
-.public-content {
-  max-width: 680px;
-  margin: 0 auto;
-  padding: var(--space-2xl) var(--space-xl);
-}
-
-.public-title {
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  margin-bottom: var(--space-2xl);
-}
+/* .public-content + .public-title rules now live above near the
+   subpage scaffolding (lines ~2810-2920). Removing the duplicates
+   here so the cascade lets the new typography stick. */
 
 .public-section {
   margin-bottom: var(--space-2xl);
 }
 
 .public-section-title {
-  font-size: 18px;
+  font-family: var(--font-display);
+  font-size: 26px;
   font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
   margin-bottom: var(--space-md);
-  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
 }
 
 /* ---- Articles index ----
@@ -3626,46 +3753,58 @@ a:hover {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
+  gap: 16px;
 }
 
+/* Glass cards — same recipe as .home-step / .home-split-tile so the
+   article index reads as part of the same visual family as the
+   home page. Hover lifts subtly + brightens the border. */
 .article-list-link {
   display: block;
   text-decoration: none;
   color: inherit;
-  padding: var(--space-md) 0;
-  border-top: 1px solid var(--color-border);
-  transition: opacity 0.15s ease;
-}
-
-.article-list-item:last-child .article-list-link {
-  border-bottom: 1px solid var(--color-border);
+  padding: 28px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border-hover);
+  background: var(--color-modal-surface);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .article-list-link:hover {
-  opacity: 0.85;
+  transform: translateY(-2px);
+  border-color: var(--color-text-tertiary);
 }
 
 .article-list-date {
   display: block;
+  font-family: var(--font-sans);
   font-size: 12px;
+  font-weight: 500;
   color: var(--color-text-tertiary);
-  margin-bottom: 6px;
-  letter-spacing: 0.02em;
+  margin-bottom: 10px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .article-list-title {
-  font-size: 22px;
+  font-family: var(--font-display);
+  font-size: 28px;
   font-weight: 600;
-  letter-spacing: -0.01em;
-  margin: 0 0 6px 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0 0 10px 0;
   color: var(--color-text-primary);
 }
 
 .article-list-description {
-  font-size: 14px;
-  line-height: 1.55;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
   color: var(--color-text-secondary);
   margin: 0;
   max-width: 580px;
@@ -3740,10 +3879,20 @@ a:hover {
 }
 
 .public-text {
-  font-size: 15px;
+  /* 16px reading body — bumps line-length comfort for long-form
+     prose (privacy, articles). Color stays secondary for the
+     newspaper-comfortable contrast. */
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 300;
   line-height: 1.7;
   color: var(--color-text-secondary);
-  margin-bottom: var(--space-md);
+  margin-bottom: 18px;
+}
+
+.public-text strong {
+  color: var(--color-text-primary);
+  font-weight: 500;
 }
 
 .public-text:last-child {

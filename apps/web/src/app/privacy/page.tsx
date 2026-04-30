@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const metadata = {
   title: "Privacy | askscout",
@@ -8,25 +9,29 @@ export const metadata = {
 
 export default function PrivacyPage() {
   return (
-    <main className="public-page">
-      <nav className="public-nav">
-        <Link href="/" className="public-nav-logo">
+    <main className="page">
+      <nav className="home-nav" aria-label="Site">
+        <Link href="/" className="home-nav-logo">
           askscout
         </Link>
-        <div className="public-nav-links">
+        <div className="home-nav-links">
           <Link href="/articles">Articles</Link>
           <Link href="/docs">Docs</Link>
           <Link href="/privacy">Privacy</Link>
+          <ThemeToggle />
         </div>
       </nav>
 
-      <div className="public-content">
-        <h1 className="public-title">Privacy</h1>
+      <header className="page-header">
+        <div className="page-header-inner">
+          <p className="home-eyebrow">Policy</p>
+          <h1 className="page-title">Privacy</h1>
+          <p className="page-deck">Plain English, no lawyer-speak. Last updated April 30, 2026.</p>
+        </div>
+      </header>
 
+      <div className="page-body page-body--reading">
         <section className="public-section">
-          <p className="public-text">
-            Plain English, no lawyer-speak. Last updated April 30, 2026.
-          </p>
           <p className="public-text">
             This page covers the askscout web app at askscout.dev. The askscout CLI is a separate
             tool that runs on your machine and follows different rules — see the{" "}
