@@ -2905,12 +2905,15 @@ a:hover {
 
 .home-hero-title {
   font-family: var(--font-display);
-  font-size: 64px;
+  /* 80px display anchors the hero with confidence — Raycast-tier
+     scale without overflowing on standard widescreen displays.
+     Pridi at this size + tight tracking carries the brand. */
+  font-size: 80px;
   font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
   color: var(--color-text-primary);
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .home-hero-title em {
@@ -2939,7 +2942,7 @@ a:hover {
 
 .home-hero-meta {
   font-size: 12px;
-  color: var(--color-text-tertiary, var(--color-text-secondary));
+  color: var(--color-text-tertiary);
   margin: 0;
 }
 
@@ -3080,8 +3083,15 @@ a:hover {
   width: 100%;
   max-width: 880px;
   border-radius: 12px;
-  border: 1px solid var(--color-border);
-  background: var(--color-bg-secondary);
+  /* Glass treatment — same recipe used by tooltips/modals
+     elsewhere in the app: translucent surface + brighter border
+     + backdrop blur + inner glow. Adapts to both themes via the
+     --color-modal-surface token (rgba(18,18,18,0.7) dark /
+     rgba(255,255,255,0.85) light). */
+  border: 1px solid var(--color-border-hover);
+  background: var(--color-modal-surface);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   box-shadow:
     inset 0 0 60px 0 var(--color-inner-glow),
     0 24px 48px -16px rgba(0, 0, 0, 0.4);
@@ -3111,7 +3121,7 @@ a:hover {
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.04em;
-  color: var(--color-text-tertiary, var(--color-text-secondary));
+  color: var(--color-text-tertiary);
 }
 
 .home-hero-demo-body {
@@ -3171,20 +3181,24 @@ a:hover {
 
 .home-section-title {
   font-family: var(--font-display);
-  font-size: 44px;
+  /* 56px section titles — bigger than typical app headings to give
+     each section its own scroll-stop weight. Tight tracking keeps
+     the type from feeling sprawling at this size. */
+  font-size: 56px;
   font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.1;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
   color: var(--color-text-primary);
   margin: 0 0 32px;
-  max-width: 680px;
+  max-width: 760px;
 }
 
 .home-section-title--cta {
-  font-size: 52px;
-  margin-bottom: 36px;
+  font-size: 64px;
+  margin-bottom: 40px;
   margin-left: auto;
   margin-right: auto;
+  max-width: none;
 }
 
 .home-section-deck {
@@ -3233,7 +3247,7 @@ a:hover {
 }
 
 .home-inline-code {
-  font-family: var(--font-mono, ui-monospace, "SF Mono", Menlo, monospace);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: 0.9em;
   background: var(--color-bg-tertiary);
   color: var(--color-text-primary);
@@ -3252,15 +3266,23 @@ a:hover {
 
 .home-step {
   padding: 32px 24px;
-  border: 1px solid var(--color-border);
   border-radius: 12px;
-  background: var(--color-bg-secondary);
+  /* Glass treatment — same recipe as the hero demo card and
+     existing app modals. The translucency + blur reads as
+     "premium card surface" without introducing brand color. */
+  border: 1px solid var(--color-border-hover);
+  background: var(--color-modal-surface);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
-  transition: transform 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .home-step:hover {
   transform: translateY(-2px);
+  border-color: var(--color-text-tertiary);
 }
 
 .home-step-num {
@@ -3291,7 +3313,7 @@ a:hover {
 }
 
 .home-step code {
-  font-family: var(--font-mono, ui-monospace, "SF Mono", Menlo, monospace);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
   background: var(--color-bg-tertiary);
   padding: 1px 5px;
   border-radius: 3px;
@@ -3344,9 +3366,14 @@ a:hover {
 
 .home-split-tile {
   padding: 36px;
-  border: 1px solid var(--color-border);
   border-radius: 12px;
-  background: var(--color-bg-secondary);
+  /* Glass treatment — consistent with home-step + home-hero-demo.
+     Borders + inner glow give the card definition; the modal-
+     surface translucency + backdrop blur gives the premium feel. */
+  border: 1px solid var(--color-border-hover);
+  background: var(--color-modal-surface);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
   display: flex;
   flex-direction: column;
@@ -3371,7 +3398,7 @@ a:hover {
 }
 
 .home-split-tile-code {
-  font-family: var(--font-mono, ui-monospace, "SF Mono", Menlo, monospace);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: 13px;
   background: var(--color-bg-primary);
   border: 1px solid var(--color-border);
@@ -3447,7 +3474,7 @@ a:hover {
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: var(--color-text-tertiary, var(--color-text-secondary));
+  color: var(--color-text-tertiary);
   margin-bottom: 4px;
 }
 
@@ -3468,19 +3495,19 @@ a:hover {
   padding-top: 24px;
   border-top: 1px solid var(--color-border);
   font-size: 12px;
-  color: var(--color-text-tertiary, var(--color-text-secondary));
+  color: var(--color-text-tertiary);
 }
 
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 880px) {
   .home-hero-title {
-    font-size: 44px;
+    font-size: 56px;
   }
   .home-section-title {
-    font-size: 32px;
+    font-size: 40px;
   }
   .home-section-title--cta {
-    font-size: 36px;
+    font-size: 44px;
   }
   .home-steps,
   .home-grid {
@@ -3504,13 +3531,17 @@ a:hover {
     padding: 48px 20px 80px;
   }
   .home-hero-title {
-    font-size: 36px;
+    font-size: 40px;
+    letter-spacing: -0.02em;
   }
   .home-section {
     padding: 64px 20px;
   }
   .home-section-title {
-    font-size: 28px;
+    font-size: 32px;
+  }
+  .home-section-title--cta {
+    font-size: 36px;
   }
   .home-footer-cols {
     grid-template-columns: 1fr;
