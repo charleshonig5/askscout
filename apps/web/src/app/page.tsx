@@ -44,9 +44,9 @@ export default async function LandingPage() {
             Remember what you <em>actually</em> shipped.
           </h1>
           <p className="home-hero-subtitle">
-            You ship 200 commits a week with your AI coding tools. By Friday you can&apos;t remember
-            what you actually built. askscout reads your git history and tells you, in plain
-            English, what shipped, what changed, and where you left off.
+            AI wrote half your code this week. By Friday, half of that is a blur. askscout reads
+            your repo and writes you a plain-English digest of what you actually shipped, what
+            changed, and where to pick back up.
           </p>
           <div className="home-hero-cta">
             <div className="home-cta-row">
@@ -109,8 +109,8 @@ export default async function LandingPage() {
             </p>
             <p>
               <code className="home-inline-code">git log</code> is unreadable at this volume. Linear
-              and Jira track plans, not actual built work. And asking the AI to summarize means
-              pasting in diffs by hand every day.
+              and Jira track what you planned, not what the AI shipped. And asking the AI to
+              summarize would mean pasting diffs by hand every day. Nobody does that.
             </p>
             <p>
               Vibe coding needs vibe digesting.{" "}
@@ -129,30 +129,30 @@ export default async function LandingPage() {
       <section className="home-section">
         <div className="home-section-inner">
           <p className="home-eyebrow">How it works</p>
-          <h2 className="home-section-title">Three steps. One ritual.</h2>
+          <h2 className="home-section-title">Three steps. That&apos;s it.</h2>
           <div className="home-steps">
             <div className="home-step">
               <span className="home-step-num">01</span>
               <h3 className="home-step-title">Connect your repo</h3>
               <p className="home-step-text">
                 Sign in with GitHub on the web, or run <code>askscout</code> in any local repo with
-                your own LLM API key.
+                your own LLM key.
               </p>
             </div>
             <div className="home-step">
               <span className="home-step-num">02</span>
               <h3 className="home-step-title">Get your digest</h3>
               <p className="home-step-text">
-                askscout reads commits and diffs, summarizes them in plain English, and streams the
-                result to you in seconds.
+                askscout reads your commits and diffs and writes them up in plain English. The
+                result streams back in seconds.
               </p>
             </div>
             <div className="home-step">
               <span className="home-step-num">03</span>
               <h3 className="home-step-title">Read your day</h3>
               <p className="home-step-text">
-                Vibe Check, what shipped, what changed, what kept shifting, where you left off. Copy
-                it into Slack or use it as your standup.
+                Vibe Check, what shipped, what changed, what kept shifting, where you left off.
+                Paste it into Slack. Or just keep it for yourself.
               </p>
             </div>
           </div>
@@ -167,22 +167,22 @@ export default async function LandingPage() {
       <section className="home-section home-section--quiet">
         <div className="home-section-inner">
           <p className="home-eyebrow">What&apos;s in a digest</p>
-          <h2 className="home-section-title">Built like a daily report.</h2>
+          <h2 className="home-section-title">What you&apos;ll actually read.</h2>
           <p className="home-section-deck">
-            Every digest reads top-to-bottom like a thoughtful engineer wrote it for you. Six
-            sections, in a consistent order, every time.
+            Six sections, same order every day. You learn the shape after a couple of reads and it
+            becomes a daily habit.
           </p>
           <div className="home-grid">
             <div className="home-tile">
               <h3 className="home-tile-title">Vibe Check</h3>
               <p className="home-tile-text">
-                One-line read on the day&apos;s work. Sets the tone before the details.
+                A one-line read on how the day went, before any of the specifics.
               </p>
             </div>
             <div className="home-tile">
               <h3 className="home-tile-title">Shipped</h3>
               <p className="home-tile-text">
-                The features that actually made it into the codebase, not just attempts.
+                Things you actually finished. Not the experiments that got reverted.
               </p>
             </div>
             <div className="home-tile">
@@ -194,7 +194,7 @@ export default async function LandingPage() {
             <div className="home-tile">
               <h3 className="home-tile-title">Still Shifting</h3>
               <p className="home-tile-text">
-                The parts you keep reworking. The things you haven&apos;t locked in yet.
+                The parts you keep coming back to. Things that aren&apos;t settled yet.
               </p>
             </div>
             <div className="home-tile">
@@ -206,7 +206,7 @@ export default async function LandingPage() {
             <div className="home-tile">
               <h3 className="home-tile-title">Key Takeaways</h3>
               <p className="home-tile-text">
-                One observation worth remembering. A nudge for the next session.
+                One thing worth remembering for next time. Sometimes the most useful line.
               </p>
             </div>
           </div>
@@ -224,8 +224,8 @@ export default async function LandingPage() {
             <div className="home-split-tile">
               <h3 className="home-split-tile-title">CLI</h3>
               <p className="home-split-tile-text">
-                Runs locally in any git repo. Bring your own API key. Pipe the output anywhere. 100%
-                offline-capable except the call to your chosen LLM provider.
+                Runs in your terminal, in any git repo. Bring your own LLM key. Pipe the output
+                wherever you want. The only network call is the one to your provider.
               </p>
               <pre className="home-split-tile-code">
                 <code>npm install -g askscout</code>
@@ -238,8 +238,9 @@ export default async function LandingPage() {
             <div className="home-split-tile">
               <h3 className="home-split-tile-title">Web app</h3>
               <p className="home-split-tile-text">
-                Sign in with GitHub. Hosted API key, no setup. Persistent history across sessions.
-                Insights, streaks, and per-repo activity over time.
+                Sign in with GitHub, we cover the API key. Your digests stick around, so you get
+                streaks, per-repo history, and the occasional weird stat about how you actually
+                work.
               </p>
               <div className="home-split-tile-cta">
                 <Link href="/dashboard" className="home-cta home-cta--inline">
@@ -263,9 +264,9 @@ export default async function LandingPage() {
             Never your secrets.
           </h2>
           <p className="home-section-prose-narrow">
-            askscout reads commit messages and diffs. It never reads full source files, environment
-            variables, or anything outside the changes themselves. The web app stores your digests
-            scoped to your GitHub user; the CLI stores nothing in the cloud.{" "}
+            askscout reads commit messages and diffs. That&apos;s it. No source files, no env vars,
+            no anything-not-in-a-commit. The web app keeps your digests under your GitHub user. The
+            CLI keeps nothing online.{" "}
             <Link href="/privacy" className="home-prose-link">
               Read the full policy →
             </Link>

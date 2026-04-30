@@ -26,8 +26,7 @@ export default function DocsPage() {
           <p className="home-eyebrow">Get started</p>
           <h1 className="page-title">Docs</h1>
           <p className="page-deck">
-            Setup, commands, API keys, privacy. Everything you need to install askscout and use it
-            daily.
+            Install, sign in, run a digest. The whole onboarding takes about ten seconds.
           </p>
         </div>
       </header>

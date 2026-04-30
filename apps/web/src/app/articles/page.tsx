@@ -70,8 +70,8 @@ export default function ArticlesIndexPage() {
           <p className="home-eyebrow">Writing</p>
           <h1 className="page-title">Articles</h1>
           <p className="page-deck">
-            Writing on vibe coding, AI-assisted development, and how we think about the daily-digest
-            workflow.
+            Notes on vibe coding, AI-assisted dev work, and what we&apos;re learning about the
+            daily-digest habit.
           </p>
         </div>
       </header>

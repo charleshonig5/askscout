@@ -4,18 +4,18 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 export const metadata = {
   title: "The Hidden Cost of Vibe Coding | askscout",
   description:
-    "AI coding tools made us faster. They also made it harder to remember what we actually built. The case for a daily digest in the vibe-coding era.",
+    "AI coding tools sped us up. They also made it harder to remember what we actually built. Why I think the next big workflow problem is digesting your own code.",
   openGraph: {
     title: "The Hidden Cost of Vibe Coding",
     description:
-      "AI coding tools made us faster. They also made it harder to remember what we actually built.",
+      "AI coding tools sped us up. They also made it harder to remember what we actually built.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
     title: "The Hidden Cost of Vibe Coding",
     description:
-      "AI coding tools made us faster. They also made it harder to remember what we actually built.",
+      "AI coding tools sped us up. They also made it harder to remember what we actually built.",
   },
 };
 
@@ -40,14 +40,14 @@ export default function ManifestoPage() {
         </Link>
         <h1 className="page-title page-title--article">The Hidden Cost of Vibe Coding</h1>
         <p className="article-deck">
-          AI coding tools made us faster. They also made it harder to remember what we actually
-          built. Here&apos;s the case for a daily digest in the vibe-coding era.
+          AI coding tools sped us up. They also made it harder to keep track of what we actually
+          built. Why I think the next big workflow problem is digesting your own code.
         </p>
 
         <section className="public-section">
           <p className="public-text">
-            Friday, 5&nbsp;PM. You close your laptop. You shipped a lot this week. 200+ commits, a
-            handful of features, a refactor or two. You can feel the velocity in your bones.
+            Friday, 5&nbsp;PM. You close your laptop. You shipped a lot this week. Two hundred
+            commits, a handful of features, a refactor or two. Feels like a productive run.
           </p>
           <p className="public-text">
             Then your teammate asks: <em>&ldquo;What did you build this week?&rdquo;</em>
@@ -60,16 +60,18 @@ export default function ManifestoPage() {
         <section className="public-section">
           <h2 className="public-section-title">A new pattern, a new problem</h2>
           <p className="public-text">
-            AI coding tools didn&apos;t just speed us up. They changed our relationship with our own
-            code. We don&apos;t write line-by-line anymore. We describe outcomes, accept patches,
-            review diffs at speed. The cost of getting code into the codebase has collapsed.
+            The way most of us code now is fundamentally different from two years ago. We don&apos;t
+            write line by line. We describe what we want, accept the patches, scan the diffs.
+            Sometimes we don&apos;t even fully scan the diffs. The friction of producing code has
+            basically disappeared.
           </p>
           <p className="public-text">
-            What hasn&apos;t collapsed: the cost of remembering what we actually shipped.
+            What hasn&apos;t disappeared: the cost of remembering what we actually shipped.
           </p>
           <p className="public-text">
-            This is the shape of vibe coding. Fluid, fast, generative. And it has a hidden cost
-            nobody talks about, because the cost only shows up when you stop typing.
+            This is what vibe coding looks like in practice. The work feels loose and quick. The
+            cost only shows up when you stop typing. That&apos;s when you realize you can&apos;t
+            account for half of what you produced.
           </p>
         </section>
 
@@ -84,8 +86,8 @@ export default function ManifestoPage() {
             <strong>Your git log becomes static.</strong> Auto-generated commit messages like{" "}
             <code className="inline-code">wip</code>, <code className="inline-code">fix</code>, and{" "}
             <code className="inline-code">update X</code> don&apos;t tell you what happened. A
-            normal week now produces 50 illegible commits per day. The signal-to-noise ratio of your
-            history is on the floor.
+            normal week now produces fifty illegible commits per day. You can&apos;t read your own
+            history.
           </p>
           <p className="public-text">
             <strong>Monday-morning amnesia.</strong> You sit down to keep building and you
@@ -106,18 +108,16 @@ export default function ManifestoPage() {
         <section className="public-section">
           <h2 className="public-section-title">Why current tools don&apos;t fix it</h2>
           <p className="public-text">
-            <code className="inline-code">git log</code> is unreadable at this volume. The whole
-            format was designed for an era of slower, more deliberate commits. It scales linearly;
-            our output has gone exponential.
+            <code className="inline-code">git log</code> is unreadable at this volume. The format
+            was designed for slow, deliberate commits. We&apos;re producing fifty a day.
           </p>
           <p className="public-text">
-            Project trackers like Linear and Jira track <em>plans</em>, not actual{" "}
-            <em>built work</em>. The disconnect between what you intended and what the AI actually
-            shipped is now significant, and the trackers can&apos;t see the difference.
+            Linear and Jira track plans. They have no way to see what the AI actually shipped, only
+            what you intended to ship. The gap between those two has gotten really wide.
           </p>
           <p className="public-text">
             &ldquo;Just ask the AI to summarize.&rdquo; But the AI doesn&apos;t see your commits.
-            You&apos;d have to paste in diffs every day. Nobody does that.
+            You&apos;d have to paste diffs in by hand every day. Nobody does that.
           </p>
         </section>
 
@@ -125,16 +125,15 @@ export default function ManifestoPage() {
           <h2 className="public-section-title">The thesis</h2>
           <p className="public-text">Vibe coding needs vibe digesting.</p>
           <p className="public-text">
-            If AI helped you write the code, AI should help you remember it. A daily summary, in
-            plain English, of what your AI-assisted self actually shipped. Not a list of file paths.
-            Not a reformatted git log. A read of the day, the way a thoughtful engineer would write
-            it up: Vibe Check, what shipped, what changed, what kept shifting, where you left off.
+            If AI helped you write the code, AI should help you remember it. A daily summary in
+            plain English. Not file paths. Not a reformatted git log. A real read of what happened,
+            the way you&apos;d want a coworker to brief you back: Vibe Check, what shipped, what
+            changed, what kept shifting, where you left off.
           </p>
           <p className="public-text">
-            That&apos;s askscout. Run it as a CLI in your repo, or sign in to the web app at{" "}
-            <Link href="/">askscout.dev</Link>. It reads your git history, sends only the diffs to
-            the LLM of your choice, and gives you back a digest you&apos;d actually want to read.
-            Free. Takes ten seconds to install.
+            That&apos;s askscout. Run it as a CLI, or sign in to the web app at{" "}
+            <Link href="/">askscout.dev</Link>. It reads your repo, sends only the diffs to the LLM
+            you choose, and writes you a digest worth reading. Free. Sets up in about ten seconds.
           </p>
         </section>
 

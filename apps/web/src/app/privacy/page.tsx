@@ -33,9 +33,8 @@ export default function PrivacyPage() {
       <div className="page-body page-body--reading">
         <section className="public-section">
           <p className="public-text">
-            This page covers the askscout web app at askscout.dev. The askscout CLI is a separate
-            tool that runs on your machine and follows different rules. See the{" "}
-            <Link href="/docs">Docs</Link> page for the CLI&apos;s privacy notes.
+            This page is about the web app at askscout.dev. The CLI runs locally on your machine and
+            the rules are different there. See <Link href="/docs">Docs</Link> for the CLI side.
           </p>
         </section>
 
