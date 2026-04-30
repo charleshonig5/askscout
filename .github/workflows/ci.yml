@@ -24,3 +24,7 @@ jobs:
       - run: pnpm lint
       - run: pnpm format:check
       - run: pnpm test
+      # Run coverage separately so threshold breaches fail the build
+      # with a clear "coverage dropped" signal rather than getting
+      # mixed into the regular test output.
+      - run: pnpm test:coverage

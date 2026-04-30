@@ -7,6 +7,9 @@ dist/
 .turbo/
 *.tsbuildinfo
 
+# test coverage reports (generated, per-machine)
+coverage/
+
 # environment
 .env
 .env.local
