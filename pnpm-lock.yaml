@@ -38,12 +38,12 @@ importers:
 
   apps/web:
     dependencies:
-      '@askscout/core':
-        specifier: workspace:*
-        version: link:../../packages/core
       '@supabase/supabase-js':
         specifier: ^2.101.1
         version: 2.101.1
+      askscout-core:
+        specifier: workspace:*
+        version: link:../../packages/core
       lucide-react:
         specifier: ^1.7.0
         version: 1.7.0(react@19.2.4)
@@ -75,7 +75,7 @@ importers:
 
   packages/cli:
     dependencies:
-      '@askscout/core':
+      askscout-core:
         specifier: workspace:*
         version: link:../core
       yargs:

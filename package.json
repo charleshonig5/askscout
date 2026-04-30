@@ -1,6 +1,6 @@
 {
   "name": "askscout-monorepo",
-  "description": "askscout monorepo — CLI (askscout), shared library (@askscout/core), and web app (@askscout/web).",
+  "description": "askscout monorepo — CLI (askscout), shared library (askscout-core), and web app (askscout-web).",
   "license": "MIT",
   "author": "Charles Honig <charleshonigdesign@gmail.com>",
   "homepage": "https://askscout.dev",

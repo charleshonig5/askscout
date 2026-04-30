@@ -1,4 +1,4 @@
-import type { GitCommit, GitDiff } from "@askscout/core";
+import type { GitCommit, GitDiff } from "askscout-core";
 
 const GITHUB_API = "https://api.github.com";
 const MAX_DIFF_CHARS = 12_000;

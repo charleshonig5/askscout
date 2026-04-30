@@ -30,12 +30,12 @@ You can also use [GitHub's private vulnerability reporting](https://github.com/c
 
 ## Supported versions
 
-Only the latest minor release of `askscout` (CLI) and `@askscout/core` is actively patched. Older versions may receive critical security fixes at the maintainer's discretion.
+Only the latest minor release of `askscout` (CLI) and `askscout-core` is actively patched. Older versions may receive critical security fixes at the maintainer's discretion.
 
 | Package          | Latest       | Security fixes |
 | ---------------- | ------------ | -------------- |
 | `askscout` (CLI) | latest minor | ✅             |
-| `@askscout/core` | latest minor | ✅             |
+| `askscout-core`  | latest minor | ✅             |
 
 The web app at askscout.dev is always running the latest deployed version — there's no concept of an "older release" to patch.
 
@@ -44,7 +44,7 @@ The web app at askscout.dev is always running the latest deployed version — th
 In scope:
 
 - The `askscout` CLI (`packages/cli/`)
-- The `@askscout/core` library (`packages/core/`)
+- The `askscout-core` library (`packages/core/`)
 - The askscout.dev web app (`apps/web/`)
 
 Out of scope:

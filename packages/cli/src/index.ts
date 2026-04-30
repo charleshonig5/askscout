@@ -1,6 +1,6 @@
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
-import type { OutputMode } from "@askscout/core";
+import type { OutputMode } from "askscout-core";
 import { scan } from "./commands/scan.js";
 import { runSetup } from "./setup.js";
 

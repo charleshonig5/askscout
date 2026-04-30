@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { AiProvider } from "@askscout/core";
+import type { AiProvider } from "askscout-core";
 
 const CONFIG_DIR = path.join(os.homedir(), ".askscout");
 const CONFIG_FILE = path.join(CONFIG_DIR, "config.json");

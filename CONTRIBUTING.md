@@ -30,7 +30,7 @@ If any of those fail on a fresh clone, that's a bug — please open an issue.
 ## Repo layout
 
 ```
-packages/core   shared library (@askscout/core)
+packages/core   shared library (askscout-core)
 packages/cli    CLI published to npm as askscout
 apps/web        Next.js web app (askscout.dev)
 ```
@@ -69,7 +69,7 @@ Cross-package dependencies use `workspace:*`. Build order is core → cli/web.
 
 ## Testing
 
-The project uses [vitest](https://vitest.dev/). Run the full suite with `pnpm test`. Run a single package's tests with `pnpm --filter @askscout/core test`.
+The project uses [vitest](https://vitest.dev/). Run the full suite with `pnpm test`. Run a single package's tests with `pnpm --filter askscout-core test`.
 
 Web app tests live in `apps/web/src/lib/__tests__/`. Add tests for new logic in the same convention.
 

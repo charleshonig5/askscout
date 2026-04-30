@@ -15,9 +15,9 @@ import {
   readState,
   summarize,
   writeState,
-} from "@askscout/core";
-import type { GitDiff } from "@askscout/core";
-import type { OutputMode, ProjectState } from "@askscout/core";
+} from "askscout-core";
+import type { GitDiff } from "askscout-core";
+import type { OutputMode, ProjectState } from "askscout-core";
 import { loadConfig } from "../config.js";
 import { inlineSetup } from "../setup.js";
 

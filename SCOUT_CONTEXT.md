@@ -39,7 +39,7 @@ pnpm monorepo at `/Users/charleshonig/Desktop/askscout/`.
 
 ```
 packages/
-  core/          @askscout/core — shared library
+  core/          askscout-core — shared library
                  git reading, LLM summarization, output formatting,
                  project state management
   cli/           askscout npm package — thin CLI wrapper around core

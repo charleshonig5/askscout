@@ -24,7 +24,7 @@ assignees: ""
 
 - [ ] CLI (`askscout`)
 - [ ] Web app (askscout.dev)
-- [ ] `@askscout/core` library
+- [ ] `askscout-core` library
 
 ## Anything else
 

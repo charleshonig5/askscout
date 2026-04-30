@@ -1,12 +1,12 @@
 # askscout
 
-The daily digest for vibe coders. Scout sniffs through your repo and tells you what you built, what changed, and where you left off.
+The daily digest for vibe coders. Scout reads through your repo and tells you what you built, what changed, and where you left off.
 
 ## Project Structure
 
 pnpm monorepo with three packages:
 
-- `packages/core` — shared library (`@askscout/core`). Git reading, LLM summarization, output formatting, project state management.
+- `packages/core` — shared library (`askscout-core`). Git reading, LLM summarization, output formatting, project state management.
 - `packages/cli` — CLI tool published to npm as `askscout`. Thin wrapper around core.
 - `apps/web` — Next.js web app deployed to Vercel at askscout.dev.
 

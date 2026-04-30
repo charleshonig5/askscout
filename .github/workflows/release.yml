@@ -11,7 +11,7 @@
 #
 # Required repository secret:
 #   NPM_TOKEN — automation token from npm with publish access to the
-#   `askscout` and `@askscout/core` packages. Generate at
+#   `askscout` and `askscout-core` packages. Generate at
 #   https://www.npmjs.com/settings/<your-user>/tokens (type:
 #   "Automation"; do not use a "Publish" token without 2FA bypass).
 #

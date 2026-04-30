@@ -45,7 +45,7 @@ Visit [askscout.dev](https://askscout.dev), sign in with GitHub, pick a repo. Yo
 ```
 askscout/
 ├─ packages/
-│  ├─ core/      @askscout/core — shared library (git reading, LLM summarization, formatting, state)
+│  ├─ core/      askscout-core — shared library (git reading, LLM summarization, formatting, state)
 │  └─ cli/       askscout — CLI tool published to npm
 └─ apps/
    └─ web/      Next.js web app deployed to Vercel
@@ -80,7 +80,7 @@ To run the web app locally:
 ```bash
 cp apps/web/.env.example apps/web/.env.local
 # fill in the env vars (GitHub OAuth, Supabase, LLM provider key)
-pnpm --filter @askscout/web dev
+pnpm --filter askscout-web dev
 ```
 
 ## Tech stack

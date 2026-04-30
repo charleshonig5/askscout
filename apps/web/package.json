@@ -1,5 +1,5 @@
 {
-  "name": "@askscout/web",
+  "name": "askscout-web",
   "version": "0.1.0",
   "description": "askscout web app — Next.js application deployed at askscout.dev. Not published to npm.",
   "license": "MIT",
@@ -19,7 +19,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "build": "pnpm --filter @askscout/core build && next build",
+    "build": "pnpm --filter askscout-core build && next build",
     "dev": "next dev",
     "start": "next start",
     "typecheck": "tsc --noEmit",
@@ -28,7 +28,7 @@
     "clean": "rm -rf .next"
   },
   "dependencies": {
-    "@askscout/core": "workspace:*",
+    "askscout-core": "workspace:*",
     "@supabase/supabase-js": "^2.101.1",
     "lucide-react": "^1.7.0",
     "next": "^15.3.1",

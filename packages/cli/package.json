@@ -44,7 +44,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@askscout/core": "workspace:*",
+    "askscout-core": "workspace:*",
     "yargs": "^18.0.0"
   },
   "devDependencies": {

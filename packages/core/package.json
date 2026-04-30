@@ -1,5 +1,5 @@
 {
-  "name": "@askscout/core",
+  "name": "askscout-core",
   "version": "0.1.0",
   "description": "Shared library powering askscout — git reading, LLM digest summarization, output formatting, and project state management.",
   "license": "MIT",

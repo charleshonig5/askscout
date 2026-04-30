@@ -3,9 +3,9 @@
   "changelog": "@changesets/cli/changelog",
   "commit": false,
   "fixed": [],
-  "linked": [["@askscout/core", "askscout"]],
+  "linked": [["askscout-core", "askscout"]],
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@askscout/web"]
+  "ignore": ["askscout-web"]
 }

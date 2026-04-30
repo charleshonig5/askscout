@@ -1,7 +1,7 @@
 /**
  * Digest generation streaming endpoint.
  *
- * Uses buildUnifiedSystemPrompt() from @askscout/core for the system prompt
+ * Uses buildUnifiedSystemPrompt() from askscout-core for the system prompt
  * (shared tone, format, and rules). The user prompt is built here because
  * it uses web-specific data: Supabase project context, GitHub API commit
  * format, sanitized patches, and churn data.
@@ -19,7 +19,7 @@ import {
   getProjectSummary,
   saveProjectSummary,
 } from "@/lib/supabase";
-import { buildUnifiedSystemPrompt } from "@askscout/core";
+import { buildUnifiedSystemPrompt } from "askscout-core";
 
 export const maxDuration = 60;
 

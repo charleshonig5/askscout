@@ -1,8 +1,8 @@
-# @askscout/core
+# askscout-core
 
 > Shared library powering askscout — git reading, LLM digest summarization, output formatting, and project state management.
 
-[![npm version](https://img.shields.io/npm/v/@askscout/core.svg)](https://www.npmjs.com/package/@askscout/core)
+[![npm version](https://img.shields.io/npm/v/askscout-core.svg)](https://www.npmjs.com/package/askscout-core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/charleshonig5/askscout/blob/main/LICENSE)
 
 This is the engine behind the [`askscout` CLI](https://www.npmjs.com/package/askscout) and the [askscout.dev](https://askscout.dev) web app. Most users want one of those, not this package directly. Use this package if you're building your own integration on top of the same primitives.
@@ -10,7 +10,7 @@ This is the engine behind the [`askscout` CLI](https://www.npmjs.com/package/ask
 ## Install
 
 ```bash
-npm install @askscout/core
+npm install askscout-core
 ```
 
 Requires **Node.js >= 22**. ESM and CJS builds are both shipped.
@@ -55,7 +55,7 @@ See [`src/types.ts`](https://github.com/charleshonig5/askscout/blob/main/package
 ## Example
 
 ```ts
-import { getCommits, getDiffs, summarize, formatDigest, readState } from "@askscout/core";
+import { getCommits, getDiffs, summarize, formatDigest, readState } from "askscout-core";
 
 const projectRoot = process.cwd();
 const since = new Date(Date.now() - 24 * 60 * 60 * 1000); // last 24h
