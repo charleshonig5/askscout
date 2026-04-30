@@ -58,6 +58,14 @@ askscout auto-detects the provider from your API key format:
 
 Get a key at [console.anthropic.com](https://console.anthropic.com) or [platform.openai.com](https://platform.openai.com).
 
+## Environment variables
+
+The CLI is config-file-driven, not env-var-driven — your API key lives in `~/.askscout/config.json`, not in env. The only environment variable askscout reads is the universal [`NO_COLOR`](https://no-color.org) standard:
+
+- Set `NO_COLOR=1` (or any non-empty value) to force plain-text output without emoji or unicode block bars. Useful for piping into other tools or running in CI.
+
+The CLI also auto-detects when stdout isn't a TTY (e.g. `askscout > digest.txt`) and falls back to the same plain-text rendering, so you usually don't need to set `NO_COLOR` explicitly.
+
 ## Web app
 
 For persistent history, GitHub OAuth, and a richer UI, visit [askscout.dev](https://askscout.dev).

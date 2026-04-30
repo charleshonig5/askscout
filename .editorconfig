@@ -1,0 +1,22 @@
+# EditorConfig — keeps editors and IDEs aligned on the basic formatting
+# conventions this repo uses. https://editorconfig.org
+#
+# Prettier (configured at the repo root) is the source of truth for
+# code formatting. This file just covers the broader axes Prettier
+# doesn't touch — line endings, final newline, trailing whitespace —
+# so editors that ignore Prettier still produce clean diffs.
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Markdown lines often carry meaningful trailing whitespace (two
+# spaces = hard line break in CommonMark). Don't strip it.
+[*.md]
+trim_trailing_whitespace = false
