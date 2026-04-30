@@ -11,6 +11,27 @@ const authConfig: NextAuthConfig = {
   ],
   callbacks: {
     jwt({ token, account, profile }) {
+      // CRITICAL — pin token.sub to GitHub's stable providerAccountId
+      // on every initial sign-in. Without this, NextAuth's JWT
+      // strategy issues a fresh UUID for `token.sub` each time a
+      // session is created, which means the same GitHub user gets a
+      // different `user_id` after each cookie expiry / browser
+      // refresh / Vercel redeploy. That orphans every digest the
+      // user has ever saved and silently fragments their identity
+      // across the database.
+      //
+      // GitHub's `providerAccountId` is the user's permanent numeric
+      // ID (e.g. "42223843") — it never changes for the lifetime of
+      // a GitHub account. Pinning to it makes user_id stable across
+      // every session forever.
+      //
+      // The `account` argument is only populated on the initial
+      // sign-in event; subsequent JWT refreshes don't see it. So
+      // this only runs once per session start, which is all we
+      // need — once token.sub is set, NextAuth carries it forward.
+      if (account?.providerAccountId) {
+        token.sub = account.providerAccountId;
+      }
       if (account?.access_token) {
         token.accessToken = account.access_token;
       }
