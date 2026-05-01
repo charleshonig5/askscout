@@ -26,34 +26,38 @@ import { Emoji } from "@/components/Emoji";
 import { DigestOpener } from "@/components/DigestOpener";
 
 /**
- * Build the text that goes into the clipboard / downloaded markdown file.
+ * Build the markdown that feeds both the clipboard Copy button and the
+ * .md download. Renders proper CommonMark so when the user pastes into
+ * GitHub / Notion / Linear / Slack / Obsidian / VS Code preview, they
+ * see the same hierarchy and emphasis the dashboard shows on screen.
  *
  * Goals:
- *   1. Match the on-screen rendered order exactly so paste == what you saw.
- *   2. Strip private sections (Standup, Plan, AI Context, Summary) — those are
- *      accessed via their own modals, never via "Copy digest".
- *   3. Use emoji + plain-text section headers everywhere (matches the UI and
- *      renders well in Slack/Notion/email/plain-text targets).
+ *   1. Match on-screen render order exactly (narrative → stats → takeaway)
+ *      so the paste reads top-to-bottom the same way the dashboard does.
+ *   2. Strip private sections (Standup, Plan, AI Context, Summary) — those
+ *      are accessed via their own modals, never via Copy / Download.
+ *   3. Real markdown semantics throughout: H1 title, H2 section headers,
+ *      H3 stats sub-sections, `-` bullets with bold titles, backticked
+ *      file paths, bold emphasis on hero numbers (cards line, Pace Check
+ *      multiplier, Codebase Health labels).
  *   4. Respect the user's section toggles from settings.
  */
 function buildFullMarkdown(
   text: string,
   stats?: DigestViewStats | null,
   visibleSections?: Record<string, boolean>,
+  repoName?: string,
 ): string {
   const isVisible = (key: string) => !visibleSections || visibleSections[key] !== false;
+  const fmt = (n: number) => n.toLocaleString("en-US");
 
   // 1. Strip private sections (---STANDUP---, ---PLAN---, etc).
   const digestOnly = parseSections(text).digest;
 
   // 2. Parse the narrative into structured sections so we can filter
-  //    out anything the user has toggled off in settings, then
-  //    reconstruct in the same order the UI renders. Without the
-  //    filter, hidden sections (e.g. "Shipped" off) would still
-  //    appear in the paste — UI hides, copy shows, mismatch.
-  //    Key Takeaways is pulled out so we can place it AFTER the
-  //    sidebar stats block to match the linearized read order
-  //    (narrative → sidebar stats → takeaway).
+  //    out anything the user has toggled off in settings. Key Takeaways
+  //    is pulled out so we can place it AFTER the sidebar stats block,
+  //    matching the linearized read order (narrative → stats → takeaway).
   const parsedNarrative = parseStreamingSections(digestOnly);
   const narrativeBlocks: string[] = [];
   let keyTakeawaysBlock: string | null = null;
@@ -61,37 +65,41 @@ function buildFullMarkdown(
   for (const sec of parsedNarrative) {
     const settingsKey = sectionKeyMap[sec.key] ?? sec.key;
     if (!isVisible(settingsKey)) continue;
-    const block = `${sec.emoji} ${sec.label}\n${sec.content}`;
+    if (sec.key === "stats") continue; // dead path — stats live in sidebar block
+
+    const body = formatNarrativeBody(sec.key, sec.content);
+    if (!body) continue;
+    const block = `## ${sec.emoji} ${sec.label}\n\n${body}`;
+
     if (sec.key === "takeaway") {
       keyTakeawaysBlock = block;
-    } else if (sec.key === "stats") {
-      // Dead path — the LLM is instructed not to emit a stats
-      // narrative section; computed stats live in the sidebar.
-      continue;
     } else {
       narrativeBlocks.push(block);
     }
   }
 
-  const fmt = (n: number) => n.toLocaleString("en-US");
-  // Collect sub-section blocks under the umbrella in UI render order.
-  const subSections: string[] = [];
-  // Cards line — the umbrella's first content (no sub-section label,
-  // it sits directly under "📊 Statistics").
-  const cardsLine =
-    stats && isVisible("statistics") && stats.commits != null
-      ? `+${fmt(stats.linesAdded ?? 0)} lines · -${fmt(stats.linesRemoved ?? 0)} lines · ${fmt(stats.commits)} commits · ${fmt(stats.filesChanged ?? 0)} files`
-      : null;
+  // 3. Statistics block — assembled as ## Statistics with ### sub-headings
+  //    in UI render order: Cards row → Most Active Files → Codebase Health
+  //    → Coding Timeline → Pace Check.
+  const statsBlocks: string[] = [];
 
-  // Sub-sections in UI render order: Most Active Files →
-  // Codebase Health → Coding Timeline → Pace Check. Plain-text
-  // labels (no emoji) match the UI's .stats-subsection-title.
+  // Cards row — bold so it reads as the headline stat under the umbrella.
+  if (stats && isVisible("statistics") && stats.commits != null) {
+    statsBlocks.push(
+      `**+${fmt(stats.linesAdded ?? 0)} lines · -${fmt(stats.linesRemoved ?? 0)} lines · ${fmt(
+        stats.commits,
+      )} commits · ${fmt(stats.filesChanged ?? 0)} files**`,
+    );
+  }
+
   if (stats && isVisible("mostActiveFiles") && (stats.topFiles?.length ?? 0) > 0) {
     const rows = stats.topFiles!.map(
       (f, i) =>
-        `${i + 1}. ${f.file} (+${fmt(f.added ?? 0)} / -${fmt(f.removed ?? 0)}, ${f.commits} ${f.commits === 1 ? "commit" : "commits"})`,
+        `${i + 1}. \`${f.file}\` (+${fmt(f.added ?? 0)} / -${fmt(f.removed ?? 0)}, ${f.commits} ${
+          f.commits === 1 ? "commit" : "commits"
+        })`,
     );
-    subSections.push(["Most Active Files", ...rows].join("\n"));
+    statsBlocks.push(`### Most Active Files\n\n${rows.join("\n")}`);
   }
 
   if (
@@ -102,12 +110,13 @@ function buildFullMarkdown(
     stats.health.churn?.level
   ) {
     const h = stats.health;
-    subSections.push(
+    statsBlocks.push(
       [
-        "Codebase Health",
-        `Growth: ${h.growth.level} (+${fmt(h.growth.added)} / -${fmt(h.growth.removed)})`,
-        `Focus: ${h.focus.level} (${h.focus.filesPerCommit} files touched per commit)`,
-        `Churn: ${h.churn.level} (${h.churn.files} ${h.churn.files === 1 ? "file" : "files"} reworked)`,
+        "### Codebase Health",
+        "",
+        `- **Growth:** ${h.growth.level} (+${fmt(h.growth.added)} / -${fmt(h.growth.removed)})`,
+        `- **Focus:** ${h.focus.level} (${h.focus.filesPerCommit} files touched per commit)`,
+        `- **Churn:** ${h.churn.level} (${h.churn.files} ${h.churn.files === 1 ? "file" : "files"} reworked)`,
       ].join("\n"),
     );
   }
@@ -123,41 +132,84 @@ function buildFullMarkdown(
       stats.timeline.startMs === stats.timeline.endMs
         ? fmtT(stats.timeline.startMs)
         : `${fmtT(stats.timeline.startMs)} to ${fmtT(stats.timeline.endMs)}`;
-    subSections.push(["Coding Timeline", `${timeRange} · ${commitsLabel}`].join("\n"));
+    statsBlocks.push(`### Coding Timeline\n\n${timeRange} · ${commitsLabel}`);
   }
 
   if (stats && isVisible("paceCheck") && stats.pace && typeof stats.pace.multiplier === "number") {
-    subSections.push(
+    statsBlocks.push(
       [
-        "Pace Check",
-        `${stats.pace.multiplier}x · ${stats.pace.label}`,
+        "### Pace Check",
+        "",
+        `**${stats.pace.multiplier}x** · ${stats.pace.label}`,
         `${stats.pace.todayCommits} commits today · ${stats.pace.avgCommits}-commit avg`,
       ].join("\n"),
     );
   }
 
-  // Build the umbrella block ("\u{1F4CA} Statistics" header + cards
-  // line + sub-sections) only when there's something to put in it.
-  let sidebarBlock = "";
-  if (cardsLine || subSections.length > 0) {
-    const parts: string[] = ["\u{1F4CA} Statistics"];
-    if (cardsLine) parts.push(cardsLine);
-    if (subSections.length > 0) {
-      // Blank line between umbrella content and the first sub-
-      // section; sub-sections themselves separated by blank lines.
-      parts.push("", subSections.join("\n\n"));
-    }
-    sidebarBlock = parts.join("\n");
-  }
+  const sidebarBlock =
+    statsBlocks.length > 0 ? `## \u{1F4CA} Statistics\n\n${statsBlocks.join("\n\n")}` : "";
 
-  // Final paste payload in linearized UI order:
-  //   narrative (filtered) → sidebar stats → key takeaways
-  const allBlocks: string[] = [];
-  if (narrativeBlocks.length > 0) allBlocks.push(narrativeBlocks.join("\n\n"));
+  // 4. Title + metadata header. Repo name as the H1, full date as a bold
+  //    subtitle. Falls back to a generic "# Digest" when repoName is
+  //    unavailable (rare — only if the caller forgot to thread it).
+  const titleLine = repoName ? `# ${repoName}` : "# Digest";
+  const dateStr = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  const headerBlock = `${titleLine}\n**${dateStr}**`;
+
+  // 5. Final assembly — blank line between top-level blocks, trailing
+  //    newline so the file ends cleanly.
+  const allBlocks: string[] = [headerBlock];
+  if (narrativeBlocks.length > 0) allBlocks.push(...narrativeBlocks);
   if (sidebarBlock) allBlocks.push(sidebarBlock);
   if (keyTakeawaysBlock) allBlocks.push(keyTakeawaysBlock);
 
-  return allBlocks.join("\n\n").trim();
+  return allBlocks.join("\n\n").trim() + "\n";
+}
+
+/**
+ * Render a single narrative section's body as markdown. Bullet sections
+ * (Shipped / Changed / Still Shifting / Left Off) become real markdown
+ * lists with bold titles, mirroring the on-screen "**Title** - body"
+ * layout. Paragraph sections (Vibe Check, Key Takeaways) pass through
+ * as prose. Empty sections return an empty string so the caller can
+ * skip them entirely.
+ */
+function formatNarrativeBody(key: string, content: string): string {
+  const trimmed = content.trim();
+  if (!trimmed) return "";
+
+  const isBulletSection =
+    key === "shipped" || key === "changed" || key === "unstable" || key === "leftOff";
+
+  if (isBulletSection) {
+    // Match StreamingDigest exactly: take only lines starting with a
+    // bullet glyph, strip the marker, defensively drop section-emoji
+    // false-positives the LLM occasionally repeats inside content.
+    const lines = trimmed.split("\n").filter((l) => l.length > 0);
+    const items = lines
+      .filter((l) => /^\s*[•\-*]/.test(l))
+      .map((l) => l.replace(/^\s*[•\-*]\s*/, "").trim())
+      .filter((l) => l.length > 0)
+      .filter((l) => !SECTION_EMOJI_PREFIX.test(l));
+
+    if (items.length === 0) return "";
+
+    return items
+      .map((item) => {
+        const { title, context } = splitBulletTitle(item);
+        if (title && context) return `- **${title}** - ${context}`;
+        return `- ${title || context}`;
+      })
+      .join("\n");
+  }
+
+  // Vibe Check / Key Takeaways: prose. Preserve as-is.
+  return trimmed;
 }
 
 function DownloadBtn({
@@ -175,7 +227,7 @@ function DownloadBtn({
     const name = repoName ?? "digest";
     const date = new Date().toISOString().slice(0, 10);
     const filename = `${name}-${date}.md`;
-    const md = buildFullMarkdown(text, stats, visibleSections);
+    const md = buildFullMarkdown(text, stats, visibleSections, repoName);
 
     const blob = new Blob([md], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
@@ -304,7 +356,10 @@ export function DigestActions({
 }) {
   return (
     <div className="digest-actions-row">
-      <CopyBtn text={buildFullMarkdown(text, stats, visibleSections)} label="Copy" />
+      <CopyBtn
+        text={buildFullMarkdown(text, stats, visibleSections, repoName)}
+        label="Copy"
+      />
       <DownloadBtn
         text={text}
         stats={stats}
