@@ -24,6 +24,13 @@ interface RepoSelectorProps {
    *  the settings page so users can revert from a hard-pinned default
    *  back to the most-recently-pushed fallback. */
   showDynamicDefault?: boolean;
+  /** Override the internal `repos.length === 0` loading heuristic. When
+   *  set, the combobox stays in its loading state until this flips false
+   *  even if `repos` has populated. Used by callers that depend on a
+   *  second async source (e.g. settings) to pick the right `selected`
+   *  value, so we don't flash through a placeholder fallback while
+   *  that second fetch is in flight. */
+  isLoading?: boolean;
 }
 
 /**
@@ -42,6 +49,7 @@ export function RepoSelector({
   hideActivityBadge = false,
   placeholder = "Select a repo",
   showDynamicDefault = false,
+  isLoading: isLoadingProp,
 }: RepoSelectorProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -54,7 +62,10 @@ export function RepoSelector({
 
   // The combobox is disabled until repos arrive. Prevents the user from
   // selecting a placeholder while the GitHub fetch is still in flight.
-  const isLoading = repos.length === 0;
+  // When the parent passes an explicit `isLoadingProp`, honor that too
+  // so callers can keep the trigger in its loading label until a second
+  // async source (settings, etc.) has resolved.
+  const isLoading = repos.length === 0 || isLoadingProp === true;
 
   // When no search: sort selected → active (by recency) → others (GitHub order).
   // When searching: pure substring-match score across all repos.

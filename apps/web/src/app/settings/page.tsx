@@ -90,6 +90,14 @@ export default function SettingsPage() {
    *  "Clear" buttons next to repos that have nothing to clear. */
   const [activeRepos, setActiveRepos] = useState<string[]>([]);
   const [defaultRepo, setDefaultRepo] = useState<string>("");
+  /** Tracks whether the initial /api/settings call has resolved. Until it
+   *  has, the Default Repository combobox should NOT fall back to repos[0]
+   *  — otherwise the user sees a flicker as the trigger label snaps from
+   *  "Loading..." → repos[0] (whichever happens to be most recent) →
+   *  the actual saved default once settings comes back. Reads as the
+   *  combobox "searching." Holding the fallback until settings is in
+   *  removes the middle frame entirely. */
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [sectionPrefs, setSectionPrefs] = useState<Record<string, boolean>>(DEFAULT_SECTIONS);
 
@@ -135,6 +143,10 @@ export default function SettingsPage() {
         }
       } catch {
         /* silent */
+      } finally {
+        // Always flip the loaded flag, even on error / non-OK response.
+        // The combobox would otherwise stay in its loading state forever.
+        setSettingsLoaded(true);
       }
     })();
   }, []);
@@ -314,8 +326,14 @@ export default function SettingsPage() {
               // same value, so the trigger label always reflects
               // what would actually load. As soon as the user picks
               // something explicit it saves and locks in.
+              //
+              // The fallback is gated on `settingsLoaded` so we never
+              // commit to repos[0] before /api/settings has had a
+              // chance to return a saved default — that's what caused
+              // the trigger to flash through the wrong repo briefly.
               repos={repos}
-              selected={defaultRepo || repos[0] || ""}
+              selected={defaultRepo || (settingsLoaded ? repos[0] : "") || ""}
+              isLoading={!settingsLoaded}
               onChange={(repo) => void saveDefaultRepo(repo)}
               variant="settings"
               hideActivityBadge
