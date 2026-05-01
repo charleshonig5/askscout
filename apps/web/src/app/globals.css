@@ -2434,12 +2434,17 @@ a:hover {
 /* Fresh-entry reveal — applied for one render cycle when a digest
    finishes and lands in the sidebar history. Two stacked animations:
    1. a brief slide-down + fade-in that gives the card physical
-      presence as it joins the list (280ms);
-   2. a soft success-tinted glow that blooms after the slide settles
-      and fades back to the normal active inner-glow (900ms, delayed
-      200ms so it blooms once the card is in position).
-   Both end on `forwards` fill so the final state matches a normal
-   active row, then the count-up hooks inside take over.
+      presence as it joins the list (280ms, `both` fill so the
+      pre-mount opacity:0 state holds before the keyframe runs);
+   2. a soft success-tinted glow that blooms over a transparent base
+      and fades back to nothing (900ms, delayed 200ms so it blooms
+      once the card has slid into position).
+   The glow keyframe uses NO fill mode (default `none`) so after it
+   finishes, box-shadow returns to whatever the static rule says —
+   `inset 0 8px 20px var(--color-inner-glow)` for active cards,
+   nothing for inactive cards. This is critical: with `forwards`/`both`
+   the keyframe's final box-shadow value would override the static
+   rule and make every fresh non-active card look selected.
    Honors prefers-reduced-motion: users with that pref get the final
    state instantly with no slide and no bloom. */
 @keyframes sidebar-item-fresh-slide {
@@ -2455,23 +2460,23 @@ a:hover {
 
 @keyframes sidebar-item-fresh-glow {
   0% {
-    box-shadow: inset 0 8px 20px 0 var(--color-inner-glow);
+    box-shadow: 0 0 0 0 transparent;
   }
   40% {
     box-shadow:
       inset 0 8px 32px 0
-        color-mix(in srgb, var(--color-success) 35%, var(--color-inner-glow)),
+        color-mix(in srgb, var(--color-success) 35%, transparent),
       0 0 0 1px color-mix(in srgb, var(--color-success) 40%, transparent);
   }
   100% {
-    box-shadow: inset 0 8px 20px 0 var(--color-inner-glow);
+    box-shadow: 0 0 0 0 transparent;
   }
 }
 
 .sidebar-item--fresh {
   animation:
     sidebar-item-fresh-slide 280ms ease-out both,
-    sidebar-item-fresh-glow 900ms ease-out 200ms both;
+    sidebar-item-fresh-glow 900ms ease-out 200ms;
 }
 
 @media (prefers-reduced-motion: reduce) {

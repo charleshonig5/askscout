@@ -64,15 +64,21 @@ export function Sidebar({
 
   // Track which entry IDs have been seen across renders. An ID that wasn't
   // seen on the previous render is "fresh" — the digest just finished and
-  // landed in history during this session — so its stat numbers count up.
-  // IDs already on screen at mount stay silent. The Set is mutated in-place
-  // each render, so it's effectively render-history rather than reactive
-  // state.
-  const seenIdsRef = useRef<Set<string>>(new Set());
+  // landed in history during this session. Initial page-load entries are
+  // seeded into the Set on first render so they DON'T get flagged fresh
+  // (otherwise every existing history card would slide in and glow on
+  // mount). Only entries added after mount fire the reveal.
+  const seenIdsRef = useRef<Set<string> | null>(null);
   const freshIds = new Set<string>();
-  for (const e of entries) {
-    if (!seenIdsRef.current.has(e.id)) freshIds.add(e.id);
-    seenIdsRef.current.add(e.id);
+  if (seenIdsRef.current === null) {
+    seenIdsRef.current = new Set(entries.map((e) => e.id));
+  } else {
+    for (const e of entries) {
+      if (!seenIdsRef.current.has(e.id)) {
+        freshIds.add(e.id);
+        seenIdsRef.current.add(e.id);
+      }
+    }
   }
 
   const avatarUrl = session?.user?.image;

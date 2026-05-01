@@ -368,8 +368,8 @@ interface ParsedSection {
  *  changes, so as bullets stream in the number ticks 1 → 2 → 3 instead of
  *  snapping. Snappy 300ms duration since this fires repeatedly during
  *  streaming. */
-function BulletedCount({ count }: { count: number }) {
-  const animated = useCountTransition(count, 300);
+function BulletedCount({ count, animate }: { count: number; animate: boolean }) {
+  const animated = useCountTransition(count, 300, animate);
   const display = Math.round(animated);
   return (
     <span className="digest-bulleted-count">
@@ -566,7 +566,9 @@ function StreamingDigest({
               <div className="digest-bulleted-heading">
                 <Emoji name={section.key} size={20} />
                 <span className="digest-bulleted-label">{section.label}</span>
-                {items.length > 0 && <BulletedCount count={items.length} />}
+                {items.length > 0 && (
+                  <BulletedCount count={items.length} animate={isStreaming} />
+                )}
                 {showCursor && <LiveBadge />}
               </div>
               {section.key === "shipped" && !isStreaming && items.length > 0 && (
@@ -1216,7 +1218,15 @@ function WhenYouCoded({
   );
 }
 
-function TopFiles({ files, repoFullName }: { files: TopFile[]; repoFullName?: string }) {
+function TopFiles({
+  files,
+  repoFullName,
+  animate = true,
+}: {
+  files: TopFile[];
+  repoFullName?: string;
+  animate?: boolean;
+}) {
   if (files.length === 0) return null;
 
   // Build a GitHub deep-link for a given file path. Use HEAD instead of a
@@ -1253,7 +1263,12 @@ function TopFiles({ files, repoFullName }: { files: TopFile[]; repoFullName?: st
                 </a>
               )}
             </div>
-            <TopFileStats added={f.added ?? 0} removed={f.removed ?? 0} commits={f.commits} />
+            <TopFileStats
+              added={f.added ?? 0}
+              removed={f.removed ?? 0}
+              commits={f.commits}
+              animate={animate}
+            />
           </div>
         );
       })}
@@ -1267,15 +1282,17 @@ function TopFileStats({
   added,
   removed,
   commits,
+  animate,
 }: {
   added: number;
   removed: number;
   commits: number;
+  animate: boolean;
 }) {
   const fmt = (n: number) => n.toLocaleString("en-US");
-  const addedAnim = useCountUp(added, 1000, added > 0);
-  const removedAnim = useCountUp(removed, 1000, removed > 0);
-  const commitsAnim = useCountUp(commits, 1000, commits > 0);
+  const addedAnim = useCountUp(added, 1000, animate && added > 0);
+  const removedAnim = useCountUp(removed, 1000, animate && removed > 0);
+  const commitsAnim = useCountUp(commits, 1000, animate && commits > 0);
   return (
     <div className="top-file-right">
       <span className="top-file-added">+{fmt(addedAnim)}</span>
@@ -1391,21 +1408,26 @@ const HEALTH_DESCRIPTIONS: Record<string, Record<string, string>> = {
   },
 };
 
-function CodebaseHealth({ health }: { health: HealthData }) {
+function CodebaseHealth({ health, animate = true }: { health: HealthData; animate?: boolean }) {
   const fmt = (n: number) => n.toLocaleString("en-US");
 
-  // Count-up animations for numeric values. Per spec, animate only when the
-  // underlying value is greater than zero — a static "0" snapping in is
-  // visually quieter than a 0→0 no-op tween.
-  const addedAnim = useCountUp(health.growth.added, 1000, health.growth.added > 0);
-  const removedAnim = useCountUp(health.growth.removed, 1000, health.growth.removed > 0);
+  // Count-up animations for numeric values. Two gates: the per-render `animate`
+  // flag (false when the user is just clicking through historical digests, so
+  // numbers snap in) AND value > 0 (a static "0" is visually quieter than a
+  // 0→0 no-op tween).
+  const addedAnim = useCountUp(health.growth.added, 1000, animate && health.growth.added > 0);
+  const removedAnim = useCountUp(
+    health.growth.removed,
+    1000,
+    animate && health.growth.removed > 0,
+  );
   const filesPerCommitAnim = useCountUp(
     health.focus.filesPerCommit,
     1000,
-    health.focus.filesPerCommit > 0,
+    animate && health.focus.filesPerCommit > 0,
     1,
   );
-  const churnFilesAnim = useCountUp(health.churn.files, 1000, health.churn.files > 0);
+  const churnFilesAnim = useCountUp(health.churn.files, 1000, animate && health.churn.files > 0);
 
   // Touch-device tap-to-pin for the level-description tooltips. A single key
   // tracks which card's tooltip is pinned (at most one at a time).
@@ -1564,7 +1586,7 @@ function DigestStatsSidebar({
         {vis("mostActiveFiles") && stats.topFiles && stats.topFiles.length > 0 && (
           <div className="stats-subsection stats-reveal-item" style={{ animationDelay: "450ms" }}>
             <div className="stats-subsection-title">Most Active Files</div>
-            <TopFiles files={stats.topFiles} repoFullName={repoFullName} />
+            <TopFiles files={stats.topFiles} repoFullName={repoFullName} animate={animate} />
           </div>
         )}
 
@@ -1579,7 +1601,7 @@ function DigestStatsSidebar({
           stats.health.churn?.level && (
             <div className="stats-subsection stats-reveal-item" style={{ animationDelay: "700ms" }}>
               <div className="stats-subsection-title">Codebase Health</div>
-              <CodebaseHealth health={stats.health} />
+              <CodebaseHealth health={stats.health} animate={animate} />
             </div>
           )}
 
