@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, ChevronDown, ChevronUp, CircleX, TrendingUp } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
+import { useCountUp } from "@/lib/use-count-up";
 
 /**
  * Insights page (`/insights`).
@@ -559,6 +560,15 @@ export default function InsightsPage() {
     })();
   }, []);
 
+  // Count-up animations for the two Snapshot hero stats. Both initialize
+  // from EMPTY_DATA's zero values, so when /api/insights resolves they
+  // tween once from 0 → target. No re-animation on subsequent renders
+  // because target doesn't change again. Only the Snapshot numbers
+  // animate — the per-repo table, calendar, and personality stay static
+  // (movement-to-payoff ratio doesn't justify it).
+  const bestStreakAnim = useCountUp(data.bestStreak.length, 1000, loaded);
+  const totalDigestsAnim = useCountUp(data.totalDigests, 1000, loaded);
+
   const goBack = () => router.push("/dashboard");
 
   return (
@@ -607,7 +617,7 @@ export default function InsightsPage() {
                 <div className="settings-panel insights-stat-cell">
                   <span className="insights-stat-label">Best streak</span>
                   <div className="insights-stat-value-row">
-                    <span className="insights-stat-value">{data.bestStreak.length}</span>
+                    <span className="insights-stat-value">{bestStreakAnim}</span>
                     <span className="insights-stat-unit">
                       {data.bestStreak.length === 1 ? "day" : "days"}
                     </span>
@@ -633,7 +643,7 @@ export default function InsightsPage() {
                 <div className="settings-panel insights-stat-cell">
                   <span className="insights-stat-label">Total digests</span>
                   <div className="insights-stat-value-row">
-                    <span className="insights-stat-value">{data.totalDigests}</span>
+                    <span className="insights-stat-value">{totalDigestsAnim}</span>
                     {/* Unit phrase mirrors Best streak's "days" so
                         the two cells share the same number/unit/chip
                         rhythm. "generated" reads as the action that
