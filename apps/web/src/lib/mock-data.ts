@@ -20,6 +20,11 @@ export interface HistoryEntry {
   linesAdded: number;
   /** Total lines removed across the day. Rendered as "-N" in the sidebar. */
   linesRemoved: number;
+  /** ISO timestamp the digest was inserted into the DB. The Sidebar uses this
+   *  to decide whether an entry is "fresh" (created during this session, so
+   *  it deserves the slide-in + glow reveal) vs pre-existing (already there
+   *  when the user landed, render silently). */
+  createdAt: string;
 }
 
 /** Raw streaming-text sample used by the landing page to demo a digest. */

@@ -62,22 +62,29 @@ export function Sidebar({
   const [signOutOpen, setSignOutOpen] = useState(false);
   const footerRef = useRef<HTMLDivElement>(null);
 
-  // Track which entry IDs have been seen across renders. An ID that wasn't
-  // seen on the previous render is "fresh" — the digest just finished and
-  // landed in history during this session. Initial page-load entries are
-  // seeded into the Set on first render so they DON'T get flagged fresh
-  // (otherwise every existing history card would slide in and glow on
-  // mount). Only entries added after mount fire the reveal.
-  const seenIdsRef = useRef<Set<string> | null>(null);
+  // Decide which entries are "fresh" — the digest just finished and landed
+  // in history during this session, so it gets the slide-in + glow reveal.
+  //
+  // Earlier versions tried to detect this by tracking previously-seen IDs
+  // across renders, but that broke when the dashboard's /api/history fetch
+  // resolved AFTER the Sidebar mounted: every entry that arrived in the
+  // async response looked "new" to the seen-IDs Set and lit up.
+  //
+  // The fix: compare each entry's DB `createdAt` to a timestamp captured
+  // when this Sidebar instance mounted. Anything created after mount-time
+  // is fresh, anything created before is silent — regardless of whether
+  // the data arrived synchronously or async, regardless of repo switches,
+  // regardless of render order. We also gate on the entry never having
+  // been flagged before so the animation runs at most once per ID.
+  const mountTimeRef = useRef<number>(Date.now());
+  const flashedIdsRef = useRef<Set<string>>(new Set());
   const freshIds = new Set<string>();
-  if (seenIdsRef.current === null) {
-    seenIdsRef.current = new Set(entries.map((e) => e.id));
-  } else {
-    for (const e of entries) {
-      if (!seenIdsRef.current.has(e.id)) {
-        freshIds.add(e.id);
-        seenIdsRef.current.add(e.id);
-      }
+  for (const e of entries) {
+    if (flashedIdsRef.current.has(e.id)) continue;
+    const ts = Date.parse(e.createdAt);
+    if (Number.isFinite(ts) && ts > mountTimeRef.current) {
+      freshIds.add(e.id);
+      flashedIdsRef.current.add(e.id);
     }
   }
 

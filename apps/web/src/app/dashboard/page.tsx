@@ -208,6 +208,7 @@ export default function DashboardPage() {
               filesChanged: stats?.filesChanged ?? 0,
               linesAdded: stats?.linesAdded ?? 0,
               linesRemoved: stats?.linesRemoved ?? 0,
+              createdAt: h.created_at,
             };
           }),
         );
