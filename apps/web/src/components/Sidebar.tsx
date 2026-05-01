@@ -15,6 +15,7 @@ import {
   SquareArrowUpRight,
 } from "lucide-react";
 import type { HistoryEntry } from "@/lib/mock-data";
+import { useCountUp } from "@/lib/use-count-up";
 import { RepoSelector } from "./RepoSelector";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -60,6 +61,19 @@ export function Sidebar({
   const router = useRouter();
   const [signOutOpen, setSignOutOpen] = useState(false);
   const footerRef = useRef<HTMLDivElement>(null);
+
+  // Track which entry IDs have been seen across renders. An ID that wasn't
+  // seen on the previous render is "fresh" — the digest just finished and
+  // landed in history during this session — so its stat numbers count up.
+  // IDs already on screen at mount stay silent. The Set is mutated in-place
+  // each render, so it's effectively render-history rather than reactive
+  // state.
+  const seenIdsRef = useRef<Set<string>>(new Set());
+  const freshIds = new Set<string>();
+  for (const e of entries) {
+    if (!seenIdsRef.current.has(e.id)) freshIds.add(e.id);
+    seenIdsRef.current.add(e.id);
+  }
 
   const avatarUrl = session?.user?.image;
   // Prefer the GitHub @handle. Fall back to display name, then generic "User".
@@ -159,11 +173,12 @@ export function Sidebar({
                 )}
                 {entries.map((entry) => {
                   const isActive = activeId === entry.id;
+                  const isFresh = freshIds.has(entry.id);
                   return (
                     <button
                       key={entry.id}
                       type="button"
-                      className={`sidebar-item${isActive ? " active" : ""}`}
+                      className={`sidebar-item${isActive ? " active" : ""}${isFresh ? " sidebar-item--fresh" : ""}`}
                       onClick={() => {
                         onSelect(entry.id);
                         onClose();
@@ -171,27 +186,13 @@ export function Sidebar({
                     >
                       <div className="sidebar-item-body">
                         <span className="sidebar-item-date">{entry.date}</span>
-                        <div className="sidebar-item-stats">
-                          <span className="sidebar-item-stat sidebar-item-stat--added">
-                            +{entry.linesAdded}
-                          </span>
-                          <span className="sidebar-item-stat sidebar-item-stat--removed">
-                            -{entry.linesRemoved}
-                          </span>
-                          <span className="sidebar-item-stat">
-                            {entry.commits}
-                            <GitCommitHorizontal
-                              size={16}
-                              strokeWidth={1}
-                              className="commit-icon"
-                              aria-hidden
-                            />
-                          </span>
-                          <span className="sidebar-item-stat">
-                            {entry.filesChanged}
-                            <FileText size={12} strokeWidth={1} className="file-icon" aria-hidden />
-                          </span>
-                        </div>
+                        <SidebarItemStats
+                          linesAdded={entry.linesAdded}
+                          linesRemoved={entry.linesRemoved}
+                          commits={entry.commits}
+                          filesChanged={entry.filesChanged}
+                          animate={isFresh}
+                        />
                       </div>
                       <span className="sidebar-item-open" aria-hidden>
                         <SquareArrowUpRight size={20} strokeWidth={1} />
@@ -299,5 +300,43 @@ export function Sidebar({
         </div>
       </aside>
     </>
+  );
+}
+
+/** Stat row inside a single history card. When `animate` is true (the entry
+ *  is fresh — just landed during this session), the four numbers count up
+ *  from zero. When false (entry was already on screen at mount, or has been
+ *  seen on a previous render), they render at their final value with no
+ *  animation, so initial page load and repo switches stay quiet. */
+function SidebarItemStats({
+  linesAdded,
+  linesRemoved,
+  commits,
+  filesChanged,
+  animate,
+}: {
+  linesAdded: number;
+  linesRemoved: number;
+  commits: number;
+  filesChanged: number;
+  animate: boolean;
+}) {
+  const addedAnim = useCountUp(linesAdded, 1000, animate && linesAdded > 0);
+  const removedAnim = useCountUp(linesRemoved, 1000, animate && linesRemoved > 0);
+  const commitsAnim = useCountUp(commits, 1000, animate && commits > 0);
+  const filesAnim = useCountUp(filesChanged, 1000, animate && filesChanged > 0);
+  return (
+    <div className="sidebar-item-stats">
+      <span className="sidebar-item-stat sidebar-item-stat--added">+{addedAnim}</span>
+      <span className="sidebar-item-stat sidebar-item-stat--removed">-{removedAnim}</span>
+      <span className="sidebar-item-stat">
+        {commitsAnim}
+        <GitCommitHorizontal size={16} strokeWidth={1} className="commit-icon" aria-hidden />
+      </span>
+      <span className="sidebar-item-stat">
+        {filesAnim}
+        <FileText size={12} strokeWidth={1} className="file-icon" aria-hidden />
+      </span>
+    </div>
   );
 }

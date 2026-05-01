@@ -43,3 +43,54 @@ export function useCountUp(target: number, duration = 1000, enabled = true, deci
 
   return value;
 }
+
+/** Like useCountUp, but animates from the previous displayed value to the new
+ *  target whenever target changes. Use this for values that update repeatedly
+ *  (e.g. a streaming item count that ticks 1 → 2 → 3) where animating from 0
+ *  on every change would feel like a reset. When `enabled` is false, returns
+ *  the target value immediately. */
+export function useCountTransition(
+  target: number,
+  duration = 300,
+  enabled = true,
+  decimals = 0,
+): number {
+  const [value, setValue] = useState(target);
+  const fromRef = useRef(target);
+  const startTime = useRef<number | null>(null);
+  const rafRef = useRef<number>(0);
+
+  useEffect(() => {
+    if (!enabled) {
+      fromRef.current = target;
+      setValue(target);
+      return;
+    }
+
+    const from = fromRef.current;
+    if (from === target) return;
+
+    startTime.current = null;
+    const factor = Math.pow(10, decimals);
+
+    const animate = (timestamp: number) => {
+      if (!startTime.current) startTime.current = timestamp;
+      const elapsed = timestamp - startTime.current;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const next = from + (target - from) * eased;
+      setValue(Math.round(next * factor) / factor);
+
+      if (progress < 1) {
+        rafRef.current = requestAnimationFrame(animate);
+      } else {
+        fromRef.current = target;
+      }
+    };
+
+    rafRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [target, duration, enabled, decimals]);
+
+  return value;
+}

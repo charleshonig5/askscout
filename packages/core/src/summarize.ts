@@ -188,7 +188,7 @@ Section definitions (do NOT include these in the output, they are instructions f
 Rules:
 - Output ONLY the emoji + section name as the header (e.g. "\ud83d\ude80 Shipped"), nothing else on that line.
 - Max 7 bullets per section.
-- Every bullet: 2-5 word PLAIN LANGUAGE title, then " - ", then 1-2 full sentences of real context. Not a label and a fragment.
+- Every bullet in Shipped, Changed, Still Shifting, and Left Off MUST follow this exact format: "Title - body". The title is 2-5 plain-language words. Then a single space, a hyphen, a single space (" - "). Then 1-2 full sentences of context. NEVER write a bullet without the "Title - " prefix. A bullet that starts with body text and no title is a format failure. This rule has zero exceptions.
 - NEVER use file names, function names, or code paths anywhere in the digest. Translate everything to features and behaviors.
 - Left Off must always have at least 1 item and should list everything in progress.
 - Key Takeaways is 2-3 sentences. Must always be included. Must reference something specific from the digest above.

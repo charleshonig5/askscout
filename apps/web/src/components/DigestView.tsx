@@ -14,7 +14,7 @@ import {
   GitCommitHorizontal,
   TrendingUp,
 } from "lucide-react";
-import { useCountUp } from "@/lib/use-count-up";
+import { useCountUp, useCountTransition } from "@/lib/use-count-up";
 import { parseSections } from "@/lib/parse-sections";
 import {
   SectionSkeleton,
@@ -363,6 +363,58 @@ interface ParsedSection {
   content: string;
 }
 
+/** Item count next to a bulleted-section heading ("3 items"). Tweens
+ *  smoothly from the previous value to the new target whenever the count
+ *  changes, so as bullets stream in the number ticks 1 → 2 → 3 instead of
+ *  snapping. Snappy 300ms duration since this fires repeatedly during
+ *  streaming. */
+function BulletedCount({ count }: { count: number }) {
+  const animated = useCountTransition(count, 300);
+  const display = Math.round(animated);
+  return (
+    <span className="digest-bulleted-count">
+      {display} {count === 1 ? "item" : "items"}
+    </span>
+  );
+}
+
+/**
+ * Split a bulleted-section item into title + context. The LLM is instructed
+ * to format every bullet as "Title - body" (Shipped, Changed, Still Shifting,
+ * Left Off), but it occasionally drops the title and emits raw prose. This
+ * helper guarantees the visual format stays consistent regardless:
+ *
+ *   1. Preferred: explicit " - " separator from the LLM (60-char cap on the
+ *      title side rules out matches inside long body text).
+ *   2. Fallback: first sentence used as title if it's a clean 2-8 words.
+ *      Catches "Payment form is incomplete. The UI works..." cleanly.
+ *   3. Last resort: take the first ~4 words as a title. Less elegant but
+ *      keeps the bulleted-list shape uniform.
+ *   4. Tiny single-clause bullets (under 5 words) get used wholesale as a
+ *      title with no context — there's nothing to split.
+ */
+function splitBulletTitle(item: string): { title: string | null; context: string } {
+  const dashIdx = item.indexOf(" - ");
+  if (dashIdx > 0 && dashIdx < 60) {
+    return { title: item.slice(0, dashIdx).trim(), context: item.slice(dashIdx + 3).trim() };
+  }
+  const sentenceMatch = item.match(/^([^.!?]{4,60})[.!?]\s+(.+)$/s);
+  if (sentenceMatch) {
+    const candidate = sentenceMatch[1]!.trim();
+    const wordCount = candidate.split(/\s+/).length;
+    if (wordCount >= 2 && wordCount <= 8) {
+      return { title: candidate, context: sentenceMatch[2]!.trim() };
+    }
+  }
+  const words = item.trim().split(/\s+/);
+  if (words.length >= 5) {
+    const title = words.slice(0, 4).join(" ").replace(/[,;:.!?]+$/, "");
+    const context = words.slice(4).join(" ");
+    return { title, context };
+  }
+  return { title: item.trim(), context: "" };
+}
+
 /** Tiny pulsing pill shown on the section currently being streamed. */
 function LiveBadge() {
   return (
@@ -514,11 +566,7 @@ function StreamingDigest({
               <div className="digest-bulleted-heading">
                 <Emoji name={section.key} size={20} />
                 <span className="digest-bulleted-label">{section.label}</span>
-                {items.length > 0 && (
-                  <span className="digest-bulleted-count">
-                    {items.length} {items.length === 1 ? "item" : "items"}
-                  </span>
-                )}
+                {items.length > 0 && <BulletedCount count={items.length} />}
                 {showCursor && <LiveBadge />}
               </div>
               {section.key === "shipped" && !isStreaming && items.length > 0 && (
@@ -530,10 +578,7 @@ function StreamingDigest({
             </div>
             <div className="digest-bulleted-list">
               {items.map((item: string, i: number) => {
-                const dashIdx = item.indexOf(" - ");
-                const hasSplit = dashIdx > 0 && dashIdx < 60;
-                const title = hasSplit ? item.slice(0, dashIdx) : null;
-                const context = hasSplit ? item.slice(dashIdx + 3) : item;
+                const { title, context } = splitBulletTitle(item);
                 return (
                   <div key={i} className="digest-item">
                     <span className="digest-item-bullet" aria-hidden />
@@ -1173,7 +1218,6 @@ function WhenYouCoded({
 
 function TopFiles({ files, repoFullName }: { files: TopFile[]; repoFullName?: string }) {
   if (files.length === 0) return null;
-  const fmt = (n: number) => n.toLocaleString("en-US");
 
   // Build a GitHub deep-link for a given file path. Use HEAD instead of a
   // specific branch name so this works regardless of whether the repo's
@@ -1209,22 +1253,37 @@ function TopFiles({ files, repoFullName }: { files: TopFile[]; repoFullName?: st
                 </a>
               )}
             </div>
-            <div className="top-file-right">
-              <span className="top-file-added">+{fmt(f.added ?? 0)}</span>
-              <span className="top-file-removed">-{fmt(f.removed ?? 0)}</span>
-              <span className="top-file-commits">
-                <GitCommitHorizontal
-                  size={16}
-                  strokeWidth={1}
-                  className="commit-icon"
-                  aria-hidden
-                />
-                {f.commits}
-              </span>
-            </div>
+            <TopFileStats added={f.added ?? 0} removed={f.removed ?? 0} commits={f.commits} />
           </div>
         );
       })}
+    </div>
+  );
+}
+
+/** Right-side numeric block for a single Most Active Files row. Pulled out
+ *  so each row can own its own count-up animation hooks. */
+function TopFileStats({
+  added,
+  removed,
+  commits,
+}: {
+  added: number;
+  removed: number;
+  commits: number;
+}) {
+  const fmt = (n: number) => n.toLocaleString("en-US");
+  const addedAnim = useCountUp(added, 1000, added > 0);
+  const removedAnim = useCountUp(removed, 1000, removed > 0);
+  const commitsAnim = useCountUp(commits, 1000, commits > 0);
+  return (
+    <div className="top-file-right">
+      <span className="top-file-added">+{fmt(addedAnim)}</span>
+      <span className="top-file-removed">-{fmt(removedAnim)}</span>
+      <span className="top-file-commits">
+        <GitCommitHorizontal size={16} strokeWidth={1} className="commit-icon" aria-hidden />
+        {commitsAnim}
+      </span>
     </div>
   );
 }
@@ -1335,6 +1394,19 @@ const HEALTH_DESCRIPTIONS: Record<string, Record<string, string>> = {
 function CodebaseHealth({ health }: { health: HealthData }) {
   const fmt = (n: number) => n.toLocaleString("en-US");
 
+  // Count-up animations for numeric values. Per spec, animate only when the
+  // underlying value is greater than zero — a static "0" snapping in is
+  // visually quieter than a 0→0 no-op tween.
+  const addedAnim = useCountUp(health.growth.added, 1000, health.growth.added > 0);
+  const removedAnim = useCountUp(health.growth.removed, 1000, health.growth.removed > 0);
+  const filesPerCommitAnim = useCountUp(
+    health.focus.filesPerCommit,
+    1000,
+    health.focus.filesPerCommit > 0,
+    1,
+  );
+  const churnFilesAnim = useCountUp(health.churn.files, 1000, health.churn.files > 0);
+
   // Touch-device tap-to-pin for the level-description tooltips. A single key
   // tracks which card's tooltip is pinned (at most one at a time).
   const [openCategory, setOpenCategory] = useState<string | null>(null);
@@ -1355,19 +1427,19 @@ function CodebaseHealth({ health }: { health: HealthData }) {
     {
       label: "Growth" as const,
       level: health.growth.level,
-      stat: `+${fmt(health.growth.added)} / -${fmt(health.growth.removed)}`,
+      stat: `+${fmt(addedAnim)} / -${fmt(removedAnim)}`,
       detail: GROWTH_DETAIL[health.growth.level] ?? "",
     },
     {
       label: "Focus" as const,
       level: health.focus.level,
-      stat: `${health.focus.filesPerCommit} files touched per commit`,
+      stat: `${filesPerCommitAnim.toFixed(1)} files touched per commit`,
       detail: FOCUS_DETAIL[health.focus.level] ?? "",
     },
     {
       label: "Churn" as const,
       level: health.churn.level,
-      stat: `${health.churn.files} ${health.churn.files === 1 ? "file" : "files"} reworked`,
+      stat: `${churnFilesAnim} ${health.churn.files === 1 ? "file" : "files"} reworked`,
       detail: CHURN_DETAIL[health.churn.level] ?? "",
     },
   ];
@@ -1412,12 +1484,8 @@ function CodebaseHealth({ health }: { health: HealthData }) {
               <div className={`health-card-stat health-card-stat--${h.label.toLowerCase()}`}>
                 {h.label === "Growth" ? (
                   <>
-                    <span className="health-card-stat-added">
-                      +{fmt(health.growth.added)} lines
-                    </span>
-                    <span className="health-card-stat-removed">
-                      -{fmt(health.growth.removed)} lines
-                    </span>
+                    <span className="health-card-stat-added">+{fmt(addedAnim)} lines</span>
+                    <span className="health-card-stat-removed">-{fmt(removedAnim)} lines</span>
                   </>
                 ) : (
                   <>
