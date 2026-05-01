@@ -472,11 +472,18 @@ const sectionKeyMap: Record<string, string> = {
 function StreamingDigest({
   text,
   isStreaming,
+  showSkeletons = false,
   onResumeWithAI,
   visibleSections,
 }: {
   text: string;
   isStreaming: boolean;
+  /** Force-render section skeletons even when isStreaming is false. Used
+   *  during the dashboard's bootstrap window (returning from /settings or
+   *  /insights) where we want the same skeleton scaffold but without the
+   *  streaming-specific chrome (LiveBadge, cursor) the isStreaming flag
+   *  would also trigger. */
+  showSkeletons?: boolean;
   /** If provided, the Left Off section renders a small "Resume Prompt"
       button in its header that fires this callback (opens the
       AIContextModal at the call site). */
@@ -603,13 +610,13 @@ function StreamingDigest({
         );
       })}
 
-      {/* Progressive skeletons: while streaming, render a skeleton for every
-          SECTION_SKELETONS entry that hasn't arrived in the parsed sections
-          yet. This prevents the page from collapsing when typing starts —
-          skeletons hold space for upcoming sections and get replaced in
-          order as their markers appear in the stream. Skip sections the
-          user has toggled off in settings. */}
-      {isStreaming &&
+      {/* Progressive skeletons: while streaming OR during bootstrap loading,
+          render a skeleton for every SECTION_SKELETONS entry that hasn't
+          arrived in the parsed sections yet. This prevents the page from
+          collapsing when typing starts — skeletons hold space for upcoming
+          sections and get replaced in order as their markers appear in
+          the stream. Skip sections the user has toggled off in settings. */}
+      {(isStreaming || showSkeletons) &&
         SECTION_SKELETONS.filter((shape) => {
           const settingsKey = sectionKeyMap[shape.key];
           if (settingsKey && visibleSections && visibleSections[settingsKey] === false) {
@@ -1727,11 +1734,13 @@ export function DigestView({
     }, OPENER_FADE_MS);
   }, []);
 
-  if (isLoading) {
-    return <div className="digest-loading">Checking for today&apos;s digest...</div>;
-  }
-
-  // Unified streaming branch. Three sub-phases live inside it:
+  // Unified streaming branch. Five sub-phases live inside it:
+  //   0. bootstrap     (isLoading, !isStreaming, !streamingText) → returning
+  //                       from /settings or /insights, page is remounting
+  //                       and we don't know yet whether we'll show a cached
+  //                       digest, stream a fresh one, or hit quiet/empty.
+  //                       Render skeletons (no opener — bootstrap is too
+  //                       fast to justify a 2s editorial typing line).
   //   1. opener         (isStreaming, !streamingText, openerPhase !== "done")
   //                     → DigestOpener types its line; skeletons + sidebar
   //                       are suppressed so the opener owns the moment.
@@ -1746,16 +1755,23 @@ export function DigestView({
   //
   // Keeping all phases in ONE render branch lets StreamingDigest stay
   // mounted across phase transitions, avoiding remount flashes.
-  if (isStreaming || streamingText) {
+  if (isLoading || isStreaming || streamingText) {
     // True ONLY during the editorial opener phase: opener typing or fading.
     // Used to suppress skeletons + sidebar so the opener owns the moment.
     const openerVisible = openerPhase !== "done";
+
+    // Treat bootstrap loading the same as streaming for skeleton purposes —
+    // both produce the "show placeholders" visual. Kept distinct from the
+    // raw isStreaming prop so LiveBadge / cursor (which need the real
+    // streaming signal) aren't accidentally turned on during bootstrap.
+    const showSkeletonScaffold: boolean = isStreaming || !!isLoading;
 
     // Decide whether the two-column layout + sidebar render. Suppress them
     // entirely while the opener is on screen — they reveal as the opener
     // fades. Once the opener is done, fall back to the normal data-driven
     // gate (which also handles "all sections hidden" / missing stats).
-    const renderSidebar = !openerVisible && sidebarHasContent(stats, isStreaming, visibleSections);
+    const renderSidebar =
+      !openerVisible && sidebarHasContent(stats, showSkeletonScaffold, visibleSections);
 
     return (
       <div className={animate ? "" : "no-animation"}>
@@ -1769,7 +1785,10 @@ export function DigestView({
             {/* Editorial opener: types a single line using real stats from
                 the SSE stats event. Owns the pre-text moment alone — no
                 skeletons, no sidebar — then cross-fades to the streaming
-                layout. Unmounts after its fade completes. */}
+                layout. Unmounts after its fade completes. Gated on
+                isStreaming specifically (not isLoading) so the bootstrap
+                window doesn't fire a 2s opener for what's typically a
+                ~200ms cache check. */}
             {isStreaming && openerVisible && (
               <DigestOpener
                 onComplete={handleOpenerComplete}
@@ -1781,11 +1800,15 @@ export function DigestView({
                 skeletons don't render alongside the editorial line. As
                 soon as the opener finishes (phase: "done"), this mounts
                 and either shows skeletons (still pre-text) or the live
-                streaming sections. */}
+                streaming sections. Pass `showSkeletons` so bootstrap
+                renders the same skeleton placeholders without flipping
+                isStreaming on (which would also light up LiveBadge / the
+                streaming cursor — wrong for bootstrap). */}
             {!openerVisible && (
               <StreamingDigest
                 text={streamingText}
                 isStreaming={isStreaming}
+                showSkeletons={!!isLoading}
                 visibleSections={visibleSections}
                 onResumeWithAI={onResumeWithAI}
               />
@@ -1813,7 +1836,11 @@ export function DigestView({
           {renderSidebar && (
             <DigestStatsSidebar
               stats={stats}
-              isStreaming={isStreaming}
+              // Pass the combined skeleton-scaffold flag so bootstrap renders
+              // the same SidebarSkeleton it uses during fresh streaming.
+              // The sidebar doesn't expose any streaming-only chrome, so
+              // there's no behavioral leakage from this conflation.
+              isStreaming={showSkeletonScaffold}
               animate={animate}
               visibleSections={visibleSections}
               repoFullName={repoFullName}

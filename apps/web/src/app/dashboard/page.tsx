@@ -104,6 +104,16 @@ export default function DashboardPage() {
   const revealedReposRef = useRef<Set<string>>(new Set());
   const [, forceUpdate] = useState({});
   const [isCheckingCache, setIsCheckingCache] = useState(false);
+  /** Flips true once the parallel /api/repos + /api/settings fetch has
+   *  resolved. Used (along with the predicate further down) to decide
+   *  whether the dashboard is still bootstrapping vs has settled into
+   *  one of the definite display states (cached digest / streaming /
+   *  quiet day / empty repo / history view). The DigestView's `isLoading`
+   *  prop is gated on this so users returning from /settings or /insights
+   *  see the same skeleton scaffold the streaming flow uses, instead of
+   *  the bare "Select a repo to generate your digest." fallback flashing
+   *  for a beat. */
+  const [reposLoaded, setReposLoaded] = useState(false);
   const [noNewCommits, setNoNewCommits] = useState<{
     content: string;
     stats: Record<string, unknown> | null;
@@ -180,6 +190,10 @@ export default function DashboardPage() {
         }
       } catch {
         // Silently fail
+      } finally {
+        // Always flip even on error so the bootstrap-loading gate
+        // doesn't get stuck on a network failure.
+        setReposLoaded(true);
       }
     })();
   }, []);
@@ -698,6 +712,23 @@ export default function DashboardPage() {
     !emptyRepo &&
     !(noNewCommits && !showLatestFromQuietDay);
 
+  // True while the dashboard is still bootstrapping after a remount
+  // (e.g. returning from /settings or /insights) and hasn't resolved
+  // into any of the definite display states yet. Gate is intentionally
+  // strict — once ANY of these resolves, isInitialLoading flips false
+  // and the relevant render branch (history / quiet / streaming / done)
+  // takes over.
+  const hasCachedDigest = cachedDigests[`${selectedRepo}:digest`] != null;
+  const hasResolvedToDefiniteState =
+    digestStream.isStreaming ||
+    digestStream.text !== "" ||
+    hasCachedDigest ||
+    noNewCommits != null ||
+    emptyRepo ||
+    isViewingHistory ||
+    (reposLoaded && repos.length === 0);
+  const isInitialLoading = !hasResolvedToDefiniteState;
+
   return (
     <div>
       <Header onMenuToggle={() => setSidebarOpen((v) => !v)} />
@@ -899,7 +930,7 @@ export default function DashboardPage() {
                 ) : (
                   <DigestView
                     isStreaming={digestStream.isStreaming}
-                    isLoading={isCheckingCache}
+                    isLoading={isCheckingCache || isInitialLoading}
                     animate={
                       digestStream.isStreaming ||
                       (digestStream.isDone && !revealedReposRef.current.has(selectedRepo))
