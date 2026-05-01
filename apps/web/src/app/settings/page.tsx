@@ -90,14 +90,18 @@ export default function SettingsPage() {
    *  "Clear" buttons next to repos that have nothing to clear. */
   const [activeRepos, setActiveRepos] = useState<string[]>([]);
   const [defaultRepo, setDefaultRepo] = useState<string>("");
-  /** Tracks whether the initial /api/settings call has resolved. Until it
-   *  has, the Default Repository combobox should NOT fall back to repos[0]
-   *  — otherwise the user sees a flicker as the trigger label snaps from
-   *  "Loading..." → repos[0] (whichever happens to be most recent) →
-   *  the actual saved default once settings comes back. Reads as the
-   *  combobox "searching." Holding the fallback until settings is in
-   *  removes the middle frame entirely. */
-  const [settingsLoaded, setSettingsLoaded] = useState(false);
+  /** Tracks whether the initial /api/repos + /api/settings parallel fetch
+   *  has resolved. Used in two places:
+   *    1. Default Repository combobox: holds the repos[0] fallback until
+   *       settings is in, otherwise the trigger label flashes through
+   *       "Loading..." → repos[0] → real saved default.
+   *    2. Customize + Clear History: render skeletons mirroring the
+   *       real layout until data arrives, so toggles don't briefly
+   *       render at defaults before snapping to saved values, and the
+   *       "No history to clear" empty-state copy doesn't flash before
+   *       the repo list arrives. Single flag because both data sources
+   *       resolve in the same Promise.all — they finish together. */
+  const [pageLoaded, setPageLoaded] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [sectionPrefs, setSectionPrefs] = useState<Record<string, boolean>>(DEFAULT_SECTIONS);
 
@@ -146,7 +150,7 @@ export default function SettingsPage() {
       } finally {
         // Always flip the loaded flag, even on error / non-OK response.
         // The combobox would otherwise stay in its loading state forever.
-        setSettingsLoaded(true);
+        setPageLoaded(true);
       }
     })();
   }, []);
@@ -327,13 +331,13 @@ export default function SettingsPage() {
               // what would actually load. As soon as the user picks
               // something explicit it saves and locks in.
               //
-              // The fallback is gated on `settingsLoaded` so we never
+              // The fallback is gated on `pageLoaded` so we never
               // commit to repos[0] before /api/settings has had a
               // chance to return a saved default — that's what caused
               // the trigger to flash through the wrong repo briefly.
               repos={repos}
-              selected={defaultRepo || (settingsLoaded ? repos[0] : "") || ""}
-              isLoading={!settingsLoaded}
+              selected={defaultRepo || (pageLoaded ? repos[0] : "") || ""}
+              isLoading={!pageLoaded}
               onChange={(repo) => void saveDefaultRepo(repo)}
               variant="settings"
               hideActivityBadge
@@ -353,30 +357,34 @@ export default function SettingsPage() {
                 Choose which sections appear in your digest. Changes are saved automatically.
               </p>
             </header>
-            <div className="settings-panel settings-panel--toggles">
-              {SECTION_OPTIONS.map((opt, i) => (
-                <Fragment key={opt.key}>
-                  <div className="settings-toggle-row">
-                    <div className="settings-toggle-info">
-                      <span className="settings-toggle-label">{opt.label}</span>
-                      <span className="settings-toggle-desc">{opt.desc}</span>
+            {pageLoaded ? (
+              <div className="settings-panel settings-panel--toggles">
+                {SECTION_OPTIONS.map((opt, i) => (
+                  <Fragment key={opt.key}>
+                    <div className="settings-toggle-row">
+                      <div className="settings-toggle-info">
+                        <span className="settings-toggle-label">{opt.label}</span>
+                        <span className="settings-toggle-desc">{opt.desc}</span>
+                      </div>
+                      <label className="settings-switch" aria-label={`Toggle ${opt.label}`}>
+                        <input
+                          type="checkbox"
+                          checked={sectionPrefs[opt.key] !== false}
+                          onChange={(e) => void toggleSection(opt.key, e.target.checked)}
+                        />
+                        <span className="settings-switch-track" aria-hidden />
+                        <span className="settings-switch-thumb" aria-hidden />
+                      </label>
                     </div>
-                    <label className="settings-switch" aria-label={`Toggle ${opt.label}`}>
-                      <input
-                        type="checkbox"
-                        checked={sectionPrefs[opt.key] !== false}
-                        onChange={(e) => void toggleSection(opt.key, e.target.checked)}
-                      />
-                      <span className="settings-switch-track" aria-hidden />
-                      <span className="settings-switch-thumb" aria-hidden />
-                    </label>
-                  </div>
-                  {i < SECTION_OPTIONS.length - 1 && (
-                    <hr className="settings-row-divider" aria-hidden />
-                  )}
-                </Fragment>
-              ))}
-            </div>
+                    {i < SECTION_OPTIONS.length - 1 && (
+                      <hr className="settings-row-divider" aria-hidden />
+                    )}
+                  </Fragment>
+                ))}
+              </div>
+            ) : (
+              <CustomizeSkeleton />
+            )}
           </section>
 
           <hr className="settings-divider" />
@@ -395,7 +403,7 @@ export default function SettingsPage() {
                 </div>
                 <p className="settings-section-desc">Delete past digests. This cannot be undone.</p>
               </div>
-              {activeRepos.length > 0 && (
+              {pageLoaded && activeRepos.length > 0 && (
                 <button type="button" className="settings-clear-all-btn" onClick={openClearAll}>
                   <Trash2 size={16} strokeWidth={1} aria-hidden />
                   Clear All History
@@ -403,7 +411,9 @@ export default function SettingsPage() {
               )}
             </header>
             <div className="settings-panel settings-panel--repos">
-              {activeRepos.length === 0 ? (
+              {!pageLoaded ? (
+                <ClearHistorySkeleton />
+              ) : activeRepos.length === 0 ? (
                 <p className="settings-empty">
                   No history to clear yet. Repos with saved digests will appear here.
                 </p>
@@ -659,5 +669,64 @@ export default function SettingsPage() {
         </>
       )}
     </div>
+  );
+}
+
+/**
+ * Customize Digest skeleton — matches `.settings-panel--toggles` exactly:
+ * one row per SECTION_OPTIONS entry, separated by the same row dividers,
+ * each with two stacked shimmer lines (label + desc) on the left and a
+ * 44×24 shimmer pill (the switch) on the right. Same panel chrome as
+ * the loaded state so the swap doesn't reflow.
+ *
+ * Reuses the .insights-skel primitive from globals.css for the shimmer
+ * itself so the loading vibe matches the insights page (same gradient,
+ * same animation timings).
+ */
+function CustomizeSkeleton() {
+  return (
+    <div className="settings-panel settings-panel--toggles" aria-hidden>
+      {SECTION_OPTIONS.map((opt, i) => (
+        <Fragment key={opt.key}>
+          <div className="settings-skel-toggle-row">
+            <div className="settings-skel-toggle-info">
+              <div className="insights-skel" style={{ height: 14, width: "45%" }} />
+              <div className="insights-skel" style={{ height: 11, width: "75%" }} />
+            </div>
+            <div className="insights-skel settings-skel-switch" />
+          </div>
+          {i < SECTION_OPTIONS.length - 1 && (
+            <hr className="settings-row-divider" aria-hidden />
+          )}
+        </Fragment>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * Clear History skeleton — three placeholder repo rows in the same
+ * `.settings-panel--repos` chrome. We don't know the user's actual repo
+ * count until /api/repos resolves, so three is a representative
+ * stand-in that covers the common case (most users have 1–5 repos with
+ * saved digests). Each row has a wide name shimmer + a smaller "Clear"
+ * pill shimmer to mirror the loaded layout.
+ */
+function ClearHistorySkeleton() {
+  return (
+    <>
+      {Array.from({ length: 3 }).map((_, i) => (
+        <Fragment key={i}>
+          <div className="settings-skel-repo-row">
+            <div className="insights-skel" style={{ height: 14, width: "55%" }} />
+            <div
+              className="insights-skel"
+              style={{ height: 20, width: 64, borderRadius: "var(--radius-full)" }}
+            />
+          </div>
+          {i < 2 && <hr className="settings-row-divider" aria-hidden />}
+        </Fragment>
+      ))}
+    </>
   );
 }
