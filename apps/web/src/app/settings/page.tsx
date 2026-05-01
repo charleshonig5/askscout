@@ -390,11 +390,19 @@ export default function SettingsPage() {
                   No history to clear yet. Repos with saved digests will appear here.
                 </p>
               ) : (
-                activeRepos.map((repo, i) => (
+                activeRepos.map((repo, i) => {
+                  // Strip "owner/" prefix to match RepoSelector + dashboard
+                  // title. Internally we still use the full slug as the
+                  // row key, in API calls, and for the title-attribute on
+                  // hover so the full path stays discoverable when two
+                  // repos share a name across owners.
+                  const slash = repo.lastIndexOf("/");
+                  const repoLabel = slash === -1 ? repo : repo.slice(slash + 1);
+                  return (
                   <Fragment key={repo}>
                     <div className="settings-repo-row">
                       <span className="settings-repo-name" title={repo}>
-                        {repo}
+                        {repoLabel}
                       </span>
                       {confirmDelete === `repo:${repo}` ? (
                         <span className="settings-repo-confirm">
@@ -428,7 +436,8 @@ export default function SettingsPage() {
                       <hr className="settings-row-divider" aria-hidden />
                     )}
                   </Fragment>
-                ))
+                  );
+                })
               )}
             </div>
           </section>
