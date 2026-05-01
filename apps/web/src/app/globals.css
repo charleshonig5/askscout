@@ -5926,9 +5926,9 @@ a:hover {
   font-size: 40px;
   line-height: 1;
   margin-bottom: 4px;
-  /* Native Unicode emoji rendering — no fluent-image fetch here
-     since each archetype has a different emoji and a static font
-     glyph reads instantly. */
+  /* Renders a Fluent 3D archetype emoji via <Emoji />. The font-size
+     above only kicks in for the unicode fallback path (archetypeKey
+     missing); the <Emoji /> branch renders an explicitly-sized <img>. */
 }
 
 /* Pridi 24px Medium — matches modal titles and the Settings

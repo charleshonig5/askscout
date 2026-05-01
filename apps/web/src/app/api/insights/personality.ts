@@ -39,6 +39,10 @@ export interface CheckinRow {
 export interface PersonalityResult {
   state: "hidden" | "placeholder" | "real" | "dormant";
   archetype: string | null;
+  /** Stable key used to look up the Fluent 3D emoji on the client (see
+   *  EMOJI_MAP in components/Emoji.tsx). Distinct from the unicode `emoji`
+   *  field which is kept as a fallback / for any non-rendered consumers. */
+  archetypeKey: string | null;
   emoji: string;
   subheader: string;
 }
@@ -649,6 +653,7 @@ const SINGLE_PRIORITY: string[] = [
 ];
 
 function pickArchetype(s: SignalVector): {
+  key: string;
   name: string;
   emoji: string;
   subheader: string;
@@ -658,7 +663,12 @@ function pickArchetype(s: SignalVector): {
   for (const combo of combos) {
     const score = combo.evaluate(s);
     if (score > 0) {
-      return { name: combo.name, emoji: combo.emoji, subheader: combo.subheader(s) };
+      return {
+        key: combo.key,
+        name: combo.name,
+        emoji: combo.emoji,
+        subheader: combo.subheader(s),
+      };
     }
   }
   // Single tier — score everything, take the highest. Ties broken by
@@ -680,6 +690,7 @@ function pickArchetype(s: SignalVector): {
   }
   if (best) {
     return {
+      key: best.archetype.key,
       name: best.archetype.name,
       emoji: best.archetype.emoji,
       subheader: best.archetype.subheader(s),
@@ -687,6 +698,7 @@ function pickArchetype(s: SignalVector): {
   }
   // Fallback: The Wildcard.
   return {
+    key: "wildcard",
     name: "The Wildcard",
     emoji: "🎲",
     subheader: "Still figuring out your pattern.",
@@ -707,6 +719,7 @@ export function computePersonality(
     return {
       state: "hidden",
       archetype: null,
+      archetypeKey: null,
       emoji: "",
       subheader: "",
     };
@@ -716,6 +729,7 @@ export function computePersonality(
     return {
       state: "placeholder",
       archetype: "Just Getting Started",
+      archetypeKey: "hatching",
       emoji: "🐣",
       subheader:
         digests.length === 2
@@ -732,6 +746,7 @@ export function computePersonality(
     return {
       state: "dormant",
       archetype: archetype.name,
+      archetypeKey: archetype.key,
       emoji: archetype.emoji,
       subheader: "Currently dormant. Get back in.",
     };
@@ -741,6 +756,7 @@ export function computePersonality(
   return {
     state: "real",
     archetype: archetype.name,
+    archetypeKey: archetype.key,
     emoji: archetype.emoji,
     subheader: archetype.subheader,
   };

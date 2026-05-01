@@ -35,6 +35,9 @@ interface RepoStat {
 interface Personality {
   state: "hidden" | "placeholder" | "real" | "dormant";
   archetype: string | null;
+  /** Stable key for looking up the Fluent 3D emoji on the client. Mirrors
+   *  the archetype keys in api/insights/personality.ts. */
+  archetypeKey: string | null;
   emoji: string;
   subheader: string;
 }
@@ -53,6 +56,7 @@ interface InsightsData {
 const EMPTY_PERSONALITY: Personality = {
   state: "hidden",
   archetype: null,
+  archetypeKey: null,
   emoji: "",
   subheader: "",
 };
@@ -681,7 +685,14 @@ export default function InsightsPage() {
                     }`}
                   >
                     <div className="insights-personality-emoji" aria-hidden>
-                      {data.personality.emoji}
+                      {data.personality.archetypeKey ? (
+                        <Emoji name={data.personality.archetypeKey} size={48} />
+                      ) : (
+                        // Fallback to the unicode glyph if for any reason the
+                        // archetypeKey is missing (e.g. an older cached
+                        // response). Should never hit in practice.
+                        data.personality.emoji
+                      )}
                     </div>
                     <h3 className="insights-personality-name">{data.personality.archetype}</h3>
                     <p className="insights-personality-subheader">{data.personality.subheader}</p>

@@ -63,6 +63,36 @@ const EMOJI_MAP: Record<string, EmojiAsset> = {
   calendar: { folder: "Spiral calendar", file: "spiral_calendar_3d.png" },
   perRepo: { folder: "Card index dividers", file: "card_index_dividers_3d.png" },
   personality: { folder: "Performing arts", file: "performing_arts_3d.png" },
+  // Personality archetypes (keys mirror personality.ts archetype keys so the
+  // API response's archetypeKey can be passed straight through to <Emoji />).
+  // Combo tier
+  cathedral_builder: { folder: "Church", file: "church_3d.png" },
+  pirate: { folder: "Pirate flag", file: "pirate_flag_3d.png" },
+  garage_tinkerer: { folder: "Wrench", file: "wrench_3d.png" },
+  stealth_shipper: { folder: "Ninja", file: "ninja_3d.png" },
+  marathoner: { folder: "Turtle", file: "turtle_3d.png" },
+  // Time-driven
+  dawn_patrol: { folder: "Sunrise", file: "sunrise_3d.png" },
+  nine_to_five: { folder: "Sun", file: "sun_3d.png" },
+  sundowner: { folder: "Sunset", file: "sunset_3d.png" },
+  night_owl: { folder: "Crescent moon", file: "crescent_moon_3d.png" },
+  insomniac: { folder: "Bat", file: "bat_3d.png" },
+  moonlighter: { folder: "Last quarter moon", file: "last_quarter_moon_3d.png" },
+  weekend_warrior: { folder: "Beach with umbrella", file: "beach_with_umbrella_3d.png" },
+  // Portfolio
+  specialist: { folder: "Direct hit", file: "direct_hit_3d.png" },
+  juggler: { folder: "Person juggling", file: "person_juggling_3d.png" },
+  drifter: { folder: "Parachute", file: "parachute_3d.png" },
+  // Style
+  builder: { folder: "Hammer and wrench", file: "hammer_and_wrench_3d.png" },
+  polisher: { folder: "Mirror", file: "mirror_3d.png" },
+  surgeon: { folder: "Microscope", file: "microscope_3d.png" },
+  earthquake: { folder: "Volcano", file: "volcano_3d.png" },
+  architect: { folder: "Building construction", file: "building_construction_3d.png" },
+  sprinter: { folder: "High voltage", file: "high_voltage_3d.png" },
+  // States outside the archetype library
+  wildcard: { folder: "Game die", file: "game_die_3d.png" },
+  hatching: { folder: "Hatching chick", file: "hatching_chick_3d.png" },
 };
 
 export type EmojiName = keyof typeof EMOJI_MAP;

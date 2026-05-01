@@ -63,6 +63,7 @@ interface InsightsResponse {
 const EMPTY_PERSONALITY: PersonalityResult = {
   state: "hidden",
   archetype: null,
+  archetypeKey: null,
   emoji: "",
   subheader: "",
 };
