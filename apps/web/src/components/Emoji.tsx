@@ -22,8 +22,14 @@ const BASE = "https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets";
 interface EmojiAsset {
   /** Folder in the Fluent Emoji repo (Title Case with spaces). */
   folder: string;
-  /** PNG filename inside the folder's 3D/ subfolder. */
+  /** PNG filename. For most emojis this lives at `<folder>/3D/<file>`.
+   *  Skin-tone-variant emojis nest under `<folder>/Default/3D/<file>`
+   *  (and the file name itself ends in `_default.png`); set
+   *  `hasSkinTones: true` to use that path. */
   file: string;
+  /** Set true for emojis with skin-tone variations (people emoji), where
+   *  the asset lives under `<folder>/Default/3D/` instead of `<folder>/3D/`. */
+  hasSkinTones?: boolean;
 }
 
 /**
@@ -69,7 +75,7 @@ const EMOJI_MAP: Record<string, EmojiAsset> = {
   cathedral_builder: { folder: "Church", file: "church_3d.png" },
   pirate: { folder: "Pirate flag", file: "pirate_flag_3d.png" },
   garage_tinkerer: { folder: "Wrench", file: "wrench_3d.png" },
-  stealth_shipper: { folder: "Ninja", file: "ninja_3d.png" },
+  stealth_shipper: { folder: "Ninja", file: "ninja_3d_default.png", hasSkinTones: true },
   marathoner: { folder: "Turtle", file: "turtle_3d.png" },
   // Time-driven
   dawn_patrol: { folder: "Sunrise", file: "sunrise_3d.png" },
@@ -80,8 +86,12 @@ const EMOJI_MAP: Record<string, EmojiAsset> = {
   moonlighter: { folder: "Last quarter moon", file: "last_quarter_moon_3d.png" },
   weekend_warrior: { folder: "Beach with umbrella", file: "beach_with_umbrella_3d.png" },
   // Portfolio
-  specialist: { folder: "Direct hit", file: "direct_hit_3d.png" },
-  juggler: { folder: "Person juggling", file: "person_juggling_3d.png" },
+  specialist: { folder: "Bullseye", file: "bullseye_3d.png" },
+  juggler: {
+    folder: "Person juggling",
+    file: "person_juggling_3d_default.png",
+    hasSkinTones: true,
+  },
   drifter: { folder: "Parachute", file: "parachute_3d.png" },
   // Style
   builder: { folder: "Hammer and wrench", file: "hammer_and_wrench_3d.png" },
@@ -109,7 +119,8 @@ export function Emoji({ name, size = 18, className = "", alt = "" }: EmojiProps)
   const asset = EMOJI_MAP[name];
   if (!asset) return null;
 
-  const url = `${BASE}/${encodeURIComponent(asset.folder)}/3D/${asset.file}`;
+  const subpath = asset.hasSkinTones ? "Default/3D" : "3D";
+  const url = `${BASE}/${encodeURIComponent(asset.folder)}/${subpath}/${asset.file}`;
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
