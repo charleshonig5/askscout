@@ -3738,6 +3738,431 @@ a:hover {
   margin-top: 0;
 }
 
+/* ============================================================
+   BENTO GRID — features showcase. 4-column grid that collapses to
+   2-col below 880px and 1-col below 540px. Tiles share a glass
+   treatment (matches .home-step / .home-split-tile so the page
+   reads as one design system). The "Daily digest" hero tile spans
+   2 cols; "Multi-output" spans all 4 as a slim strip.
+   ============================================================ */
+.home-bento {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.home-bento-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 28px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border-hover);
+  background: var(--color-modal-surface);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
+  /* Tiles default to one column. Specific size modifiers below
+     widen them. */
+  grid-column: span 1;
+  /* Default tile content lays out as: <content> on top, <mock>
+     filling the bottom. The mock grows to take whatever space the
+     tile has so the visual doesn't look top-heavy. */
+  min-height: 280px;
+}
+
+.home-bento-tile--span-2 {
+  grid-column: span 2;
+}
+
+.home-bento-tile--full {
+  grid-column: 1 / -1;
+}
+
+/* Hero tile (Daily digest) is taller than the others so the mock
+   has room to show four lines of fake streaming output. */
+.home-bento-tile--hero {
+  min-height: 360px;
+}
+
+/* Slim strip variant for the bottom Multi-output tile. Lays out
+   horizontally on wide screens (text left, chips right) and stacks
+   on narrow. Smaller min-height since there's no big mock. */
+.home-bento-tile--strip {
+  min-height: 0;
+}
+
+/* Linkable tile (Manifesto). Renders as <a>; gets a hover lift +
+   border-color shift to signal interactivity. */
+.home-bento-tile--link {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition:
+    border-color 0.18s ease,
+    transform 0.18s ease,
+    background 0.18s ease;
+}
+
+.home-bento-tile--link:hover {
+  border-color: var(--color-text-secondary);
+  transform: translateY(-2px);
+}
+
+.home-bento-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Horizontal content layout for the multi-output strip. Title +
+   body on the left, mock chips on the right. Stacks below 720px. */
+.home-bento-content--horizontal {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  width: 100%;
+}
+
+.home-bento-content--horizontal > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.home-bento-eyebrow {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
+
+.home-bento-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.home-bento-body {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* --- Generic mock wrapper ----------------------------------- */
+.home-bento-mock {
+  margin-top: auto;
+}
+
+/* --- 1. Daily digest mock ----------------------------------- */
+.home-bento-mock--digest {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px;
+  border-radius: 8px;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.home-bento-mock-section {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.home-bento-mock-section:first-child {
+  margin-top: 0;
+}
+
+.home-bento-mock-emoji {
+  font-size: 14px;
+}
+
+.home-bento-mock-section-label {
+  font-size: 12px;
+}
+
+.home-bento-mock-bullet {
+  padding-left: 4px;
+}
+
+.home-bento-mock-bullet strong {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* --- 2. Streak mock ----------------------------------------- */
+.home-bento-mock--streak {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.home-bento-mock-streak-count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.home-bento-mock-streak-num {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--color-text-primary);
+}
+
+.home-bento-mock-streak-label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.home-bento-mock-streak-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.home-bento-mock-streak-cell {
+  height: 16px;
+  border-radius: 3px;
+  background: var(--color-bg-tertiary);
+}
+
+.home-bento-mock-streak-cell--on {
+  background: var(--color-text-primary);
+}
+
+/* --- 3. Personality mock ------------------------------------ */
+.home-bento-mock--personality {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.home-bento-mock-personality-name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-top: 4px;
+}
+
+.home-bento-mock-personality-sub {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+}
+
+/* --- 4. Codebase health mock -------------------------------- */
+.home-bento-mock--health {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.home-bento-mock-health-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.home-bento-mock-health-label {
+  flex-shrink: 0;
+  width: 56px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.home-bento-mock-health-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-bg-tertiary);
+  overflow: hidden;
+  display: block;
+}
+
+.home-bento-mock-health-fill {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+}
+
+.home-bento-mock-health-fill--good {
+  background: var(--color-success);
+}
+
+.home-bento-mock-health-fill--mid {
+  background: var(--color-text-secondary);
+}
+
+/* --- 5. Pace mock ------------------------------------------- */
+.home-bento-mock--pace {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.home-bento-mock-pace-num {
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--color-success);
+}
+
+.home-bento-mock-pace-label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+}
+
+/* --- 6. Insights mock --------------------------------------- */
+.home-bento-mock--insights {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.home-bento-mock-insight-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-family: var(--font-sans);
+  font-size: 12px;
+}
+
+.home-bento-mock-insight-label {
+  color: var(--color-text-tertiary);
+}
+
+.home-bento-mock-insight-value {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* --- 7. Manifesto mock -------------------------------------- */
+.home-bento-mock--manifesto {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.home-bento-mock-article-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.home-bento-mock-article-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+}
+
+/* --- 8. Multi-output mock ----------------------------------- */
+.home-bento-mock--multi {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.home-bento-mock-output-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+/* --- Responsive collapses ----------------------------------- */
+@media (max-width: 880px) {
+  .home-bento {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .home-bento-tile--span-2 {
+    grid-column: span 2;
+  }
+
+  .home-bento-content--horizontal {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .home-bento-mock--multi {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 540px) {
+  .home-bento {
+    grid-template-columns: 1fr;
+  }
+
+  .home-bento-tile,
+  .home-bento-tile--span-2,
+  .home-bento-tile--full {
+    grid-column: span 1;
+  }
+
+  .home-bento-tile {
+    min-height: 0;
+  }
+
+  .home-bento-tile--hero {
+    min-height: 0;
+  }
+}
+
 /* ---------- FINAL CTA ---------- */
 .home-final-cta {
   display: flex;

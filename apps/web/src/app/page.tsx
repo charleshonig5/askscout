@@ -5,6 +5,7 @@ import { auth, signIn } from "@/auth";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { InstallChip } from "@/components/InstallChip";
 import { HeroStars } from "@/components/HeroStars";
+import { Emoji } from "@/components/Emoji";
 import { MOCK_STREAMING_TEXT } from "@/lib/mock-data";
 
 export default async function LandingPage() {
@@ -110,9 +111,247 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* TODO(step 2): Bento grid lands here. */}
-      {/* TODO(step 4): Articles strip lands later in the page (after Privacy). */}
-      {/* TODO(step 3): FAQ accordion lands before the final CTA. */}
+      {/* ===========================================================
+          BENTO — features showcase. Eight tiles in a 4-column grid.
+          The "Daily digest" tile spans two columns and acts as the
+          hero of the bento; the four medium tiles fill the second
+          row; "Multi-output" is a slim full-width strip at the
+          bottom. Each tile has a tiny visual mock, not just text,
+          so the section reads as a product surface rather than a
+          paragraph wall.
+          =========================================================== */}
+      <section className="home-section">
+        <div className="home-section-inner">
+          <p className="home-eyebrow">What you get</p>
+          <h2 className="home-section-title">A daily read on your code.</h2>
+          <div className="home-bento">
+            {/* 1. DAILY DIGEST — large, spans two columns. The bento's
+                hero tile. Mock shows a streamed-section header + a
+                couple of fake bullets so first-time readers see the
+                product's actual output shape. */}
+            <div className="home-bento-tile home-bento-tile--span-2 home-bento-tile--hero">
+              <div className="home-bento-content">
+                <p className="home-bento-eyebrow">Today</p>
+                <h3 className="home-bento-title">What you actually shipped.</h3>
+                <p className="home-bento-body">
+                  Streams in plain English. Scout reads your commits and diffs and writes you
+                  something worth reading.
+                </p>
+              </div>
+              <div className="home-bento-mock home-bento-mock--digest" aria-hidden>
+                <div className="home-bento-mock-section">
+                  <span className="home-bento-mock-emoji">🚀</span>
+                  <span className="home-bento-mock-section-label">Shipped</span>
+                </div>
+                <div className="home-bento-mock-bullet">
+                  <strong>Sign in with Google</strong> - Users can finally log in without a
+                  password.
+                </div>
+                <div className="home-bento-mock-bullet">
+                  <strong>Settings page</strong> - Dark mode toggle and saved per-repo prefs.
+                </div>
+                <div className="home-bento-mock-section">
+                  <span className="home-bento-mock-emoji">🔧</span>
+                  <span className="home-bento-mock-section-label">Changed</span>
+                </div>
+                <div className="home-bento-mock-bullet">
+                  <strong>Auth flow</strong> - Replaced the legacy session middleware.
+                </div>
+              </div>
+            </div>
+
+            {/* 2. STREAKS & HISTORY — medium. Mock shows a streak
+                count + a 7-cell calendar strip with the last few
+                days "filled." Communicates the daily-habit loop. */}
+            <div className="home-bento-tile">
+              <div className="home-bento-content">
+                <p className="home-bento-eyebrow">Habit</p>
+                <h3 className="home-bento-title">Don&apos;t break the chain.</h3>
+                <p className="home-bento-body">
+                  Every digest you generate builds your streak. Last 30 days saved per repo.
+                </p>
+              </div>
+              <div className="home-bento-mock home-bento-mock--streak" aria-hidden>
+                <div className="home-bento-mock-streak-count">
+                  <Emoji name="streak" size={20} />
+                  <span className="home-bento-mock-streak-num">23</span>
+                  <span className="home-bento-mock-streak-label">day streak</span>
+                </div>
+                <div className="home-bento-mock-streak-calendar">
+                  <span className="home-bento-mock-streak-cell home-bento-mock-streak-cell--on" />
+                  <span className="home-bento-mock-streak-cell home-bento-mock-streak-cell--on" />
+                  <span className="home-bento-mock-streak-cell home-bento-mock-streak-cell--on" />
+                  <span className="home-bento-mock-streak-cell" />
+                  <span className="home-bento-mock-streak-cell home-bento-mock-streak-cell--on" />
+                  <span className="home-bento-mock-streak-cell home-bento-mock-streak-cell--on" />
+                  <span className="home-bento-mock-streak-cell home-bento-mock-streak-cell--on" />
+                </div>
+              </div>
+            </div>
+
+            {/* 3. PERSONALITY — medium. Mock is a Fluent 3D archetype
+                emoji + name + subheader. Echoes the actual insights
+                page treatment so readers recognize it later. */}
+            <div className="home-bento-tile">
+              <div className="home-bento-content">
+                <p className="home-bento-eyebrow">About you</p>
+                <h3 className="home-bento-title">Find your archetype.</h3>
+                <p className="home-bento-body">
+                  The Marathoner. The Pirate. The Surgeon. Twenty-one ways Scout reads your work.
+                </p>
+              </div>
+              <div className="home-bento-mock home-bento-mock--personality" aria-hidden>
+                <Emoji name="marathoner" size={48} />
+                <div className="home-bento-mock-personality-name">The Marathoner</div>
+                <div className="home-bento-mock-personality-sub">
+                  Active most weeks, low variance.
+                </div>
+              </div>
+            </div>
+
+            {/* 4. CODEBASE HEALTH — medium. Three horizontal bars
+                Growth / Focus / Churn at varied fills. Mirrors the
+                product's actual health-card visual. */}
+            <div className="home-bento-tile">
+              <div className="home-bento-content">
+                <p className="home-bento-eyebrow">Signals</p>
+                <h3 className="home-bento-title">Growth, focus, churn.</h3>
+                <p className="home-bento-body">
+                  Three indicators on every digest. See where you build, where you polish, and where
+                  you keep coming back.
+                </p>
+              </div>
+              <div className="home-bento-mock home-bento-mock--health" aria-hidden>
+                <div className="home-bento-mock-health-row">
+                  <span className="home-bento-mock-health-label">Growth</span>
+                  <span className="home-bento-mock-health-bar">
+                    <span
+                      className="home-bento-mock-health-fill home-bento-mock-health-fill--good"
+                      style={{ width: "78%" }}
+                    />
+                  </span>
+                </div>
+                <div className="home-bento-mock-health-row">
+                  <span className="home-bento-mock-health-label">Focus</span>
+                  <span className="home-bento-mock-health-bar">
+                    <span
+                      className="home-bento-mock-health-fill home-bento-mock-health-fill--good"
+                      style={{ width: "62%" }}
+                    />
+                  </span>
+                </div>
+                <div className="home-bento-mock-health-row">
+                  <span className="home-bento-mock-health-label">Churn</span>
+                  <span className="home-bento-mock-health-bar">
+                    <span
+                      className="home-bento-mock-health-fill home-bento-mock-health-fill--mid"
+                      style={{ width: "44%" }}
+                    />
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* 5. PACE CHECK — medium. Hero number "1.7×" with a
+                short label. Echoes the actual pace card. */}
+            <div className="home-bento-tile">
+              <div className="home-bento-content">
+                <p className="home-bento-eyebrow">Today vs you</p>
+                <h3 className="home-bento-title">Above your usual.</h3>
+                <p className="home-bento-body">
+                  Today&apos;s commits compared to your rolling average. Calibrated to you, not some
+                  industry baseline.
+                </p>
+              </div>
+              <div className="home-bento-mock home-bento-mock--pace" aria-hidden>
+                <span className="home-bento-mock-pace-num">1.7x</span>
+                <span className="home-bento-mock-pace-label">Your normal pace</span>
+              </div>
+            </div>
+
+            {/* 6. INSIGHTS — medium. Three stat rows mirroring the
+                Snapshot card on the insights page. */}
+            <div className="home-bento-tile">
+              <div className="home-bento-content">
+                <p className="home-bento-eyebrow">Patterns</p>
+                <h3 className="home-bento-title">A read on your week.</h3>
+                <p className="home-bento-body">
+                  Best streak. Total digests. Most active repos. The picture that doesn&apos;t fit in
+                  one digest.
+                </p>
+              </div>
+              <div className="home-bento-mock home-bento-mock--insights" aria-hidden>
+                <div className="home-bento-mock-insight-row">
+                  <span className="home-bento-mock-insight-label">Best streak</span>
+                  <span className="home-bento-mock-insight-value">47 days</span>
+                </div>
+                <div className="home-bento-mock-insight-row">
+                  <span className="home-bento-mock-insight-label">Total digests</span>
+                  <span className="home-bento-mock-insight-value">231</span>
+                </div>
+                <div className="home-bento-mock-insight-row">
+                  <span className="home-bento-mock-insight-label">Per week avg</span>
+                  <span className="home-bento-mock-insight-value">5.2</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 7. MANIFESTO — medium, clickable. Cover-style article
+                tile linking to the Hidden Cost essay. Doubles as the
+                "why this exists" beat that the dropped Problem
+                section used to carry. */}
+            <Link
+              href="/articles/the-hidden-cost-of-vibe-coding"
+              className="home-bento-tile home-bento-tile--link"
+            >
+              <div className="home-bento-content">
+                <p className="home-bento-eyebrow">Why this exists</p>
+                <h3 className="home-bento-title">The hidden cost of vibe coding.</h3>
+                <p className="home-bento-body">
+                  AI sped you up and made you forget what you built. Read the full piece.
+                </p>
+              </div>
+              <div className="home-bento-mock home-bento-mock--manifesto" aria-hidden>
+                <div className="home-bento-mock-article-tag">Article</div>
+                <div className="home-bento-mock-article-meta">
+                  Read time: 4 min
+                  <Forward size={10} strokeWidth={1.5} aria-hidden />
+                </div>
+              </div>
+            </Link>
+
+            {/* 8. MULTI-OUTPUT — slim full-width strip across the
+                whole grid. Three chips for Standup / Plan / Resume,
+                framed as bonus uses of the same diff data. */}
+            <div className="home-bento-tile home-bento-tile--full home-bento-tile--strip">
+              <div className="home-bento-content home-bento-content--horizontal">
+                <div>
+                  <p className="home-bento-eyebrow">Same diffs, more uses</p>
+                  <h3 className="home-bento-title">Standup. Plan. Resume Prompt.</h3>
+                  <p className="home-bento-body">
+                    Three extra outputs from the same data. A Slack standup, a tomorrow plan, and a
+                    context block to paste into your AI.
+                  </p>
+                </div>
+                <div className="home-bento-mock home-bento-mock--multi" aria-hidden>
+                  <div className="home-bento-mock-output-chip">
+                    <Emoji name="standup" size={16} />
+                    <span>Standup</span>
+                  </div>
+                  <div className="home-bento-mock-output-chip">
+                    <Emoji name="plan" size={16} />
+                    <span>Plan</span>
+                  </div>
+                  <div className="home-bento-mock-output-chip">
+                    <Emoji name="resume" size={16} />
+                    <span>Resume Prompt</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ===========================================================
           PREFER LOCAL — CLI section. By the time the reader reaches
