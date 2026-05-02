@@ -4,10 +4,18 @@
  * + a low z-index. Pointer-events disabled so it can't intercept the
  * CTA clicks.
  *
- * Positions are generated at module load via a seeded PRNG so the
- * layout is identical between SSR and the client (no hydration
- * mismatch) and stable across reloads. Want a different layout? Bump
- * SEED.
+ * Eight size tiers — four dot, four sparkle — for natural variation:
+ *   - dot-1 (1px) and dot-2 (2px) dominate as the background dust.
+ *   - dot-3 (3px) and dot-4 (4px with halo) add depth.
+ *   - sparkle-6 / sparkle-8 are the small 4-point twinkle shapes.
+ *   - sparkle-12 / sparkle-16 are the rare halo'd showpieces.
+ * Mix is weighted so smaller and rounder dominate; the bigger sparkles
+ * are eye-catchers, not the baseline.
+ *
+ * Positions, kinds, sizes, and timings are generated at module load
+ * via a seeded PRNG so SSR + client agree on layout (no hydration
+ * mismatch) and the layout is stable across reloads. Bump SEED to
+ * reshuffle.
  *
  * Honors prefers-reduced-motion via the .hero-star keyframe rule in
  * globals.css — users with that preference get static stars at full
@@ -26,13 +34,24 @@ function mulberry32(seed: number): () => number {
   };
 }
 
+type StarKind =
+  | "dot-1"
+  | "dot-2"
+  | "dot-3"
+  | "dot-4"
+  | "sparkle-6"
+  | "sparkle-8"
+  | "sparkle-12"
+  | "sparkle-16";
+
 interface Star {
   /** Horizontal position as a percentage of the container's width. */
   x: number;
   /** Vertical position as a percentage of the container's height. */
   y: number;
-  /** Pixel size — 1, 2, or 3. Bigger stars are rarer. */
-  size: 1 | 2 | 3;
+  /** Visual variant. Drives the size class and the DOM shape (round
+   *  vs. 4-point sparkle SVG). */
+  kind: StarKind;
   /** Animation start offset in seconds (0–6). Staggered so stars don't
    *  pulse in sync. */
   delay: number;
@@ -42,18 +61,29 @@ interface Star {
 }
 
 const SEED = 42;
-const STAR_COUNT = 36;
+const STAR_COUNT = 100;
+
+/** Cumulative-weighted draw for star kind. Tuned so the smaller and
+ *  more numerous shapes dominate; bigger sparkles stay rare. */
+function pickKind(roll: number): StarKind {
+  if (roll < 0.32) return "dot-1";
+  if (roll < 0.56) return "dot-2";
+  if (roll < 0.72) return "dot-3";
+  if (roll < 0.82) return "dot-4";
+  if (roll < 0.9) return "sparkle-6";
+  if (roll < 0.96) return "sparkle-8";
+  if (roll < 0.99) return "sparkle-12";
+  return "sparkle-16";
+}
 
 const STARS: Star[] = (() => {
   const rand = mulberry32(SEED);
   const out: Star[] = [];
   for (let i = 0; i < STAR_COUNT; i++) {
-    const sizeRoll = rand();
-    const size: 1 | 2 | 3 = sizeRoll < 0.6 ? 1 : sizeRoll < 0.9 ? 2 : 3;
     out.push({
       x: rand() * 100,
       y: rand() * 100,
-      size,
+      kind: pickKind(rand()),
       delay: rand() * 6,
       duration: 3 + rand() * 3,
     });
@@ -61,21 +91,34 @@ const STARS: Star[] = (() => {
   return out;
 })();
 
+/** 4-point sparkle path. Thin diamond arms with a slight inset waist
+ *  so it reads as a classic "✦" rather than a plain plus. */
+const SPARKLE_PATH = "M12 0 L13.5 10.5 L24 12 L13.5 13.5 L12 24 L10.5 13.5 L0 12 L10.5 10.5 Z";
+
 export function HeroStars() {
   return (
     <div className="hero-stars" aria-hidden>
-      {STARS.map((star, i) => (
-        <span
-          key={i}
-          className={`hero-star hero-star--${star.size}`}
-          style={{
-            left: `${star.x}%`,
-            top: `${star.y}%`,
-            animationDelay: `${star.delay}s`,
-            animationDuration: `${star.duration}s`,
-          }}
-        />
-      ))}
+      {STARS.map((star, i) => {
+        const isSparkle = star.kind.startsWith("sparkle-");
+        return (
+          <span
+            key={i}
+            className={`hero-star hero-star--${star.kind}`}
+            style={{
+              left: `${star.x}%`,
+              top: `${star.y}%`,
+              animationDelay: `${star.delay}s`,
+              animationDuration: `${star.duration}s`,
+            }}
+          >
+            {isSparkle && (
+              <svg viewBox="0 0 24 24" aria-hidden>
+                <path d={SPARKLE_PATH} />
+              </svg>
+            )}
+          </span>
+        );
+      })}
     </div>
   );
 }

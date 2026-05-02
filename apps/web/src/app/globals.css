@@ -2877,6 +2877,11 @@ a:hover {
 .hero-star {
   position: absolute;
   border-radius: 50%;
+  /* Center each star ON its (x, y) coordinate rather than placing
+     its top-left there. Tiny offset for 1px dots, but matters for
+     the larger sparkle tiers (up to 16px) where the half-width
+     would otherwise visibly bias them down-right. */
+  transform: translate(-50%, -50%);
   /* Themed star color — visible white in dark mode, a much fainter
      near-transparent black in light mode so the field reads as a
      subtle texture rather than dust specks. */
@@ -2895,27 +2900,84 @@ a:hover {
   background: rgba(255, 255, 255, 0.85);
 }
 
-.hero-star--1 {
+/* --- Round dot tiers --------------------------------------- */
+.hero-star--dot-1 {
   width: 1px;
   height: 1px;
 }
 
-.hero-star--2 {
+.hero-star--dot-2 {
   width: 2px;
   height: 2px;
 }
 
-.hero-star--3 {
+.hero-star--dot-3 {
   width: 3px;
   height: 3px;
-  /* Larger stars get a soft halo so they read as the brighter
-     background bodies in the field, mimicking how distance + size
-     play out in a real night-sky composition. */
+}
+
+.hero-star--dot-4 {
+  width: 4px;
+  height: 4px;
+  /* Soft halo on the largest dot tier so it reads as a nearer
+     "bright body" against the smaller dust dots. */
   box-shadow: 0 0 4px var(--color-hero-star, rgba(0, 0, 0, 0.12));
 }
 
-[data-theme="dark"] .hero-star--3 {
+[data-theme="dark"] .hero-star--dot-4 {
   box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+}
+
+/* --- 4-point sparkle tiers --------------------------------- */
+/* Sparkle stars use a square positioning container with the SVG
+   path inside. The container's dimensions set the sparkle size;
+   the path inherits color from the parent's `color` property. */
+.hero-star[class*="hero-star--sparkle-"] {
+  /* Sparkle shapes don't take a background fill — they render via
+     SVG. Override the dot background to transparent so the bare
+     <span> doesn't show through. */
+  background: transparent;
+  border-radius: 0;
+  /* The SVG path uses `fill: currentColor`, so set the color of
+     the wrapper to drive the sparkle's tint. Theme-aware via the
+     same color tokens the dots use. */
+  color: var(--color-hero-star, rgba(0, 0, 0, 0.45));
+}
+
+[data-theme="dark"] .hero-star[class*="hero-star--sparkle-"] {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.hero-star[class*="hero-star--sparkle-"] svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  fill: currentColor;
+}
+
+.hero-star--sparkle-6 {
+  width: 6px;
+  height: 6px;
+}
+
+.hero-star--sparkle-8 {
+  width: 8px;
+  height: 8px;
+}
+
+.hero-star--sparkle-12 {
+  width: 12px;
+  height: 12px;
+  /* The two largest sparkle tiers get halos so they read as the
+     brightest stars in the field. Halo color tracks currentColor
+     so it auto-themes. */
+  filter: drop-shadow(0 0 3px currentColor);
+}
+
+.hero-star--sparkle-16 {
+  width: 16px;
+  height: 16px;
+  filter: drop-shadow(0 0 5px currentColor);
 }
 
 @keyframes hero-star-twinkle {
