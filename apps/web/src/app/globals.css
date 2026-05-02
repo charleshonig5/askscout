@@ -4242,6 +4242,85 @@ a:hover {
   color: var(--color-text-tertiary);
 }
 
+/* ============================================================
+   FAQ — accordion built on native <details>/<summary>. Each item
+   gets a top divider; the last item has a bottom divider too so
+   the list reads as a complete unit. The <summary> arrow is
+   suppressed via the marker pseudo-elements; we render our own
+   ChevronDown that rotates 180° when the item opens.
+   ============================================================ */
+.home-faq {
+  display: flex;
+  flex-direction: column;
+  margin-top: 32px;
+  border-top: 1px solid var(--color-border);
+}
+
+.home-faq-item {
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Hide the native disclosure arrows on both Webkit and modern
+   spec engines so our chevron is the only indicator. */
+.home-faq-question::-webkit-details-marker {
+  display: none;
+}
+
+.home-faq-question::marker {
+  display: none;
+  content: "";
+}
+
+.home-faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 4px;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  transition: color 0.15s ease;
+}
+
+.home-faq-question:hover {
+  color: var(--color-text-secondary);
+}
+
+.home-faq-chevron {
+  flex-shrink: 0;
+  color: var(--color-text-tertiary);
+  transition: transform 0.2s ease;
+}
+
+.home-faq-item[open] .home-faq-chevron {
+  transform: rotate(180deg);
+}
+
+.home-faq-answer {
+  padding: 0 4px 20px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+}
+
+.home-faq-answer p {
+  margin: 0;
+}
+
+.home-faq-answer code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
 /* --- Responsive collapses ----------------------------------- */
 @media (max-width: 880px) {
   .home-bento {

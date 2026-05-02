@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Forward } from "lucide-react";
+import { ChevronDown, Forward } from "lucide-react";
 import { auth, signIn } from "@/auth";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { InstallChip } from "@/components/InstallChip";
@@ -443,6 +443,145 @@ export default async function LandingPage() {
                 <Forward size={10} strokeWidth={1.5} aria-hidden />
               </span>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ===========================================================
+          FAQ — accordion built with native <details>/<summary> so
+          it's accessible and SSR-clean without any client JS. Each
+          item collapses on load. Sits between Articles and the
+          Final CTA so any last-mile objections get cleared right
+          before the second sign-in button.
+          =========================================================== */}
+      <section className="home-section home-section--quiet">
+        <div className="home-section-inner home-section-inner--narrow">
+          <p className="home-eyebrow">Questions</p>
+          <h2 className="home-section-title">Things people ask.</h2>
+          <div className="home-faq">
+            <details className="home-faq-item">
+              <summary className="home-faq-question">
+                <span>Does Scout read my source code?</span>
+                <ChevronDown size={16} strokeWidth={1.5} className="home-faq-chevron" aria-hidden />
+              </summary>
+              <div className="home-faq-answer">
+                <p>
+                  No. Scout reads commit messages and diffs, which are the lines added and removed
+                  in each commit. Source files, env vars, secrets, and build artifacts never get
+                  touched.
+                </p>
+              </div>
+            </details>
+
+            <details className="home-faq-item">
+              <summary className="home-faq-question">
+                <span>What does &ldquo;read-only&rdquo; mean exactly?</span>
+                <ChevronDown size={16} strokeWidth={1.5} className="home-faq-chevron" aria-hidden />
+              </summary>
+              <div className="home-faq-answer">
+                <p>
+                  The OAuth scope we request is <code>read:user repo</code>. That gives Scout
+                  permission to read your profile and your repositories. We never write, modify, or
+                  delete anything in any repo.
+                </p>
+              </div>
+            </details>
+
+            <details className="home-faq-item">
+              <summary className="home-faq-question">
+                <span>How much does it cost?</span>
+                <ChevronDown size={16} strokeWidth={1.5} className="home-faq-chevron" aria-hidden />
+              </summary>
+              <div className="home-faq-answer">
+                <p>
+                  The web app is free. The CLI is free too. With the CLI you bring your own LLM
+                  API key, which runs about $0.001 to $0.003 per digest.
+                </p>
+              </div>
+            </details>
+
+            <details className="home-faq-item">
+              <summary className="home-faq-question">
+                <span>Does this work for private repos?</span>
+                <ChevronDown size={16} strokeWidth={1.5} className="home-faq-chevron" aria-hidden />
+              </summary>
+              <div className="home-faq-answer">
+                <p>
+                  Yes. As long as you grant access during sign-in, Scout can generate digests for
+                  any repo on your account, public or private.
+                </p>
+              </div>
+            </details>
+
+            <details className="home-faq-item">
+              <summary className="home-faq-question">
+                <span>Can I delete my data?</span>
+                <ChevronDown size={16} strokeWidth={1.5} className="home-faq-chevron" aria-hidden />
+              </summary>
+              <div className="home-faq-answer">
+                <p>
+                  Yes. Settings &rarr; Danger Zone &rarr; Delete Account removes every record tied
+                  to your user ID. You can also clear individual repo histories without deleting
+                  your account.
+                </p>
+              </div>
+            </details>
+
+            <details className="home-faq-item">
+              <summary className="home-faq-question">
+                <span>Why GitHub OAuth and not API keys?</span>
+                <ChevronDown size={16} strokeWidth={1.5} className="home-faq-chevron" aria-hidden />
+              </summary>
+              <div className="home-faq-answer">
+                <p>
+                  GitHub OAuth means you never have to manage tokens. Scout never sees your
+                  password. You can revoke access any time at{" "}
+                  <a
+                    href="https://github.com/settings/applications"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="home-prose-link"
+                  >
+                    github.com/settings/applications
+                  </a>
+                  .
+                </p>
+              </div>
+            </details>
+
+            <details className="home-faq-item">
+              <summary className="home-faq-question">
+                <span>What happens if I clear my history?</span>
+                <ChevronDown size={16} strokeWidth={1.5} className="home-faq-chevron" aria-hidden />
+              </summary>
+              <div className="home-faq-answer">
+                <p>
+                  Past digests get deleted from our database. Your streak count and personality
+                  archetype recompute from whatever digests are still on file. Clearing history
+                  doesn&apos;t sign you out or revoke GitHub access.
+                </p>
+              </div>
+            </details>
+
+            <details className="home-faq-item">
+              <summary className="home-faq-question">
+                <span>Who built this and why?</span>
+                <ChevronDown size={16} strokeWidth={1.5} className="home-faq-chevron" aria-hidden />
+              </summary>
+              <div className="home-faq-answer">
+                <p>
+                  Charles Honig built askscout because AI coding tools made him forget what he
+                  shipped.{" "}
+                  <Link
+                    href="/articles/the-hidden-cost-of-vibe-coding"
+                    className="home-prose-link"
+                  >
+                    Read the full piece
+                  </Link>{" "}
+                  for the longer version.
+                </p>
+              </div>
+            </details>
           </div>
         </div>
       </section>
