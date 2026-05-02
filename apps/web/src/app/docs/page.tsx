@@ -163,7 +163,8 @@ export default function DocsPage() {
               <h3 className="faq-question">How much does it cost?</h3>
               <p className="public-text">
                 The CLI is free forever (you bring your own API key, ~$0.002 per digest). The web
-                app has a free tier with one digest per day per repo.
+                app is free, with a soft cap at 30 digests per day across your account so API
+                costs stay manageable.
               </p>
             </div>
             <div className="faq-item">

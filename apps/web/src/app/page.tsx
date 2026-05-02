@@ -276,8 +276,8 @@ export default async function LandingPage() {
                 <p className="home-bento-eyebrow">Patterns</p>
                 <h3 className="home-bento-title">A read on your week.</h3>
                 <p className="home-bento-body">
-                  Best streak. Total digests. Most active repos. The picture that doesn&apos;t fit in
-                  one digest.
+                  Best streak, total digests, your weekly pace, plus a per-repo breakdown. The big
+                  picture you don&apos;t get from any single digest.
                 </p>
               </div>
               <div className="home-bento-mock home-bento-mock--insights" aria-hidden>
@@ -494,8 +494,10 @@ export default async function LandingPage() {
               </summary>
               <div className="home-faq-answer">
                 <p>
-                  The web app is free. The CLI is free too. With the CLI you bring your own LLM
-                  API key, which runs about $0.001 to $0.003 per digest.
+                  The web app is free. There&apos;s a soft cap at 30 digests per day across your
+                  account to keep API costs sane, which is plenty for a daily reader. The CLI is
+                  free too. With the CLI you bring your own LLM API key, which runs about $0.001
+                  to $0.003 per digest.
                 </p>
               </div>
             </details>
