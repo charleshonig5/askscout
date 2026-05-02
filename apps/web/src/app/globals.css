@@ -3739,11 +3739,10 @@ a:hover {
 }
 
 /* ============================================================
-   BENTO GRID — features showcase. 4-column grid that collapses to
-   2-col below 880px and 1-col below 540px. Tiles share a glass
-   treatment (matches .home-step / .home-split-tile so the page
-   reads as one design system). The "Daily digest" hero tile spans
-   2 cols; "Multi-output" spans all 4 as a slim strip.
+   BENTO GRID — four pillar tiles, equal width, single row on
+   desktop. Collapses to 2-col below 880px and 1-col below 540px.
+   Tiles share a glass treatment (matches .home-step /
+   .home-split-tile so the page reads as one design system).
    ============================================================ */
 .home-bento {
   display: grid;
@@ -4100,9 +4099,72 @@ a:hover {
   color: var(--color-text-tertiary);
 }
 
-/* --- 8. Multi-output mock ----------------------------------- */
+/* --- Customize toggles mock --------------------------------- */
+/* Renders a small panel of mock setting rows (label + faux toggle
+   pill) so readers see the customization control directly rather
+   than just reading about it. Mirrors the actual
+   `.settings-toggle-row` shape from the real settings page so the
+   mock recognizable when the user lands on /settings. */
+.home-bento-mock--toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 8px;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+}
+
+.home-bento-mock-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.home-bento-mock-toggle-label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.home-bento-mock-toggle-pill {
+  position: relative;
+  width: 28px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-tertiary);
+  flex-shrink: 0;
+}
+
+.home-bento-mock-toggle-pill::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-text-tertiary);
+}
+
+.home-bento-mock-toggle-pill--on {
+  background: var(--color-success);
+}
+
+.home-bento-mock-toggle-pill--on::after {
+  background: var(--color-bg-primary);
+  transform: translateX(12px);
+}
+
+/* --- Multi-output mock -------------------------------------- */
+/* Three product chips for Standup / To-Do List / Resume Prompt.
+   Uses flex-wrap so the chips stack inside a single-column bento
+   tile rather than overflowing. */
 .home-bento-mock--multi {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   flex-shrink: 0;
 }
