@@ -4,6 +4,7 @@ import { Forward } from "lucide-react";
 import { auth, signIn } from "@/auth";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { InstallChip } from "@/components/InstallChip";
+import { HeroStars } from "@/components/HeroStars";
 import { MOCK_STREAMING_TEXT } from "@/lib/mock-data";
 
 export default async function LandingPage() {
@@ -39,6 +40,7 @@ export default async function LandingPage() {
           streaming digest demo card sitting beneath. Everything
           centers on the page's content axis. =========================================================== */}
       <section className="home-hero">
+        <HeroStars />
         <div className="home-hero-inner">
           <p className="home-hero-eyebrow">The daily digest for vibe coders</p>
           <h1 className="home-hero-title">

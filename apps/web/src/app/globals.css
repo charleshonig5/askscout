@@ -2843,6 +2843,7 @@ a:hover {
 
 /* ---------- HERO ---------- */
 .home-hero {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2853,8 +2854,87 @@ a:hover {
 }
 
 .home-hero-inner {
+  position: relative;
+  z-index: 1;
   max-width: 720px;
   margin-bottom: 64px;
+}
+
+/* Twinkly starfield. Sits behind hero content (z-index 0) and the
+   demo card (which gets its own z-index: 1). Stars are fixed in
+   place via deterministic positioning from the HeroStars component;
+   each one runs a randomized twinkle animation. The stars are
+   ornamental — no information conveyed, hence aria-hidden — so
+   pointer-events are off and screen readers skip them entirely. */
+.hero-stars {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-star {
+  position: absolute;
+  border-radius: 50%;
+  /* Themed star color — visible white in dark mode, a much fainter
+     near-transparent black in light mode so the field reads as a
+     subtle texture rather than dust specks. */
+  background: var(--color-hero-star, rgba(0, 0, 0, 0.18));
+  /* Baseline opacity (no animation): low so static stars stay
+     subtle. The keyframe pushes this up during the twinkle peak. */
+  opacity: 0.25;
+  animation-name: hero-star-twinkle;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  /* animation-delay and animation-duration are set inline per star
+     so the field doesn't pulse in lockstep. */
+}
+
+[data-theme="dark"] .hero-star {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.hero-star--1 {
+  width: 1px;
+  height: 1px;
+}
+
+.hero-star--2 {
+  width: 2px;
+  height: 2px;
+}
+
+.hero-star--3 {
+  width: 3px;
+  height: 3px;
+  /* Larger stars get a soft halo so they read as the brighter
+     background bodies in the field, mimicking how distance + size
+     play out in a real night-sky composition. */
+  box-shadow: 0 0 4px var(--color-hero-star, rgba(0, 0, 0, 0.12));
+}
+
+[data-theme="dark"] .hero-star--3 {
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes hero-star-twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-star {
+    /* Hold at the static baseline, no twinkle, so the field still
+       reads as a starfield without any motion firing. */
+    animation: none;
+    opacity: 0.4;
+  }
 }
 
 /* Eyebrow text — small uppercase label that introduces the title.
@@ -3176,6 +3256,10 @@ a:hover {
    Monochrome — no traffic-light dot colors, just three
    secondary-tinted dots that read as window-chrome. */
 .home-hero-demo {
+  /* z-index above the .hero-stars layer so the demo card stays in
+     front of the twinkly starfield. */
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 880px;
   border-radius: 12px;
