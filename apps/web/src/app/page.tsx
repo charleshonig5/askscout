@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { ChevronDown, Forward } from "lucide-react";
+import { BookText, ChevronDown, Forward, ScrollText, Sparkles } from "lucide-react";
 import { auth, signIn } from "@/auth";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { InstallChip } from "@/components/InstallChip";
@@ -137,23 +137,61 @@ export default async function LandingPage() {
                   sections, same shape every day.
                 </p>
               </div>
-              <div className="home-bento-mock home-bento-mock--digest" aria-hidden>
-                <div className="home-bento-mock-section">
-                  <Emoji name="shipped" size={16} />
-                  <span className="home-bento-mock-section-label">Shipped</span>
+              <div className="home-bento-mock home-bento-mock--scaled" aria-hidden>
+                {/* Real digest section DOM — same classes the dashboard
+                    uses (`.digest-bulleted`, `.digest-bulleted-heading`,
+                    `.digest-item-bullet/title/context`). What you see
+                    here is what the live digest renders, just shrunk
+                    via the .home-bento-mock--scaled wrapper. */}
+                <div className="digest-bulleted">
+                  <div className="digest-bulleted-header">
+                    <div className="digest-bulleted-heading">
+                      <Emoji name="shipped" size={20} />
+                      <span className="digest-bulleted-label">Shipped</span>
+                    </div>
+                  </div>
+                  <div className="digest-bulleted-list">
+                    <div className="digest-item">
+                      <span className="digest-item-bullet" aria-hidden />
+                      <p className="digest-item-text">
+                        <span className="digest-item-title">Sign in with Google</span>
+                        {" - "}
+                        <span className="digest-item-context">
+                          Users can log in without a password.
+                        </span>
+                      </p>
+                    </div>
+                    <div className="digest-item">
+                      <span className="digest-item-bullet" aria-hidden />
+                      <p className="digest-item-text">
+                        <span className="digest-item-title">Settings page</span>
+                        {" - "}
+                        <span className="digest-item-context">
+                          Dark mode + saved per-repo prefs.
+                        </span>
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div className="home-bento-mock-bullet">
-                  <strong>Sign in with Google</strong> - Users can log in without a password.
-                </div>
-                <div className="home-bento-mock-bullet">
-                  <strong>Settings page</strong> - Dark mode + saved per-repo prefs.
-                </div>
-                <div className="home-bento-mock-section">
-                  <Emoji name="changed" size={16} />
-                  <span className="home-bento-mock-section-label">Changed</span>
-                </div>
-                <div className="home-bento-mock-bullet">
-                  <strong>Auth flow</strong> - Replaced legacy session middleware.
+                <div className="digest-bulleted">
+                  <div className="digest-bulleted-header">
+                    <div className="digest-bulleted-heading">
+                      <Emoji name="changed" size={20} />
+                      <span className="digest-bulleted-label">Changed</span>
+                    </div>
+                  </div>
+                  <div className="digest-bulleted-list">
+                    <div className="digest-item">
+                      <span className="digest-item-bullet" aria-hidden />
+                      <p className="digest-item-text">
+                        <span className="digest-item-title">Auth flow</span>
+                        {" - "}
+                        <span className="digest-item-context">
+                          Replaced legacy session middleware.
+                        </span>
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -171,22 +209,61 @@ export default async function LandingPage() {
                   at once.
                 </p>
               </div>
-              <div className="home-bento-mock home-bento-mock--toggles" aria-hidden>
-                <div className="home-bento-mock-toggle-row">
-                  <span className="home-bento-mock-toggle-label">Vibe Check</span>
-                  <span className="home-bento-mock-toggle-pill home-bento-mock-toggle-pill--on" />
+              <div
+                className="home-bento-mock settings-panel settings-panel--toggles"
+                aria-hidden
+              >
+                {/* Real settings toggle DOM — same classes the
+                    /settings page uses (`.settings-toggle-row`,
+                    `.settings-toggle-info`, `.settings-switch` with
+                    track + thumb). Inputs are disabled + tabIndex
+                    -1 so the marketing tile stays non-interactive. */}
+                <div className="settings-toggle-row">
+                  <div className="settings-toggle-info">
+                    <span className="settings-toggle-label">Vibe Check</span>
+                    <span className="settings-toggle-desc">Casual overview of your day</span>
+                  </div>
+                  <label className="settings-switch">
+                    <input type="checkbox" defaultChecked tabIndex={-1} disabled />
+                    <span className="settings-switch-track" />
+                    <span className="settings-switch-thumb" />
+                  </label>
                 </div>
-                <div className="home-bento-mock-toggle-row">
-                  <span className="home-bento-mock-toggle-label">Shipped</span>
-                  <span className="home-bento-mock-toggle-pill home-bento-mock-toggle-pill--on" />
+                <hr className="settings-row-divider" aria-hidden />
+                <div className="settings-toggle-row">
+                  <div className="settings-toggle-info">
+                    <span className="settings-toggle-label">Shipped</span>
+                    <span className="settings-toggle-desc">New features and functionality</span>
+                  </div>
+                  <label className="settings-switch">
+                    <input type="checkbox" defaultChecked tabIndex={-1} disabled />
+                    <span className="settings-switch-track" />
+                    <span className="settings-switch-thumb" />
+                  </label>
                 </div>
-                <div className="home-bento-mock-toggle-row">
-                  <span className="home-bento-mock-toggle-label">Codebase Health</span>
-                  <span className="home-bento-mock-toggle-pill home-bento-mock-toggle-pill--on" />
+                <hr className="settings-row-divider" aria-hidden />
+                <div className="settings-toggle-row">
+                  <div className="settings-toggle-info">
+                    <span className="settings-toggle-label">Codebase Health</span>
+                    <span className="settings-toggle-desc">Growth, focus, and churn</span>
+                  </div>
+                  <label className="settings-switch">
+                    <input type="checkbox" defaultChecked tabIndex={-1} disabled />
+                    <span className="settings-switch-track" />
+                    <span className="settings-switch-thumb" />
+                  </label>
                 </div>
-                <div className="home-bento-mock-toggle-row">
-                  <span className="home-bento-mock-toggle-label">Pace Check</span>
-                  <span className="home-bento-mock-toggle-pill" />
+                <hr className="settings-row-divider" aria-hidden />
+                <div className="settings-toggle-row">
+                  <div className="settings-toggle-info">
+                    <span className="settings-toggle-label">Pace Check</span>
+                    <span className="settings-toggle-desc">Today vs your rolling average</span>
+                  </div>
+                  <label className="settings-switch">
+                    <input type="checkbox" tabIndex={-1} disabled />
+                    <span className="settings-switch-track" />
+                    <span className="settings-switch-thumb" />
+                  </label>
                 </div>
               </div>
             </div>
@@ -203,20 +280,24 @@ export default async function LandingPage() {
                   count, every read one click away.
                 </p>
               </div>
-              <div className="home-bento-mock home-bento-mock--streak" aria-hidden>
-                <div className="home-bento-mock-streak-count">
-                  <Emoji name="streak" size={20} />
-                  <span className="home-bento-mock-streak-num">23</span>
-                  <span className="home-bento-mock-streak-label">day streak</span>
-                </div>
-                <div className="home-bento-mock-streak-calendar">
-                  <span className="home-bento-mock-streak-cell home-bento-mock-streak-cell--on" />
-                  <span className="home-bento-mock-streak-cell home-bento-mock-streak-cell--on" />
-                  <span className="home-bento-mock-streak-cell home-bento-mock-streak-cell--on" />
-                  <span className="home-bento-mock-streak-cell" />
-                  <span className="home-bento-mock-streak-cell home-bento-mock-streak-cell--on" />
-                  <span className="home-bento-mock-streak-cell home-bento-mock-streak-cell--on" />
-                  <span className="home-bento-mock-streak-cell home-bento-mock-streak-cell--on" />
+              <div className="home-bento-mock home-bento-mock--history" aria-hidden>
+                {/* Real streak chip — same `.digest-streak` class the
+                    dashboard header uses, with the same Fluent fire
+                    Emoji at the same size (14px) the live product
+                    renders. Plus a strip of real `.insights-calendar-cell`
+                    elements in their active/empty/checkin states from
+                    the insights activity grid. */}
+                <span className="digest-streak">
+                  <Emoji name="streak" size={14} /> 23 Day Streak
+                </span>
+                <div className="home-bento-mock-cal-row">
+                  <span className="insights-calendar-cell" data-state="active" />
+                  <span className="insights-calendar-cell" data-state="active" />
+                  <span className="insights-calendar-cell" data-state="active" />
+                  <span className="insights-calendar-cell" data-state="checkin" />
+                  <span className="insights-calendar-cell" data-state="active" />
+                  <span className="insights-calendar-cell" data-state="active" />
+                  <span className="insights-calendar-cell" data-state="active" />
                 </div>
               </div>
             </div>
@@ -233,19 +314,25 @@ export default async function LandingPage() {
                   your tracker, the resume prompt into your AI.
                 </p>
               </div>
-              <div className="home-bento-mock home-bento-mock--multi" aria-hidden>
-                <div className="home-bento-mock-output-chip">
-                  <Emoji name="standup" size={16} />
-                  <span>Standup</span>
-                </div>
-                <div className="home-bento-mock-output-chip">
-                  <Emoji name="plan" size={16} />
-                  <span>To-Do List</span>
-                </div>
-                <div className="home-bento-mock-output-chip">
-                  <Emoji name="resume" size={16} />
-                  <span>Resume Prompt</span>
-                </div>
+              <div className="home-bento-mock home-bento-mock--actions" aria-hidden>
+                {/* Real action-button DOM — same `.standup-btn` class
+                    + same Lucide icons (BookText, ScrollText,
+                    Sparkles) the dashboard's bottom-action row and
+                    the Resume Prompt button render. Disabled +
+                    tabIndex -1 so the marketing tile is purely
+                    visual. */}
+                <button type="button" className="standup-btn" tabIndex={-1} disabled>
+                  <BookText size={20} strokeWidth={1} aria-hidden />
+                  Generate Standup
+                </button>
+                <button type="button" className="standup-btn" tabIndex={-1} disabled>
+                  <ScrollText size={20} strokeWidth={1} aria-hidden />
+                  Generate Todo List
+                </button>
+                <button type="button" className="standup-btn" tabIndex={-1} disabled>
+                  <Sparkles size={20} strokeWidth={1} aria-hidden />
+                  Resume Prompt
+                </button>
               </div>
             </div>
           </div>
