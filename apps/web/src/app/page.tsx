@@ -349,20 +349,52 @@ export default async function LandingPage() {
           <p className="home-eyebrow">Want it local?</p>
           <h2 className="home-section-title">Run it locally.</h2>
           <p className="home-section-prose-narrow">
-            Same product, as a CLI on your machines. Bring your own LLM key. Nothing persists
-            online.
+            Same product, as a CLI on your machine. Bring your own LLM key. Always stays fully
+            local.
           </p>
-          <div className="home-split-tile home-split-tile--solo">
-            <pre className="home-split-tile-code">
-              <code>npm install -g askscout</code>
-              <br />
-              <code>askscout</code>
-            </pre>
-            <div className="home-split-tile-cta">
-              <Link href="/docs" className="home-cta home-cta--inline">
-                Read the CLI docs →
-              </Link>
+          <div className="home-terminal" role="img" aria-label="askscout running in a terminal">
+            <div className="home-terminal-chrome">
+              <span className="home-terminal-dot home-terminal-dot--red" />
+              <span className="home-terminal-dot home-terminal-dot--yellow" />
+              <span className="home-terminal-dot home-terminal-dot--green" />
+              <span className="home-terminal-title">askscout — zsh</span>
             </div>
+            <pre className="home-terminal-body">
+              <span className="home-terminal-prompt">$</span> askscout
+              {"\n\n"}
+              <span className="home-terminal-heading">
+                🔍 Scout scanned askscout
+              </span>
+              {"\n"}
+              <span className="home-terminal-dim">
+                12 commits · 23 files · today
+              </span>
+              {"\n\n"}
+              <span className="home-terminal-heading">💬 Vibe Check</span>
+              {"\n"}
+              You shipped the bento grid and tightened the{"\n"}
+              homepage copy. Strong forward motion.
+              {"\n\n"}
+              <span className="home-terminal-heading">🚀 Shipped (3)</span>
+              {"\n"}
+              • Bento: render real product DOM inside each tile{"\n"}
+              • Marketing: pare bento to four pillar tiles{"\n"}
+              • Marketing/docs: align copy with product behavior
+              {"\n\n"}
+              <span className="home-terminal-heading">📋 Left Off</span>
+              {"\n"}
+              Mid-edit on the CLI section subheader copy.
+              {"\n\n"}
+              <span className="home-terminal-prompt">$</span>{" "}
+              <span className="home-terminal-cursor" aria-hidden>
+                ▮
+              </span>
+            </pre>
+          </div>
+          <div className="home-cli-cta">
+            <Link href="/docs" className="home-cta home-cta--inline">
+              Read the CLI docs →
+            </Link>
           </div>
         </div>
       </section>
