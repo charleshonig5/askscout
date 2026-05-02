@@ -139,7 +139,7 @@ export default async function LandingPage() {
               </div>
               <div className="home-bento-mock home-bento-mock--digest" aria-hidden>
                 <div className="home-bento-mock-section">
-                  <span className="home-bento-mock-emoji">🚀</span>
+                  <Emoji name="shipped" size={16} />
                   <span className="home-bento-mock-section-label">Shipped</span>
                 </div>
                 <div className="home-bento-mock-bullet">
@@ -149,7 +149,7 @@ export default async function LandingPage() {
                   <strong>Settings page</strong> - Dark mode + saved per-repo prefs.
                 </div>
                 <div className="home-bento-mock-section">
-                  <span className="home-bento-mock-emoji">🔧</span>
+                  <Emoji name="changed" size={16} />
                   <span className="home-bento-mock-section-label">Changed</span>
                 </div>
                 <div className="home-bento-mock-bullet">

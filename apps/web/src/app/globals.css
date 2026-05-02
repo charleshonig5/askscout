@@ -3894,12 +3894,15 @@ a:hover {
   margin-top: 0;
 }
 
-.home-bento-mock-emoji {
-  font-size: 14px;
-}
-
+/* Section label inside the digest mock — mirrors `.digest-bulleted-label`
+   (sans-serif, weight 500, primary-text color) at a thumbnail size so
+   the mock reads as a shrunk version of the real digest section
+   header rather than a separately-styled imitation. */
 .home-bento-mock-section-label {
+  font-family: var(--font-sans);
   font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-primary);
 }
 
 .home-bento-mock-bullet {
