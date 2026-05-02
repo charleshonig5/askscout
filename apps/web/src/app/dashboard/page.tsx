@@ -11,7 +11,7 @@ import { useDigestStream } from "@/lib/use-digest-stream";
 import { parseSections } from "@/lib/parse-sections";
 import { useTapTooltip } from "@/lib/use-tap-tooltip";
 import { Emoji } from "@/components/Emoji";
-import { ArrowLeft, ArrowUpRight, SquareArrowUpRight } from "lucide-react";
+import { ArrowLeft, Forward, SquareArrowUpRight } from "lucide-react";
 
 import type { HistoryEntry } from "@/lib/mock-data";
 
@@ -803,7 +803,7 @@ export default function DashboardPage() {
                             aria-label={`Open ${selectedRepo} on GitHub`}
                           >
                             {repoName}
-                            <ArrowUpRight size={10} strokeWidth={1} aria-hidden />
+                            <Forward size={10} strokeWidth={1} aria-hidden />
                           </a>
                         )}
                         {showStreakBadge && (

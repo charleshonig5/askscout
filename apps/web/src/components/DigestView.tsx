@@ -8,7 +8,7 @@ import {
   Send,
   Sparkles,
   BookText,
-  ArrowUpRight,
+  Forward,
   ScrollText,
   FileText,
   GitCommitHorizontal,
@@ -304,7 +304,7 @@ function ShareBtn({ items }: { items: string[] }) {
   return (
     <button className="digest-bulleted-share" onClick={handleShare} aria-label="Share on X">
       Share on X
-      <ArrowUpRight size={10} strokeWidth={1} aria-hidden />
+      <Forward size={10} strokeWidth={1} aria-hidden />
     </button>
   );
 }
@@ -1321,7 +1321,7 @@ function TopFiles({
                   className="top-file-link"
                   aria-label={`Open ${shortName} on GitHub`}
                 >
-                  <ArrowUpRight size={10} strokeWidth={1} aria-hidden />
+                  <Forward size={10} strokeWidth={1} aria-hidden />
                 </a>
               )}
             </div>

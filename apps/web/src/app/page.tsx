@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { Forward } from "lucide-react";
 import { auth, signIn } from "@/auth";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { InstallChip } from "@/components/InstallChip";
@@ -85,7 +85,7 @@ export default async function LandingPage() {
                 className="home-hero-chip home-hero-chip--link"
               >
                 Open source
-                <ArrowUpRight size={10} strokeWidth={1.5} aria-hidden />
+                <Forward size={10} strokeWidth={1.5} aria-hidden />
               </a>
               <span className="home-hero-chip">Read-only</span>
               <span className="home-hero-chip">No source code</span>

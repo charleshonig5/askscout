@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowUpRight, ChevronDown, ChevronUp, CircleX, TrendingUp } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronUp, CircleX, Forward, TrendingUp } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
 import { useCountUp } from "@/lib/use-count-up";
 
@@ -635,7 +635,7 @@ export default function InsightsPage() {
                         aria-label={`Open ${data.bestStreak.repo} on GitHub`}
                       >
                         {repoDisplayName(data.bestStreak.repo)}
-                        <ArrowUpRight size={10} strokeWidth={1} aria-hidden />
+                        <Forward size={10} strokeWidth={1} aria-hidden />
                       </a>
                     )}
                   </div>
