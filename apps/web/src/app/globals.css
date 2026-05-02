@@ -2889,11 +2889,11 @@ a:hover {
   /* Baseline opacity (no animation): low so static stars stay
      subtle. The keyframe pushes this up during the twinkle peak. */
   opacity: 0.25;
-  animation-name: hero-star-twinkle;
+  /* animation-name is picked by the per-star .hero-star--cadence-*
+     class. animation-delay and animation-duration are set inline
+     per-star. iteration + timing function are shared. */
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
-  /* animation-delay and animation-duration are set inline per star
-     so the field doesn't pulse in lockstep. */
 }
 
 [data-theme="dark"] .hero-star {
@@ -2980,7 +2980,16 @@ a:hover {
   filter: drop-shadow(0 0 5px currentColor);
 }
 
-@keyframes hero-star-twinkle {
+/* --- Cadence keyframes ----------------------------------------
+   Four distinct opacity curves so the field doesn't pulse with
+   one shared rhythm. Each star picks one (.hero-star--cadence-*).
+   Combined with randomized per-star duration + delay this gives
+   each star its own apparent twinkle behavior, even when two
+   stars happen to share the same kind/size. */
+
+/* Standard breath — the baseline behavior. Symmetric ease, mid
+   amplitude. Most stars use this. */
+@keyframes hero-star-twinkle-breath {
   0%,
   100% {
     opacity: 0.15;
@@ -2988,6 +2997,62 @@ a:hover {
   50% {
     opacity: 0.85;
   }
+}
+
+/* Slow asymmetric breath — peaks past the midpoint at lower
+   amplitude. Reads as a calmer, drifting glow. */
+@keyframes hero-star-twinkle-slow {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  60% {
+    opacity: 0.6;
+  }
+}
+
+/* Sharp pulse — brief flash up to full opacity, fast rise + fall
+   either side of a narrow peak. Used sparsely so the field doesn't
+   strobe. */
+@keyframes hero-star-twinkle-pulse {
+  0%,
+  100% {
+    opacity: 0.1;
+  }
+  45% {
+    opacity: 0.45;
+  }
+  55% {
+    opacity: 1;
+  }
+  65% {
+    opacity: 0.45;
+  }
+}
+
+/* Gentle near-static glow — small amplitude swing around a higher
+   baseline, so the star is always visible but barely shifts. */
+@keyframes hero-star-twinkle-glow {
+  0%,
+  100% {
+    opacity: 0.32;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.hero-star--cadence-breath {
+  animation-name: hero-star-twinkle-breath;
+}
+.hero-star--cadence-slow {
+  animation-name: hero-star-twinkle-slow;
+}
+.hero-star--cadence-pulse {
+  animation-name: hero-star-twinkle-pulse;
+}
+.hero-star--cadence-glow {
+  animation-name: hero-star-twinkle-glow;
 }
 
 @media (prefers-reduced-motion: reduce) {
