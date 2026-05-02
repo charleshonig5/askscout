@@ -347,17 +347,14 @@ export default async function LandingPage() {
       <section className="home-section">
         <div className="home-section-inner home-section-inner--narrow">
           <p className="home-eyebrow">Want it local?</p>
-          <h2 className="home-section-title">There&apos;s a CLI too.</h2>
+          <h2 className="home-section-title">Run it locally.</h2>
           <p className="home-section-prose-narrow">
-            Same product, just on your machine. Runs in any git repo, brings your own LLM key, and
-            pipes wherever you want. The only network call is the one to your provider. Nothing
-            persists online.
+            Same product, as a CLI on your machines. Bring your own LLM key. Nothing persists
+            online.
           </p>
           <div className="home-split-tile home-split-tile--solo">
             <pre className="home-split-tile-code">
               <code>npm install -g askscout</code>
-              <br />
-              <code>askscout --setup</code>
               <br />
               <code>askscout</code>
             </pre>
