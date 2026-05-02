@@ -3457,6 +3457,23 @@ a:hover {
   margin-top: auto;
 }
 
+/* Solo modifier — used when the section dropped its second tile (CLI-only
+   "Want it local?" surface, post web-app demotion). Centers the install
+   command + CTA in a single tile with comfortable internal spacing,
+   sized so it doesn't sprawl in the wider layout the dual-tile grid
+   used to fill. */
+.home-split-tile--solo {
+  margin-top: 24px;
+  align-self: center;
+  width: 100%;
+  max-width: 560px;
+  gap: 24px;
+}
+
+.home-split-tile--solo .home-split-tile-cta {
+  margin-top: 0;
+}
+
 /* ---------- FINAL CTA ---------- */
 .home-final-cta {
   display: flex;

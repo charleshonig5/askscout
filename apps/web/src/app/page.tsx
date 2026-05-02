@@ -70,7 +70,7 @@ export default async function LandingPage() {
               <InstallChip />
             </div>
             <p className="home-hero-meta">
-              Free. Read-only. Sign in with GitHub. We never see your source code.
+              Free, read-only, no source code, no secrets.
             </p>
           </div>
         </div>
@@ -123,9 +123,10 @@ export default async function LandingPage() {
       </section>
 
       {/* ===========================================================
-          HOW IT WORKS — three tiles. Sign in / generate / read.
-          Each tile gets a number, a short title, and one line of
-          prose. Visual rhythm > information density. =========================================================== */}
+          HOW IT WORKS — three tiles, web-app explicit. The web app
+          is the primary funnel. CLI gets its own section later for
+          users who want it local. Each tile: number, short title,
+          one-line description. Visual rhythm > information density. =========================================================== */}
       <section className="home-section">
         <div className="home-section-inner">
           <p className="home-eyebrow">How it works</p>
@@ -133,26 +134,23 @@ export default async function LandingPage() {
           <div className="home-steps">
             <div className="home-step">
               <span className="home-step-num">01</span>
-              <h3 className="home-step-title">Connect your repo</h3>
+              <h3 className="home-step-title">Sign in with GitHub</h3>
               <p className="home-step-text">
-                Sign in with GitHub on the web, or run <code>askscout</code> in any local repo with
-                your own LLM key.
+                One click. Read-only access. Scout pulls your commit history, never your source.
               </p>
             </div>
             <div className="home-step">
               <span className="home-step-num">02</span>
-              <h3 className="home-step-title">Get your digest</h3>
+              <h3 className="home-step-title">Pick a repo</h3>
               <p className="home-step-text">
-                askscout reads your commits and diffs and writes them up in plain English. The
-                result streams back in seconds.
+                Or let Scout auto-pick your most active. Switch any time. Everything is per-repo.
               </p>
             </div>
             <div className="home-step">
               <span className="home-step-num">03</span>
-              <h3 className="home-step-title">Read your day</h3>
+              <h3 className="home-step-title">Read your digest</h3>
               <p className="home-step-text">
-                Vibe Check, what shipped, what changed, what kept shifting, where you left off.
-                Paste it into Slack. Or just keep it for yourself.
+                Streams in plain English in seconds. Streaks, insights, and history build as you go.
               </p>
             </div>
           </div>
@@ -214,39 +212,32 @@ export default async function LandingPage() {
       </section>
 
       {/* ===========================================================
-          CLI OR WEB — split tile. Two paths to the same product,
-          designed to fit different workflows. =========================================================== */}
+          PREFER LOCAL — CLI section, demoted from the previous
+          equal-weight split. By this point the page has already
+          covered the web app (hero + How It Works), so this section
+          exists for power users who want everything to run on their
+          machine. Single tile, lead-with-the-CLI framing. =========================================================== */}
       <section className="home-section">
-        <div className="home-section-inner">
-          <p className="home-eyebrow">Two ways to use it</p>
-          <h2 className="home-section-title">CLI or web. Your call.</h2>
-          <div className="home-split">
-            <div className="home-split-tile">
-              <h3 className="home-split-tile-title">CLI</h3>
-              <p className="home-split-tile-text">
-                Runs in your terminal, in any git repo. Bring your own LLM key. Pipe the output
-                wherever you want. The only network call is the one to your provider.
-              </p>
-              <pre className="home-split-tile-code">
-                <code>npm install -g askscout</code>
-                <br />
-                <code>askscout --setup</code>
-                <br />
-                <code>askscout</code>
-              </pre>
-            </div>
-            <div className="home-split-tile">
-              <h3 className="home-split-tile-title">Web app</h3>
-              <p className="home-split-tile-text">
-                Sign in with GitHub, we cover the API key. Your digests stick around, so you get
-                streaks, per-repo history, and the occasional weird stat about how you actually
-                work.
-              </p>
-              <div className="home-split-tile-cta">
-                <Link href="/dashboard" className="home-cta home-cta--inline">
-                  Try it on the web →
-                </Link>
-              </div>
+        <div className="home-section-inner home-section-inner--narrow">
+          <p className="home-eyebrow">Want it local?</p>
+          <h2 className="home-section-title">There&apos;s a CLI too.</h2>
+          <p className="home-section-prose-narrow">
+            Same product, just on your machine. Runs in any git repo, brings your own LLM key, and
+            pipes wherever you want. The only network call is the one to your provider. Nothing
+            persists online.
+          </p>
+          <div className="home-split-tile home-split-tile--solo">
+            <pre className="home-split-tile-code">
+              <code>npm install -g askscout</code>
+              <br />
+              <code>askscout --setup</code>
+              <br />
+              <code>askscout</code>
+            </pre>
+            <div className="home-split-tile-cta">
+              <Link href="/docs" className="home-cta home-cta--inline">
+                Read the CLI docs →
+              </Link>
             </div>
           </div>
         </div>
