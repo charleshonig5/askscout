@@ -2913,6 +2913,59 @@ a:hover {
   margin: 0;
 }
 
+/* Trust chips row in the hero — sits below the CTA pair and serves
+   as scan-able security signals (Open source / Read-only / No source
+   code). The Open source chip is a link to the repo; the other two
+   are static spans. All three share the same minimal pill recipe so
+   the row reads as a single visual unit. */
+.home-hero-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 0;
+}
+
+.home-hero-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.home-hero-chip svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.home-hero-chip--link {
+  text-decoration: none;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background 0.15s ease;
+}
+
+.home-hero-chip--link:hover {
+  border-color: var(--color-border-hover);
+  color: var(--color-text-primary);
+  background: var(--color-bg-tertiary);
+}
+
+.home-hero-chip--link:hover svg {
+  opacity: 1;
+}
+
 /* ---------- ORBITAL CTA ---------- */
 /* The primary CTA on the page. A small bright "star" orbits the
    button's perimeter via offset-path, plays into the Scout

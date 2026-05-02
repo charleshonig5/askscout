@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { auth, signIn } from "@/auth";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { InstallChip } from "@/components/InstallChip";
@@ -69,9 +70,26 @@ export default async function LandingPage() {
                   users skip the sign-in flow entirely. */}
               <InstallChip />
             </div>
-            <p className="home-hero-meta">
-              Free, read-only, no source code, no secrets.
-            </p>
+            {/* Trust chips — three small pills sitting below the CTA row.
+                "Open source" is a link out to the repo so security-
+                conscious readers can verify the read-only / diffs-only
+                claims directly in code. The other two are static
+                badges. Free / no credit card lives on the CTA button
+                copy + the final CTA section, so it's not duplicated
+                here. */}
+            <div className="home-hero-chips">
+              <a
+                href="https://github.com/charleshonig5/askscout"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="home-hero-chip home-hero-chip--link"
+              >
+                Open source
+                <ArrowUpRight size={10} strokeWidth={1.5} aria-hidden />
+              </a>
+              <span className="home-hero-chip">Read-only</span>
+              <span className="home-hero-chip">No source code</span>
+            </div>
           </div>
         </div>
 
