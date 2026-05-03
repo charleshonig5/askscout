@@ -591,7 +591,7 @@ export default function MarketingHome() {
       <section className="home-section home-section--quiet">
         <div className="home-section-inner home-section-inner--narrow">
           <p className="home-eyebrow">Questions</p>
-          <h2 className="home-section-title">Things people ask.</h2>
+          <h2 className="home-section-title">Frequently asked questions.</h2>
           <div className="home-faq">
             <details className="home-faq-item">
               <summary className="home-faq-question">
