@@ -1,67 +1,67 @@
 /* Plain-text FAQ Q&A pairs. Lives in /lib (no "use client") so both
-   the server-rendered MarketingHome (for JSON-LD FAQPage schema) and
-   the client FAQTabs component can import it. Keeps schema text in
-   lockstep with what users read on the page. */
+   the server-rendered MarketingHome (for JSON-LD) and the client
+   FAQTabs component can import it. Keeps schema text in lockstep
+   with what users read on the page. */
 
 export const FAQ_PLAIN: { q: string; a: string }[] = [
   {
     q: "What is askscout?",
-    a: "askscout is a daily digest tool for developers. It reads your git commits and diffs, then generates a clear summary of what you shipped each day. Think of it as a daily standup that writes itself, built for solo devs and vibe coders.",
+    a: "askscout is a daily digest tool for developers, designed to summarize your code changes into a readable report. It reads your git commits and diffs, then generates a clear summary of what you shipped, what changed, and what you left off. Think of it as a daily standup that writes itself, built for solo developers and vibe coders shipping fast.",
   },
   {
     q: "How does askscout work?",
-    a: "Sign in with GitHub on the web, or run the askscout CLI in any local git repo. askscout reads your commit messages and diffs and returns a structured digest of what shipped, what changed, and what you left off. The web app stores your digest history; the CLI runs entirely on your machine.",
+    a: "Sign in with GitHub on the web, or run the askscout CLI in any local git repo. askscout pulls your commit messages and diffs from your git history, then returns a structured digest covering what shipped, what changed, what's still in progress, and what you left off. The web app stores your digest history under your account. The CLI runs entirely on your machine and stores nothing online.",
   },
   {
     q: "Is askscout free?",
-    a: "Yes. The askscout web app is free to use with a soft cap of 30 digests per day, which is plenty for daily standup or end-of-day reflection. The CLI is free open-source software. With the CLI you bring your own API key, which costs roughly $0.001 to $0.003 per digest depending on repo size.",
+    a: "Yes. The askscout web app is free to use with a soft cap of 30 digests per day across your account, which comfortably covers daily standup notes and end-of-day reviews. The askscout CLI is free open-source software under the MIT license. With the CLI you bring your own API key, which typically costs $0.001 to $0.003 per digest depending on commit volume and repo size.",
   },
   {
     q: "How do I install the askscout CLI?",
-    a: "Install the CLI globally with npm install -g askscout, then run askscout --setup to add your API key. After setup, run askscout in any git repo to generate a digest of recent commits. Full instructions are in the CLI docs.",
+    a: "Install the askscout CLI globally with npm install -g askscout, then run askscout --setup to add your API key (saved with owner-only file permissions in your home folder). After setup, run askscout in any git repo to generate a digest of recent commits. Full installation and usage instructions are in the CLI docs.",
   },
   {
     q: "Can askscout summarize what I shipped this week?",
-    a: "Yes. Run askscout in your repo or open the web app, and it generates a daily digest of what shipped, what changed, and what you left off. Each digest covers commits since the last run, so checking in once a day or once a week gives you a clear summary of what you shipped without scrolling through git log.",
+    a: "Yes. Run askscout in your repo or open the web app, and it generates a daily digest of what shipped, what changed, and what you left off across your recent git commits. Each digest covers commits since the last run, so checking in once a day or once a week gives you a clear summary of what you shipped without scrolling through git log or browsing GitHub activity manually.",
   },
   {
     q: "Does askscout read my source code?",
-    a: "No. askscout reads commit messages and diffs (the lines added and removed in each commit). Full source files, environment variables, secrets, and build artifacts are never accessed. Diffs only contain code that actually changed in a commit, not your entire codebase.",
+    a: "No. askscout reads only commit messages and diffs, meaning the specific lines added and removed in each git commit. Full source files, environment variables, secrets, build artifacts, and untracked files are never accessed or transmitted. A diff only contains code that actually changed in a commit, not your entire codebase or repository state.",
   },
   {
     q: "Is askscout safe to use on my repo?",
-    a: "Yes. askscout's code only ever reads from your repo, never writes to it. The codebase is open source under the MIT license, so you can audit exactly what it does. The web app uses GitHub OAuth, which you can revoke any time at github.com/settings/applications.",
+    a: "Yes. askscout's code only ever reads from your repo, never writes, modifies, or deletes anything. The full codebase is open source under the MIT license, so you can audit exactly what it does and how it handles your data. The web app uses GitHub OAuth, which you can revoke any time at github.com/settings/applications.",
   },
   {
     q: "What data does askscout store?",
-    a: "The web app stores your digest history under your GitHub account in a private database, so you can revisit past digests. The CLI stores nothing online. Locally, the CLI saves your LLM API key in ~/.askscout/config.json (owner-only permissions) and a small per-project state file in .askscout/state.json for pace tracking.",
+    a: "The web app stores your digest history under your GitHub account in a private database, so you can revisit past digests anytime. The askscout CLI stores nothing online, with no telemetry or analytics. Locally, the CLI saves your API key in ~/.askscout/config.json with owner-only file permissions, plus a small per-project state file in .askscout/state.json that tracks pace and run history.",
   },
   {
     q: "Can I delete my askscout data?",
-    a: "Yes. On the web app, Settings → Danger Zone → Delete Account removes every record tied to your user ID. You can also clear individual repo histories without deleting your account. For the CLI, just remove ~/.askscout and any .askscout folder from your project to wipe local state.",
+    a: "Yes. On the web app, Settings → Danger Zone → Delete Account permanently removes every digest, summary, and record tied to your user ID. You can also clear individual repo histories without deleting your account. For the CLI, just remove the ~/.askscout folder from your home directory and any .askscout folder inside your project to wipe local state.",
   },
   {
     q: "Is askscout open source?",
-    a: "Yes. askscout is open source under the MIT license. The full codebase, including the web app, CLI, and core library, is public on GitHub. You can read, fork, audit, or contribute to any part of it.",
+    a: "Yes. askscout is fully open source under the MIT license. The complete codebase, including the web app, the CLI, and the shared core library, is public on GitHub. You can read every line, fork the project, audit how your data is handled, or contribute improvements through pull requests.",
   },
   {
     q: "What's the difference between the web app and the CLI?",
-    a: "The askscout web app runs in your browser, signs in with GitHub, and stores your digest history under your account. The askscout CLI runs locally in any git repo, uses your own API key, and stores nothing online. Same digest format, two surfaces, depending on whether you want a hosted history or a local-only workflow.",
+    a: "The askscout web app runs in your browser, signs in with GitHub, and stores your digest history under your account so you can revisit past summaries. The askscout CLI runs locally in any git repo, uses your own API key, and stores nothing online beyond the calls to your provider. Same digest format and same daily summary, two surfaces, depending on whether you want a hosted history or a fully local workflow.",
   },
   {
     q: "Does askscout work with private repos?",
-    a: "Yes. Once you grant access during GitHub sign-in, the askscout web app generates digests for any repo on your account, public or private. The CLI works on any local git repo by default since it reads from your local clone, so private repo support is automatic.",
+    a: "Yes. Once you grant access during GitHub sign-in, the askscout web app generates digests for any repo on your account, public or private, including organization repositories you have access to. The CLI works on any local git repository by default since it reads from your local clone, so private repo support is automatic with no extra configuration.",
   },
   {
     q: "Does askscout work with GitLab or Bitbucket?",
-    a: "The askscout CLI works with any git repo regardless of host, including GitLab, Bitbucket, and self-hosted git servers, because it reads from your local clone. The web app currently only supports GitHub OAuth.",
+    a: "The askscout CLI works with any git repo regardless of host, including GitLab, Bitbucket, Codeberg, Gitea, and self-hosted git servers, because it reads from your local clone rather than calling a host API. The web app currently only supports GitHub OAuth for sign-in.",
   },
   {
     q: "How accurate is the askscout digest?",
-    a: "The digest is automatically generated, so it can occasionally miss nuance or restate the same change twice. It stays grounded in your actual commit messages and diffs rather than working from memory, which keeps the output close to what you really shipped. For day-to-day tracking, standup notes, and remembering your work, the digest is reliably useful.",
+    a: "The digest is automatically generated from your real git history, so it can occasionally miss nuance or restate the same change twice across sections. It stays grounded in your actual commit messages and diffs rather than working from memory, which keeps the output close to what you really shipped. For day-to-day tracking, standup notes, weekly reviews, and remembering your own work, the digest is reliably useful.",
   },
   {
     q: "Is there a usage limit?",
-    a: "The askscout web app has a soft cap of 30 digests per day across your account, which covers daily standup and end-of-day reviews comfortably. The CLI has no askscout usage limit; the only limits are your provider's rate limits and your own spend on whichever API you connect.",
+    a: "The askscout web app has a soft cap of 30 digests per day across your entire account, which covers daily standup notes, end-of-day reviews, and weekly summaries comfortably. The CLI has no askscout-imposed usage limit, so you can run digests as often as you want. The only limits there are your provider's API rate limits and your own spend on the key you bring.",
   },
 ];
