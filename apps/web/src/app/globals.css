@@ -4646,15 +4646,21 @@ a:hover {
 /* ---------- FOOTER ---------- */
 .home-footer {
   border-top: 1px solid var(--color-border);
-  padding: 48px 32px 32px;
+  padding: 56px 32px 24px;
   background: var(--color-bg-secondary);
 }
 
 .home-footer-inner {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+.home-footer-top {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1fr 2.4fr;
   gap: 48px;
 }
 
@@ -4666,7 +4672,7 @@ a:hover {
 
 .home-footer-logo {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--color-text-primary);
@@ -4686,7 +4692,7 @@ a:hover {
 .home-footer-col {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .home-footer-col-title {
@@ -4700,7 +4706,7 @@ a:hover {
 }
 
 .home-footer-col a {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--color-text-secondary);
   text-decoration: none;
   transition: color 0.15s ease;
@@ -4710,11 +4716,59 @@ a:hover {
   color: var(--color-text-primary);
 }
 
-.home-footer-copy {
-  max-width: 1100px;
-  margin: 32px auto 0;
-  padding-top: 24px;
+/* Giant wordmark band — full-width display-font lockup that visually
+   anchors the footer the way Letta's marquee mark does. We don't
+   marquee since the brand reads cleaner static. */
+.home-footer-wordmark {
+  font-family: var(--font-display);
+  font-size: clamp(72px, 18vw, 220px);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 0.85;
+  color: var(--color-text-primary);
+  text-align: center;
+  padding: 8px 0 0;
   border-top: 1px solid var(--color-border);
+  user-select: none;
+  overflow: hidden;
+}
+
+.home-footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+}
+
+.home-footer-bottom-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.home-footer-bottom-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.home-footer-social {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.home-footer-social:hover {
+  color: var(--color-text-primary);
+}
+
+.home-footer-copy {
   font-size: 12px;
   color: var(--color-text-tertiary);
 }
@@ -4737,7 +4791,7 @@ a:hover {
   .home-split {
     grid-template-columns: 1fr;
   }
-  .home-footer-inner {
+  .home-footer-top {
     grid-template-columns: 1fr;
     gap: 32px;
   }
