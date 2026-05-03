@@ -367,7 +367,7 @@ export default async function LandingPage() {
               </span>
               {"\n"}
               <span className="home-terminal-dim">
-                12 commits · 23 files · today
+                {"   "}12 commits · 23 files · today
               </span>
               {"\n\n"}
               <span className="home-terminal-heading">💬 Vibe Check</span>
@@ -375,15 +375,19 @@ export default async function LandingPage() {
               You shipped the bento grid and tightened the{"\n"}
               homepage copy. Strong forward motion.
               {"\n\n"}
-              <span className="home-terminal-heading">🚀 Shipped (3)</span>
-              {"\n"}
-              • Bento: render real product DOM inside each tile{"\n"}
-              • Marketing: pare bento to four pillar tiles{"\n"}
-              • Marketing/docs: align copy with product behavior
+              <span className="home-terminal-dim">
+                {"   "}+1,284 lines · -612 lines · 12 commits · 23 files
+              </span>
               {"\n\n"}
-              <span className="home-terminal-heading">📋 Left Off</span>
+              <span className="home-terminal-heading">🚀 Shipped  3</span>
               {"\n"}
-              Mid-edit on the CLI section subheader copy.
+              {"  "}• Bento: render real product DOM inside each tile{"\n"}
+              {"  "}• Marketing: pare bento to four pillar tiles{"\n"}
+              {"  "}• Marketing/docs: align copy with product behavior
+              {"\n\n"}
+              <span className="home-terminal-heading">📋 Left Off  1</span>
+              {"\n"}
+              {"  "}• Mid-edit on the CLI section subheader copy
               {"\n\n"}
               <span className="home-terminal-prompt">%</span>{" "}
               <span className="home-terminal-cursor" aria-hidden>
