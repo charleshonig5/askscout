@@ -416,7 +416,7 @@ export default function MarketingHome() {
           <p className="home-eyebrow">Trust</p>
           <h2 className="home-section-title">Private. Secure. Open.</h2>
           <p className="home-section-prose-narrow">
-            Scout reads your diffs to write your digest. That&apos;s the whole interaction.{" "}
+            Scout reads your diffs to write your digest.{" "}
             <Link href="/privacy" className="home-prose-link">
               Read the full privacy policy →
             </Link>
@@ -437,7 +437,8 @@ export default function MarketingHome() {
               </span>
               <h3 className="home-trust-title">Locked down by default.</h3>
               <p className="home-trust-body">
-                LLM keys saved with owner-only permissions. HTTPS everywhere. No telemetry.
+                Read-only on the web. Keys saved owner-only on the CLI. HTTPS everywhere, no
+                telemetry.
               </p>
             </article>
             <article className="home-trust-card">
