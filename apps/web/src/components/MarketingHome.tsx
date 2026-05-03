@@ -436,7 +436,7 @@ export default function MarketingHome() {
               <span className="home-trust-icon" aria-hidden>
                 <ShieldCheck size={20} strokeWidth={1.5} />
               </span>
-              <h3 className="home-trust-title">Locked down by default.</h3>
+              <h3 className="home-trust-title">Your data stays safe.</h3>
               <p className="home-trust-body">
                 Your keys stay private on your machine. Scout can never write to your repo. No
                 tracking, ever.
