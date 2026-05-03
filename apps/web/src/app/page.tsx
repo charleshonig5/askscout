@@ -3,9 +3,9 @@ import Link from "next/link";
 import {
   BookText,
   ChevronDown,
+  Code2,
   EyeOff,
   Forward,
-  Github,
   ScrollText,
   ShieldCheck,
   Sparkles,
@@ -443,7 +443,7 @@ export default async function LandingPage() {
             </article>
             <article className="home-trust-card">
               <span className="home-trust-icon" aria-hidden>
-                <Github size={20} strokeWidth={1.5} />
+                <Code2 size={20} strokeWidth={1.5} />
               </span>
               <h3 className="home-trust-title">Nothing is hidden.</h3>
               <p className="home-trust-body">
