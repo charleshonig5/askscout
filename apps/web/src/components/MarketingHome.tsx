@@ -547,7 +547,7 @@ export default function MarketingHome() {
       <section className="home-section home-section--cta">
         <div className="home-section-inner">
           <h2 className="home-section-title home-section-title--cta">
-            Start your first digest today.
+            Get your first digest now.
           </h2>
           <div className="home-final-cta">
             <div className="home-cta-row">
