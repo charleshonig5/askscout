@@ -1,7 +1,6 @@
 import Link from "next/link";
 import {
   BookText,
-  ChevronDown,
   Code2,
   EyeOff,
   Forward,
