@@ -414,7 +414,7 @@ export default function MarketingHome() {
       <section className="home-section home-section--quiet">
         <div className="home-section-inner">
           <p className="home-eyebrow">Trust</p>
-          <h2 className="home-section-title">Private. Open. Auditable.</h2>
+          <h2 className="home-section-title">Private. Secure. Open.</h2>
           <p className="home-section-prose-narrow">
             Scout reads your diffs to write your digest. That&apos;s the whole interaction.{" "}
             <Link href="/privacy" className="home-prose-link">
@@ -428,9 +428,7 @@ export default function MarketingHome() {
               </span>
               <h3 className="home-trust-title">We don&apos;t see your code.</h3>
               <p className="home-trust-body">
-                Scout reads commit messages and diffs. On the web via the GitHub API, on the CLI
-                via local git. Never source files, env vars, or secrets. Web digests live under
-                your account. The CLI stores nothing online.
+                Scout reads commit messages and diffs. Never source files, env vars, or secrets.
               </p>
             </article>
             <article className="home-trust-card">
@@ -439,9 +437,7 @@ export default function MarketingHome() {
               </span>
               <h3 className="home-trust-title">Locked down by default.</h3>
               <p className="home-trust-body">
-                Your LLM key is stored with owner-only permissions ({" "}
-                <code className="home-trust-code">chmod 600</code>). All network traffic is HTTPS.
-                No telemetry, no analytics, no trackers.
+                LLM keys saved with owner-only permissions. HTTPS everywhere. No telemetry.
               </p>
             </article>
             <article className="home-trust-card">
@@ -450,8 +446,7 @@ export default function MarketingHome() {
               </span>
               <h3 className="home-trust-title">Nothing is hidden.</h3>
               <p className="home-trust-body">
-                The whole codebase is public on GitHub under an MIT license. Read, fork, or audit
-                exactly what Scout touches and stores.
+                MIT licensed. Every line is public on GitHub.
               </p>
               <a
                 href="https://github.com/charleshonig5/askscout"
