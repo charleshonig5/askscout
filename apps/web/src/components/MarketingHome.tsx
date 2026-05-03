@@ -16,8 +16,84 @@ import { HeroStars } from "@/components/HeroStars";
 import { Emoji } from "@/components/Emoji";
 import { MOCK_STREAMING_TEXT } from "@/lib/mock-data";
 
+const FAQ_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "What is askscout?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "askscout is a daily digest tool for developers. It reads what you change in your repos and writes a short report so you remember what you shipped.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How does askscout work?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Sign in with GitHub on the web, or run the CLI in any git repo. askscout reads your commits and diffs, then uses an LLM to summarize what changed into a clean digest you can read, share, or paste into standup.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is askscout free?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. The web app is free with a soft cap of 30 digests per day, which is plenty for daily use. The CLI is free too. With the CLI you bring your own LLM key, which runs about $0.001 to $0.003 per digest.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Does askscout read my source code?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. askscout reads commit messages and diffs (the lines added and removed in each commit). Source files, environment variables, secrets, and build artifacts are never touched.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Does askscout work with private repos?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. Once you grant access during sign-in, askscout can generate digests for any repo on your account, public or private. The CLI works on any local git repo by default.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What's the difference between the web app and the CLI?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "The web app runs in your browser, signs in with GitHub, and stores your digest history under your account. The CLI runs locally in any git repo, brings your own LLM key, and stores nothing online. Same product, two surfaces.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is askscout safe to use on my repo?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. askscout never writes to your repo, only reads it. The codebase is open source under MIT, so you can audit exactly what it does. You can revoke GitHub access at any time.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can I delete my askscout data?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. Settings → Danger Zone → Delete Account removes every record tied to your user ID. You can also clear individual repo histories without deleting your account.",
+      },
+    },
+  ],
+};
+
 export default function MarketingHome() {
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
+      />
     <main className="home">
       {/* ===========================================================
           NAV — minimal top bar with section anchors + theme toggle.
@@ -519,83 +595,97 @@ export default function MarketingHome() {
           <div className="home-faq">
             <details className="home-faq-item">
               <summary className="home-faq-question">
-                <span>Does Scout read my source code?</span>
+                <span>What is askscout?</span>
                 <ChevronDown size={16} strokeWidth={1.5} className="home-faq-chevron" aria-hidden />
               </summary>
               <div className="home-faq-answer">
                 <p>
-                  No. Scout reads commit messages and diffs, which are the lines added and removed
-                  in each commit. Source files, env vars, secrets, and build artifacts never get
-                  touched.
+                  askscout is a daily digest tool for developers. It reads what you change in your
+                  repos and writes a short report so you remember what you shipped.
                 </p>
               </div>
             </details>
 
             <details className="home-faq-item">
               <summary className="home-faq-question">
-                <span>What does &ldquo;read-only&rdquo; mean exactly?</span>
+                <span>How does askscout work?</span>
                 <ChevronDown size={16} strokeWidth={1.5} className="home-faq-chevron" aria-hidden />
               </summary>
               <div className="home-faq-answer">
                 <p>
-                  The OAuth scope we request is <code>read:user repo</code>. That gives Scout
-                  permission to read your profile and your repositories. We never write, modify, or
-                  delete anything in any repo.
+                  Sign in with GitHub on the web, or run the CLI in any git repo. askscout reads
+                  your commits and diffs, then uses an LLM to summarize what changed into a clean
+                  digest you can read, share, or paste into standup.
                 </p>
               </div>
             </details>
 
             <details className="home-faq-item">
               <summary className="home-faq-question">
-                <span>How much does it cost?</span>
+                <span>Is askscout free?</span>
                 <ChevronDown size={16} strokeWidth={1.5} className="home-faq-chevron" aria-hidden />
               </summary>
               <div className="home-faq-answer">
                 <p>
-                  The web app is free. There&apos;s a soft cap at 30 digests per day across your
-                  account to keep API costs sane, which is plenty for a daily reader. The CLI is
-                  free too. With the CLI you bring your own LLM API key, which runs about $0.001
-                  to $0.003 per digest.
+                  Yes. The web app is free with a soft cap of 30 digests per day, which is plenty
+                  for daily use. The CLI is free too. With the CLI you bring your own LLM key,
+                  which runs about $0.001 to $0.003 per digest.
                 </p>
               </div>
             </details>
 
             <details className="home-faq-item">
               <summary className="home-faq-question">
-                <span>Does this work for private repos?</span>
+                <span>Does askscout read my source code?</span>
                 <ChevronDown size={16} strokeWidth={1.5} className="home-faq-chevron" aria-hidden />
               </summary>
               <div className="home-faq-answer">
                 <p>
-                  Yes. As long as you grant access during sign-in, Scout can generate digests for
-                  any repo on your account, public or private.
+                  No. askscout reads commit messages and diffs (the lines added and removed in
+                  each commit). Source files, environment variables, secrets, and build artifacts
+                  are never touched.
                 </p>
               </div>
             </details>
 
             <details className="home-faq-item">
               <summary className="home-faq-question">
-                <span>Can I delete my data?</span>
+                <span>Does askscout work with private repos?</span>
                 <ChevronDown size={16} strokeWidth={1.5} className="home-faq-chevron" aria-hidden />
               </summary>
               <div className="home-faq-answer">
                 <p>
-                  Yes. Settings &rarr; Danger Zone &rarr; Delete Account removes every record tied
-                  to your user ID. You can also clear individual repo histories without deleting
-                  your account.
+                  Yes. Once you grant access during sign-in, askscout can generate digests for any
+                  repo on your account, public or private. The CLI works on any local git repo by
+                  default.
                 </p>
               </div>
             </details>
 
             <details className="home-faq-item">
               <summary className="home-faq-question">
-                <span>Why GitHub OAuth and not API keys?</span>
+                <span>What&apos;s the difference between the web app and the CLI?</span>
                 <ChevronDown size={16} strokeWidth={1.5} className="home-faq-chevron" aria-hidden />
               </summary>
               <div className="home-faq-answer">
                 <p>
-                  GitHub OAuth means you never have to manage tokens. Scout never sees your
-                  password. You can revoke access any time at{" "}
+                  The web app runs in your browser, signs in with GitHub, and stores your digest
+                  history under your account. The CLI runs locally in any git repo, brings your
+                  own LLM key, and stores nothing online. Same product, two surfaces.
+                </p>
+              </div>
+            </details>
+
+            <details className="home-faq-item">
+              <summary className="home-faq-question">
+                <span>Is askscout safe to use on my repo?</span>
+                <ChevronDown size={16} strokeWidth={1.5} className="home-faq-chevron" aria-hidden />
+              </summary>
+              <div className="home-faq-answer">
+                <p>
+                  Yes. askscout never writes to your repo, only reads it. The codebase is open
+                  source under MIT, so you can audit exactly what it does. You can revoke GitHub
+                  access at any time at{" "}
                   <a
                     href="https://github.com/settings/applications"
                     target="_blank"
@@ -611,34 +701,14 @@ export default function MarketingHome() {
 
             <details className="home-faq-item">
               <summary className="home-faq-question">
-                <span>What happens if I clear my history?</span>
+                <span>Can I delete my askscout data?</span>
                 <ChevronDown size={16} strokeWidth={1.5} className="home-faq-chevron" aria-hidden />
               </summary>
               <div className="home-faq-answer">
                 <p>
-                  Past digests get deleted from our database. Your streak count and personality
-                  archetype recompute from whatever digests are still on file. Clearing history
-                  doesn&apos;t sign you out or revoke GitHub access.
-                </p>
-              </div>
-            </details>
-
-            <details className="home-faq-item">
-              <summary className="home-faq-question">
-                <span>Who built this and why?</span>
-                <ChevronDown size={16} strokeWidth={1.5} className="home-faq-chevron" aria-hidden />
-              </summary>
-              <div className="home-faq-answer">
-                <p>
-                  Charles Honig built askscout because AI coding tools made him forget what he
-                  shipped.{" "}
-                  <Link
-                    href="/articles/the-hidden-cost-of-vibe-coding"
-                    className="home-prose-link"
-                  >
-                    Read the full piece
-                  </Link>{" "}
-                  for the longer version.
+                  Yes. Settings &rarr; Danger Zone &rarr; Delete Account removes every record tied
+                  to your user ID. You can also clear individual repo histories without deleting
+                  your account.
                 </p>
               </div>
             </details>
@@ -713,5 +783,6 @@ export default function MarketingHome() {
         <div className="home-footer-copy">© 2026 askscout</div>
       </footer>
     </main>
+    </>
   );
 }

@@ -4516,11 +4516,21 @@ a:hover {
   display: flex;
   flex-direction: column;
   margin-top: 32px;
-  border-top: 1px solid var(--color-border);
+  padding: 8px 24px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border-hover);
+  background: var(--color-modal-surface);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
 }
 
 .home-faq-item {
   border-bottom: 1px solid var(--color-border);
+}
+
+.home-faq-item:last-child {
+  border-bottom: none;
 }
 
 /* Hide the native disclosure arrows on both Webkit and modern
