@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const metadata = {
-  title: "Articles | askscout",
+  title: "Articles | AskScout",
   description: "Writing on vibe coding, AI-assisted development, and the daily-digest workflow.",
 };
 
@@ -52,7 +52,7 @@ export default function ArticlesIndexPage() {
     <main className="page">
       <nav className="home-nav" aria-label="Site">
         <Link href="/" className="home-nav-logo">
-          askscout
+          AskScout
         </Link>
         <div className="home-nav-links">
           <Link href="/articles">Articles</Link>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const metadata = {
-  title: "The Hidden Cost of Vibe Coding | askscout",
+  title: "The Hidden Cost of Vibe Coding | AskScout",
   description:
     "AI coding tools sped us up. They also made it harder to remember what we actually built. Why I think the next big workflow problem is digesting your own code.",
   openGraph: {
@@ -24,7 +24,7 @@ export default function ManifestoPage() {
     <main className="page">
       <nav className="home-nav" aria-label="Site">
         <Link href="/" className="home-nav-logo">
-          askscout
+          AskScout
         </Link>
         <div className="home-nav-links">
           <Link href="/articles">Articles</Link>
@@ -131,7 +131,7 @@ export default function ManifestoPage() {
             changed, what kept shifting, where you left off.
           </p>
           <p className="public-text">
-            That&apos;s askscout. Run it as a CLI, or sign in to the web app at{" "}
+            That&apos;s AskScout. Run it as a CLI, or sign in to the web app at{" "}
             <Link href="/">askscout.dev</Link>. It reads your repo, sends only the diffs to the LLM
             you choose, and writes you a digest worth reading. Free. Sets up in about ten seconds.
           </p>
@@ -146,7 +146,7 @@ export default function ManifestoPage() {
         <section className="public-section">
           <div className="article-cta">
             <Link href="/" className="btn btn-primary">
-              Try askscout
+              Try AskScout
             </Link>
             <Link href="/docs" className="article-cta-secondary">
               Or read the docs →

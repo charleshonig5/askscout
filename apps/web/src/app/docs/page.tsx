@@ -2,8 +2,8 @@ import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const metadata = {
-  title: "Docs | askscout",
-  description: "Guides, setup instructions, and documentation for askscout.",
+  title: "Docs | AskScout",
+  description: "Guides, setup instructions, and documentation for AskScout.",
 };
 
 export default function DocsPage() {
@@ -11,7 +11,7 @@ export default function DocsPage() {
     <main className="page">
       <nav className="home-nav" aria-label="Site">
         <Link href="/" className="home-nav-logo">
-          askscout
+          AskScout
         </Link>
         <div className="home-nav-links">
           <Link href="/articles">Articles</Link>

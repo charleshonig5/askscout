@@ -46,7 +46,7 @@ export default function MarketingHome() {
           hero. =========================================================== */}
       <nav className="home-nav" aria-label="Site">
         <Link href="/" className="home-nav-logo">
-          askscout
+          AskScout
         </Link>
         <div className="home-nav-links">
           <Link href="/articles">Articles</Link>
@@ -69,7 +69,7 @@ export default function MarketingHome() {
             Remember what you <em>actually</em> shipped.
           </h1>
           <p className="home-hero-subtitle">
-            AI wrote half your code this week. By Friday, half of that is a blur. askscout reads
+            AI wrote half your code this week. By Friday, half of that is a blur. AskScout reads
             your repo and writes you a plain-English digest of what you actually shipped, what
             changed, and where to pick back up.
           </p>
@@ -85,7 +85,7 @@ export default function MarketingHome() {
                 }}
               >
                 <button type="submit" className="home-cta home-cta--orbital">
-                  <span className="home-cta-label">Try askscout free</span>
+                  <span className="home-cta-label">Try AskScout free</span>
                   <span className="home-cta-orbit" aria-hidden />
                 </button>
               </form>
@@ -373,7 +373,7 @@ export default function MarketingHome() {
             Same product, as a CLI on your machine. Bring your own LLM key. Always stays fully
             local.
           </p>
-          <div className="home-terminal" role="img" aria-label="askscout running in a terminal">
+          <div className="home-terminal" role="img" aria-label="AskScout running in a terminal">
             <div className="home-terminal-chrome">
               <span className="home-terminal-dot home-terminal-dot--red" />
               <span className="home-terminal-dot home-terminal-dot--yellow" />
@@ -558,7 +558,7 @@ export default function MarketingHome() {
                 }}
               >
                 <button type="submit" className="home-cta home-cta--orbital">
-                  <span className="home-cta-label">Try askscout free</span>
+                  <span className="home-cta-label">Try AskScout free</span>
                   <span className="home-cta-orbit" aria-hidden />
                 </button>
               </form>
@@ -577,7 +577,7 @@ export default function MarketingHome() {
         <div className="home-footer-inner">
           <div className="home-footer-top">
             <div className="home-footer-brand">
-              <span className="home-footer-logo">askscout</span>
+              <span className="home-footer-logo">AskScout</span>
               <span className="home-footer-tagline">The daily digest for vibe coders.</span>
             </div>
             <div className="home-footer-cols">
@@ -608,7 +608,7 @@ export default function MarketingHome() {
           </div>
 
           <div className="home-footer-wordmark" aria-hidden>
-            askscout
+            AskScout
           </div>
 
           <div className="home-footer-bottom">
@@ -627,7 +627,7 @@ export default function MarketingHome() {
               </a>
             </div>
             <div className="home-footer-bottom-right">
-              <span className="home-footer-copy">© 2026 askscout</span>
+              <span className="home-footer-copy">© 2026 AskScout</span>
               <ThemeToggle />
             </div>
           </div>

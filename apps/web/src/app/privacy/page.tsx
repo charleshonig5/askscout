@@ -2,9 +2,9 @@ import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const metadata = {
-  title: "Privacy | askscout",
+  title: "Privacy | AskScout",
   description:
-    "What data askscout collects, where it's stored, who it's shared with, and how to delete it.",
+    "What data AskScout collects, where it's stored, who it's shared with, and how to delete it.",
 };
 
 export default function PrivacyPage() {
@@ -12,7 +12,7 @@ export default function PrivacyPage() {
     <main className="page">
       <nav className="home-nav" aria-label="Site">
         <Link href="/" className="home-nav-logo">
-          askscout
+          AskScout
         </Link>
         <div className="home-nav-links">
           <Link href="/articles">Articles</Link>
@@ -39,9 +39,9 @@ export default function PrivacyPage() {
         </section>
 
         <section className="public-section">
-          <h2 className="public-section-title">Who runs askscout</h2>
+          <h2 className="public-section-title">Who runs AskScout</h2>
           <p className="public-text">
-            askscout is built and operated by Charles Honig. Questions, requests, or concerns about
+            AskScout is built and operated by Charles Honig. Questions, requests, or concerns about
             your data go to <strong>charleshonigdesign@gmail.com</strong>.
           </p>
         </section>
@@ -49,7 +49,7 @@ export default function PrivacyPage() {
         <section className="public-section">
           <h2 className="public-section-title">What we collect when you sign in</h2>
           <p className="public-text">
-            Sign-in uses GitHub OAuth. When you authorize askscout, GitHub gives us:
+            Sign-in uses GitHub OAuth. When you authorize AskScout, GitHub gives us:
           </p>
           <ul className="public-list">
             <li>Your GitHub user ID, username, display name, email, and avatar URL</li>
@@ -59,7 +59,7 @@ export default function PrivacyPage() {
             The OAuth scope we request is <code className="inline-code">read:user repo</code>. The{" "}
             <code className="inline-code">repo</code> portion of that scope is broad. GitHub
             doesn&apos;t offer a read-only repository scope, so granting access necessarily includes
-            permissions we don&apos;t use (like writing to repos). askscout only ever reads commits
+            permissions we don&apos;t use (like writing to repos). AskScout only ever reads commits
             and diffs; it does not create, modify, or delete anything in your repos.
           </p>
           <p className="public-text">
@@ -105,7 +105,7 @@ export default function PrivacyPage() {
         <section className="public-section">
           <h2 className="public-section-title">What gets sent to GitHub and the LLM provider</h2>
           <p className="public-text">
-            To generate a digest, askscout reads commits and diffs from your repository through the
+            To generate a digest, AskScout reads commits and diffs from your repository through the
             GitHub API and sends them to a large language model to summarize. Specifically:
           </p>
           <ul className="public-list">
@@ -123,7 +123,7 @@ export default function PrivacyPage() {
             </li>
           </ul>
           <p className="public-text">
-            The LLM provider processes this content to produce the digest text. Treat askscout the
+            The LLM provider processes this content to produce the digest text. Treat AskScout the
             same way you&apos;d treat any code-sharing tool: don&apos;t use it on repositories that
             contain credentials, secrets, or content you wouldn&apos;t paste into another LLM.
           </p>
@@ -150,7 +150,7 @@ export default function PrivacyPage() {
         <section className="public-section">
           <h2 className="public-section-title">Third parties</h2>
           <p className="public-text">
-            askscout uses the following services to operate. Each has its own privacy policy:
+            AskScout uses the following services to operate. Each has its own privacy policy:
           </p>
           <ul className="public-list">
             <li>
@@ -176,7 +176,7 @@ export default function PrivacyPage() {
         <section className="public-section">
           <h2 className="public-section-title">Cookies</h2>
           <p className="public-text">
-            askscout sets one essential cookie, the NextAuth session cookie, used solely to keep you
+            AskScout sets one essential cookie, the NextAuth session cookie, used solely to keep you
             signed in. It is HTTP-only and Secure-flagged. We do not set marketing or analytics
             cookies.
           </p>
@@ -196,7 +196,7 @@ export default function PrivacyPage() {
             <li>
               <strong>Delete your account</strong>: Settings → Danger Zone → Delete Account. This
               removes every record tied to your user ID from our database. You&apos;ll need to sign
-              in with GitHub again to use askscout afterwards
+              in with GitHub again to use AskScout afterwards
             </li>
             <li>
               <strong>Revoke GitHub access</strong>: at{" "}
@@ -231,7 +231,7 @@ export default function PrivacyPage() {
         <section className="public-section">
           <h2 className="public-section-title">Children</h2>
           <p className="public-text">
-            askscout is not directed at children under 13 and we do not knowingly collect data from
+            AskScout is not directed at children under 13 and we do not knowingly collect data from
             them. If you believe a child has signed up, contact us and we will delete the account.
           </p>
         </section>

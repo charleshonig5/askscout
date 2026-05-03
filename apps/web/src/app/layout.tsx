@@ -26,9 +26,9 @@ const pridi = Pridi({
 });
 
 export const metadata: Metadata = {
-  title: "askscout, the daily digest for vibe coders",
+  title: "AskScout, the daily digest for vibe coders",
   description:
-    "AI wrote half your code this week. askscout reads your repo and tells you, in plain English, what you actually shipped.",
+    "AI wrote half your code this week. AskScout reads your repo and tells you, in plain English, what you actually shipped.",
   keywords: [
     "vibe coding",
     "vibe coders",
@@ -39,18 +39,18 @@ export const metadata: Metadata = {
     "daily standup",
   ],
   openGraph: {
-    title: "askscout, the daily digest for vibe coders",
+    title: "AskScout, the daily digest for vibe coders",
     description:
-      "AI wrote half your code this week. askscout reads your repo and tells you what you actually shipped.",
+      "AI wrote half your code this week. AskScout reads your repo and tells you what you actually shipped.",
     url: "https://askscout.dev",
-    siteName: "askscout",
+    siteName: "AskScout",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "askscout, the daily digest for vibe coders",
+    title: "AskScout, the daily digest for vibe coders",
     description:
-      "AI wrote half your code this week. askscout reads your repo and tells you what you actually shipped.",
+      "AI wrote half your code this week. AskScout reads your repo and tells you what you actually shipped.",
   },
 };
 

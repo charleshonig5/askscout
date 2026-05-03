@@ -18,7 +18,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
       <button className="header-icon-btn sidebar-toggle" onClick={onMenuToggle} aria-label="Menu">
         <Menu size={16} />
       </button>
-      <span className="logo">askscout</span>
+      <span className="logo">AskScout</span>
     </header>
   );
 }

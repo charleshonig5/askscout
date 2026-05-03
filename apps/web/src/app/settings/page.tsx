@@ -321,7 +321,7 @@ export default function SettingsPage() {
                 <Emoji name="defaultRepo" size={20} />
                 <h2>Default Repository</h2>
               </div>
-              <p className="settings-section-desc">The repo that loads when you open askscout.</p>
+              <p className="settings-section-desc">The repo that loads when you open AskScout.</p>
             </header>
             <RepoSelector
               // When no default is saved (new user), fall back to
