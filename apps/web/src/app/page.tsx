@@ -360,7 +360,7 @@ export default async function LandingPage() {
               <span className="home-terminal-title">askscout — zsh</span>
             </div>
             <pre className="home-terminal-body">
-              <span className="home-terminal-prompt">$</span> askscout
+              <span className="home-terminal-prompt">%</span> askscout
               {"\n\n"}
               <span className="home-terminal-heading">
                 🔍 Scout scanned askscout
@@ -385,9 +385,9 @@ export default async function LandingPage() {
               {"\n"}
               Mid-edit on the CLI section subheader copy.
               {"\n\n"}
-              <span className="home-terminal-prompt">$</span>{" "}
+              <span className="home-terminal-prompt">%</span>{" "}
               <span className="home-terminal-cursor" aria-hidden>
-                ▮
+                █
               </span>
             </pre>
           </div>
