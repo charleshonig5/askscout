@@ -435,6 +435,17 @@ export default function MarketingHome() {
             </article>
             <article className="home-trust-card">
               <span className="home-trust-icon" aria-hidden>
+                <ShieldCheck size={20} strokeWidth={1.5} />
+              </span>
+              <h3 className="home-trust-title">Locked down by default.</h3>
+              <p className="home-trust-body">
+                LLM keys are saved with file-system protection so other apps can&apos;t read them.
+                The web app only ever calls GitHub&apos;s read endpoints, auditable in the open
+                repo. No telemetry, no analytics.
+              </p>
+            </article>
+            <article className="home-trust-card">
+              <span className="home-trust-icon" aria-hidden>
                 <Code2 size={20} strokeWidth={1.5} />
               </span>
               <h3 className="home-trust-title">Nothing is hidden.</h3>
@@ -451,17 +462,6 @@ export default function MarketingHome() {
                 View on GitHub
                 <Forward size={10} strokeWidth={1.5} aria-hidden />
               </a>
-            </article>
-            <article className="home-trust-card">
-              <span className="home-trust-icon" aria-hidden>
-                <ShieldCheck size={20} strokeWidth={1.5} />
-              </span>
-              <h3 className="home-trust-title">Locked down by default.</h3>
-              <p className="home-trust-body">
-                LLM keys are saved with file-system protection so other apps can&apos;t read them.
-                The web app only ever calls GitHub&apos;s read endpoints, auditable in the open
-                repo. No telemetry, no analytics.
-              </p>
             </article>
           </div>
         </div>
