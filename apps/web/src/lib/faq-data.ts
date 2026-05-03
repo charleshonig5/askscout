@@ -25,10 +25,6 @@ export const FAQ_PLAIN: { q: string; a: string }[] = [
     a: "askscout solves exactly this. Instead of scrolling git log or browsing GitHub activity, askscout summarizes your commits into a daily digest you can read, share, or paste into standup. It groups changes by what shipped, what changed, and what you left off, so you never lose track of progress across busy AI coding sessions.",
   },
   {
-    q: "How do I summarize git commits with AI?",
-    a: "askscout uses LLMs from Anthropic (Claude) or OpenAI (GPT) to turn raw git commits and diffs into readable summaries. The CLI runs locally with your own API key. The web app handles the LLM call for you using your GitHub account. Both produce the same daily digest format covering shipped work, changes, and unfinished threads.",
-  },
-  {
     q: "Does askscout read my source code?",
     a: "No. askscout reads commit messages and diffs (the lines added and removed in each commit). Full source files, environment variables, secrets, and build artifacts are never accessed. Diffs only contain code that actually changed in a commit, not your entire codebase.",
   },

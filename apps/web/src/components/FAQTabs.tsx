@@ -66,17 +66,6 @@ const TABS: FAQTab[] = [
           </p>
         ),
       },
-      {
-        q: "How do I summarize git commits with AI?",
-        a: (
-          <p>
-            askscout uses LLMs from Anthropic (Claude) or OpenAI (GPT) to turn raw git commits
-            and diffs into readable summaries. The CLI runs locally with your own API key. The
-            web app handles the LLM call for you using your GitHub account. Both produce the
-            same daily digest format covering shipped work, changes, and unfinished threads.
-          </p>
-        ),
-      },
     ],
   },
   {
