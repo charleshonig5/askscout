@@ -1,6 +1,15 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { BookText, ChevronDown, Forward, ScrollText, Sparkles } from "lucide-react";
+import {
+  BookText,
+  ChevronDown,
+  EyeOff,
+  Forward,
+  Github,
+  ScrollText,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { auth, signIn } from "@/auth";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { InstallChip } from "@/components/InstallChip";
@@ -404,24 +413,65 @@ export default async function LandingPage() {
       </section>
 
       {/* ===========================================================
-          PRIVACY — short, declarative. One paragraph + link to the
-          full policy. Not a section that needs to overwhelm. =========================================================== */}
+          TRUST — three pillars (privacy, open source, security)
+          that compound credibility. Each card title is a plain
+          claim a non-technical reader can grok; body backs it
+          with verifiable specifics grounded in the actual repo
+          (github.ts read endpoints, MIT license across all
+          packages, chmod 600 on CLI key file). =========================================================== */}
       <section className="home-section home-section--quiet">
-        <div className="home-section-inner home-section-inner--narrow">
-          <p className="home-eyebrow">Privacy</p>
-          <h2 className="home-section-title">
-            Read-only. Diffs only.
-            <br />
-            Never your secrets.
-          </h2>
+        <div className="home-section-inner">
+          <p className="home-eyebrow">Trust</p>
+          <h2 className="home-section-title">Private. Open. Auditable.</h2>
           <p className="home-section-prose-narrow">
-            askscout reads commit messages and diffs. That&apos;s it. No source files, no env vars,
-            no anything-not-in-a-commit. The web app keeps your digests under your GitHub user. The
-            CLI keeps nothing online.{" "}
+            Scout reads your diffs to write your digest. That&apos;s the whole interaction.{" "}
             <Link href="/privacy" className="home-prose-link">
-              Read the full policy →
+              Read the full privacy policy →
             </Link>
           </p>
+          <div className="home-trust-grid">
+            <article className="home-trust-card">
+              <span className="home-trust-icon" aria-hidden>
+                <EyeOff size={20} strokeWidth={1.5} />
+              </span>
+              <h3 className="home-trust-title">We don&apos;t see your code.</h3>
+              <p className="home-trust-body">
+                Scout reads commit messages and diffs. On the web via the GitHub API, on the CLI
+                via local git. Never source files, env vars, or secrets. Web digests live under
+                your account. The CLI stores nothing online.
+              </p>
+            </article>
+            <article className="home-trust-card">
+              <span className="home-trust-icon" aria-hidden>
+                <Github size={20} strokeWidth={1.5} />
+              </span>
+              <h3 className="home-trust-title">Nothing is hidden.</h3>
+              <p className="home-trust-body">
+                The whole codebase is public on GitHub under an MIT license. Read, fork, or audit
+                exactly what Scout touches and stores.
+              </p>
+              <a
+                href="https://github.com/charleshonig5/askscout"
+                target="_blank"
+                rel="noreferrer"
+                className="home-trust-link"
+              >
+                View on GitHub
+                <Forward size={10} strokeWidth={1.5} aria-hidden />
+              </a>
+            </article>
+            <article className="home-trust-card">
+              <span className="home-trust-icon" aria-hidden>
+                <ShieldCheck size={20} strokeWidth={1.5} />
+              </span>
+              <h3 className="home-trust-title">Locked down by default.</h3>
+              <p className="home-trust-body">
+                LLM keys are saved with file-system protection so other apps can&apos;t read them.
+                The web app only ever calls GitHub&apos;s read endpoints, auditable in the open
+                repo. No telemetry, no analytics.
+              </p>
+            </article>
+          </div>
         </div>
       </section>
 
