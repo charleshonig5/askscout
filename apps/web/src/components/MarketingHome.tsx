@@ -13,7 +13,8 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { InstallChip } from "@/components/InstallChip";
 import { HeroStars } from "@/components/HeroStars";
 import { Emoji } from "@/components/Emoji";
-import FAQTabs, { FAQ_PLAIN } from "@/components/FAQTabs";
+import FAQTabs from "@/components/FAQTabs";
+import { FAQ_PLAIN } from "@/lib/faq-data";
 import { MOCK_STREAMING_TEXT } from "@/lib/mock-data";
 
 /* JSON-LD FAQPage schema generated from FAQ_PLAIN so the structured
