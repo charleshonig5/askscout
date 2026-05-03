@@ -66,7 +66,7 @@ export default function MarketingHome() {
         <div className="home-hero-inner">
           <p className="home-hero-eyebrow">The daily digest for vibe coders</p>
           <h1 className="home-hero-title">
-            Remember what you <em>actually</em> shipped.
+            Your morning code briefing in 10 seconds.
           </h1>
           <p className="home-hero-subtitle">
             AI wrote half your code this week. By Friday, half of that is a blur. AskScout reads
