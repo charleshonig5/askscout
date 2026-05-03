@@ -416,7 +416,7 @@ export default function MarketingHome() {
           <p className="home-eyebrow">Trust</p>
           <h2 className="home-section-title">Private. Secure. Open.</h2>
           <p className="home-section-prose-narrow">
-            Scout reads your diffs to write your digest.{" "}
+            Scout reads what you change to write your daily digest.{" "}
             <Link href="/privacy" className="home-prose-link">
               Read the full privacy policy →
             </Link>
@@ -428,7 +428,8 @@ export default function MarketingHome() {
               </span>
               <h3 className="home-trust-title">We don&apos;t see your code.</h3>
               <p className="home-trust-body">
-                Scout reads commit messages and diffs. Never source files, env vars, or secrets.
+                Scout only looks at what changed in your repo. Not your full codebase, your
+                secrets, or your config.
               </p>
             </article>
             <article className="home-trust-card">
@@ -437,8 +438,8 @@ export default function MarketingHome() {
               </span>
               <h3 className="home-trust-title">Locked down by default.</h3>
               <p className="home-trust-body">
-                Read-only on the web. Keys saved owner-only on the CLI. HTTPS everywhere, no
-                telemetry.
+                Your keys stay private on your machine. Scout can never write to your repo. No
+                tracking, ever.
               </p>
             </article>
             <article className="home-trust-card">
@@ -447,7 +448,7 @@ export default function MarketingHome() {
               </span>
               <h3 className="home-trust-title">Nothing is hidden.</h3>
               <p className="home-trust-body">
-                MIT licensed. Every line is public on GitHub.
+                Every line of Scout is public on GitHub. Free to read, fork, or build on.
               </p>
               <a
                 href="https://github.com/charleshonig5/askscout"
