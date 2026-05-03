@@ -439,9 +439,9 @@ export default function MarketingHome() {
               </span>
               <h3 className="home-trust-title">Locked down by default.</h3>
               <p className="home-trust-body">
-                LLM keys are saved with file-system protection so other apps can&apos;t read them.
-                The web app only ever calls GitHub&apos;s read endpoints, auditable in the open
-                repo. No telemetry, no analytics.
+                Your LLM key is stored with owner-only permissions ({" "}
+                <code className="home-trust-code">chmod 600</code>). All network traffic is HTTPS.
+                No telemetry, no analytics, no trackers.
               </p>
             </article>
             <article className="home-trust-card">
