@@ -16,7 +16,7 @@ import { HeroStars } from "@/components/HeroStars";
 import { Emoji } from "@/components/Emoji";
 import { MOCK_STREAMING_TEXT } from "@/lib/mock-data";
 
-export default async function MarketingHome() {
+export default function MarketingHome() {
   return (
     <main className="home">
       {/* ===========================================================
