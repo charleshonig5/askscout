@@ -416,7 +416,7 @@ export default function MarketingHome() {
           <p className="home-eyebrow">Trust</p>
           <h2 className="home-section-title">Private. Secure. Open.</h2>
           <p className="home-section-prose-narrow">
-            Scout reads what you change to write your daily digest.{" "}
+            You stay in control of your code, your keys, and your data.{" "}
             <Link href="/privacy" className="home-prose-link">
               Read the full privacy policy →
             </Link>
