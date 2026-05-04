@@ -583,12 +583,18 @@ export default function MarketingHome() {
             <div className="home-footer-cols">
               <div className="home-footer-col">
                 <span className="home-footer-col-title">Product</span>
-                <Link href="/home">Web app</Link>
                 <Link href="/dashboard">Dashboard</Link>
                 <Link href="/docs">CLI</Link>
               </div>
               <div className="home-footer-col">
-                <span className="home-footer-col-title">Developers</span>
+                <span className="home-footer-col-title">Writing</span>
+                <Link href="/articles">Articles</Link>
+                <Link href="/articles/the-hidden-cost-of-vibe-coding">
+                  The Hidden Cost of Vibe Coding
+                </Link>
+              </div>
+              <div className="home-footer-col">
+                <span className="home-footer-col-title">Open source</span>
                 <a
                   href="https://github.com/charleshonig5/askscout"
                   target="_blank"
@@ -596,13 +602,7 @@ export default function MarketingHome() {
                 >
                   GitHub
                 </a>
-                <Link href="/docs">Documentation</Link>
                 <Link href="/privacy">Privacy</Link>
-              </div>
-              <div className="home-footer-col">
-                <span className="home-footer-col-title">Writing</span>
-                <Link href="/articles">Articles</Link>
-                <Link href="/articles/the-hidden-cost-of-vibe-coding">Manifesto</Link>
               </div>
             </div>
           </div>
