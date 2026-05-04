@@ -2095,16 +2095,25 @@ a:hover {
 .health-card-fill {
   height: 100%;
   border-radius: 60px;
-  /* Bars fill right after the Codebase Health card cascades in.
-     Reveal: animationDelay 700ms + statsReveal 500ms = card settled
-     at 1200ms. Bar delay 1300ms picks up immediately after, 800ms
-     duration finishes the fill at 2100ms. */
+  /* Animate via transform: scaleX() instead of width so the keyframe
+     never has to override the inline width (CSS spec ignores
+     !important in @keyframes, which made width-based animations
+     fight the inline style). transform-origin: left grows the bar
+     leftward from the start of the rail.
+
+     Timing: card cascade settles at 1200ms (animationDelay 700ms +
+     statsReveal 500ms). Bar starts filling at 1300ms, finishes at
+     2100ms — clear visual sequence after the card lands. */
+  transform-origin: left;
   animation: healthBarFill 0.8s ease-out 1.3s both;
 }
 
 @keyframes healthBarFill {
   from {
-    width: 0% !important;
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
   }
 }
 
