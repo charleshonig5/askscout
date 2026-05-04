@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata = {
   title: "How to Summarize Your Git Commits (With or Without AI) | AskScout",
@@ -99,8 +100,16 @@ export default function SummarizeGitCommitsPage() {
             actually happened.
           </p>
           <p className="public-text">
-            That is the gap a summary fills. Below are the three real ways to close it, ordered
-            from no-extra-tooling to fully-automated.
+            That is the gap a summary fills. (For the broader argument about why this is a
+            problem now,{" "}
+            <Link
+              href="/articles/the-hidden-cost-of-vibe-coding"
+              className="home-prose-link"
+            >
+              The Hidden Cost of Vibe Coding
+            </Link>{" "}
+            covers the why.) Below are the three real ways to close it, ordered from
+            no-extra-tooling to fully-automated.
           </p>
         </section>
 
@@ -252,6 +261,7 @@ Use plain English. No file paths. 1-2 short sentences per item.
           </div>
         </section>
       </article>
+      <SiteFooter />
     </main>
   );
 }

@@ -3,6 +3,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { InstallChip } from "@/components/InstallChip";
 import { CommandChip } from "@/components/CommandChip";
 import DocsFAQ from "@/components/DocsFAQ";
+import { SiteFooter } from "@/components/SiteFooter";
 import { DOCS_FAQ_PLAIN } from "@/lib/docs-faq-data";
 
 export const metadata = {
@@ -238,6 +239,7 @@ export default function DocsPage() {
           </Link>
         </div>
       </div>
+      <SiteFooter />
     </main>
   );
 }

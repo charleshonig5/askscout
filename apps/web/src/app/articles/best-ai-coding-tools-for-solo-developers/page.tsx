@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata = {
   title: "Best AI Coding Tools for Solo Developers | AskScout",
@@ -205,7 +206,14 @@ export default function BestAICodingToolsPage() {
             That gap is real. When you ship fifty commits in an afternoon with Cursor and
             Claude Code, your git log is unreadable by the next morning. Your standup is
             paralyzing because you cannot account for what landed. Your Monday is a hour of
-            re-reading your own diffs to onboard yourself.
+            re-reading your own diffs to onboard yourself. (
+            <Link
+              href="/articles/the-hidden-cost-of-vibe-coding"
+              className="home-prose-link"
+            >
+              I wrote the long version of this argument here.
+            </Link>
+            )
           </p>
           <p className="public-text">
             This is the layer AskScout fills. It reads your git history and writes a daily
@@ -243,6 +251,7 @@ export default function BestAICodingToolsPage() {
           </div>
         </section>
       </article>
+      <SiteFooter />
     </main>
   );
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata = {
   title: "Best Ways to Track What You Shipped as a Developer | AskScout",
@@ -100,7 +101,15 @@ export default function TrackWhatYouShippedPage() {
           <p className="public-text">
             With AI coding tools, the same person can land fifty commits in an afternoon. The
             volume is bigger. The mental ownership is smaller. And by Friday you are looking at
-            your own git history wondering what half of it does.
+            your own git history wondering what half of it does. (I wrote about why this happens
+            in{" "}
+            <Link
+              href="/articles/the-hidden-cost-of-vibe-coding"
+              className="home-prose-link"
+            >
+              The Hidden Cost of Vibe Coding
+            </Link>
+            .)
           </p>
           <p className="public-text">
             So how do you keep up? Below are the four options that actually work, in order from
@@ -246,6 +255,7 @@ export default function TrackWhatYouShippedPage() {
           </div>
         </section>
       </article>
+      <SiteFooter />
     </main>
   );
 }

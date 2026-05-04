@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata = {
   title: "The Hidden Cost of Vibe Coding | AskScout",
@@ -161,7 +162,11 @@ export default function ManifestoPage() {
           </p>
           <p className="public-text">
             &ldquo;Just ask the AI to summarize.&rdquo; But the AI doesn&apos;t see your commits.
-            You&apos;d have to paste diffs in by hand every day. Nobody does that.
+            You&apos;d have to paste diffs in by hand every day. Nobody does that. (
+            <Link href="/articles/how-to-summarize-git-commits" className="home-prose-link">
+              The full version of how to actually summarize commits with an LLM
+            </Link>
+            , if you want to try.)
           </p>
         </section>
 
@@ -210,6 +215,7 @@ export default function ManifestoPage() {
           </div>
         </section>
       </article>
+      <SiteFooter />
     </main>
   );
 }

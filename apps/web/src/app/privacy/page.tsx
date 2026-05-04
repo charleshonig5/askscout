@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata = {
   title: "Privacy | AskScout",
@@ -252,6 +253,7 @@ export default function PrivacyPage() {
           </p>
         </section>
       </div>
+      <SiteFooter />
     </main>
   );
 }

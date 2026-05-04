@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata = {
   title: "Articles | AskScout",
@@ -110,6 +111,7 @@ export default function ArticlesIndexPage() {
           ))}
         </ul>
       </div>
+      <SiteFooter />
     </main>
   );
 }
