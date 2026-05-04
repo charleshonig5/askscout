@@ -50,6 +50,15 @@ export default function DocsPage() {
             your git activity and writes a digestible, plain-English summary of what you worked
             on each day. Use the web app or run the CLI locally on your device.
           </p>
+          <a
+            href="https://github.com/charleshonig5/askscout"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-primary"
+            style={{ marginTop: 16, fontSize: 14, padding: "8px 18px" }}
+          >
+            View on GitHub →
+          </a>
         </div>
       </header>
 
@@ -175,38 +184,47 @@ export default function DocsPage() {
 
           <h3 className="public-card-title" style={{ marginTop: 24 }}>Advanced configuration</h3>
           <p className="public-text">
-            Reference for power users. Day-to-day you do not need to touch any of this; setup
-            handles everything.
+            Reference for power users. Setup handles the basics. This section is for tweaks
+            like overriding the default model, which require editing the config file directly.
           </p>
           <p className="public-text">
             Your API key lives at <code className="inline-code">~/.askscout/config.json</code>{" "}
-            with <code className="inline-code">chmod 600</code> (owner read/write only).
+            with <code className="inline-code">chmod 600</code> (owner read/write only). The
+            file is JSON shaped like this (the comment below is illustrative, not valid JSON):
           </p>
           <div className="resource-code-block">
             <code>
               {`{
   "provider": "anthropic" | "openai",
   "apiKey": "sk-...",
-  "model": "claude-haiku-4-5-20250414"  // optional
+  "model": "claude-haiku-4-5-20250414"   // optional override
 }`}
             </code>
           </div>
           <p className="public-text">
-            Provider auto-detects from the key prefix. Keys starting with{" "}
-            <code className="inline-code">sk-ant-</code> route to Anthropic. Other keys starting
-            with <code className="inline-code">sk-</code> route to OpenAI. Any other format is
-            rejected at setup. Defaults:{" "}
-            <code className="inline-code">claude-haiku-4-5-20250414</code> on Anthropic,{" "}
-            <code className="inline-code">gpt-4o-mini</code> on OpenAI. Cost runs roughly $0.001
-            to $0.003 per digest.
+            At setup, AskScout detects the provider from your key prefix and writes it into the
+            file. Keys starting with <code className="inline-code">sk-ant-</code> route to
+            Anthropic. Other keys starting with <code className="inline-code">sk-</code> route
+            to OpenAI. Any other format is rejected. After setup, the stored provider value is
+            used directly without re-detecting on each run.
+          </p>
+          <p className="public-text">
+            Default models:{" "}
+            <code className="inline-code">claude-haiku-4-5-20250414</code> for Anthropic and{" "}
+            <code className="inline-code">gpt-4o-mini</code> for OpenAI. Cost runs roughly $0.001
+            to $0.003 per digest at the defaults. Override by adding a{" "}
+            <code className="inline-code">model</code> field to the config file. The model has
+            to belong to the same provider as your key.
           </p>
           <p className="public-text">
             Each repo also gets a small{" "}
             <code className="inline-code">.askscout/state.json</code> in the project root. It
-            stores the last run timestamp, run count, the rolling 10-run history (used for Pace
-            Check), and a 200-word AI-maintained summary of the project that feeds back into the
-            next run. Add the folder to your <code className="inline-code">.gitignore</code> if
-            you want to keep it out of version control.
+            stores the last run timestamp, run count, a rolling history of up to your last 10
+            digest runs, and a 200-word AI-maintained summary of the project that feeds back
+            into the next run. Pace Check uses the most recent 3 entries from that history as
+            its baseline; the older entries are kept for context but not currently consumed.
+            Add the folder to your <code className="inline-code">.gitignore</code> if you want
+            to keep it out of version control.
           </p>
         </section>
 
