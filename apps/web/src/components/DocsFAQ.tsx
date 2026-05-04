@@ -134,13 +134,14 @@ const TABS: DocsFAQTab[] = [
         ),
       },
       {
-        q: "Why is Pace Check missing from my digest?",
+        q: "How do I share or export a digest?",
         a: (
           <p>
-            Pace Check needs at least 3 prior digest runs to compute a baseline that is not
-            statistical noise. On runs 1 and 2 the section is hidden by design. Keep running
-            daily and it shows up on run 4 with a multiplier comparing today&apos;s commit
-            count to the average of your three most recent runs.
+            Every digest in the dashboard has three share actions in the header.{" "}
+            <strong>Copy</strong> puts the digest on your clipboard as markdown, ready to
+            paste into Slack or any markdown-aware tool. <strong>Download</strong> saves the
+            same markdown as a <code>.md</code> file named after the repo and date.{" "}
+            <strong>Email</strong> sends the digest to the address tied to your account.
           </p>
         ),
       },
