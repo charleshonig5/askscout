@@ -233,12 +233,6 @@ export default function PrivacyPage() {
               . This stops us from making any further reads but doesn&apos;t delete data already
               stored. Use the account-deletion option above to remove that
             </li>
-            <li>
-              <strong>Other requests</strong>: for anything not covered by the in-app controls
-              (data export, specific edits, restrictions on processing), email{" "}
-              <strong>charleshonigdesign@gmail.com</strong>. We aim to respond within 30 days,
-              which is the GDPR statutory window
-            </li>
           </ul>
         </section>
 
