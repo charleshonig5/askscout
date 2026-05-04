@@ -31,6 +31,34 @@ interface ArticleListing {
 
 const ARTICLES: ArticleListing[] = [
   {
+    slug: "introducing-askscout",
+    title: "Introducing AskScout: your vibe coding companion",
+    description:
+      "AskScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Cursor, Claude Code, and Copilot.",
+    date: "2026-05-08",
+  },
+  {
+    slug: "how-askscout-summarizes-git",
+    title: "How AskScout turns a noisy git log into a 10-second digest",
+    description:
+      "A walkthrough of how AskScout reads commits and diffs, computes structural signals, and uses a tuned LLM prompt to produce a readable digest.",
+    date: "2026-05-07",
+  },
+  {
+    slug: "why-askscout-is-open-source",
+    title: "Why we made AskScout open source",
+    description:
+      "Trust matters more than moat for a tool that reads your code. Why AskScout is fully MIT, including the prompt.",
+    date: "2026-05-06",
+  },
+  {
+    slug: "fastest-way-to-give-claude-or-cursor-project-context",
+    title: "The fastest way to bring Claude or Cursor up to speed on your project",
+    description:
+      "How to give Claude Code or Cursor a one-shot context block covering tech stack, recent work, current focus, and key files.",
+    date: "2026-05-05",
+  },
+  {
     slug: "best-ways-to-track-what-you-shipped",
     title: "Best Ways to Track What You Shipped as a Developer",
     description:
