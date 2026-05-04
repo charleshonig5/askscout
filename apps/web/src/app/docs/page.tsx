@@ -125,45 +125,45 @@ export default function DocsPage() {
           <h3 className="public-card-title" style={{ marginTop: 24 }}>Commands</h3>
           <div className="resource-commands">
             <div className="resource-command">
-              <code className="inline-code">askscout</code>
+              <CommandChip command="askscout" />
               <span className="resource-command-desc">
                 Daily digest. Covers commits since your last run.
               </span>
             </div>
             <div className="resource-command">
-              <code className="inline-code">askscout --week</code>
+              <CommandChip command="askscout --week" />
               <span className="resource-command-desc">
                 Past 7 days instead of since-last-run. Good for Friday wrap-ups or catching up
                 after time off.
               </span>
             </div>
             <div className="resource-command">
-              <code className="inline-code">askscout --standup</code>
+              <CommandChip command="askscout --standup" />
               <span className="resource-command-desc">
                 Yesterday / Today / Heads Up format, ready to paste into Slack or Teams.
               </span>
             </div>
             <div className="resource-command">
-              <code className="inline-code">askscout --resume</code>
+              <CommandChip command="askscout --resume" />
               <span className="resource-command-desc">
                 Tech stack, recent work, current focus, and key files in one block. Paste into
                 Claude, Cursor, or Copilot to skip the catch-up step.
               </span>
             </div>
             <div className="resource-command">
-              <code className="inline-code">askscout --json</code>
+              <CommandChip command="askscout --json" />
               <span className="resource-command-desc">
                 Machine-readable JSON. Pipe into your own scripts, dashboards, or CI jobs.
               </span>
             </div>
             <div className="resource-command">
-              <code className="inline-code">askscout --setup</code>
+              <CommandChip command="askscout --setup" />
               <span className="resource-command-desc">
                 Save or replace your API key. Cannot be combined with other flags.
               </span>
             </div>
             <div className="resource-command">
-              <code className="inline-code">askscout --dry-run</code>
+              <CommandChip command="askscout --dry-run" />
               <span className="resource-command-desc">
                 Lists the commits AskScout would summarize without calling the LLM. No charges, no
                 output written.
