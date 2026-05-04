@@ -121,53 +121,55 @@ export default function DocsPage() {
             <div className="resource-command">
               <CommandChip command="askscout" />
               <span className="resource-command-desc">
-                Daily digest. Covers commits since your last run.
+                Generate a daily digest of what changed since your last run.
               </span>
             </div>
             <div className="resource-command">
               <CommandChip command="askscout --week" />
               <span className="resource-command-desc">
-                Past 7 days instead of since-last-run. Good for Friday wrap-ups or catching up
-                after time off.
+                Generate a digest covering the past 7 days. Good for Friday wrap-ups or catching
+                up after time off.
               </span>
             </div>
             <div className="resource-command">
               <CommandChip command="askscout --standup" />
               <span className="resource-command-desc">
-                Done / Up Next / Heads Up format, ready to paste into Slack or Teams.
+                Format your digest as a Slack-ready standup with Done, Up Next, and Heads Up
+                sections.
               </span>
             </div>
             <div className="resource-command">
               <CommandChip command="askscout --resume" />
               <span className="resource-command-desc">
-                Tech stack, recent work, current focus, and key files in one block. Paste into
-                Claude, Cursor, or Copilot to skip the catch-up step.
+                Generate a context block (tech stack, recent work, current focus, key files) for
+                Claude, Cursor, or Copilot. Lets the AI pick up your project on a new session
+                without you explaining it.
               </span>
             </div>
             <div className="resource-command">
               <CommandChip command="askscout --json" />
               <span className="resource-command-desc">
-                Machine-readable JSON. Pipe into your own scripts, dashboards, or CI jobs.
+                Output the digest as machine-readable JSON. Useful for scripts, dashboards, or CI.
               </span>
             </div>
             <div className="resource-command">
               <CommandChip command="askscout --setup" />
               <span className="resource-command-desc">
-                Save or replace your API key. Cannot be combined with other flags.
+                Save or replace your API key. Cannot be combined with other options.
               </span>
             </div>
             <div className="resource-command">
               <CommandChip command="askscout --dry-run" />
               <span className="resource-command-desc">
-                Shows the commits AskScout would summarize without calling the LLM. No charges
-                and no state file changes.
+                Preview which commits AskScout would include, without calling the LLM. No cost
+                and nothing gets saved.
               </span>
             </div>
           </div>
           <p className="public-text">
             <code className="inline-code">--standup</code> and{" "}
             <code className="inline-code">--resume</code> cannot be combined.{" "}
-            <code className="inline-code">--setup</code> ignores all other flags.
+            <code className="inline-code">--setup</code> ignores all other options.
           </p>
 
           <h3 className="public-card-title" style={{ marginTop: 24 }}>Advanced configuration</h3>
