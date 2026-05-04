@@ -448,23 +448,37 @@ function BulletedCount({ count, animate }: { count: number; animate: boolean }) 
  *   4. Tiny single-clause bullets (under 5 words) get used wholesale as a
  *      title with no context — there's nothing to split.
  */
+/** Capitalize the first letter of a sentence body. The LLM occasionally
+ *  emits bullet bodies that begin with a lowercase word (most common in
+ *  Left Off, where the model treats the body as a continuation of the
+ *  title fragment). Forcing the first character upper keeps the visual
+ *  format consistent across all four sections regardless of model
+ *  output quirks. */
+function capitalizeFirst(s: string): string {
+  if (!s) return s;
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 function splitBulletTitle(item: string): { title: string | null; context: string } {
   const dashIdx = item.indexOf(" - ");
   if (dashIdx > 0 && dashIdx < 60) {
-    return { title: item.slice(0, dashIdx).trim(), context: item.slice(dashIdx + 3).trim() };
+    return {
+      title: item.slice(0, dashIdx).trim(),
+      context: capitalizeFirst(item.slice(dashIdx + 3).trim()),
+    };
   }
   const sentenceMatch = item.match(/^([^.!?]{4,60})[.!?]\s+(.+)$/s);
   if (sentenceMatch) {
     const candidate = sentenceMatch[1]!.trim();
     const wordCount = candidate.split(/\s+/).length;
     if (wordCount >= 2 && wordCount <= 8) {
-      return { title: candidate, context: sentenceMatch[2]!.trim() };
+      return { title: candidate, context: capitalizeFirst(sentenceMatch[2]!.trim()) };
     }
   }
   const words = item.trim().split(/\s+/);
   if (words.length >= 5) {
     const title = words.slice(0, 4).join(" ").replace(/[,;:.!?]+$/, "");
-    const context = words.slice(4).join(" ");
+    const context = capitalizeFirst(words.slice(4).join(" "));
     return { title, context };
   }
   return { title: item.trim(), context: "" };
