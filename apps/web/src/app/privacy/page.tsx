@@ -292,12 +292,6 @@ export default function PrivacyPage() {
           </p>
         </section>
 
-        <section className="public-section">
-          <h2 className="public-section-title">Contact</h2>
-          <p className="public-text">
-            Questions, data requests, or concerns: <strong>charleshonigdesign@gmail.com</strong>.
-          </p>
-        </section>
       </div>
       <SiteFooter />
     </main>
