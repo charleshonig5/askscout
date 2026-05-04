@@ -2,6 +2,8 @@ import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { InstallChip } from "@/components/InstallChip";
 import { CommandChip } from "@/components/CommandChip";
+import DocsFAQ from "@/components/DocsFAQ";
+import { DOCS_FAQ_PLAIN } from "@/lib/docs-faq-data";
 
 export const metadata = {
   title: "Docs | AskScout",
@@ -9,9 +11,23 @@ export const metadata = {
     "AskScout docs. How to use the web app, the CLI, and answers to common questions.",
 };
 
+const FAQ_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: DOCS_FAQ_PLAIN.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+
 export default function DocsPage() {
   return (
     <main className="page">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
+      />
       <nav className="home-nav" aria-label="Site">
         <Link href="/" className="home-nav-logo">
           AskScout
@@ -195,83 +211,23 @@ export default function DocsPage() {
         <section className="public-section">
           <h2 className="public-section-title">FAQ</h2>
           <p className="public-text">
-            For broader product questions (privacy, pricing, what AskScout reads),{" "}
+            For product-level questions (privacy, pricing, what AskScout reads),{" "}
             <Link href="/" className="home-prose-link">see the homepage FAQ</Link>. The questions
             below are docs-specific.
           </p>
-          <div className="faq-list">
-            <div className="faq-item">
-              <h3 className="faq-question">"Scout didn't find any new commits"</h3>
-              <p className="public-text">
-                AskScout looks at commits since your last run by default. If that window is empty,
-                try <code className="inline-code">askscout --week</code> for the past 7 days, or{" "}
-                <code className="inline-code">askscout --dry-run</code> to confirm what is in the
-                window.
-              </p>
-            </div>
-            <div className="faq-item">
-              <h3 className="faq-question">My API key keeps getting rejected</h3>
-              <p className="public-text">
-                Run <code className="inline-code">askscout --setup</code> again to overwrite the
-                key. Anthropic keys start with <code className="inline-code">sk-ant-</code> and
-                OpenAI keys start with <code className="inline-code">sk-</code>. If yours starts
-                with neither, AskScout cannot route it.
-              </p>
-            </div>
-            <div className="faq-item">
-              <h3 className="faq-question">Pace Check is missing from my digest</h3>
-              <p className="public-text">
-                Pace Check needs 3 prior runs to compute a real baseline. Keep running daily and
-                it shows up on run 4.
-              </p>
-            </div>
-            <div className="faq-item">
-              <h3 className="faq-question">Does the CLI work on Windows?</h3>
-              <p className="public-text">
-                Yes, on Node 22+ via PowerShell, CMD, or WSL. The config lives at{" "}
-                <code className="inline-code">%USERPROFILE%\.askscout\config.json</code> on
-                Windows.
-              </p>
-            </div>
-            <div className="faq-item">
-              <h3 className="faq-question">Can I run AskScout in CI or cron?</h3>
-              <p className="public-text">
-                Yes. Use <code className="inline-code">askscout --json</code> for parseable
-                output, or pipe the default output to a file. AskScout drops the spinner and
-                emoji automatically when stdout is not a TTY, so logs stay readable.
-              </p>
-            </div>
-            <div className="faq-item">
-              <h3 className="faq-question">How do I switch providers?</h3>
-              <p className="public-text">
-                Run <code className="inline-code">askscout --setup</code> and paste a key from the
-                other provider. AskScout overwrites the existing config in place.
-              </p>
-            </div>
-            <div className="faq-item">
-              <h3 className="faq-question">How do I reset everything?</h3>
-              <p className="public-text">
-                Delete <code className="inline-code">~/.askscout</code> to clear your config and
-                global state. Delete <code className="inline-code">.askscout</code> inside a repo
-                to clear that project's history and summary.
-              </p>
-            </div>
-            <div className="faq-item">
-              <h3 className="faq-question">Where do I report a bug or request a feature?</h3>
-              <p className="public-text">
-                Open an issue at{" "}
-                <a
-                  href="https://github.com/charleshonig5/askscout/issues"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="home-prose-link"
-                >
-                  github.com/charleshonig5/askscout/issues
-                </a>
-                . Include your AskScout version, OS, and the command you ran.
-              </p>
-            </div>
-          </div>
+          <DocsFAQ />
+          <p className="public-text" style={{ marginTop: 24 }}>
+            Found a bug or want to request a feature? Open an issue at{" "}
+            <a
+              href="https://github.com/charleshonig5/askscout/issues"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="home-prose-link"
+            >
+              github.com/charleshonig5/askscout/issues
+            </a>
+            . Include your AskScout version, OS, and the command you ran.
+          </p>
         </section>
 
         <div className="public-cta">
