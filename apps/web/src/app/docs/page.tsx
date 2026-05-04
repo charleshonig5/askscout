@@ -27,8 +27,9 @@ export default function DocsPage() {
           <p className="home-eyebrow">Docs</p>
           <h1 className="page-title">Run AskScout your way.</h1>
           <p className="page-deck">
-            Web app, CLI, output format, and configuration. Everything you need to read your repo
-            in 10 seconds.
+            AskScout is an open source daily digest tool for developers and vibe coders. It reads
+            your git activity and writes a digestible, plain-English summary of what you worked
+            on each day. Use the web app or run the CLI locally on your device.
           </p>
         </div>
       </header>
