@@ -90,8 +90,8 @@ export default function DocsPage() {
 
           <h3 className="public-card-title" style={{ marginTop: 24 }}>Run your first digest</h3>
           <p className="public-text">
-            Drop into any git repo and run AskScout. Your first digest covers today, then each
-            subsequent run picks up from the last.
+            Run AskScout in any git repo. Your first digest covers today, and every run after
+            picks up from there.
           </p>
           <div style={{ margin: "12px 0" }}>
             <CommandChip command="askscout" />
