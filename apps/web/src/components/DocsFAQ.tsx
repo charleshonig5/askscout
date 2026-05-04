@@ -8,77 +8,128 @@ type DocsFAQTab = { id: string; label: string; items: DocsFAQItem[] };
 
 const TABS: DocsFAQTab[] = [
   {
-    id: "use",
-    label: "Using AskScout",
+    id: "cli",
+    label: "CLI",
     items: [
       {
-        q: "Does AskScout work in a monorepo?",
+        q: "Does the AskScout CLI work in a monorepo?",
         a: (
           <p>
-            Yes. AskScout reads commits at the repo root, so it sees activity across every
-            package and workspace inside your monorepo. It does not filter by directory, so the
-            digest covers everything that landed in any commit during the time window. If you
-            want a digest scoped to one package, run AskScout from a separate checkout of just
+            Yes. The CLI walks up from your current directory to find the nearest{" "}
+            <code>.git</code> root and reads every commit in that repo. It does not filter by
+            subdirectory, so a digest from a monorepo covers every package and workspace
+            inside. To scope a digest to one package, run the CLI from a separate clone of just
             that package.
           </p>
         ),
       },
       {
-        q: "How do I change which model AskScout uses?",
+        q: "Where does the CLI store my data?",
         a: (
           <p>
-            Open <code>~/.askscout/config.json</code> and add a <code>"model"</code> field with
-            the model ID you want. AskScout uses that on the next run instead of the default.
-            The model has to belong to the same provider as your key. Anthropic keys can only
-            target Anthropic models, and OpenAI keys can only target OpenAI models.
+            Two places, both local. Your API key and provider live at{" "}
+            <code>~/.askscout/config.json</code> with owner-only permissions (
+            <code>chmod 600</code>). Each repo also gets its own{" "}
+            <code>.askscout/state.json</code> in the project root holding the last run
+            timestamp, run count, project summary, and a small history of recent runs. The CLI
+            sends no telemetry and stores nothing online.
           </p>
         ),
       },
       {
-        q: "Can I run AskScout in CI or cron?",
+        q: "Why does the CLI reject my API key?",
         a: (
           <p>
-            Yes. Use <code>askscout --json</code> for parseable output, or pipe the default
-            output to a file. AskScout drops the spinner, emoji, and color automatically when
-            stdout is not a TTY, so logs stay readable in CI output and cron emails.
+            Three reasons setup will reject a key. The key is shorter than 20 characters. The
+            key contains characters outside letters, numbers, hyphens, or underscores. Or the
+            prefix is not <code>sk-ant-</code> (Anthropic) or <code>sk-</code> (OpenAI). To
+            replace a stored key, run <code>askscout --setup</code> again. The existing config
+            is overwritten in place.
           </p>
         ),
       },
       {
-        q: "Does the AskScout CLI work on Windows?",
+        q: "Can I run the AskScout CLI in CI or cron?",
         a: (
           <p>
-            Yes, on Node 22 or later via PowerShell, CMD, or WSL. The config lives at{" "}
-            <code>%USERPROFILE%\.askscout\config.json</code> on Windows. Per-project state lives
-            at <code>.askscout\state.json</code> in each repo.
+            Yes. When the CLI runs without a TTY (piped to a file, in CI logs, or cron
+            emails), it automatically suppresses the spinner and swaps emoji headers and
+            unicode bullets for bracketed plain text and ASCII characters. For
+            machine-readable output, use <code>askscout --json</code>. Setting{" "}
+            <code>NO_COLOR=1</code> also forces plain-text mode.
+          </p>
+        ),
+      },
+      {
+        q: "How do I reset or uninstall the CLI?",
+        a: (
+          <p>
+            Run <code>npm uninstall -g askscout</code> to remove the binary. Delete{" "}
+            <code>~/.askscout</code> to clear your saved API key and provider. Delete{" "}
+            <code>.askscout</code> inside any repo to clear that project&apos;s history and
+            AI-maintained summary. These three are independent. You can uninstall the binary
+            while keeping config, or wipe config while keeping the binary.
           </p>
         ),
       },
     ],
   },
   {
-    id: "trouble",
-    label: "Troubleshooting",
+    id: "web",
+    label: "Web app",
     items: [
       {
-        q: "What does \"Scout didn't find any new commits\" mean?",
+        q: "How do I switch repos in the web app?",
         a: (
           <p>
-            AskScout looks at commits since your last run by default, so an empty window just
-            means nothing landed since you last checked. Try <code>askscout --week</code> for
-            the past 7 days, or <code>askscout --dry-run</code> to see exactly what is in the
-            window.
+            Use the repo selector at the top of the sidebar in the dashboard. Picking a
+            different repo loads its digest history immediately. To change which repo loads
+            when you open AskScout, go to Settings and set a Default Repository there.
           </p>
         ),
       },
       {
-        q: "Why does AskScout reject my API key?",
+        q: "Why does AskScout need GitHub authorization?",
         a: (
           <p>
-            Keys are validated by prefix. Anthropic keys start with <code>sk-ant-</code> and
-            OpenAI keys start with <code>sk-</code>. Anything else is rejected at setup. To
-            replace a stored key with a new one, run <code>askscout --setup</code> again. The
-            existing config is overwritten in place.
+            Two reasons. The <code>read:user</code> scope identifies you to AskScout so your
+            digests save under your GitHub account. The <code>repo</code> scope is what lets
+            AskScout fetch commits and diffs from your repos through the GitHub API. GitHub
+            does not offer a finer-grained read-only repo scope, so granting{" "}
+            <code>repo</code> necessarily includes write capabilities our code never uses. You
+            can revoke access any time at{" "}
+            <a
+              href="https://github.com/settings/applications"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="home-prose-link"
+            >
+              github.com/settings/applications
+            </a>
+            .
+          </p>
+        ),
+      },
+      {
+        q: "Why is there a 30-digest-per-day cap?",
+        a: (
+          <p>
+            The hosted web app uses our own LLM API key, and the cap keeps API costs
+            predictable. 30 digests per day per account covers daily standup and end-of-day
+            reviews. If you need more, the CLI has no AskScout-imposed cap. You bring your own
+            API key and pay your provider directly.
+          </p>
+        ),
+      },
+      {
+        q: "How do I delete my AskScout account and data?",
+        a: (
+          <p>
+            Settings, then Danger Zone, then Delete Account. The action removes every record
+            tied to your user ID from our database: digests, project summaries, settings, and
+            check-ins. You will need to sign in with GitHub again to use AskScout afterwards.
+            To clear individual repo histories without deleting your account, use Settings,
+            then Clear History instead.
           </p>
         ),
       },
@@ -87,28 +138,9 @@ const TABS: DocsFAQTab[] = [
         a: (
           <p>
             Pace Check needs at least 3 prior digest runs to compute a baseline that is not
-            statistical noise. On runs 1 and 2 the section is hidden. Keep running daily and it
-            shows up on run 4.
-          </p>
-        ),
-      },
-      {
-        q: "How do I uninstall AskScout?",
-        a: (
-          <p>
-            Run <code>npm uninstall -g askscout</code> to remove the CLI. Delete{" "}
-            <code>~/.askscout</code> if you also want to clear your saved API key, and delete
-            any <code>.askscout</code> folders inside repos to remove per-project state.
-          </p>
-        ),
-      },
-      {
-        q: "How do I reset AskScout completely?",
-        a: (
-          <p>
-            Delete <code>~/.askscout</code> to clear your config and global state. Delete{" "}
-            <code>.askscout</code> inside a repo to clear that project's history and
-            AI-maintained summary. The next run is treated as a fresh first run.
+            statistical noise. On runs 1 and 2 the section is hidden by design. Keep running
+            daily and it shows up on run 4 with a multiplier comparing today&apos;s commit
+            count to the average of your three most recent runs.
           </p>
         ),
       },
