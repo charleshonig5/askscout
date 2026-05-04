@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { InstallChip } from "@/components/InstallChip";
+import { CommandChip } from "@/components/CommandChip";
 
 export const metadata = {
   title: "Docs | AskScout",
@@ -77,12 +78,17 @@ export default function DocsPage() {
           <div style={{ margin: "12px 0" }}>
             <InstallChip />
           </div>
+
+          <h3 className="public-card-title" style={{ marginTop: 24 }}>Save your API key</h3>
           <p className="public-text">
-            Run <code className="inline-code">askscout --setup</code> once to save your API key
-            (Anthropic or OpenAI). After that, <code className="inline-code">askscout</code> in
-            any git repo prints a digest of your recent commits. The CLI never sends data to
-            anyone except the LLM provider you configured.
+            Run setup once to store your Anthropic or OpenAI API key locally. After that,{" "}
+            <code className="inline-code">askscout</code> in any git repo prints a digest of
+            your recent commits. The CLI never sends data anywhere except the LLM provider you
+            configured.
           </p>
+          <div style={{ margin: "12px 0" }}>
+            <CommandChip command="askscout --setup" />
+          </div>
 
           <h3 className="public-card-title" style={{ marginTop: 24 }}>Commands</h3>
           <div className="resource-commands">
