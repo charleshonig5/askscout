@@ -188,7 +188,7 @@ export default function TrackWhatYouShippedPage() {
           <p className="public-text">
             The newest option is to read what your repo did and turn it into a daily summary
             automatically. AskScout is one of these. So is anything you build yourself by piping
-            git diffs into a Claude or GPT prompt.
+            git diffs into a ChatGPT or Claude prompt.
           </p>
           <p className="public-text">
             What you get is a written digest with sections: what shipped, what changed, what kept

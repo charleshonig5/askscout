@@ -4,20 +4,20 @@ import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata = {
   title:
-    "The fastest way to bring Claude or Cursor up to speed on your project | AskScout",
+    "The fastest way to bring Claude Code, Cursor, or Codex up to speed on your project | AskScout",
   description:
-    "How to give Claude Code or Cursor a one-shot context block covering tech stack, recent work, current focus, and key files, so the AI is useful from the first message.",
+    "How to give Claude Code, Cursor, or Codex a one-shot context block covering tech stack, recent work, current focus, and key files, so the AI is useful from the first message.",
   openGraph: {
-    title: "The fastest way to bring Claude or Cursor up to speed on your project",
+    title: "The fastest way to bring Claude Code, Cursor, or Codex up to speed on your project",
     description:
-      "How to give Claude Code or Cursor a one-shot context block so the AI is useful from the first message.",
+      "How to give Claude Code, Cursor, or Codex a one-shot context block so the AI is useful from the first message.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: "The fastest way to bring Claude or Cursor up to speed on your project",
+    title: "The fastest way to bring Claude Code, Cursor, or Codex up to speed on your project",
     description:
-      "How to give Claude Code or Cursor instant project context.",
+      "How to give Claude Code, Cursor, or Codex instant project context.",
   },
 };
 
@@ -74,7 +74,7 @@ export default function FastestWayToContextPage() {
           ← All articles
         </Link>
         <h1 className="page-title page-title--article">
-          The fastest way to bring Claude or Cursor up to speed on your project
+          The fastest way to bring Claude Code, Cursor, or Codex up to speed on your project
         </h1>
         <p className="article-deck">
           A practical guide to giving AI coding tools project context that actually works,
@@ -84,22 +84,23 @@ export default function FastestWayToContextPage() {
         <section className="public-section">
           <h2 className="public-section-title">TLDR</h2>
           <p className="public-text">
-            Claude Code and Cursor work best when they understand your project. The fastest way
-            to give them context is to paste a structured block at the start of a session
-            covering tech stack, recent work, current focus, key files, and any warnings.
-            AskScout&apos;s <code className="inline-code">--resume</code> command generates this
-            block in one shot from your real git history. Below is what good context looks like
-            and how to assemble it whether you use AskScout or not.
+            Claude Code, Cursor, and Codex work best when they understand your project. The
+            fastest way to give them context is to paste a structured block at the start of a
+            session covering tech stack, recent work, current focus, key files, and any
+            warnings. The AskScout web app has a <strong>Resume Prompt</strong> button that
+            generates this block from your latest digest; the CLI does the same thing with{" "}
+            <code className="inline-code">askscout --resume</code>. Below is what good context
+            looks like and how to assemble it whether you use AskScout or not.
           </p>
         </section>
 
         <section className="public-section">
           <h2 className="public-section-title">The catch-up problem</h2>
           <p className="public-text">
-            Every Claude Code session starts cold. Cursor remembers a little more across files
-            but still loses thread between long breaks. The first ten minutes of any session
-            tend to look like this: you explain what the project is, what you were doing
-            yesterday, and where the current work fits.
+            Every Claude Code or Codex session starts cold. Cursor remembers a little more
+            across files but still loses thread between long breaks. The first ten minutes of
+            any session tend to look like this: you explain what the project is, what you were
+            doing yesterday, and where the current work fits.
           </p>
           <p className="public-text">
             That is wasted typing. The information already exists. It is in your git history,
@@ -163,7 +164,7 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
             </code>
           </div>
           <p className="public-text">
-            Paste this at the start of a Claude Code or Cursor session and the next response
+            Paste this at the start of a Claude Code, Cursor, or Codex session and the next response
             will be sharper than starting cold. The downside is that writing it takes a few
             minutes, and it goes stale fast.
           </p>
@@ -172,7 +173,10 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
         <section className="public-section">
           <h2 className="public-section-title">The automated way</h2>
           <p className="public-text">
-            If you already have AskScout installed, generate the same block in one command:
+            On the AskScout web app, generate this block by clicking the{" "}
+            <strong>Resume Prompt</strong> button on the Left Off section of any digest. It
+            opens a modal with the same five-section context, ready to copy. The CLI does the
+            same thing in one command:
           </p>
           <div className="resource-code-block">
             <code>askscout --resume</code>
@@ -207,7 +211,7 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
           </p>
           <p className="public-text">
             For most solo developers the rhythm that works is: regenerate at the top of every
-            new Claude Code or Cursor session. If you stay in the same session all day, the
+            new Claude Code, Cursor, or Codex session. If you stay in the same session all day, the
             initial paste is fine. The point is that the context the AI sees should reflect
             what your codebase actually looks like right now, not what you remember it being.
           </p>
@@ -228,7 +232,8 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
               href="/articles/best-ai-coding-tools-for-solo-developers"
               className="home-prose-link"
             >
-              here&apos;s an honest read on Cursor, Claude Code, Copilot, and Aider
+              here&apos;s an honest read on Claude Code, Cursor, Codex, and the other AI
+              coding tools
             </Link>
             .)
           </p>

@@ -23,7 +23,7 @@ export const metadata = {
 const FAQ_PLAIN: { q: string; a: string }[] = [
   {
     q: "How does AskScout read my git history?",
-    a: "On the CLI, AskScout shells out to git in your local repo to fetch commits and diffs since your last run. On the web app, it pulls the same data through the GitHub API after you grant read access. Either way, only commit messages, diffs, and file paths are read. Source files outside of diffs are never opened.",
+    a: "On the web app, AskScout pulls commits and diffs through the GitHub API after you grant read access. On the CLI, it shells out to git in your local repo to fetch the same data. Either way, only commit messages, diffs, and file paths are read. Source files outside of diffs are never opened.",
   },
   {
     q: "What LLM does AskScout use?",
@@ -110,11 +110,11 @@ export default function HowAskScoutSummarizesGitPage() {
         <section className="public-section">
           <h2 className="public-section-title">Step 1: Read commits and diffs</h2>
           <p className="public-text">
-            On the CLI, AskScout calls git directly in your repo. It pulls commits since your
-            last run (or the past 7 days with{" "}
-            <code className="inline-code">--week</code>), then fetches the diffs for each one.
-            On the web app, it does the same thing through the GitHub API after you grant
-            read-only access.
+            On the web app, AskScout pulls commits and diffs through the GitHub API after you
+            grant read-only access. On the CLI, it calls git directly in your local repo to
+            pull the same data, with{" "}
+            <code className="inline-code">--week</code> for the past 7 days. Either path
+            fetches commits since your last run by default.
           </p>
           <p className="public-text">
             What gets read: commit messages, timestamps, authors, file paths, and the actual

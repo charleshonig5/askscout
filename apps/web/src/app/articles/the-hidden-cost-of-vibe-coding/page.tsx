@@ -180,9 +180,10 @@ export default function HiddenCostPage() {
             changed, what kept shifting, where you left off.
           </p>
           <p className="public-text">
-            That&apos;s AskScout. Run it as a CLI, or sign in to the web app at{" "}
-            <Link href="/">askscout.dev</Link>. It reads your repo, sends only the diffs to the LLM
-            you choose, and writes you a digest worth reading. Free. Sets up in about ten seconds.
+            That&apos;s AskScout. Sign in to the web app at{" "}
+            <Link href="/">askscout.dev</Link>, or run it as a CLI in any local repo with your
+            own LLM key. It reads your repo, sends only the diffs to the LLM you choose, and
+            writes you a digest worth reading. Free. Sets up in about ten seconds.
           </p>
         </section>
 

@@ -5,25 +5,25 @@ import { SiteFooter } from "@/components/SiteFooter";
 export const metadata = {
   title: "Best AI Coding Tools for Solo Developers | AskScout",
   description:
-    "An honest take on Cursor, Claude Code, GitHub Copilot, and Aider for solo developers. What each one is good at, and the layer they all leave out.",
+    "An honest take on Claude Code, Cursor, Codex, GitHub Copilot, and Aider for solo developers. What each one is good at, and the layer they all leave out.",
   openGraph: {
     title: "Best AI Coding Tools for Solo Developers",
     description:
-      "An honest take on Cursor, Claude Code, GitHub Copilot, and Aider for solo developers.",
+      "An honest take on Claude Code, Cursor, Codex, GitHub Copilot, and Aider for solo developers.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
     title: "Best AI Coding Tools for Solo Developers",
     description:
-      "An honest take on Cursor, Claude Code, GitHub Copilot, and Aider for solo developers.",
+      "An honest take on Claude Code, Cursor, Codex, GitHub Copilot, and Aider for solo developers.",
   },
 };
 
 const FAQ_PLAIN: { q: string; a: string }[] = [
   {
     q: "What is the best AI coding tool for solo developers?",
-    a: "It depends on how you work. Cursor is the strongest editor experience for everyday typing. Claude Code wins for agent-driven multi-file edits. GitHub Copilot is the most flexible inside whatever editor you already use. Aider fits best if you prefer the terminal. Most solo developers end up using two of these together.",
+    a: "It depends on how you work. Cursor is the strongest editor experience for everyday typing. Claude Code wins for agent-driven multi-file edits. Codex is OpenAI's equivalent agent CLI, useful if you prefer the OpenAI ecosystem. GitHub Copilot is the most flexible inside whatever editor you already use. Aider fits best if you prefer the terminal. Most solo developers end up using two of these together.",
   },
   {
     q: "Is Cursor better than Claude Code?",
@@ -31,7 +31,7 @@ const FAQ_PLAIN: { q: string; a: string }[] = [
   },
   {
     q: "Do AI coding tools track what they wrote for me?",
-    a: "Mostly no. Cursor, Claude Code, GitHub Copilot, and Aider write code. They do not summarize what shipped at the end of the day. Tracking what you actually built across an AI-assisted session is the layer that AskScout fills next to these tools.",
+    a: "Mostly no. Claude Code, Cursor, Codex, GitHub Copilot, and Aider write code. They do not summarize what shipped at the end of the day. Tracking what you actually built across an AI-assisted session is the layer that AskScout fills next to these tools.",
   },
   {
     q: "Are AI coding tools worth it for indie hackers?",
@@ -83,11 +83,12 @@ export default function BestAICodingToolsPage() {
         <section className="public-section">
           <h2 className="public-section-title">TLDR</h2>
           <p className="public-text">
-            The AI coding tools most solo developers use right now: Cursor for everyday editing,
-            Claude Code for agent-style multi-file work, GitHub Copilot for autocomplete inside
-            any editor, and Aider for terminal-driven workflows. They all write code. None of
-            them tell you what you wrote. That last layer is missing, which is why tools like
-            AskScout exist next to them.
+            The AI coding tools most solo developers use right now: Claude Code for agent-style
+            multi-file work, Cursor for everyday editing, Codex as OpenAI&apos;s equivalent
+            agent CLI, GitHub Copilot for autocomplete inside any editor, and Aider for
+            terminal-driven workflows. They all write code. None of them tell you what you
+            wrote. That last layer is missing, which is why tools like AskScout exist next to
+            them.
           </p>
         </section>
 
@@ -150,6 +151,27 @@ export default function BestAICodingToolsPage() {
         </section>
 
         <section className="public-section">
+          <h2 className="public-section-title">Codex</h2>
+          <p className="public-text">
+            Codex is OpenAI&apos;s agent CLI, the closest counterpart to Claude Code on the
+            OpenAI side. You point it at a task, it edits files and runs commands, then reports
+            back. Same shape of work, different model family.
+          </p>
+          <p className="public-text">
+            What it is good at: bigger tasks, like Claude Code. If you already have an OpenAI
+            API key and prefer that ecosystem (or want to compare model behavior on the same
+            task), Codex is the obvious pick.
+          </p>
+          <p className="public-text">
+            What it is not great at: live typing flow, again. Codex is task-driven, not
+            keystroke-driven. The same caveats as Claude Code apply.
+          </p>
+          <p className="public-text">
+            Pick Codex if you want an agent CLI in the OpenAI ecosystem.
+          </p>
+        </section>
+
+        <section className="public-section">
           <h2 className="public-section-title">GitHub Copilot</h2>
           <p className="public-text">
             Copilot is the most-used AI coding tool by raw numbers, mostly because it works
@@ -196,15 +218,15 @@ export default function BestAICodingToolsPage() {
         <section className="public-section">
           <h2 className="public-section-title">The layer none of them fill</h2>
           <p className="public-text">
-            Cursor, Claude Code, Copilot, and Aider all do the same fundamental thing: they help
-            you write code faster.
+            Claude Code, Cursor, Codex, Copilot, and Aider all do the same fundamental thing:
+            they help you write code faster.
           </p>
           <p className="public-text">
             None of them help you remember what you wrote.
           </p>
           <p className="public-text">
-            That gap is real. When you ship fifty commits in an afternoon with Cursor and
-            Claude Code, your git log is unreadable by the next morning. Your standup is
+            That gap is real. When you ship fifty commits in an afternoon with Claude Code,
+            Cursor, or Codex, your git log is unreadable by the next morning. Your standup is
             paralyzing because you cannot account for what landed. Your Monday is a hour of
             re-reading your own diffs to onboard yourself. (
             <Link
@@ -218,8 +240,9 @@ export default function BestAICodingToolsPage() {
           <p className="public-text">
             This is the layer AskScout fills. It reads your git history and writes a daily
             digest in plain English. Sections cover what shipped, what changed, what kept
-            getting reworked, and where you left off. It runs as a CLI in any local repo or as
-            a hosted web app. It does not compete with Cursor, Claude Code, Copilot, or Aider.
+            getting reworked, and where you left off. It runs as a hosted web app you sign in
+            with GitHub, or as a CLI in any local repo with your own LLM key. Same digest,
+            either way. It does not compete with Claude Code, Cursor, Codex, Copilot, or Aider.
             It runs after them.
           </p>
           <p className="public-text">

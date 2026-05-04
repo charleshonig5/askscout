@@ -5,11 +5,11 @@ import { SiteFooter } from "@/components/SiteFooter";
 export const metadata = {
   title: "Introducing AskScout: your vibe coding companion | AskScout",
   description:
-    "AskScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Cursor, Claude Code, and Copilot.",
+    "AskScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex.",
   openGraph: {
     title: "Introducing AskScout: your vibe coding companion",
     description:
-      "The companion tool for developers using Cursor, Claude Code, and Copilot. Reads your repo, writes your digest.",
+      "The companion tool for developers using Claude Code, Cursor, and Codex. Reads your repo, writes your digest.",
     type: "article",
   },
   twitter: {
@@ -30,12 +30,12 @@ const FAQ_PLAIN: { q: string; a: string }[] = [
     a: "Yes. The web app is free with a soft cap of 30 digests per day. The CLI is free open-source software under MIT, with you bringing your own LLM API key (about $0.001 to $0.003 per digest). No paid tier, no upsell.",
   },
   {
-    q: "Does AskScout work with Cursor and Claude Code?",
-    a: "Yes. AskScout does not replace Cursor, Claude Code, or Copilot. It runs after them. They write code; AskScout reads what you wrote and produces a daily digest. Most users run one of the AI coding tools all day and read AskScout once at the end.",
+    q: "Does AskScout work with Claude Code, Cursor, and Codex?",
+    a: "Yes. AskScout does not replace Claude Code, Cursor, or Codex. It runs after them. They write code; AskScout reads what you wrote and produces a daily digest. Most users run one of the AI coding tools all day and read AskScout once at the end.",
   },
   {
-    q: "How is AskScout different from GitHub Copilot or Cursor?",
-    a: "Copilot and Cursor write code as you type. AskScout does not write code at all. It reads your git history (commits and diffs) and writes a plain-English summary of what shipped, what changed, and what you left off. Different layer, different job.",
+    q: "How is AskScout different from Claude Code, Cursor, or Codex?",
+    a: "Those tools write code. AskScout does not write code at all. It reads your git history (commits and diffs) and writes a plain-English summary of what shipped, what changed, and what you left off. Different layer, different job.",
   },
 ];
 
@@ -77,17 +77,18 @@ export default function IntroducingAskScoutPage() {
         </h1>
         <p className="article-deck">
           AskScout reads your repo and writes you a daily digest of what you shipped. The
-          companion tool for developers using Cursor, Claude Code, and Copilot.
+          companion tool for developers using Claude Code, Cursor, and Codex.
         </p>
 
         <section className="public-section">
           <h2 className="public-section-title">TLDR</h2>
           <p className="public-text">
-            AskScout is a daily digest tool for developers who code with AI assistance. Cursor,
-            Claude Code, and Copilot help you write code. AskScout reads what you wrote and
+            AskScout is a daily digest tool for developers who code with AI assistance. Claude
+            Code, Cursor, and Codex help you write code. AskScout reads what you wrote and
             writes you back a 10-second summary covering what shipped, what changed, what kept
-            getting reworked, and what you left off. It runs as a CLI in any local repo or as a
-            hosted web app. Both are free, both are open source.
+            getting reworked, and what you left off. The web app runs in your browser, signed
+            in with GitHub. The CLI runs in any local git repo with your own LLM key. Both are
+            free, both are open source.
           </p>
         </section>
 
@@ -154,8 +155,8 @@ export default function IntroducingAskScoutPage() {
           <h2 className="public-section-title">What it is not</h2>
           <p className="public-text">
             AskScout is not a code generator. It will not write your features, refactor your
-            modules, or autocomplete your typing. Cursor, Claude Code, GitHub Copilot, and Aider
-            already do that, and they do it well.
+            modules, or autocomplete your typing. Claude Code, Cursor, Codex, GitHub Copilot,
+            and Aider already do that, and they do it well.
           </p>
           <p className="public-text">
             AskScout sits one layer above those tools. They write code. AskScout reads what you

@@ -35,7 +35,7 @@ const FAQ_PLAIN: { q: string; a: string }[] = [
   },
   {
     q: "Is there a tool that summarizes commits automatically?",
-    a: "AskScout reads your git history and writes a daily digest using your own Anthropic or OpenAI key. It runs as a CLI in any local repo or as a hosted web app on GitHub. No copy-pasting required, no diffs leave your machine except to the LLM provider you chose.",
+    a: "AskScout reads your git history and writes a daily digest using your own Anthropic or OpenAI key. The web app runs in your browser signed in with GitHub; the CLI runs in any local repo. No copy-pasting required either way, and no diffs leave your machine except to the LLM provider you chose.",
   },
 ];
 
@@ -85,7 +85,7 @@ export default function SummarizeGitCommitsPage() {
           <p className="public-text">
             You can summarize git commits three ways. The bare minimum is{" "}
             <code className="inline-code">git log --oneline --since</code> to skim. The next step
-            up is piping that log into Claude or GPT yourself with a good prompt. The cleanest
+            up is piping that log into ChatGPT or Claude yourself with a good prompt. The cleanest
             option is a tool that does both for you, like AskScout. Each option below includes
             what to type, what to expect, and when to reach for it.
           </p>
@@ -151,7 +151,7 @@ export default function SummarizeGitCommitsPage() {
 
         <section className="public-section">
           <h2 className="public-section-title">
-            Option 2: Pipe your log into Claude or GPT yourself
+            Option 2: Pipe your log into ChatGPT or Claude yourself
           </h2>
           <p className="public-text">
             Once your week starts producing more commits than you can read, the next move is to
@@ -196,16 +196,17 @@ Use plain English. No file paths. 1-2 short sentences per item.
             If you find yourself doing the manual loop more than twice, automate it.
           </p>
           <p className="public-text">
-            AskScout is the version of this loop turned into a CLI. You install once with{" "}
+            AskScout is the version of this loop turned into a tool. The web app handles it for
+            you online: sign in with GitHub, pick a repo, read the digest. The CLI does the
+            same thing locally. Install with{" "}
             <code className="inline-code">npm install -g askscout</code>, run{" "}
             <code className="inline-code">askscout --setup</code> with your Anthropic or OpenAI
             key, and after that <code className="inline-code">askscout</code> in any git repo
-            prints the same kind of summary you would get from option 2. The prompt is tuned for
-            the format. The output is grounded in real diffs.
+            prints the same kind of summary you would get from option 2.
           </p>
           <p className="public-text">
-            The hosted web app is free with a soft cap of 30 digests per day. The CLI is free
-            open source software with you bringing your own LLM key (about $0.001 to $0.003 per
+            The web app is free with a soft cap of 30 digests per day. The CLI is free open
+            source software with you bringing your own LLM key (about $0.001 to $0.003 per
             digest). Either way, the diffs go to your provider and nowhere else.
           </p>
           <p className="public-text">
