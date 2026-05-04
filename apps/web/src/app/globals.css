@@ -2374,7 +2374,11 @@ a:hover {
 
 .sidebar-item-stat-tooltip {
   position: absolute;
-  top: calc(100% + 6px);
+  /* Default: anchor above the stat so bottom rows don't clip against
+     the .sidebar-list overflow box. The first row gets flipped below
+     in a more specific rule since there's nothing above it inside
+     the scroll area. */
+  bottom: calc(100% + 6px);
   /* Anchor right so the tooltip extends leftward into the sidebar
      instead of clipping past the row edge. Matches .health-tooltip. */
   right: 0;
@@ -2410,6 +2414,14 @@ a:hover {
   transition:
     opacity 0.12s ease,
     visibility 0s linear 0s;
+}
+
+/* First row has nothing above it inside the scroll area, so its
+   tooltip flips back below the stat. All other rows keep the default
+   above-the-stat anchor so the bottom of the list never clips. */
+.sidebar-item:first-child .sidebar-item-stat-tooltip {
+  bottom: auto;
+  top: calc(100% + 6px);
 }
 
 /* Repo picker row: label above trigger with 8px gap. */
