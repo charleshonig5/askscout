@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { InstallChip } from "@/components/InstallChip";
 
 export const metadata = {
   title: "Docs | AskScout",
@@ -95,8 +96,8 @@ export default function DocsPage() {
           </p>
 
           <h3 className="public-card-title" style={{ marginTop: 16 }}>Install</h3>
-          <div className="resource-code-block">
-            <code>npm install -g askscout</code>
+          <div style={{ marginBottom: 12 }}>
+            <InstallChip />
           </div>
           <p className="public-text">
             Then run <code className="inline-code">askscout --setup</code> once to save your API
