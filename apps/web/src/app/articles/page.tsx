@@ -101,7 +101,7 @@ export default function ArticlesIndexPage() {
   return (
     <main className="page">
       <nav className="home-nav" aria-label="Site">
-        <Link href="/" className="home-nav-logo">
+        <Link href="/home" className="home-nav-logo">
           AskScout
         </Link>
         <div className="home-nav-links">

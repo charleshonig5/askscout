@@ -57,7 +57,7 @@ export default function BestAICodingToolsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
       />
       <nav className="home-nav" aria-label="Site">
-        <Link href="/" className="home-nav-logo">
+        <Link href="/home" className="home-nav-logo">
           AskScout
         </Link>
         <div className="home-nav-links">
