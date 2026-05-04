@@ -118,7 +118,7 @@ export default function DocsPage() {
             <div className="resource-command">
               <CommandChip command="askscout --standup" />
               <span className="resource-command-desc">
-                Yesterday / Today / Heads Up format, ready to paste into Slack or Teams.
+                Done / Up Next / Heads Up format, ready to paste into Slack or Teams.
               </span>
             </div>
             <div className="resource-command">
@@ -143,8 +143,8 @@ export default function DocsPage() {
             <div className="resource-command">
               <CommandChip command="askscout --dry-run" />
               <span className="resource-command-desc">
-                Lists the commits AskScout would summarize without calling the LLM. No charges, no
-                output written.
+                Shows the commits AskScout would summarize without calling the LLM. No charges
+                and no state file changes.
               </span>
             </div>
           </div>
