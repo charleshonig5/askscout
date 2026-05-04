@@ -4092,7 +4092,7 @@ a:hover {
   min-height: 0;
 }
 
-/* Linkable tile (Manifesto). Renders as <a>; gets a hover lift +
+/* Linkable tile (article cards). Renders as <a>; gets a hover lift +
    border-color shift to signal interactivity. */
 .home-bento-tile--link {
   text-decoration: none;
@@ -4368,14 +4368,6 @@ a:hover {
 .home-bento-mock-insight-value {
   font-weight: 600;
   color: var(--color-text-primary);
-}
-
-/* --- 7. Manifesto mock -------------------------------------- */
-.home-bento-mock--manifesto {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
 }
 
 .home-bento-mock-article-tag {

@@ -49,7 +49,7 @@ const FAQ_SCHEMA = {
   })),
 };
 
-export default function ManifestoPage() {
+export default function HiddenCostPage() {
   return (
     <main className="page">
       <script

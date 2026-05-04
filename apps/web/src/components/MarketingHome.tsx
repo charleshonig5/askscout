@@ -487,11 +487,12 @@ export default function MarketingHome() {
 
       {/* ===========================================================
           ARTICLES — preview strip pointing readers to the writing.
-          One feature card today (the manifesto) since that's the
-          only published article; the layout is built as a row that
-          scales to two or three cards once more pieces ship. The
-          all-articles link sits at the section head so readers can
-          jump straight to the index. The FAQ section follows in the
+          One feature card today (The Hidden Cost of Vibe Coding)
+          since that's the lead piece; the layout is built as a row
+          that scales to two or three cards once more pieces ship.
+          The all-articles link sits at the section head so readers
+          can jump straight to the index. The FAQ section follows in
+          the
           next step.
           =========================================================== */}
       <section className="home-section">
