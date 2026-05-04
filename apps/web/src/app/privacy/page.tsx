@@ -33,21 +33,6 @@ export default function PrivacyPage() {
 
       <div className="page-body page-body--reading">
         <section className="public-section">
-          <p className="public-text">
-            This page is about the web app at askscout.dev. The CLI runs locally on your machine and
-            the rules are different there. See <Link href="/docs">Docs</Link> for the CLI side.
-          </p>
-        </section>
-
-        <section className="public-section">
-          <h2 className="public-section-title">Who runs AskScout</h2>
-          <p className="public-text">
-            AskScout is built and operated by Charles Honig. Questions, requests, or concerns about
-            your data go to <strong>charleshonigdesign@gmail.com</strong>.
-          </p>
-        </section>
-
-        <section className="public-section">
           <h2 className="public-section-title">What we collect when you sign in</h2>
           <p className="public-text">
             Sign-in uses GitHub OAuth. When you authorize AskScout, GitHub returns your user ID,
