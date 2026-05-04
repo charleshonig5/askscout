@@ -240,7 +240,7 @@ function DownloadBtn({
 
   return (
     <button className="action-btn" onClick={handleDownload}>
-      <Download size={20} strokeWidth={1} /> Download
+      <Download size={18} strokeWidth={1} /> Download
     </button>
   );
 }
@@ -332,11 +332,11 @@ function EmailBtn() {
     <button className={`action-btn ${sent ? "copied" : ""}`} onClick={handleEmail}>
       {sent ? (
         <>
-          <Check size={20} strokeWidth={1} /> Sent
+          <Check size={18} strokeWidth={1} /> Sent
         </>
       ) : (
         <>
-          <Send size={20} strokeWidth={1} /> Email
+          <Send size={18} strokeWidth={1} /> Email
         </>
       )}
     </button>
@@ -385,11 +385,11 @@ function CopyBtn({ text, label }: { text: string; label?: string }) {
     <button className={`action-btn ${copied ? "copied" : ""}`} onClick={handleCopy}>
       {copied ? (
         <>
-          <Check size={20} strokeWidth={1} /> Copied
+          <Check size={18} strokeWidth={1} /> Copied
         </>
       ) : (
         <>
-          <Copy size={20} strokeWidth={1} /> {label ?? "Copy"}
+          <Copy size={18} strokeWidth={1} /> {label ?? "Copy"}
         </>
       )}
     </button>
@@ -1874,13 +1874,13 @@ export function DigestView({
               <div className="digest-bottom-actions">
                 {onGenerateStandup && (
                   <button className="standup-btn" onClick={onGenerateStandup}>
-                    <BookText size={20} strokeWidth={1} aria-hidden />
+                    <BookText size={18} strokeWidth={1} aria-hidden />
                     Generate Standup
                   </button>
                 )}
                 {onGeneratePlan && (
                   <button className="standup-btn" onClick={onGeneratePlan}>
-                    <ScrollText size={20} strokeWidth={1} aria-hidden />
+                    <ScrollText size={18} strokeWidth={1} aria-hidden />
                     Generate Todo List
                   </button>
                 )}
