@@ -90,6 +90,38 @@ export default function DocsPage() {
             <CommandChip command="askscout --setup" />
           </div>
 
+          <h3 className="public-card-title" style={{ marginTop: 24 }}>Configuration</h3>
+          <p className="public-text">
+            Your API key lives at <code className="inline-code">~/.askscout/config.json</code>{" "}
+            with <code className="inline-code">chmod 600</code> (owner read/write only).
+          </p>
+          <div className="resource-code-block">
+            <code>
+              {`{
+  "provider": "anthropic" | "openai",
+  "apiKey": "sk-...",
+  "model": "claude-haiku-4-5-20250414"  // optional
+}`}
+            </code>
+          </div>
+          <p className="public-text">
+            Provider auto-detects from the key prefix. Keys starting with{" "}
+            <code className="inline-code">sk-ant-</code> route to Anthropic. Other keys starting
+            with <code className="inline-code">sk-</code> route to OpenAI. Any other format is
+            rejected at setup. Defaults:{" "}
+            <code className="inline-code">claude-haiku-4-5-20250414</code> on Anthropic,{" "}
+            <code className="inline-code">gpt-4o-mini</code> on OpenAI. Cost runs roughly $0.001
+            to $0.003 per digest.
+          </p>
+          <p className="public-text">
+            Each repo also gets a small{" "}
+            <code className="inline-code">.askscout/state.json</code> in the project root. It
+            stores the last run timestamp, run count, the rolling 10-run history (used for Pace
+            Check), and a 200-word AI-maintained summary of the project that feeds back into the
+            next run. Add the folder to your <code className="inline-code">.gitignore</code> if
+            you want to keep it out of version control.
+          </p>
+
           <h3 className="public-card-title" style={{ marginTop: 24 }}>Commands</h3>
           <div className="resource-commands">
             <div className="resource-command">
@@ -142,36 +174,6 @@ export default function DocsPage() {
             <code className="inline-code">--standup</code> and{" "}
             <code className="inline-code">--resume</code> cannot be combined.{" "}
             <code className="inline-code">--setup</code> ignores all other flags.
-          </p>
-
-          <h3 className="public-card-title" style={{ marginTop: 24 }}>Configuration</h3>
-          <p className="public-text">
-            Your API key lives at <code className="inline-code">~/.askscout/config.json</code>{" "}
-            with <code className="inline-code">chmod 600</code> (owner read/write only).
-          </p>
-          <div className="resource-code-block">
-            <code>
-              {`{
-  "provider": "anthropic" | "openai",
-  "apiKey": "sk-...",
-  "model": "claude-haiku-4-5-20250414"  // optional
-}`}
-            </code>
-          </div>
-          <p className="public-text">
-            Provider auto-detects from the key prefix. Keys starting with{" "}
-            <code className="inline-code">sk-ant-</code> route to Anthropic. Anything else routes
-            to OpenAI. Defaults: <code className="inline-code">claude-haiku-4-5-20250414</code> on
-            Anthropic, <code className="inline-code">gpt-4o-mini</code> on OpenAI. Cost runs
-            roughly $0.001 to $0.003 per digest.
-          </p>
-          <p className="public-text">
-            Each repo also gets a small{" "}
-            <code className="inline-code">.askscout/state.json</code> in the project root. It
-            stores the last run timestamp, run count, the rolling 10-run history (used for Pace
-            Check), and a 200-word AI-maintained summary of the project that feeds back into the
-            next run. Add the folder to your <code className="inline-code">.gitignore</code> if
-            you want to keep it out of version control.
           </p>
         </section>
 
