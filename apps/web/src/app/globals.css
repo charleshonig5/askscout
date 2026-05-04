@@ -2375,8 +2375,9 @@ a:hover {
 .sidebar-item-stat-tooltip {
   position: absolute;
   top: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
+  /* Anchor right so the tooltip extends leftward into the sidebar
+     instead of clipping past the row edge. Matches .health-tooltip. */
+  right: 0;
   width: max-content;
   max-width: 160px;
   padding: 4px 6px;
