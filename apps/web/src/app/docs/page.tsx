@@ -43,48 +43,23 @@ export default function DocsPage() {
             Run AskScout in your browser, no install required. Sign in with GitHub and get your
             first digest immediately.
           </p>
-          <div className="resource-steps">
-            <div className="resource-step">
-              <span className="resource-step-num">1</span>
-              <div>
-                <h3 className="resource-step-title">Sign in with GitHub</h3>
-                <p className="public-text">
-                  Open <Link href="/" className="home-prose-link">askscout.dev</Link> and sign in. The
-                  OAuth flow grants read-only access to your commits. You can revoke any time at{" "}
-                  <a
-                    href="https://github.com/settings/applications"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="home-prose-link"
-                  >
-                    github.com/settings/applications
-                  </a>
-                  .
-                </p>
-              </div>
-            </div>
-            <div className="resource-step">
-              <span className="resource-step-num">2</span>
-              <div>
-                <h3 className="resource-step-title">Pick a repo</h3>
-                <p className="public-text">
-                  Choose any repo you have access to, public or private. AskScout pulls the recent
-                  commit history through the GitHub API and starts streaming a digest.
-                </p>
-              </div>
-            </div>
-            <div className="resource-step">
-              <span className="resource-step-num">3</span>
-              <div>
-                <h3 className="resource-step-title">Read your digest</h3>
-                <p className="public-text">
-                  Each digest covers Shipped, Changed, Still Shifting, and Left Off, plus
-                  Codebase Health and a Pace Check after a few runs. Copy, download, email, or
-                  generate a standup or to-do from the same page.
-                </p>
-              </div>
-            </div>
-          </div>
+
+          <h3 className="public-card-title" style={{ marginTop: 16 }}>Getting started</h3>
+          <p className="public-text">
+            Open <Link href="/" className="home-prose-link">askscout.dev</Link> and sign in with
+            your GitHub account. Your account is created on the spot, and your first digest
+            starts streaming automatically once you pick a repo. There is no setup step and no
+            key to manage. You can revoke GitHub access any time at{" "}
+            <a
+              href="https://github.com/settings/applications"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="home-prose-link"
+            >
+              github.com/settings/applications
+            </a>
+            .
+          </p>
         </section>
 
         {/* CLI */}
@@ -95,14 +70,18 @@ export default function DocsPage() {
             repo, including private ones and self-hosted git.
           </p>
 
-          <h3 className="public-card-title" style={{ marginTop: 16 }}>Install</h3>
-          <div style={{ marginBottom: 12 }}>
+          <h3 className="public-card-title" style={{ marginTop: 16 }}>Getting started</h3>
+          <p className="public-text">
+            Copy the command below into your terminal to install AskScout globally:
+          </p>
+          <div style={{ margin: "12px 0" }}>
             <InstallChip />
           </div>
           <p className="public-text">
-            Then run <code className="inline-code">askscout --setup</code> once to save your API
-            key. After that, <code className="inline-code">askscout</code> in any repo prints a
-            digest.
+            Run <code className="inline-code">askscout --setup</code> once to save your API key
+            (Anthropic or OpenAI). After that, <code className="inline-code">askscout</code> in
+            any git repo prints a digest of your recent commits. The CLI never sends data to
+            anyone except the LLM provider you configured.
           </p>
 
           <h3 className="public-card-title" style={{ marginTop: 24 }}>Commands</h3>
