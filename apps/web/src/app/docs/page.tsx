@@ -49,7 +49,7 @@ export default function DocsPage() {
               <div>
                 <h3 className="resource-step-title">Sign in with GitHub</h3>
                 <p className="public-text">
-                  Open <a href="/" className="home-prose-link">askscout.dev</a> and sign in. The
+                  Open <Link href="/" className="home-prose-link">askscout.dev</Link> and sign in. The
                   OAuth flow grants read-only access to your commits. You can revoke any time at{" "}
                   <a
                     href="https://github.com/settings/applications"
