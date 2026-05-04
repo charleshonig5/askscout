@@ -342,13 +342,19 @@ function SidebarItemStats({
     <div className="sidebar-item-stats">
       <span className="sidebar-item-stat sidebar-item-stat--added">+{addedAnim}</span>
       <span className="sidebar-item-stat sidebar-item-stat--removed">-{removedAnim}</span>
-      <span className="sidebar-item-stat">
+      <span className="sidebar-item-stat sidebar-item-stat--tooltip">
         {commitsAnim}
         <GitCommitHorizontal size={16} strokeWidth={1} className="commit-icon" aria-hidden />
+        <span className="sidebar-item-stat-tooltip" role="tooltip">
+          Commits
+        </span>
       </span>
-      <span className="sidebar-item-stat">
+      <span className="sidebar-item-stat sidebar-item-stat--tooltip">
         {filesAnim}
         <FileText size={12} strokeWidth={1} className="file-icon" aria-hidden />
+        <span className="sidebar-item-stat-tooltip" role="tooltip">
+          Files changed
+        </span>
       </span>
     </div>
   );
