@@ -19,9 +19,42 @@ export const metadata = {
   },
 };
 
+const FAQ_PLAIN: { q: string; a: string }[] = [
+  {
+    q: "What is vibe coding?",
+    a: "Vibe coding is the way most developers write code with AI assistance. You describe what you want, the model produces patches, you review and ship. Code volume is high. Mental ownership of any individual line is low.",
+  },
+  {
+    q: "Why is it harder to remember code I built with AI?",
+    a: "When you do not type the bytes, they do not stick in memory the same way. You know the AI built a feature. You don't recall the specifics. The faster you ship, the wider the gap gets between what's in your repo and what's in your head.",
+  },
+  {
+    q: "Can I just read my git log to remember what I shipped?",
+    a: "Probably not at AI-coding pace. Git log was built for slow, deliberate commits. A normal week of vibe coding produces fifty commits a day, often with auto-generated messages like 'fix' or 'wip.' Skimming that is not the same as understanding what changed.",
+  },
+  {
+    q: "What is a daily code digest?",
+    a: "A short, plain-English summary of what changed in your repo today. Sections cover what shipped, what changed, what kept getting reworked, and where you left off. The point is to be readable in 10 seconds, not to replace your git log.",
+  },
+];
+
+const FAQ_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ_PLAIN.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+
 export default function ManifestoPage() {
   return (
     <main className="page">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
+      />
       <nav className="home-nav" aria-label="Site">
         <Link href="/" className="home-nav-logo">
           AskScout
@@ -43,6 +76,17 @@ export default function ManifestoPage() {
           AI coding tools sped us up. They also made it harder to keep track of what we actually
           built. Why I think the next big workflow problem is digesting your own code.
         </p>
+
+        <section className="public-section">
+          <h2 className="public-section-title">TLDR</h2>
+          <p className="public-text">
+            The way most of us code now produces more output than our brains can hold. AI tools
+            took the friction out of writing code. They did not take the friction out of
+            remembering it. By Friday afternoon you have shipped two hundred commits and you
+            cannot account for half of them. The fix is a daily digest of what your repo actually
+            did.
+          </p>
+        </section>
 
         <section className="public-section">
           <p className="public-text">
@@ -141,6 +185,18 @@ export default function ManifestoPage() {
           <p className="public-text">
             <strong>If AI helped you write the code, AI should help you remember it.</strong>
           </p>
+        </section>
+
+        <section className="public-section">
+          <h2 className="public-section-title">FAQ</h2>
+          <div className="faq-list">
+            {FAQ_PLAIN.map((item) => (
+              <div key={item.q} className="faq-item">
+                <h3 className="faq-question">{item.q}</h3>
+                <p className="public-text">{item.a}</p>
+              </div>
+            ))}
+          </div>
         </section>
 
         <section className="public-section">

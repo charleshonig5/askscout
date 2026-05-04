@@ -30,6 +30,27 @@ interface ArticleListing {
 
 const ARTICLES: ArticleListing[] = [
   {
+    slug: "best-ways-to-track-what-you-shipped",
+    title: "Best Ways to Track What You Shipped as a Developer",
+    description:
+      "Four real options for remembering what you built, ranked by how much effort each one costs you. Plus the tradeoffs nobody mentions.",
+    date: "2026-05-04",
+  },
+  {
+    slug: "how-to-summarize-git-commits",
+    title: "How to Summarize Your Git Commits (With or Without AI)",
+    description:
+      "Three ways to turn a noisy git log into a readable summary. The plain command, the do-it-yourself LLM prompt, and the dedicated tool.",
+    date: "2026-05-03",
+  },
+  {
+    slug: "best-ai-coding-tools-for-solo-developers",
+    title: "Best AI Coding Tools for Solo Developers",
+    description:
+      "An honest read on Cursor, Claude Code, GitHub Copilot, and Aider. What each one is good at, and the layer they all leave out.",
+    date: "2026-05-02",
+  },
+  {
     slug: "the-hidden-cost-of-vibe-coding",
     title: "The Hidden Cost of Vibe Coding",
     description:
