@@ -40,8 +40,8 @@ export default function DocsPage() {
         <section className="public-section">
           <h2 className="public-section-title">Web app</h2>
           <p className="public-text">
-            The fastest way to start. Hosted, no key to manage, your digest history saved under
-            your account.
+            Run AskScout in your browser, no install required. Sign in with GitHub and get your
+            first digest immediately.
           </p>
           <div className="resource-steps">
             <div className="resource-step">
