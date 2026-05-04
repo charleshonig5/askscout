@@ -1473,6 +1473,44 @@ const HEALTH_DESCRIPTIONS: Record<string, Record<string, string>> = {
   },
 };
 
+/** Health card progress bar. JS-driven so the fill animation is
+ *  guaranteed to play on fresh generation regardless of CSS keyframe
+ *  quirks. Mounts at width: 0%, schedules a state flip to the real
+ *  percent after 1300ms (just past the parent card cascade reveal),
+ *  and uses a CSS transition for the visible fill. On revisit
+ *  (animate=false) the bar paints at the target width on first render
+ *  with no transition so historical digests snap in cleanly. */
+function HealthBar({
+  percent,
+  color,
+  animate,
+}: {
+  percent: number;
+  color: string;
+  animate: boolean;
+}) {
+  const [width, setWidth] = useState(animate ? 0 : percent);
+  useEffect(() => {
+    if (!animate) {
+      setWidth(percent);
+      return;
+    }
+    const t = setTimeout(() => setWidth(percent), 1300);
+    return () => clearTimeout(t);
+  }, [percent, animate]);
+  return (
+    <div className="health-card-bar">
+      <div
+        className={`health-card-fill health-card-fill--${color}`}
+        style={{
+          width: `${width}%`,
+          transition: animate ? "width 800ms ease-out" : "none",
+        }}
+      />
+    </div>
+  );
+}
+
 function CodebaseHealth({ health, animate = true }: { health: HealthData; animate?: boolean }) {
   const fmt = (n: number) => n.toLocaleString("en-US");
 
@@ -1562,12 +1600,12 @@ function CodebaseHealth({ health, animate = true }: { health: HealthData; animat
                   )}
                 </span>
               </div>
-              <div className="health-card-bar">
-                <div
-                  className={`health-card-fill health-card-fill--${color}`}
-                  style={{ width: `${levelFillPercent(h.label, h.level)}%` }}
-                />
-              </div>
+              <HealthBar
+                color={color}
+                percent={levelFillPercent(h.label, h.level)}
+                animate={animate}
+              />
+
               <div className={`health-card-stat health-card-stat--${h.label.toLowerCase()}`}>
                 {h.label === "Growth" ? (
                   <>
