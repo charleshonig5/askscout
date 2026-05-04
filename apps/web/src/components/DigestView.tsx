@@ -1359,9 +1359,12 @@ function TopFileStats({
     <div className="top-file-right">
       <span className="top-file-added">+{fmt(addedAnim)}</span>
       <span className="top-file-removed">-{fmt(removedAnim)}</span>
-      <span className="top-file-commits">
+      <span className="top-file-commits top-file-commits--tooltip">
         <GitCommitHorizontal size={16} strokeWidth={1} className="commit-icon" aria-hidden />
         {commitsAnim}
+        <span className="top-file-commits-tooltip" role="tooltip">
+          Commits
+        </span>
       </span>
     </div>
   );
