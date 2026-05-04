@@ -142,7 +142,7 @@ export function StandupModal({ isOpen, onClose, content }: StandupModalProps) {
             <p className="modal-subtitle">Formatted for Slack and Teams. Just copy and paste.</p>
           </div>
           <button type="button" className="modal-close-btn" onClick={onClose} aria-label="Close">
-            <CircleX size={20} strokeWidth={1} aria-hidden />
+            <CircleX size={18} strokeWidth={1} aria-hidden />
           </button>
         </div>
 
@@ -167,12 +167,12 @@ export function StandupModal({ isOpen, onClose, content }: StandupModalProps) {
             >
               {copied ? (
                 <>
-                  <Check size={20} strokeWidth={1} aria-hidden />
+                  <Check size={18} strokeWidth={1} aria-hidden />
                   Copied
                 </>
               ) : (
                 <>
-                  <Copy size={20} strokeWidth={1} aria-hidden />
+                  <Copy size={18} strokeWidth={1} aria-hidden />
                   Copy to Clipboard
                 </>
               )}

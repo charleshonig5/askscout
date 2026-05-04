@@ -175,7 +175,7 @@ export function PlanModal({ isOpen, onClose, content }: PlanModalProps) {
             <p className="modal-subtitle">Your to-do list for today. Check off as you go.</p>
           </div>
           <button type="button" className="modal-close-btn" onClick={onClose} aria-label="Close">
-            <CircleX size={20} strokeWidth={1} aria-hidden />
+            <CircleX size={18} strokeWidth={1} aria-hidden />
           </button>
         </div>
 
@@ -230,12 +230,12 @@ export function PlanModal({ isOpen, onClose, content }: PlanModalProps) {
             >
               {copied ? (
                 <>
-                  <Check size={20} strokeWidth={1} aria-hidden />
+                  <Check size={18} strokeWidth={1} aria-hidden />
                   Copied
                 </>
               ) : (
                 <>
-                  <Copy size={20} strokeWidth={1} aria-hidden />
+                  <Copy size={18} strokeWidth={1} aria-hidden />
                   Copy to Clipboard
                 </>
               )}
