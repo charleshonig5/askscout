@@ -2448,6 +2448,15 @@ a:hover {
   gap: 6px;
   overflow-y: auto;
   min-height: 0;
+  /* Hide the native scrollbar visually while keeping wheel/trackpad
+     scrolling functional. Cleaner look in the sidebar gutter and
+     sidesteps the phantom-scrollbar issue tooltips trigger when an
+     absolute child's bounding box extends past the visible content. */
+  scrollbar-width: none;
+}
+
+.sidebar-list::-webkit-scrollbar {
+  display: none;
 }
 
 /* One history row. Inactive state is a bare flex row; active state gets
