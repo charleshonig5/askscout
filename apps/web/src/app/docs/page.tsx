@@ -98,6 +98,9 @@ export default function DocsPage() {
           </div>
 
           <h3 className="public-card-title" style={{ marginTop: 24 }}>Commands</h3>
+          <p className="public-text">
+            Every command AskScout supports, with a quick note on when to use each one.
+          </p>
           <div className="resource-commands">
             <div className="resource-command">
               <CommandChip command="askscout" />
