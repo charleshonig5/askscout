@@ -19,7 +19,14 @@ import {
   getProjectSummary,
   saveProjectSummary,
 } from "@/lib/supabase";
-import { buildUnifiedSystemPrompt, detectStack, formatDetectedStackBlock } from "askscout-core";
+import {
+  buildUnifiedSystemPrompt,
+  detectStack,
+  extractFlaggedCommits,
+  extractTodosFromDiffs,
+  formatDetectedStackBlock,
+  formatHeadsUpSignalsBlock,
+} from "askscout-core";
 
 export const maxDuration = 60;
 
@@ -459,8 +466,18 @@ export async function POST(req: Request) {
     ).catch(() => ({}));
     const detectedStackBlock = formatDetectedStackBlock(detectedStack);
 
+    // Heads Up signals: TODO/FIXME comments the user added in this digest's
+    // diffs, plus commits whose subjects flag risky or unfinished work.
+    // Both are extracted deterministically and surfaced verbatim. The LLM
+    // is instructed (in the prompt block) to render every item exactly as
+    // written before adding any inferred nuance.
+    const headsUpSignalsBlock = formatHeadsUpSignalsBlock(
+      extractTodosFromDiffs(diffs),
+      extractFlaggedCommits(commits),
+    );
+
     const userPrompt = `Analyze the following git activity.
-${detectedStackBlock ? `\n${detectedStackBlock}` : ""}
+${detectedStackBlock ? `\n${detectedStackBlock}` : ""}${headsUpSignalsBlock ? `\n${headsUpSignalsBlock}` : ""}
 ## Previous Project Context
 ${previousContext}
 

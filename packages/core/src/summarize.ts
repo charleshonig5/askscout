@@ -32,6 +32,11 @@ import type {
 } from "./types.js";
 import type { DetectedStack } from "./detect-stack.js";
 import { formatDetectedStackBlock } from "./detect-stack.js";
+import {
+  extractFlaggedCommits,
+  extractTodosFromDiffs,
+  formatHeadsUpSignalsBlock,
+} from "./heads-up-signals.js";
 
 const ANTHROPIC_API = "https://api.anthropic.com/v1/messages";
 const OPENAI_API = "https://api.openai.com/v1/chat/completions";
@@ -57,10 +62,12 @@ Tech Stack
 [2-3 short sentences. Must include language and version, primary framework and version, auth provider if any, database if any, styling approach, build tools, deploy target. Period-separated facts, not a single run-on sentence.]
 
 Recent Work
-[2-3 short sentences with file paths. Name what shipped and where it lives in the tree. Be specific about feature names rather than generic categories.]
+[ONE short sentence. Name the feature(s) that shipped and the file paths they live in. No narrative, no recap of how the work was done.]
 
 Current Focus
-[2-3 short sentences. What was being worked on, what's blocked, what's unfinished. The LAST sentence MUST start with "Next move:" and name a single concrete first action a coding agent can take.]
+[Two lines, NOT a paragraph.
+Line 1: ONE short sentence naming what is unfinished and the specific file or area it lives in.
+Line 2: MUST start with "Next move:" and name a single concrete first action a coding agent can take. No explanation after the action.]
 
 Key Files
   \u2022 [file path] - [one short clause on why this file matters right now]
@@ -251,9 +258,11 @@ Format:
 Tech Stack
 [2-3 short sentences. Must include language and version, primary framework and version, auth provider if any, database if any, styling approach, build tools, deploy target. Period-separated facts, not a single run-on sentence.]
 Recent Work
-[2-3 short sentences with file paths. Name what shipped and where it lives in the tree. Be specific about feature names rather than generic categories.]
+[ONE short sentence. Name the feature(s) that shipped and the file paths they live in. No narrative, no recap of how the work was done.]
 Current Focus
-[2-3 short sentences. What was being worked on, what's blocked, what's unfinished. The LAST sentence MUST start with "Next move:" and name a single concrete first action a coding agent can take.]
+[Two lines, NOT a paragraph.
+Line 1: ONE short sentence naming what is unfinished and the specific file or area it lives in.
+Line 2: MUST start with "Next move:" and name a single concrete first action a coding agent can take. No explanation after the action.]
 Key Files
   \u2022 [file path] - [one short clause on why this file matters right now]
   \u2022 [file path] - [one short clause on why this file matters right now]
@@ -344,9 +353,13 @@ Each has: label, level (Strong|Okay|Rough), score (0-10), and a brief detail str
     .join("\n");
 
   const stackBlock = detectedStack ? formatDetectedStackBlock(detectedStack) : "";
+  const signalsBlock = formatHeadsUpSignalsBlock(
+    extractTodosFromDiffs(diffs),
+    extractFlaggedCommits(commits),
+  );
 
   return `Analyze the following git activity and produce a structured digest.
-${stackBlock ? `\n${stackBlock}` : ""}
+${stackBlock ? `\n${stackBlock}` : ""}${signalsBlock ? `\n${signalsBlock}` : ""}
 ## Previous Project Context
 ${context}
 

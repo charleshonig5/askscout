@@ -17,6 +17,12 @@ export {
 } from "./detect-stack.js";
 export type { DetectedStack, FilesReader } from "./detect-stack.js";
 export {
+  extractTodosFromDiffs,
+  extractFlaggedCommits,
+  formatHeadsUpSignalsBlock,
+} from "./heads-up-signals.js";
+export type { ExtractedTodo, FlaggedCommit } from "./heads-up-signals.js";
+export {
   formatDigest,
   formatResume,
   formatStandup,
