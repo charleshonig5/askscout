@@ -1790,7 +1790,10 @@ a:hover {
 
 .pace-stat svg {
   flex-shrink: 0;
-  color: var(--color-text-primary);
+  /* Match the secondary-gray treatment used by every other stats
+     icon (.commit-icon). Was --color-text-primary which rendered
+     near-white in dark mode and broke the pattern. */
+  color: var(--color-text-secondary);
 }
 
 /* ============================================

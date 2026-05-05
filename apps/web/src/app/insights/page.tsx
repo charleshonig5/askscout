@@ -2,7 +2,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ChevronDown, ChevronUp, CircleX, Forward, TrendingUp } from "lucide-react";
+import {
+  ArrowLeft,
+  ChartNoAxesCombined,
+  ChevronDown,
+  ChevronUp,
+  CircleX,
+  Forward,
+} from "lucide-react";
 import { Emoji } from "@/components/Emoji";
 
 /**
@@ -647,13 +654,13 @@ export default function InsightsPage() {
                     <span className="insights-stat-unit">generated</span>
                     {/* Pace pill — same .digest-repo-chip primitive
                         as the Best streak repo chip, just non-link
-                        (--static modifier). TrendingUp matches the
-                        icon used in Pace Check's "commit avg" line
-                        so the "average" signal reads the same in
-                        both places. */}
+                        (--static modifier). ChartNoAxesCombined
+                        matches the icon used in Pace Check's
+                        "commit avg" line so the "average" signal
+                        reads the same in both places. */}
                     {data.digestsPerWeek != null && (
                       <span className="digest-repo-chip digest-repo-chip--static">
-                        <TrendingUp size={10} strokeWidth={1} aria-hidden />
+                        <ChartNoAxesCombined size={10} strokeWidth={1} aria-hidden />
                         {formatPerWeek(data.digestsPerWeek)} per week avg
                       </span>
                     )}

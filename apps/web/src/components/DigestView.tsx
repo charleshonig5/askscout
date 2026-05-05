@@ -12,7 +12,7 @@ import {
   LayoutList,
   FileText,
   GitCommitHorizontal,
-  TrendingUp,
+  ChartNoAxesCombined,
 } from "lucide-react";
 import { useCountUp, useCountTransition } from "@/lib/use-count-up";
 import { parseSections } from "@/lib/parse-sections";
@@ -795,7 +795,7 @@ function PaceCard({
             {pace.todayCommits} commits today
           </span>
           <span className="pace-stat">
-            <TrendingUp size={16} strokeWidth={1} className="commit-icon" aria-hidden />
+            <ChartNoAxesCombined size={16} strokeWidth={1} className="commit-icon" aria-hidden />
             {pace.avgCommits} commit avg
           </span>
         </div>
