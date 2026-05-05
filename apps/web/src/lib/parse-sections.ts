@@ -16,7 +16,10 @@ export function parseSections(fullText: string): ParsedSections {
     fullText;
   const standup = fullText.split("---STANDUP---")[1]?.split("---PLAN---")[0]?.trim() ?? "";
   const plan = fullText.split("---PLAN---")[1]?.split("---AI_CONTEXT---")[0]?.trim() ?? "";
-  const aiContext = fullText.split("---AI_CONTEXT---")[1]?.trim() ?? "";
+  const aiContext =
+    fullText.split("---AI_CONTEXT---")[1]?.split("---SUMMARY---")[0]?.trim() ??
+    fullText.split("---AI_CONTEXT---")[1]?.trim() ??
+    "";
 
   return { digest, standup, plan, aiContext };
 }

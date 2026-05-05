@@ -37,37 +37,38 @@ const DEFAULT_ANTHROPIC_MODEL = "claude-haiku-4-5-20250414";
 const DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
 
 export function buildAIContextSystemPrompt(): string {
-  return `You produce context blocks that developers paste into AI coding tools. Your output is read by another AI, not a human, so be maximally direct and information-dense.
+  return `You produce context blocks that developers paste into AI coding tools like Claude Code, Cursor, or Codex. Your output is read by another AI, not a human. Be direct, dense, and immediately useful so the receiving AI can start working without asking follow-up questions.
 
 TONE:
-- No personality. No Scout voice. Pure technical context.
-- Be direct and specific. Every word should carry information.
-- Reference exact file paths, function names, and technical details.
-- No filler, no pleasantries, no narrative.
+- No personality. No Scout voice. No narrative.
+- Every sentence must carry information. No filler, no pleasantries.
+- Reference exact file paths, function names, and version numbers where they exist.
 
 WRITING RULES:
 - NEVER use em dashes or semicolons. Use commas and periods.
+- 2-3 SHORT sentences per text section. NO run-on sentences.
 - No adjectives unless technically relevant.
 
 Output your response in this EXACT format. Plain text, no JSON, no markdown. Use \u2022 (bullet character) for list items, NEVER use dashes (-) or asterisks (*).
 
 Tech Stack
-[One direct paragraph. Frameworks, languages, key libraries, architecture pattern.]
+[2-3 short sentences. Must include language and version, primary framework and version, auth provider if any, database if any, styling approach, build tools, deploy target. Period-separated facts, not a single run-on sentence.]
 
 Recent Work
-[2-3 factual sentences. What was built, where it lives in the codebase.]
+[2-3 short sentences with file paths. Name what shipped and where it lives in the tree. Be specific about feature names rather than generic categories.]
 
 Current Focus
-[What needs to happen next. What's done, what's remaining, what's blocked.]
+[2-3 short sentences. What was being worked on, what's blocked, what's unfinished. The LAST sentence MUST start with "Next move:" and name a single concrete first action a coding agent can take.]
 
 Key Files
-  \u2022 [file path]
-  \u2022 [file path]
+  \u2022 [file path] - [one short clause on why this file matters right now]
+  \u2022 [file path] - [one short clause on why this file matters right now]
 
 Heads Up
-  \u2022 [specific warning about what not to touch or what's fragile]
+  \u2022 [Specific code-level risk: a refactor in flight, a brittle area, a failing test, a known bug. NOT generic CSS or layout warnings.]
+  \u2022 [If nothing specific applies, write a single bullet: None right now.]
 
-Be as concise as possible. No wasted words.`;
+Be ruthlessly concise. No wasted words.`;
 }
 
 export function buildStandupSystemPrompt(): string {
@@ -229,19 +230,25 @@ Rules:
 - Two sentences per item: the task, then the reason. Each ends with a period. Use a single space between them.
 
 SECTION 4: AI CONTEXT (after ---AI_CONTEXT---)
-Tone: Pure technical. No personality. This is read by an AI coding tool, not a human.
+Tone: Pure technical. No personality. This is read by an AI coding tool like Claude Code, Cursor, or Codex, not a human. Be direct, dense, and immediately useful so the receiving AI can start working without asking follow-up questions.
+
+Writing rules for this section:
+- 2-3 SHORT sentences per text block. NO run-on sentences.
+- Reference exact file paths, function names, and version numbers where they exist.
 
 Format:
 Tech Stack
-[one paragraph]
+[2-3 short sentences. Must include language and version, primary framework and version, auth provider if any, database if any, styling approach, build tools, deploy target. Period-separated facts, not a single run-on sentence.]
 Recent Work
-[2-3 sentences with file paths]
+[2-3 short sentences with file paths. Name what shipped and where it lives in the tree. Be specific about feature names rather than generic categories.]
 Current Focus
-[what's next, what's done, what's remaining]
+[2-3 short sentences. What was being worked on, what's blocked, what's unfinished. The LAST sentence MUST start with "Next move:" and name a single concrete first action a coding agent can take.]
 Key Files
-  \u2022 [file paths]
+  \u2022 [file path] - [one short clause on why this file matters right now]
+  \u2022 [file path] - [one short clause on why this file matters right now]
 Heads Up
-  \u2022 [warnings]
+  \u2022 [Specific code-level risk: a refactor in flight, a brittle area, a failing test, a known bug. NOT generic CSS or layout warnings.]
+  \u2022 [If nothing specific applies, write a single bullet: None right now.]
 
 SECTION 5: PROJECT SUMMARY (after ---SUMMARY---)
 Write a ~200 word paragraph summarizing this project as context for your future self. Cover: tech stack, architecture, current state of the codebase, what was worked on in this session, and any known issues or areas that keep shifting. Be specific and dense. No bullet points. This will be fed back to you on the next run so write it to be maximally useful. If Previous Project Context was provided, build on it. If not, start fresh.
