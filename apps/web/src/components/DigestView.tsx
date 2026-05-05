@@ -646,13 +646,13 @@ function StreamingDigest({
                   <BulletedCount count={items.length} animate={isStreaming} />
                 )}
                 {showCursor && <LiveBadge />}
+                {section.key === "shipped" && !isStreaming && items.length > 0 && (
+                  <ShareBtn items={items} />
+                )}
+                {section.key === "leftOff" && !isStreaming && onResumeWithAI && (
+                  <ResumePromptBtn onClick={onResumeWithAI} />
+                )}
               </div>
-              {section.key === "shipped" && !isStreaming && items.length > 0 && (
-                <ShareBtn items={items} />
-              )}
-              {section.key === "leftOff" && !isStreaming && onResumeWithAI && (
-                <ResumePromptBtn onClick={onResumeWithAI} />
-              )}
             </div>
             <div className="digest-bulleted-list">
               {items.map((item: string, i: number) => {
