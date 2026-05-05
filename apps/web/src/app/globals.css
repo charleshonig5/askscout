@@ -3852,7 +3852,7 @@ a:hover {
    session. Glass treatment matches .home-step + bento tiles so
    the page reads as one design system. */
 .home-terminal {
-  margin: 32px auto 0;
+  margin: 32px 0 0;
   width: 100%;
   max-width: 620px;
   border-radius: 10px;

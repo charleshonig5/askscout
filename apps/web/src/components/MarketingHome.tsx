@@ -385,7 +385,7 @@ export default function MarketingHome() {
               <span className="home-terminal-prompt">$</span> askscout
               {"\n\n"}
               <span className="home-terminal-heading">
-                🔍 Scout scanned askscout
+                🔍 Scout scanned acme-app
               </span>
               {"\n"}
               <span className="home-terminal-dim">
@@ -394,8 +394,8 @@ export default function MarketingHome() {
               {"\n\n"}
               <span className="home-terminal-heading">💬 Vibe Check</span>
               {"\n"}
-              You shipped the bento grid and tightened the{"\n"}
-              homepage copy. Strong forward motion.
+              Cancel flow shipped, onboarding v2 polished.{"\n"}
+              The billing pipeline finally hangs together.
               {"\n\n"}
               <span className="home-terminal-dim">
                 {"   "}+1,284 lines · -612 lines · 12 commits · 23 files
@@ -403,13 +403,13 @@ export default function MarketingHome() {
               {"\n\n"}
               <span className="home-terminal-heading">🚀 Shipped  3</span>
               {"\n"}
-              {"  "}• Bento: render real product DOM inside each tile{"\n"}
-              {"  "}• Marketing: pare bento to four pillar tiles{"\n"}
-              {"  "}• Marketing/docs: align copy with product behavior
+              {"  "}• Stripe cancel webhook handles renewals and bounces{"\n"}
+              {"  "}• Onboarding v2 with progress bar and resume drafts{"\n"}
+              {"  "}• Verification emails retry on transient SMTP failures
               {"\n\n"}
-              <span className="home-terminal-heading">📋 Left Off  1</span>
+              <span className="home-terminal-heading">📍 Left Off  1</span>
               {"\n"}
-              {"  "}• Mid-edit on the CLI section subheader copy
+              {"  "}• Invitation email template shows null for some org names
               {"\n\n"}
               <span className="home-terminal-prompt">$</span>{" "}
               <span className="home-terminal-cursor" aria-hidden>
