@@ -407,9 +407,19 @@ export default function MarketingHome() {
               {"  "}• Onboarding v2 with progress bar and resume drafts{"\n"}
               {"  "}• Verification emails retry on transient SMTP failures
               {"\n\n"}
+              <span className="home-terminal-heading">🔧 Changed  2</span>
+              {"\n"}
+              {"  "}• Search uses a composite index now, queries under 20ms{"\n"}
+              {"  "}• Sign-out syncs across browser tabs via BroadcastChannel
+              {"\n\n"}
               <span className="home-terminal-heading">📍 Left Off  1</span>
               {"\n"}
               {"  "}• Invitation email template shows null for some org names
+              {"\n\n"}
+              <span className="home-terminal-heading">🔑 Key Takeaways</span>
+              {"\n"}
+              Billing is in shape. Next move is fixing the org-name lookup{"\n"}
+              before the team-invite email goes live.
               {"\n\n"}
               <span className="home-terminal-prompt">$</span>{" "}
               <span className="home-terminal-cursor" aria-hidden>
