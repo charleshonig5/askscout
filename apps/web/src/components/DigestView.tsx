@@ -808,7 +808,6 @@ function PaceCard({
 type TimelinePoint = { timeMs: number; lines: number; added?: number; removed?: number };
 
 function TimelineBar({
-  barKey,
   targetHeight,
   centerPct,
   edgeClass,
@@ -817,7 +816,6 @@ function TimelineBar({
   onClick,
   children,
 }: {
-  barKey: string;
   targetHeight: number;
   centerPct: number;
   edgeClass: string;
@@ -1188,7 +1186,6 @@ function WhenYouCoded({
           return (
             <TimelineBar
               key={barKey}
-              barKey={barKey}
               targetHeight={h}
               centerPct={bin.centerPct}
               edgeClass={edgeClass}

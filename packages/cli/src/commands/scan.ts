@@ -2,6 +2,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { startSpinner } from "../spinner.js";
 import {
+  createLocalFilesReader,
+  detectStack,
   formatDigest,
   formatResume,
   formatStandup,
@@ -164,12 +166,24 @@ export async function scan(options: ScanOptions): Promise<void> {
       }
     }
 
-    // 9. Call summarize
-    const result = await summarize(commits, diffs, state, {
-      provider: config.provider,
-      apiKey: config.apiKey,
-      model: config.model,
-    });
+    // 9. Call summarize. Detect the project stack from config files first
+    // so the LLM gets parsed facts (framework, language, db, deploy target)
+    // instead of inferring them from diffs. .catch belt-and-suspenders: a
+    // detection failure is never allowed to break the digest.
+    const detectedStack = await detectStack(createLocalFilesReader(projectRoot)).catch(
+      () => ({}),
+    );
+    const result = await summarize(
+      commits,
+      diffs,
+      state,
+      {
+        provider: config.provider,
+        apiKey: config.apiKey,
+        model: config.model,
+      },
+      detectedStack,
+    );
 
     // 10. Stop spinner
     spinner.stop();

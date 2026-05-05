@@ -11,6 +11,12 @@ export {
   computeStats,
 } from "./summarize.js";
 export {
+  detectStack,
+  formatDetectedStackBlock,
+  createLocalFilesReader,
+} from "./detect-stack.js";
+export type { DetectedStack, FilesReader } from "./detect-stack.js";
+export {
   formatDigest,
   formatResume,
   formatStandup,

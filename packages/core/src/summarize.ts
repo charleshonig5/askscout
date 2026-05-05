@@ -30,6 +30,8 @@ import type {
   StandupNotes,
   SummarizeResult,
 } from "./types.js";
+import type { DetectedStack } from "./detect-stack.js";
+import { formatDetectedStackBlock } from "./detect-stack.js";
 
 const ANTHROPIC_API = "https://api.anthropic.com/v1/messages";
 const OPENAI_API = "https://api.openai.com/v1/chat/completions";
@@ -313,6 +315,7 @@ export function buildUserPrompt(
   commits: GitCommit[],
   diffs: GitDiff[],
   state: ProjectState | null,
+  detectedStack?: DetectedStack,
 ): string {
   const context =
     state?.summary && state.summary.length > 0
@@ -340,8 +343,10 @@ Each has: label, level (Strong|Okay|Rough), score (0-10), and a brief detail str
     .map(([file, count]) => `- ${file} (${count} commits)`)
     .join("\n");
 
-  return `Analyze the following git activity and produce a structured digest.
+  const stackBlock = detectedStack ? formatDetectedStackBlock(detectedStack) : "";
 
+  return `Analyze the following git activity and produce a structured digest.
+${stackBlock ? `\n${stackBlock}` : ""}
 ## Previous Project Context
 ${context}
 
@@ -498,9 +503,10 @@ export async function summarize(
   diffs: GitDiff[],
   state: ProjectState | null,
   ai: AiConfig,
+  detectedStack?: DetectedStack,
 ): Promise<SummarizeResult> {
   const systemPrompt = buildSystemPrompt();
-  const userPrompt = buildUserPrompt(commits, diffs, state);
+  const userPrompt = buildUserPrompt(commits, diffs, state, detectedStack);
 
   const rawText =
     ai.provider === "anthropic"

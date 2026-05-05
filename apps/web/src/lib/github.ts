@@ -1,4 +1,4 @@
-import type { GitCommit, GitDiff } from "askscout-core";
+import type { FilesReader, GitCommit, GitDiff } from "askscout-core";
 
 const GITHUB_API = "https://api.github.com";
 const MAX_DIFF_CHARS = 12_000;
@@ -207,4 +207,87 @@ export async function fetchDiffs(
   }
 
   return { diffs, filesAdded, filesRemoved };
+}
+
+/**
+ * GitHub Contents API reader for stack detection in the web app.
+ *
+ * Mirrors the FilesReader contract used by the CLI (createLocalFilesReader):
+ * returns the file contents as text, or null for any non-success outcome
+ * (404, 5xx, network error, decode failure). NEVER throws.
+ *
+ * Performance: each reader call hits the GitHub Contents API with a short
+ * timeout (8s). detectStack() issues ~10–15 reads, run in parallel via
+ * Promise.all internally. To bound cost on monorepos, we also try a few
+ * common app subpaths (apps/web, apps/app, etc.) when the root path 404s,
+ * matching the CLI's local reader behavior.
+ *
+ * Files larger than ~1MB cannot be returned inline by the Contents API
+ * (GitHub returns an empty content + size only). Those reads return null,
+ * which is fine for our purposes — config files we care about are tiny.
+ */
+const GITHUB_CONTENTS_TIMEOUT_MS = 8000;
+const MONOREPO_FALLBACKS = ["apps/web", "apps/app", "apps/server", "packages/web"];
+
+type GitHubContentsResponse = {
+  content?: string;
+  encoding?: string;
+  size?: number;
+};
+
+async function fetchContentsOnce(
+  token: string,
+  owner: string,
+  repo: string,
+  filePath: string,
+  ref: string | undefined,
+): Promise<string | null> {
+  try {
+    const params = ref ? `?ref=${encodeURIComponent(ref)}` : "";
+    const res = await fetch(
+      `${GITHUB_API}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${filePath}${params}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+        signal: AbortSignal.timeout(GITHUB_CONTENTS_TIMEOUT_MS),
+      },
+    );
+    if (!res.ok) return null;
+    const body: unknown = await res.json();
+    if (!body || typeof body !== "object") return null;
+    const c = body as GitHubContentsResponse;
+    if (typeof c.content !== "string" || c.content.length === 0) return null;
+    if (c.encoding !== "base64") return null;
+    // Strip newlines GitHub inserts in the base64 payload before decoding.
+    const cleaned = c.content.replace(/\n/g, "");
+    try {
+      return Buffer.from(cleaned, "base64").toString("utf-8");
+    } catch {
+      return null;
+    }
+  } catch {
+    return null;
+  }
+}
+
+export function createGitHubFilesReader(
+  token: string,
+  owner: string,
+  repo: string,
+  ref?: string,
+): FilesReader {
+  return {
+    async readText(rel: string): Promise<string | null> {
+      const root = await fetchContentsOnce(token, owner, repo, rel, ref);
+      if (root !== null) return root;
+      for (const sub of MONOREPO_FALLBACKS) {
+        const hit = await fetchContentsOnce(token, owner, repo, `${sub}/${rel}`, ref);
+        if (hit !== null) return hit;
+      }
+      return null;
+    },
+  };
 }

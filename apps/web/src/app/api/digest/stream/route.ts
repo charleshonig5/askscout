@@ -10,7 +10,7 @@
  * CLI and web AI paths relate.
  */
 import { auth, getUserId } from "@/auth";
-import { fetchCommits, fetchDiffs } from "@/lib/github";
+import { createGitHubFilesReader, fetchCommits, fetchDiffs } from "@/lib/github";
 import { checkDigestRateLimit } from "@/lib/rate-limit";
 import {
   saveDigest,
@@ -19,7 +19,7 @@ import {
   getProjectSummary,
   saveProjectSummary,
 } from "@/lib/supabase";
-import { buildUnifiedSystemPrompt } from "askscout-core";
+import { buildUnifiedSystemPrompt, detectStack, formatDetectedStackBlock } from "askscout-core";
 
 export const maxDuration = 60;
 
@@ -450,8 +450,17 @@ export async function POST(req: Request) {
       ? projectContext.summary
       : "No previous context. This is the first run for this project.";
 
-    const userPrompt = `Analyze the following git activity.
+    // Detect project stack from config files via the GitHub Contents API.
+    // Runs in parallel with prompt assembly below; failures (rate limit,
+    // 5xx, network) silently return {} and the LLM falls back to inferring
+    // the stack from diffs as before. NEVER allowed to break the digest.
+    const detectedStack = await detectStack(
+      createGitHubFilesReader(session.accessToken, owner, repo),
+    ).catch(() => ({}));
+    const detectedStackBlock = formatDetectedStackBlock(detectedStack);
 
+    const userPrompt = `Analyze the following git activity.
+${detectedStackBlock ? `\n${detectedStackBlock}` : ""}
 ## Previous Project Context
 ${previousContext}
 
