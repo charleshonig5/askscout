@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import type { MouseEvent as ReactMouseEvent, ReactNode } from "react";
 import {
   Copy,
   Check,
@@ -806,10 +807,58 @@ function PaceCard({
 
 type TimelinePoint = { timeMs: number; lines: number; added?: number; removed?: number };
 
+function TimelineBar({
+  barKey,
+  targetHeight,
+  centerPct,
+  edgeClass,
+  isTapOpen,
+  animate,
+  onClick,
+  children,
+}: {
+  barKey: string;
+  targetHeight: number;
+  centerPct: number;
+  edgeClass: string;
+  isTapOpen: boolean;
+  animate: boolean;
+  onClick: (e: ReactMouseEvent) => void;
+  children: ReactNode;
+}) {
+  const [height, setHeight] = useState(animate ? 0 : targetHeight);
+  useEffect(() => {
+    if (!animate) {
+      setHeight(targetHeight);
+      return;
+    }
+    const t = setTimeout(() => setHeight(targetHeight), 1300);
+    return () => clearTimeout(t);
+  }, [targetHeight, animate]);
+  return (
+    <div
+      className={`timeline-bar${edgeClass}${isTapOpen ? " tap-open" : ""}`}
+      style={{
+        left: `${centerPct}%`,
+        bottom: "14px",
+        height: `${height}px`,
+        transition: animate
+          ? "height 800ms ease-out, opacity 0.15s ease"
+          : undefined,
+      }}
+      onClick={onClick}
+    >
+      {children}
+    </div>
+  );
+}
+
 function WhenYouCoded({
   timeline,
+  animate = true,
 }: {
   timeline: { startMs: number; endMs: number; points: Array<TimelinePoint> };
+  animate?: boolean;
 }) {
   // Touch-device tap-to-pin for the bar tooltips. Single string tracks which
   // bar (if any) is pinned open; tapping anywhere else or the same bar closes.
@@ -1137,14 +1186,14 @@ function WhenYouCoded({
           const hasDetailedStats = bin.totalAdded > 0 || bin.totalRemoved > 0;
           const sameTime = bin.startMs === bin.endMs;
           return (
-            <div
+            <TimelineBar
               key={barKey}
-              className={`timeline-bar${edgeClass}${isTapOpen ? " tap-open" : ""}`}
-              style={{
-                left: `${bin.centerPct}%`,
-                bottom: "14px",
-                height: `${h}px`,
-              }}
+              barKey={barKey}
+              targetHeight={h}
+              centerPct={bin.centerPct}
+              edgeClass={edgeClass}
+              isTapOpen={isTapOpen}
+              animate={animate}
               onClick={(e) => {
                 e.stopPropagation();
                 setOpenBarKey((prev) => (prev === barKey ? null : barKey));
@@ -1179,7 +1228,7 @@ function WhenYouCoded({
                     : `${fmtTime(bin.startMs)} \u2013 ${fmtTime(bin.endMs)}`}
                 </div>
               </div>
-            </div>
+            </TimelineBar>
           );
         })}
       </div>
@@ -1728,7 +1777,7 @@ function DigestStatsSidebar({
           stats.timeline.points.length > 0 && (
             <div className="stats-subsection stats-reveal-item" style={{ animationDelay: "950ms" }}>
               <div className="stats-subsection-title">Coding Timeline</div>
-              <WhenYouCoded timeline={stats.timeline} />
+              <WhenYouCoded timeline={stats.timeline} animate={animate} />
             </div>
           )}
 
