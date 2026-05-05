@@ -329,11 +329,11 @@ export default function MarketingHome() {
                 in the dashboard. */}
             <div className="home-bento-tile">
               <div className="home-bento-content">
-                <p className="home-bento-eyebrow">Outputs</p>
-                <h3 className="home-bento-title">Three more outputs.</h3>
+                <p className="home-bento-eyebrow">Resume prompt</p>
+                <h3 className="home-bento-title">Pick up where you left off.</h3>
                 <p className="home-bento-body">
-                  Pulled from the same digest. Paste the standup into Slack, the to-do list into
-                  your tracker, the resume prompt into your AI.
+                  Paste the resume prompt into your AI coding tool. Lets you pick up your project
+                  on a new session without you explaining it.
                 </p>
               </div>
               <div className="home-bento-mock home-bento-mock--actions" aria-hidden>
