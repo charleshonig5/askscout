@@ -4,7 +4,7 @@ import {
   Code2,
   EyeOff,
   Forward,
-  ScrollText,
+  LayoutList,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
@@ -338,7 +338,7 @@ export default function MarketingHome() {
               </div>
               <div className="home-bento-mock home-bento-mock--actions" aria-hidden>
                 {/* Real action-button DOM — same `.standup-btn` class
-                    + same Lucide icons (BookText, ScrollText,
+                    + same Lucide icons (BookText, LayoutList,
                     Sparkles) the dashboard's bottom-action row and
                     the Resume Prompt button render. Disabled +
                     tabIndex -1 so the marketing tile is purely
@@ -348,7 +348,7 @@ export default function MarketingHome() {
                   Generate Standup
                 </button>
                 <button type="button" className="standup-btn" tabIndex={-1} disabled>
-                  <ScrollText size={20} strokeWidth={1} aria-hidden />
+                  <LayoutList size={20} strokeWidth={1} aria-hidden />
                   Generate Todo List
                 </button>
                 <button type="button" className="standup-btn" tabIndex={-1} disabled>

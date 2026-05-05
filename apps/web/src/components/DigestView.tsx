@@ -9,7 +9,7 @@ import {
   Sparkles,
   BookText,
   Forward,
-  ScrollText,
+  LayoutList,
   FileText,
   GitCommitHorizontal,
   TrendingUp,
@@ -1935,7 +1935,7 @@ export function DigestView({
                 )}
                 {onGeneratePlan && (
                   <button className="standup-btn" onClick={onGeneratePlan}>
-                    <ScrollText size={18} strokeWidth={1} aria-hidden />
+                    <LayoutList size={18} strokeWidth={1} aria-hidden />
                     Generate Todo List
                   </button>
                 )}
