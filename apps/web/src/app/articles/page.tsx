@@ -66,13 +66,6 @@ const ARTICLES: ArticleListing[] = [
     date: "2026-05-04",
   },
   {
-    slug: "how-to-summarize-git-commits",
-    title: "How to Summarize Your Git Commits (With or Without AI)",
-    description:
-      "Three ways to turn a noisy git log into a readable summary. The plain command, the do-it-yourself LLM prompt, and the dedicated tool.",
-    date: "2026-05-03",
-  },
-  {
     slug: "best-ai-coding-tools-for-solo-developers",
     title: "Best AI Coding Tools for Solo Developers",
     description:

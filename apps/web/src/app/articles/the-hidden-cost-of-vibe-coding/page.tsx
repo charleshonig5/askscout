@@ -162,11 +162,7 @@ export default function HiddenCostPage() {
           </p>
           <p className="public-text">
             &ldquo;Just ask the AI to summarize.&rdquo; But the AI doesn&apos;t see your commits.
-            You&apos;d have to paste diffs in by hand every day. Nobody does that. (
-            <Link href="/articles/how-to-summarize-git-commits" className="home-prose-link">
-              The full version of how to actually summarize commits with an LLM
-            </Link>
-            , if you want to try.)
+            You&apos;d have to paste diffs in by hand every day. Nobody does that.
           </p>
         </section>
 
