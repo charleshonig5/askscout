@@ -367,7 +367,7 @@ export default function MarketingHome() {
           so this section exists for users who want it local. Single
           tile, BYOK framing. =========================================================== */}
       <section className="home-section">
-        <div className="home-section-inner home-section-inner--narrow">
+        <div className="home-section-inner home-section-inner--narrow home-section-inner--align-left">
           <p className="home-eyebrow">Want it local?</p>
           <h2 className="home-section-title">Run it locally.</h2>
           <p className="home-section-prose-narrow">

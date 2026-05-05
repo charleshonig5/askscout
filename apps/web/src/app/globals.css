@@ -3585,6 +3585,13 @@ a:hover {
   text-align: center;
 }
 
+/* Left-align modifier for narrow sections that contain artifacts
+   (terminal graphics, code blocks) where flush-left reads more
+   honest than centered. */
+.home-section-inner--align-left {
+  text-align: left;
+}
+
 .home-eyebrow {
   font-family: var(--font-sans);
   font-size: 12px;
@@ -3902,12 +3909,16 @@ a:hover {
 .home-terminal-body {
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: 13px;
-  line-height: 1.45;
-  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.3;
+  color: #ffffff;
   margin: 0;
-  padding: 16px 18px 18px;
+  padding: 12px 14px;
   white-space: pre-wrap;
   overflow-x: auto;
+  /* Real terminals left-align text; <pre> already does this but
+     setting it explicitly insulates against any inherited
+     text-align: center from a centered marketing section. */
+  text-align: left;
 }
 
 .home-terminal-prompt,
