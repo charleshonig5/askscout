@@ -87,7 +87,7 @@ export default function FastestWayToContextPage() {
             Claude Code, Cursor, and Codex work best when they understand your project. The
             fastest way to give them context is to paste a structured block at the start of a
             session covering tech stack, recent work, current focus, key files, and any
-            warnings. The AskScout web app has a <strong>Resume Prompt</strong> button that
+            warnings. The AskScout web app has an <strong>AI Resume Prompt</strong> button that
             generates this block from your latest digest; the CLI does the same thing with{" "}
             <code className="inline-code">askscout --resume</code>. Below is what good context
             looks like and how to assemble it whether you use AskScout or not.
@@ -174,7 +174,7 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
           <h2 className="public-section-title">The automated way</h2>
           <p className="public-text">
             On the AskScout web app, generate this block by clicking the{" "}
-            <strong>Resume Prompt</strong> button on the Left Off section of any digest. It
+            <strong>AI Resume Prompt</strong> button on the Left Off section of any digest. It
             opens a modal with the same five-section context, ready to copy. The CLI does the
             same thing in one command:
           </p>

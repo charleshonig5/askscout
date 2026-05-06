@@ -114,7 +114,7 @@ export function AIContextModal({ isOpen, onClose, content }: AIContextModalProps
           <div className="modal-identity">
             <div className="modal-title-row">
               <Emoji name="resume" size={24} />
-              <h2 className="modal-title">Resume Prompt</h2>
+              <h2 className="modal-title">AI Resume Prompt</h2>
             </div>
             <p className="modal-subtitle">
               Paste this into your AI coding tool to pick up where you left off.
@@ -130,7 +130,7 @@ export function AIContextModal({ isOpen, onClose, content }: AIContextModalProps
         <div className="modal-body">
           {!content ? (
             <div className="modal-empty">
-              Resume Prompt will be ready when the digest finishes generating.
+              AI Resume Prompt will be ready when the digest finishes generating.
             </div>
           ) : sections.length === 0 ? (
             <div className="resume-fallback">{content}</div>

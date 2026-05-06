@@ -329,11 +329,11 @@ export default function MarketingHome() {
                 in the dashboard. */}
             <div className="home-bento-tile">
               <div className="home-bento-content">
-                <p className="home-bento-eyebrow">Resume prompt</p>
+                <p className="home-bento-eyebrow">AI Resume Prompt</p>
                 <h3 className="home-bento-title">Pick up where you left off.</h3>
                 <p className="home-bento-body">
-                  Paste the resume prompt into your AI coding tool. Lets you pick up your project
-                  on a new session without you explaining it.
+                  Paste the AI Resume Prompt into your AI coding tool. Lets you pick up your
+                  project on a new session without you explaining it.
                 </p>
               </div>
               <div className="home-bento-mock home-bento-mock--actions" aria-hidden>
@@ -353,7 +353,7 @@ export default function MarketingHome() {
                 </button>
                 <button type="button" className="standup-btn" tabIndex={-1} disabled>
                   <Sparkles size={20} strokeWidth={1} aria-hidden />
-                  Resume Prompt
+                  AI Resume Prompt
                 </button>
               </div>
             </div>

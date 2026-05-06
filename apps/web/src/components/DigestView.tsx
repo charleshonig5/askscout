@@ -315,8 +315,8 @@ function ShareBtn({ items }: { items: string[] }) {
     arrow glyph. */
 function ResumePromptBtn({ onClick }: { onClick: () => void }) {
   return (
-    <button className="digest-bulleted-share" onClick={onClick} aria-label="Open Resume Prompt">
-      Resume Prompt
+    <button className="digest-bulleted-share" onClick={onClick} aria-label="Open AI Resume Prompt">
+      AI Resume Prompt
       <Sparkles size={10} strokeWidth={1} aria-hidden />
     </button>
   );
