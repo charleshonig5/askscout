@@ -171,25 +171,32 @@ export function extractFlaggedCommits(commits: GitCommit[]): FlaggedCommit[] {
 }
 
 /**
- * Format both signal sets as a single prompt block. Empty when both
- * lists are empty so the caller can unconditionally prepend.
+ * Format both signal sets as a single prompt block.
  *
- * The wording instructs the model to surface every line verbatim
- * with the cited file:line or commit hash intact, then optionally
- * add ONE LLM-inferred bullet of nuance. This keeps the Heads Up
- * section deterministic at its core while preserving the model's
- * ability to add real value where the rules can't see.
+ * Always returns a non-empty block — even when no deterministic
+ * signals fired, the block still carries guidance to the model
+ * about how many inferred bullets are appropriate. When verbatim
+ * signals exist, the model is restricted to ONE inferred bullet
+ * on top. When the verbatim list is empty, the model gets up to
+ * TWO inferred bullets, but with explicit permission to emit fewer
+ * (or zero) so it never pads to hit a count.
  */
 export function formatHeadsUpSignalsBlock(
   todos: ExtractedTodo[],
   flagged: FlaggedCommit[],
 ): string {
-  if (todos.length === 0 && flagged.length === 0) return "";
+  const hasSignals = todos.length > 0 || flagged.length > 0;
   const lines: string[] = [];
-  lines.push("## Detected Heads Up Signals (verbatim from the user's own code and commits)");
-  lines.push(
-    "Use these as the primary content of the AI Context \"Heads Up\" section. Surface every item below as a bullet, preserving file paths, line numbers, and commit hashes EXACTLY as written. Do NOT paraphrase or merge them. After the verbatim items, you may add at most ONE additional bullet of nuance you inferred from the diffs (label it as inferred or omit it if nothing specific applies).",
-  );
+  lines.push("## Heads Up Signals");
+  if (hasSignals) {
+    lines.push(
+      "The items below are extracted verbatim from the user's own code and commits. Surface EVERY one as a bullet in the AI Context \"Heads Up\" section, preserving file paths, line numbers, and commit hashes EXACTLY as written. Do NOT paraphrase or merge them. After the verbatim items, you may add at most ONE additional inferred bullet, only if it describes a specific code-level risk a coding agent would benefit from knowing. Do NOT pad to hit a count.",
+    );
+  } else {
+    lines.push(
+      "No deterministic signals were detected for this digest. In the AI Context \"Heads Up\" section, you may add up to 2 inferred bullets, but ONLY when each describes a specific, distinct code-level risk a coding agent would benefit from knowing. One bullet is fine. Zero is fine — if nothing specific applies, write a single bullet \"None right now.\" Do NOT pad to hit a count, and do NOT include generic CSS or layout warnings.",
+    );
+  }
   if (todos.length > 0) {
     lines.push("");
     lines.push("Code comments the user added in this digest:");
