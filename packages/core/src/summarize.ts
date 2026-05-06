@@ -77,6 +77,11 @@ Heads Up
   \u2022 [Specific code-level risk: a refactor in flight, a brittle area, a failing test, a known bug. NOT generic CSS or layout warnings.]
   \u2022 [If nothing specific applies, write a single bullet: None right now.]
 
+SECTION FORMATTING RULES (do not violate):
+- Each heading ("Tech Stack", "Recent Work", "Current Focus", "Key Files", "Heads Up") MUST appear on its own line with a blank line above it, with no leading bullet character and no leading dash.
+- After the Key Files bullet list, you MUST emit a blank line, then the literal text "Heads Up" on its own line, then start a new bulleted list. Do NOT continue the Key Files list into Heads Up. Do NOT prefix "Heads Up" with a bullet.
+- Bullets only appear under "Key Files" and "Heads Up". The Tech Stack, Recent Work, and Current Focus sections are plain text, no bullets.
+
 Be ruthlessly concise. No wasted words.`;
 }
 
@@ -254,21 +259,31 @@ Writing rules for this section:
 - 2-3 SHORT sentences per text block. NO run-on sentences.
 - Reference exact file paths, function names, and version numbers where they exist.
 
-Format:
+Format (each heading on its own line, blank line between sections):
+
 Tech Stack
 [2-3 short sentences. Must include language and version, primary framework and version, auth provider if any, database if any, styling approach, build tools, deploy target. Period-separated facts, not a single run-on sentence.]
+
 Recent Work
 [ONE short sentence. Name the feature(s) that shipped and the file paths they live in. No narrative, no recap of how the work was done.]
+
 Current Focus
 [Two lines, NOT a paragraph.
 Line 1: ONE short sentence naming what is unfinished and the specific file or area it lives in.
 Line 2: MUST start with "Next move:" and name a single concrete first action a coding agent can take. No explanation after the action.]
+
 Key Files
   \u2022 [file path] - [one short clause on why this file matters right now]
   \u2022 [file path] - [one short clause on why this file matters right now]
+
 Heads Up
   \u2022 [Specific code-level risk: a refactor in flight, a brittle area, a failing test, a known bug. NOT generic CSS or layout warnings.]
   \u2022 [If nothing specific applies, write a single bullet: None right now.]
+
+SECTION FORMATTING RULES for AI Context (do not violate):
+- Each heading ("Tech Stack", "Recent Work", "Current Focus", "Key Files", "Heads Up") MUST appear on its own line with a blank line above it. No leading bullet character, no leading dash on the heading itself.
+- After the Key Files bullet list, you MUST emit a blank line, then the literal text "Heads Up" on its own line, then start a new bulleted list. Do NOT continue the Key Files list into Heads Up. Do NOT prefix "Heads Up" with a bullet.
+- Bullets only appear under "Key Files" and "Heads Up". Tech Stack, Recent Work, and Current Focus are plain text, no bullets.
 
 SECTION 5: PROJECT SUMMARY (after ---SUMMARY---)
 Write a ~200 word paragraph summarizing this project as context for your future self. Cover: tech stack, architecture, current state of the codebase, what was worked on in this session, and any known issues or areas that keep shifting. Be specific and dense. No bullet points. This will be fed back to you on the next run so write it to be maximally useful. If Previous Project Context was provided, build on it. If not, start fresh.
