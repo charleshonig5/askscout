@@ -5023,6 +5023,28 @@ a:hover {
   max-width: 760px;
 }
 
+/* Articles index header: title sits left, control buttons (Shuffle,
+   RSS) align right at the title's optical baseline. The bottom margin
+   moves to this row so the deck stays at the same vertical rhythm. */
+.page-title-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 18px;
+}
+
+.page-title-row .page-title {
+  margin: 0;
+}
+
+.article-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 10px;
+}
+
 /* Single-article variant — the article H1 is paired with a
    "← All articles" back-link sitting above it, plus a deck
    below, so it carries less weight than the index/landing
