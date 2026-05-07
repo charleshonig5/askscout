@@ -310,18 +310,6 @@ function ShareBtn({ items }: { items: string[] }) {
   );
 }
 
-/** Small header button that opens the AIContextModal from the Left Off
-    section. Mirrors the ShareBtn style — small bordered pill with a 10px
-    arrow glyph. */
-function ResumePromptBtn({ onClick }: { onClick: () => void }) {
-  return (
-    <button className="digest-bulleted-share" onClick={onClick} aria-label="Open AI Resume Prompt">
-      AI Resume Prompt
-      <Sparkles size={10} strokeWidth={1} aria-hidden />
-    </button>
-  );
-}
-
 function EmailBtn() {
   const [sent, setSent] = useState(false);
   const handleEmail = useCallback(() => {
@@ -543,7 +531,6 @@ function StreamingDigest({
   text,
   isStreaming,
   showSkeletons = false,
-  onResumeWithAI,
   visibleSections,
 }: {
   text: string;
@@ -554,10 +541,6 @@ function StreamingDigest({
    *  streaming-specific chrome (LiveBadge, cursor) the isStreaming flag
    *  would also trigger. */
   showSkeletons?: boolean;
-  /** If provided, the Left Off section renders a small "Resume Prompt"
-      button in its header that fires this callback (opens the
-      AIContextModal at the call site). */
-  onResumeWithAI?: () => void;
   visibleSections?: Record<string, boolean>;
 }) {
   const cursorRef = useRef<HTMLSpanElement>(null);
@@ -649,9 +632,6 @@ function StreamingDigest({
                 {showCursor && <LiveBadge />}
                 {section.key === "shipped" && !isStreaming && items.length > 0 && (
                   <ShareBtn items={items} />
-                )}
-                {section.key === "leftOff" && !isStreaming && onResumeWithAI && (
-                  <ResumePromptBtn onClick={onResumeWithAI} />
                 )}
               </div>
             </div>
@@ -1966,13 +1946,22 @@ export function DigestView({
                 isStreaming={isStreaming}
                 showSkeletons={!!isLoading}
                 visibleSections={visibleSections}
-                onResumeWithAI={onResumeWithAI}
               />
             )}
 
-            {/* Action buttons (Standup, To-Do) at the bottom of the main column */}
-            {!isStreaming && (onGenerateStandup || onGeneratePlan) && (
+            {/* Action buttons at the bottom of the main column. Three
+                derivative artifacts you can generate from this digest:
+                AI Resume Prompt (for your AI coding tool), Standup (for
+                your team), Todo List (for yourself). AI Resume Prompt is
+                first because it's the most distinctive value prop. */}
+            {!isStreaming && (onResumeWithAI || onGenerateStandup || onGeneratePlan) && (
               <div className="digest-bottom-actions">
+                {onResumeWithAI && (
+                  <button className="standup-btn" onClick={onResumeWithAI}>
+                    <Sparkles size={18} strokeWidth={1} aria-hidden />
+                    AI Resume Prompt
+                  </button>
+                )}
                 {onGenerateStandup && (
                   <button className="standup-btn" onClick={onGenerateStandup}>
                     <BookText size={18} strokeWidth={1} aria-hidden />
@@ -1982,7 +1971,7 @@ export function DigestView({
                 {onGeneratePlan && (
                   <button className="standup-btn" onClick={onGeneratePlan}>
                     <LayoutList size={18} strokeWidth={1} aria-hidden />
-                    Generate Todo List
+                    Todo List
                   </button>
                 )}
               </div>
