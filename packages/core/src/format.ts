@@ -34,21 +34,6 @@ const PLAIN_HEADERS = {
   takeaways: "[Key Takeaways]",
 };
 
-/** Convert the LLM's `*concept*` italic markers into terminal output.
- *  In rich-output mode (interactive TTY, color allowed) we wrap the
- *  match in ANSI italic escape codes (CSI 3 m / CSI 23 m). In
- *  plain-text mode (piped, NO_COLOR, JSON) we strip the asterisks so
- *  the prose reads cleanly without leaking markdown. Field Notes is
- *  the only digest section that uses inline italics today. */
-function renderInlineItalics(text: string, rich: boolean): string {
-  const pattern = /\*([^*\n]+)\*/g;
-  if (!rich) return text.replace(pattern, "$1");
-  // Literal escape character — kept as a hex escape so the source
-  // file is plain ASCII rather than carrying an embedded control byte.
-  const ESC = "\x1b";
-  return text.replace(pattern, `${ESC}[3m$1${ESC}[23m`);
-}
-
 export interface FormatOptions {
   repoName: string;
   timeLabel: string;
@@ -121,18 +106,21 @@ export function formatDigest(digest: Digest, options: FormatOptions): string {
     sections.push(`${header}  ${digest.leftOff.length}\n${items}`);
   }
 
-  // Field Notes \u2014 OPTIONAL editorial observation. Stored as
-  // "subtitle\n\nbody"; we split on the first blank line so the subtitle
-  // gets bold treatment and the body keeps the inline-italic concept
-  // markers. Empty fieldNotes means the LLM correctly skipped the
-  // section because the day had no clear pattern to teach, in which
-  // case the entire section (header included) is omitted.
+  // Field Notes \u2014 OPTIONAL editorial observation. Stored as a single
+  // string where the first line is the subtitle and everything after
+  // the first newline is the body paragraph. Strip any stray asterisks
+  // the LLM emits (Field Notes is plain prose, no inline emphasis).
+  // Empty fieldNotes means the LLM correctly skipped the section
+  // because the day had no clear pattern, in which case the entire
+  // section (header included) is omitted.
   if (digest.fieldNotes) {
-    const splitIdx = digest.fieldNotes.indexOf("\n\n");
+    const stripAsterisks = (s: string) => s.replace(/\*([^*\n]+)\*/g, "$1");
+    const cleaned = stripAsterisks(digest.fieldNotes.trim());
+    const splitIdx = cleaned.indexOf("\n");
     const subtitle =
-      splitIdx === -1 ? digest.fieldNotes.trim() : digest.fieldNotes.slice(0, splitIdx).trim();
+      splitIdx === -1 ? cleaned : cleaned.slice(0, splitIdx).trim();
     const body =
-      splitIdx === -1 ? "" : digest.fieldNotes.slice(splitIdx + 2).trim();
+      splitIdx === -1 ? "" : cleaned.slice(splitIdx + 1).trim();
     if (subtitle || body) {
       const header = rich ? "\ud83e\udded Field Notes" : PLAIN_HEADERS.fieldNotes;
       const ESC = "\x1b";
@@ -140,7 +128,7 @@ export function formatDigest(digest: Digest, options: FormatOptions): string {
         subtitle && rich ? `${ESC}[1m${subtitle}${ESC}[22m` : subtitle;
       const parts = [header];
       if (subtitle) parts.push(renderedSubtitle);
-      if (body) parts.push(renderInlineItalics(body, rich));
+      if (body) parts.push(body);
       sections.push(parts.join("\n"));
     }
   }

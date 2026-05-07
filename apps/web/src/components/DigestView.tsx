@@ -209,16 +209,18 @@ function formatNarrativeBody(key: string, content: string): string {
       .join("\n");
   }
 
-  // Field Notes is "subtitle\n\nbody". Render subtitle as bold so the
-  // markdown export keeps the same editorial weight users see in the
-  // rendered digest, then a blank line, then the body paragraph (with
-  // its native *italic* asterisks intact since markdown already
-  // interprets them as emphasis).
+  // Field Notes content is "subtitle\nbody" — split on the first
+  // newline. Subtitle becomes bold markdown so the editorial weight
+  // survives in the copy/download/email export. Body is plain prose;
+  // any stray asterisks from the LLM are stripped because Field Notes
+  // intentionally has no inline emphasis.
   if (key === "fieldNotes") {
-    const splitIdx = trimmed.indexOf("\n\n");
+    const stripAsterisks = (s: string) => s.replace(/\*([^*\n]+)\*/g, "$1");
+    const cleaned = stripAsterisks(trimmed);
+    const splitIdx = cleaned.indexOf("\n");
     const subtitle =
-      splitIdx === -1 ? trimmed : trimmed.slice(0, splitIdx).trim();
-    const body = splitIdx === -1 ? "" : trimmed.slice(splitIdx + 2).trim();
+      splitIdx === -1 ? cleaned : cleaned.slice(0, splitIdx).trim();
+    const body = splitIdx === -1 ? "" : cleaned.slice(splitIdx + 1).trim();
     const parts: string[] = [];
     if (subtitle) parts.push(`**${subtitle}**`);
     if (body) parts.push(body);
@@ -227,37 +229,6 @@ function formatNarrativeBody(key: string, content: string): string {
 
   // Vibe Check / Key Takeaways: prose. Preserve as-is.
   return trimmed;
-}
-
-/**
- * Render plain prose with inline `*italic*` emphasis. Used by Field Notes,
- * the only digest section where the LLM marks the named concept on first
- * mention with asterisks (e.g. *grounding*, *vocabulary debt*). Splits
- * deliberately around `*...*` pairs only — no other markdown is parsed,
- * keeping the renderer narrow and the section visually identical to other
- * prose sections except for the one italicized concept.
- *
- * Returns an array of React nodes safe to drop into a <p>. Unmatched lone
- * asterisks are preserved as plain text so the prose never rejects user
- * commit content that happens to contain a single asterisk.
- */
-function renderInlineItalics(text: string): ReactNode[] {
-  const nodes: ReactNode[] = [];
-  const pattern = /\*([^*\n]+)\*/g;
-  let lastIndex = 0;
-  let key = 0;
-  let match: RegExpExecArray | null;
-  while ((match = pattern.exec(text)) !== null) {
-    if (match.index > lastIndex) {
-      nodes.push(text.slice(lastIndex, match.index));
-    }
-    nodes.push(<em key={`em-${key++}`}>{match[1]}</em>);
-    lastIndex = match.index + match[0].length;
-  }
-  if (lastIndex < text.length) {
-    nodes.push(text.slice(lastIndex));
-  }
-  return nodes;
 }
 
 function DownloadBtn({
@@ -635,18 +606,40 @@ function StreamingDigest({
         }
 
         if (section.key === "fieldNotes") {
-          // Field Notes content is "subtitle\n\nbody" — the LLM emits a short
-          // bold headline on the first line, a blank line, then the 3-4
-          // sentence body paragraph. We split on the first blank-line so the
-          // subtitle and body render distinctly (per the Figma editorial
-          // treatment). During streaming, before the blank line arrives, the
-          // entire content lives in the subtitle slot and the body stays
-          // empty until the separator streams in.
-          const splitIdx = section.content.indexOf("\n\n");
-          const subtitle =
-            splitIdx === -1 ? section.content.trim() : section.content.slice(0, splitIdx).trim();
-          const body =
-            splitIdx === -1 ? "" : section.content.slice(splitIdx + 2).trim();
+          // Field Notes content is "subtitle\n\nbody" — bold headline on
+          // the first line, a blank line, then the 3-4 sentence body
+          // paragraph. We split on the first blank-line so the subtitle
+          // and body render distinctly (per the Figma editorial treatment).
+          //
+          // Robust to LLM format drift: \n\n is canonical, single \n is
+          // accepted as a fallback, and any stray *asterisks* the LLM
+          // emits get stripped (Field Notes is plain prose, no inline
+          // emphasis). During streaming, partial content sits in the
+          // subtitle slot until the separator arrives.
+          // Component owns the structure: emoji header, vertical rule,
+          // subtitle slot, body slot. The LLM only fills text. We split
+          // on the FIRST newline so line 1 is always the subtitle and
+          // everything after it is the body. Stray *asterisks* the LLM
+          // emits get stripped because Field Notes has no inline emphasis.
+          const stripAsterisks = (s: string) => s.replace(/\*([^*\n]+)\*/g, "$1");
+          const cleaned = stripAsterisks(section.content.trim());
+          const splitIdx = cleaned.indexOf("\n");
+          let subtitle = "";
+          let body = "";
+          if (splitIdx === -1) {
+            // Single line of content. While streaming this is the
+            // subtitle still arriving; once streaming completes with no
+            // newline, fall back to rendering as body so the user sees
+            // something readable instead of one oversized bold line.
+            if (showCursor) {
+              subtitle = cleaned;
+            } else {
+              body = cleaned;
+            }
+          } else {
+            subtitle = cleaned.slice(0, splitIdx).trim();
+            body = cleaned.slice(splitIdx + 1).trim();
+          }
           return (
             <div key={section.key} className="digest-section digest-fieldnotes">
               <div className="digest-fieldnotes-title">
@@ -663,7 +656,7 @@ function StreamingDigest({
                     )}
                     {body && (
                       <p className="digest-fieldnotes-body">
-                        {renderInlineItalics(body)}
+                        {body}
                         {showCursor && cursor}
                       </p>
                     )}

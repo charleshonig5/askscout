@@ -185,13 +185,18 @@ BAD Left Off bullet:
 Why it's bad: No context, no next step, no specifics.
 
 \ud83e\udded Field Notes
-[OPTIONAL section. Two parts separated by ONE blank line:
+[OPTIONAL section. Output format:
 
-LINE 1 (subtitle): A short headline naming the concept thesis. Aphoristic ("The model is most useful when you give it less to invent") OR concept-first ("Vocabulary debt is the smallest tax with the biggest interest rate"). Max ~12 words. ONE line, no period required, no italic asterisks here.
+The first line of content is the SUBTITLE: a short headline naming the concept thesis. Aphoristic ("The model is most useful when you give it less to invent") OR concept-first ("Vocabulary debt is the smallest tax with the biggest interest rate"). Max ~12 words. End the line with a newline.
 
-[blank line]
+The rest of the content is the BODY: a single paragraph, 3-4 sentences max. Plain prose. Cite at least one external comparison (another tool, prior art, a named pattern in the field). End on a tradeoff, principle, or insight worth keeping.
 
-LINES 2+ (body): 3-4 sentences max, single paragraph. Open by naming the concept in the first sentence with asterisks for italics, like *grounding* or *vocabulary debt*. Cite at least one external comparison (another tool, prior art, a named pattern in the field). End on a tradeoff, principle, or insight worth keeping. NO project-specific next-steps (those belong to Key Takeaways). NO bullets, NO em dashes, NO semicolons. NEVER use "you should..." or "you need to..." framing.
+ABSOLUTELY FORBIDDEN inside Field Notes content:
+- Asterisks (*) of any kind. NO inline italic markers, NO emphasis markers. The whole section is plain text.
+- Bullets, dashes, or list formatting.
+- Em dashes, semicolons.
+- Project-specific next-steps (those belong to Key Takeaways).
+- "You should..." or "you need to..." framing.
 
 WHEN TO WRITE Field Notes:
 - The day's work has a recognizable character (refactor pass, deterministic-extraction work, naming pass, prompt iteration, dependency adoption, architectural pivot, performance push, dead-code cleanup, etc.) that fits a broader concept
@@ -211,12 +216,10 @@ CRITICAL: Writing nothing is acceptable. Writing something generic is not. If yo
 
 GOOD Field Notes example:
 "The model is most useful when you give it less to invent
-
-Today's pattern was *grounding*: feeding the LLM detected facts instead of letting it guess, the way Cursor does with codebase RAG and Perplexity with web citations. The tradeoff worth knowing is that the more facts you inject, the less voice the output has. Stack detection is a free win because facts have no voice anyway, but Heads Up signals are riskier because they bleed into Scout's tone."
+Today's pattern was grounding: feeding the LLM detected facts instead of letting it guess, the way Cursor does with codebase RAG and Perplexity with web citations. The tradeoff worth knowing is that the more facts you inject, the less voice the output has. Stack detection is a free win because facts have no voice anyway, but Heads Up signals are riskier because they bleed into Scout's tone."
 
 BAD Field Notes example (overlaps with Key Takeaways, do NOT do this):
 "You added grounding logic today
-
 Run the same prompt three times against today's diffs to verify outputs stay consistent. Cursor does this kind of thing too."
 Why it's bad: "Run the same prompt three times" is a project next-step which belongs in Key Takeaways. The first line recaps what shipped instead of naming a concept. There is no tradeoff or insight worth keeping.
 
@@ -438,12 +441,13 @@ ${churnList ? `\n## Churn (files edited 3+ times — these are your Still Shifti
 - **unstable**: Areas reworked 3+ times. Use the Churn data above. Describe as features, NEVER file names. Explain what keeps changing and why it hasn't settled. Include changeCount.
 - **leftOff**: Everything in progress when the session ended. Include ALL of them. Be concrete about what works vs what doesn't and what the next step is.
 - **vibeCheck**: 3-4 casual PRESENT-TENSE sentences about where the project stands RIGHT NOW. Not a recap. Have a point of view. Notice what they're avoiding or circling. Sneak in one genuinely witty observation.
-- **fieldNotes**: OPTIONAL editorial observation. STRING containing TWO parts separated by exactly one blank line ("\\n\\n"):
-  PART 1 (subtitle): a short headline naming the concept thesis. Aphoristic ("The model is most useful when you give it less to invent") OR concept-first ("Vocabulary debt is the smallest tax with the biggest interest rate"). Max ~12 words. ONE line, no italic asterisks.
-  PART 2 (body): 3-4 sentences max, single paragraph. Open by naming the concept in the first sentence, wrapping it with single asterisks for italics like *grounding* or *vocabulary debt*. Cite at least one external comparison (another tool, prior art, named pattern in the field). End on a tradeoff, principle, or insight worth keeping.
-  Rules: NO project-specific next-steps (those belong in keyTakeaways). NO bullets, NO "you should..." framing. WRITE EMPTY STRING ("") ON SCATTERED OR QUIET DAYS, OR WHEN ONLY GENERIC ADVICE IS POSSIBLE. Empty string means the renderer omits the section entirely. Writing nothing is correct behavior; writing something generic is not.
-  GOOD fieldNotes example: "The model is most useful when you give it less to invent\\n\\nToday's pattern was *grounding*: feeding the LLM detected facts instead of letting it guess, the way Cursor does with codebase RAG and Perplexity with web citations. The tradeoff worth knowing is that the more facts you inject, the less voice the output has. Stack detection is a free win because facts have no voice anyway, but Heads Up signals are riskier because they bleed into Scout's tone."
-  BAD fieldNotes example (overlaps with keyTakeaways, do NOT do this): "You added grounding logic today\\n\\nRun the same prompt three times against today's diffs to verify outputs stay consistent. Cursor does this kind of thing too."
+- **fieldNotes**: OPTIONAL editorial observation. STRING containing TWO parts separated by a single newline ("\\n"):
+  PART 1 (subtitle, FIRST line): a short headline naming the concept thesis. Aphoristic ("The model is most useful when you give it less to invent") OR concept-first ("Vocabulary debt is the smallest tax with the biggest interest rate"). Max ~12 words.
+  PART 2 (body, REMAINING content): 3-4 sentences max, single paragraph. Plain prose, no inline emphasis. Cite at least one external comparison (another tool, prior art, named pattern in the field). End on a tradeoff, principle, or insight worth keeping.
+  ABSOLUTELY FORBIDDEN: asterisks (*) of any kind, bullets, dashes, em dashes, semicolons, project next-steps (those belong in keyTakeaways), "you should..." framing.
+  WRITE EMPTY STRING ("") ON SCATTERED OR QUIET DAYS, OR WHEN ONLY GENERIC ADVICE IS POSSIBLE. Empty string means the renderer omits the section entirely. Writing nothing is correct behavior; writing something generic is not.
+  GOOD fieldNotes example: "The model is most useful when you give it less to invent\\nToday's pattern was grounding: feeding the LLM detected facts instead of letting it guess, the way Cursor does with codebase RAG and Perplexity with web citations. The tradeoff worth knowing is that the more facts you inject, the less voice the output has. Stack detection is a free win because facts have no voice anyway, but Heads Up signals are riskier because they bleed into Scout's tone."
+  BAD fieldNotes example (overlaps with keyTakeaways, do NOT do this): "You added grounding logic today\\nRun the same prompt three times against today's diffs to verify outputs stay consistent. Cursor does this kind of thing too."
 - **keyTakeaways**: 2-3 sentences. Scout's honest sign-off on YOUR project. Start with the sharpest observation about what actually happened. Then a nudge about the next meaningful move. End with a moment of warmth or wit. NO motivational filler, NO "keep it up" energy. If you find yourself naming a broader pattern with external comparisons, that content belongs in fieldNotes, not here.
 - **resumeContext**: Rich context for AI coding tools:
   - **techStack**: What the project is built with. Be specific.

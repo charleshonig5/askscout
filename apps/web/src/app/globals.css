@@ -1448,11 +1448,6 @@ a:hover {
   margin: 0;
 }
 
-.digest-fieldnotes-body em {
-  font-style: italic;
-  color: var(--color-text-secondary);
-}
-
 .digest-item-title {
   font-weight: 600;
   color: var(--color-text-primary);
