@@ -43,22 +43,51 @@ import { DigestOpener } from "@/components/DigestOpener";
  *      multiplier, Codebase Health labels).
  *   4. Respect the user's section toggles from settings.
  */
+/**
+ * Build the digest export. Two output formats share the same structure
+ * so the section order and content are identical across surfaces:
+ *
+ *   - "markdown" (used by the .md Download): real markdown with `##`
+ *     section headers, `**bold**` for cards/subtitles, `### Sub`
+ *     headings inside Statistics, backticks around file paths.
+ *     Renders cleanly in any markdown viewer (GitHub, Notion,
+ *     VS Code, etc).
+ *
+ *   - "text" (used by the Copy button): plain text with section
+ *     emojis as the only header marker. No `##`, no `**`, no `###`.
+ *     Pastes cleanly into Slack, email, notes apps, and any context
+ *     that does not render markdown.
+ *
+ * Section order across both formats: header → narrative (Vibe Check,
+ * Shipped, Changed, Still Shifting, Left Off, Field Notes) → Key
+ * Takeaways → Statistics block. Key Takeaways sits between the
+ * narrative and the reference data so the editorial close lands
+ * before the stats.
+ */
 function buildFullMarkdown(
   text: string,
   stats?: DigestViewStats | null,
   visibleSections?: Record<string, boolean>,
   repoName?: string,
+  format: "markdown" | "text" = "text",
 ): string {
   const isVisible = (key: string) => !visibleSections || visibleSections[key] !== false;
   const fmt = (n: number) => n.toLocaleString("en-US");
+  const md = format === "markdown";
+  const h1 = (s: string) => (md ? `# ${s}` : s);
+  const h2 = (s: string) => (md ? `## ${s}` : s);
+  const h3 = (s: string) => (md ? `### ${s}` : s);
+  const bold = (s: string) => (md ? `**${s}**` : s);
+  const code = (s: string) => (md ? `\`${s}\`` : s);
 
   // 1. Strip private sections (---STANDUP---, ---PLAN---, etc).
   const digestOnly = parseSections(text).digest;
 
   // 2. Parse the narrative into structured sections so we can filter
   //    out anything the user has toggled off in settings. Key Takeaways
-  //    is pulled out so we can place it AFTER the sidebar stats block,
-  //    matching the linearized read order (narrative → stats → takeaway).
+  //    is pulled out so we can place it BETWEEN Field Notes and the
+  //    Statistics block — narrative + editorial close + reference data,
+  //    in that order.
   const parsedNarrative = parseStreamingSections(digestOnly);
   const narrativeBlocks: string[] = [];
   let keyTakeawaysBlock: string | null = null;
@@ -68,9 +97,9 @@ function buildFullMarkdown(
     if (!isVisible(settingsKey)) continue;
     if (sec.key === "stats") continue; // dead path — stats live in sidebar block
 
-    const body = formatNarrativeBody(sec.key, sec.content);
+    const body = formatNarrativeBody(sec.key, sec.content, format);
     if (!body) continue;
-    const block = `## ${sec.emoji} ${sec.label}\n\n${body}`;
+    const block = `${h2(`${sec.emoji} ${sec.label}`)}\n\n${body}`;
 
     if (sec.key === "takeaway") {
       keyTakeawaysBlock = block;
@@ -79,28 +108,27 @@ function buildFullMarkdown(
     }
   }
 
-  // 3. Statistics block — assembled as ## Statistics with ### sub-headings
-  //    in UI render order: Cards row → Most Active Files → Codebase Health
-  //    → Coding Timeline → Pace Check.
+  // 3. Statistics block — sub-section headings + cards row + file rows.
+  //    Sub-headings use ### in markdown mode and plain text in text
+  //    mode. Cards row is bold in markdown mode so it reads as the
+  //    headline stat under the Statistics umbrella.
   const statsBlocks: string[] = [];
 
-  // Cards row — bold so it reads as the headline stat under the umbrella.
   if (stats && isVisible("statistics") && stats.commits != null) {
-    statsBlocks.push(
-      `**+${fmt(stats.linesAdded ?? 0)} lines · -${fmt(stats.linesRemoved ?? 0)} lines · ${fmt(
-        stats.commits,
-      )} commits · ${fmt(stats.filesChanged ?? 0)} files**`,
-    );
+    const cards = `+${fmt(stats.linesAdded ?? 0)} lines · -${fmt(
+      stats.linesRemoved ?? 0,
+    )} lines · ${fmt(stats.commits)} commits · ${fmt(stats.filesChanged ?? 0)} files`;
+    statsBlocks.push(bold(cards));
   }
 
   if (stats && isVisible("mostActiveFiles") && (stats.topFiles?.length ?? 0) > 0) {
     const rows = stats.topFiles!.map(
       (f, i) =>
-        `${i + 1}. \`${f.file}\` (+${fmt(f.added ?? 0)} / -${fmt(f.removed ?? 0)}, ${f.commits} ${
+        `${i + 1}. ${code(f.file)} (+${fmt(f.added ?? 0)} / -${fmt(f.removed ?? 0)}, ${f.commits} ${
           f.commits === 1 ? "commit" : "commits"
         })`,
     );
-    statsBlocks.push(`### Most Active Files\n\n${rows.join("\n")}`);
+    statsBlocks.push(`${h3("Most Active Files")}\n\n${rows.join("\n")}`);
   }
 
   if (
@@ -113,11 +141,11 @@ function buildFullMarkdown(
     const h = stats.health;
     statsBlocks.push(
       [
-        "### Codebase Health",
+        h3("Codebase Health"),
         "",
-        `- **Growth:** ${h.growth.level} (+${fmt(h.growth.added)} / -${fmt(h.growth.removed)})`,
-        `- **Focus:** ${h.focus.level} (${h.focus.filesPerCommit} files touched per commit)`,
-        `- **Churn:** ${h.churn.level} (${h.churn.files} ${h.churn.files === 1 ? "file" : "files"} reworked)`,
+        `- ${bold("Growth:")} ${h.growth.level} (+${fmt(h.growth.added)} / -${fmt(h.growth.removed)})`,
+        `- ${bold("Focus:")} ${h.focus.level} (${h.focus.filesPerCommit} files touched per commit)`,
+        `- ${bold("Churn:")} ${h.churn.level} (${h.churn.files} ${h.churn.files === 1 ? "file" : "files"} reworked)`,
       ].join("\n"),
     );
   }
@@ -133,41 +161,43 @@ function buildFullMarkdown(
       stats.timeline.startMs === stats.timeline.endMs
         ? fmtT(stats.timeline.startMs)
         : `${fmtT(stats.timeline.startMs)} to ${fmtT(stats.timeline.endMs)}`;
-    statsBlocks.push(`### Coding Timeline\n\n${timeRange} · ${commitsLabel}`);
+    statsBlocks.push(`${h3("Coding Timeline")}\n\n${timeRange} · ${commitsLabel}`);
   }
 
   if (stats && isVisible("paceCheck") && stats.pace && typeof stats.pace.multiplier === "number") {
     statsBlocks.push(
       [
-        "### Pace Check",
+        h3("Pace Check"),
         "",
-        `**${stats.pace.multiplier}x** · ${stats.pace.label}`,
+        `${bold(`${stats.pace.multiplier}x`)} · ${stats.pace.label}`,
         `${stats.pace.todayCommits} commits today · ${stats.pace.avgCommits}-commit avg`,
       ].join("\n"),
     );
   }
 
   const sidebarBlock =
-    statsBlocks.length > 0 ? `## \u{1F4CA} Statistics\n\n${statsBlocks.join("\n\n")}` : "";
+    statsBlocks.length > 0
+      ? `${h2("\u{1F4CA} Statistics")}\n\n${statsBlocks.join("\n\n")}`
+      : "";
 
-  // 4. Title + metadata header. Repo name as the H1, full date as a bold
-  //    subtitle. Falls back to a generic "# Digest" when repoName is
-  //    unavailable (rare — only if the caller forgot to thread it).
-  const titleLine = repoName ? `# ${repoName}` : "# Digest";
+  // 4. Title + metadata header. In markdown mode the repo name is the
+  //    H1 and the date is bold; in text mode they're just two plain
+  //    lines so the export reads clean in any context.
+  const titleLine = h1(repoName ?? "Digest");
   const dateStr = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
   });
-  const headerBlock = `${titleLine}\n**${dateStr}**`;
+  const headerBlock = `${titleLine}\n${bold(dateStr)}`;
 
-  // 5. Final assembly — blank line between top-level blocks, trailing
-  //    newline so the file ends cleanly.
+  // 5. Final assembly. Order: header → narrative → Key Takeaways
+  //    → Statistics. Trailing newline so the file ends cleanly.
   const allBlocks: string[] = [headerBlock];
   if (narrativeBlocks.length > 0) allBlocks.push(...narrativeBlocks);
-  if (sidebarBlock) allBlocks.push(sidebarBlock);
   if (keyTakeawaysBlock) allBlocks.push(keyTakeawaysBlock);
+  if (sidebarBlock) allBlocks.push(sidebarBlock);
 
   return allBlocks.join("\n\n").trim() + "\n";
 }
@@ -180,17 +210,26 @@ function buildFullMarkdown(
  * as prose. Empty sections return an empty string so the caller can
  * skip them entirely.
  */
-function formatNarrativeBody(key: string, content: string): string {
+function formatNarrativeBody(
+  key: string,
+  content: string,
+  format: "markdown" | "text" = "text",
+): string {
   const trimmed = content.trim();
   if (!trimmed) return "";
+
+  const md = format === "markdown";
+  const bold = (s: string) => (md ? `**${s}**` : s);
 
   const isBulletSection =
     key === "shipped" || key === "changed" || key === "unstable" || key === "leftOff";
 
   if (isBulletSection) {
-    // Match StreamingDigest exactly: take only lines starting with a
-    // bullet glyph, strip the marker, defensively drop section-emoji
-    // false-positives the LLM occasionally repeats inside content.
+    // Bullets: take only lines starting with a bullet glyph, strip the
+    // marker, defensively drop section-emoji false-positives the LLM
+    // occasionally repeats. In markdown mode the title is bold; in
+    // text mode it's plain so the export reads clean in any plain-text
+    // context (Slack, email, notes app).
     const lines = trimmed.split("\n").filter((l) => l.length > 0);
     const items = lines
       .filter((l) => /^\s*[•\-*]/.test(l))
@@ -203,32 +242,39 @@ function formatNarrativeBody(key: string, content: string): string {
     return items
       .map((item) => {
         const { title, context } = splitBulletTitle(item);
-        if (title && context) return `- **${title}** - ${context}`;
+        if (title && context) return `- ${bold(title)} - ${context}`;
         return `- ${title || context}`;
       })
       .join("\n");
   }
 
-  // Field Notes content is "subtitle\nbody" — split on the first
-  // newline. Subtitle becomes bold markdown so the editorial weight
-  // survives in the copy/download/email export. Body is plain prose;
-  // any stray asterisks from the LLM are stripped because Field Notes
-  // intentionally has no inline emphasis.
+  // Field Notes content is "subtitle\nbody". Split on the first
+  // newline; everything before is the subtitle, everything after is
+  // the body paragraph. Strip stray asterisks the LLM emits (Field
+  // Notes is plain prose, no emphasis) and collapse mid-body newlines
+  // to spaces so the body reads as a single paragraph regardless of
+  // where the LLM placed its line breaks. Subtitle is bold in markdown
+  // mode, plain in text mode.
   if (key === "fieldNotes") {
     const stripAsterisks = (s: string) => s.replace(/\*([^*\n]+)\*/g, "$1");
+    const collapseNewlines = (s: string) => s.replace(/\s*\n+\s*/g, " ").trim();
     const cleaned = stripAsterisks(trimmed);
     const splitIdx = cleaned.indexOf("\n");
     const subtitle =
       splitIdx === -1 ? cleaned : cleaned.slice(0, splitIdx).trim();
-    const body = splitIdx === -1 ? "" : cleaned.slice(splitIdx + 1).trim();
+    const body =
+      splitIdx === -1 ? "" : collapseNewlines(cleaned.slice(splitIdx + 1));
     const parts: string[] = [];
-    if (subtitle) parts.push(`**${subtitle}**`);
+    if (subtitle) parts.push(bold(subtitle));
     if (body) parts.push(body);
     return parts.join("\n\n");
   }
 
-  // Vibe Check / Key Takeaways: prose. Preserve as-is.
-  return trimmed;
+  // Vibe Check / Key Takeaways: prose. Collapse mid-paragraph newlines
+  // so each section reads as a single flowing paragraph in the export,
+  // matching how the rendered web view displays them (where browser
+  // whitespace collapsing already handles this naturally).
+  return trimmed.replace(/\s*\n+\s*/g, " ");
 }
 
 function DownloadBtn({
@@ -246,7 +292,7 @@ function DownloadBtn({
     const name = repoName ?? "digest";
     const date = new Date().toISOString().slice(0, 10);
     const filename = `${name}-${date}.md`;
-    const md = buildFullMarkdown(text, stats, visibleSections, repoName);
+    const md = buildFullMarkdown(text, stats, visibleSections, repoName, "markdown");
 
     const blob = new Blob([md], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
@@ -364,7 +410,7 @@ export function DigestActions({
   return (
     <div className="digest-actions-row">
       <CopyBtn
-        text={buildFullMarkdown(text, stats, visibleSections, repoName)}
+        text={buildFullMarkdown(text, stats, visibleSections, repoName, "text")}
         label="Copy"
       />
       <DownloadBtn
