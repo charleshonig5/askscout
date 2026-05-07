@@ -62,7 +62,7 @@ Tech Stack
 [2-3 short sentences. Must include language and version, primary framework and version, auth provider if any, database if any, styling approach, build tools, deploy target. Period-separated facts, not a single run-on sentence.]
 
 Recent Work
-[ONE short sentence. Name the feature(s) that shipped and the file paths they live in. No narrative, no recap of how the work was done.]
+[ONE short sentence, max ~25 words. Name the most significant feature that shipped and 1-3 file paths it lives in. NO semicolons, NO colons used as clause-chainers, NO list of every file changed. If the session touched many things, pick the headline change and skip the rest. No narrative, no recap of how the work was done.]
 
 Current Focus
 [Two lines, NOT a paragraph.
@@ -265,7 +265,7 @@ Tech Stack
 [2-3 short sentences. Must include language and version, primary framework and version, auth provider if any, database if any, styling approach, build tools, deploy target. Period-separated facts, not a single run-on sentence.]
 
 Recent Work
-[ONE short sentence. Name the feature(s) that shipped and the file paths they live in. No narrative, no recap of how the work was done.]
+[ONE short sentence, max ~25 words. Name the most significant feature that shipped and 1-3 file paths it lives in. NO semicolons, NO colons used as clause-chainers, NO list of every file changed. If the session touched many things, pick the headline change and skip the rest. No narrative, no recap of how the work was done.]
 
 Current Focus
 [Two lines, NOT a paragraph.
