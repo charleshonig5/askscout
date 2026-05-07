@@ -35,6 +35,11 @@ export interface Digest {
   leftOff: DigestItem[];
   stats: DigestStats;
   health: HealthIndicator[] | null; // null if < 3 runs
+  /** Optional editorial observation about the broader pattern today's
+   *  work fits into. Empty string when the LLM correctly skipped the
+   *  section because the day had no clear theme. Renderers MUST treat
+   *  empty as "omit entirely" — never display an empty Field Notes. */
+  fieldNotes: string;
   keyTakeaways: string;
   resumeContext: ResumeContext;
   standupNotes: StandupNotes;

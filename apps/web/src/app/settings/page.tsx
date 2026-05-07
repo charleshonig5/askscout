@@ -29,6 +29,11 @@ const SECTION_OPTIONS = [
   { key: "unstable", label: "Still Shifting", desc: "Things that keep getting reworked" },
   { key: "leftOff", label: "Left Off", desc: "Where you stopped working" },
   {
+    key: "fieldNotes",
+    label: "Field Notes",
+    desc: "An editorial observation when the day's work fits a broader pattern",
+  },
+  {
     key: "oneTakeaway",
     label: "Key Takeaways",
     desc: "Scout's sign-off with a specific observation and a nudge",

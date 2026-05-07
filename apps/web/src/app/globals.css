@@ -1375,6 +1375,44 @@ a:hover {
   margin: 0;
 }
 
+/* Field Notes — optional editorial observation that sits between Left
+   Off and Key Takeaways. Visual rhythm is intentionally identical to
+   Key Takeaways so the digest scans cleanly. The only inline formatting
+   is an italic emphasis on the named concept (rendered via <em>),
+   which uses the secondary-text color so the concept reads as a
+   semantic handle without competing with the body copy. Light/dark
+   modes inherit from existing tokens automatically. */
+.digest-fieldnotes {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.digest-fieldnotes-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: normal;
+  color: var(--color-text-primary);
+}
+
+.digest-fieldnotes-body {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.digest-fieldnotes-body em {
+  font-style: italic;
+  color: var(--color-text-secondary);
+}
+
 .digest-item-title {
   font-weight: 600;
   color: var(--color-text-primary);

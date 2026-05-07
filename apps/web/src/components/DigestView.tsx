@@ -209,8 +209,39 @@ function formatNarrativeBody(key: string, content: string): string {
       .join("\n");
   }
 
-  // Vibe Check / Key Takeaways: prose. Preserve as-is.
+  // Vibe Check / Field Notes / Key Takeaways: prose. Preserve as-is.
   return trimmed;
+}
+
+/**
+ * Render plain prose with inline `*italic*` emphasis. Used by Field Notes,
+ * the only digest section where the LLM marks the named concept on first
+ * mention with asterisks (e.g. *grounding*, *vocabulary debt*). Splits
+ * deliberately around `*...*` pairs only — no other markdown is parsed,
+ * keeping the renderer narrow and the section visually identical to other
+ * prose sections except for the one italicized concept.
+ *
+ * Returns an array of React nodes safe to drop into a <p>. Unmatched lone
+ * asterisks are preserved as plain text so the prose never rejects user
+ * commit content that happens to contain a single asterisk.
+ */
+function renderInlineItalics(text: string): ReactNode[] {
+  const nodes: ReactNode[] = [];
+  const pattern = /\*([^*\n]+)\*/g;
+  let lastIndex = 0;
+  let key = 0;
+  let match: RegExpExecArray | null;
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      nodes.push(text.slice(lastIndex, match.index));
+    }
+    nodes.push(<em key={`em-${key++}`}>{match[1]}</em>);
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastIndex < text.length) {
+    nodes.push(text.slice(lastIndex));
+  }
+  return nodes;
 }
 
 function DownloadBtn({
@@ -392,13 +423,15 @@ const SECTION_MARKERS = [
   { key: "changed", emoji: "\ud83d\udd27", label: "Changed" },
   { key: "unstable", emoji: "\ud83d\udd01", label: "Still Shifting" },
   { key: "leftOff", emoji: "\ud83d\udccd", label: "Left Off" },
+  { key: "fieldNotes", emoji: "\ud83e\udded", label: "Field Notes" },
   { key: "takeaway", emoji: "\ud83d\udd11", label: "Key Takeaways" },
   { key: "stats", emoji: "\ud83d\udcca", label: "Stats" },
 ] as const;
 
 // Regex matching any line that begins with a section emoji — used defensively
 // to filter out LLM-repeated section headers from bullet lists.
-const SECTION_EMOJI_PREFIX = /^[\u{1F4AC}\u{1F680}\u{1F527}\u{1F501}\u{1F4CD}\u{1F511}\u{1F4CA}]/u;
+const SECTION_EMOJI_PREFIX =
+  /^[\u{1F4AC}\u{1F680}\u{1F527}\u{1F501}\u{1F4CD}\u{1F9ED}\u{1F511}\u{1F4CA}]/u;
 
 interface ParsedSection {
   key: string;
@@ -523,6 +556,7 @@ const sectionKeyMap: Record<string, string> = {
   changed: "changed",
   unstable: "unstable",
   leftOff: "leftOff",
+  fieldNotes: "fieldNotes",
   takeaway: "oneTakeaway",
   stats: "statistics",
 };
@@ -578,6 +612,28 @@ function StreamingDigest({
               </div>
               <p className="digest-vibe-body">
                 {section.content}
+                {showCursor && cursor}
+              </p>
+            </div>
+          );
+        }
+
+        if (section.key === "fieldNotes") {
+          // Field Notes is the only digest section that uses inline italics
+          // (the LLM marks the named concept on first mention with *asterisks*).
+          // renderInlineItalics splits the prose around those markers so the
+          // concept renders in <em> while the rest stays plain text. No other
+          // markdown is interpreted, keeping the section visually consistent
+          // with Vibe Check and Key Takeaways.
+          return (
+            <div key={section.key} className="digest-section digest-fieldnotes">
+              <div className="digest-fieldnotes-title">
+                <Emoji name={section.key} size={20} />
+                <span>{section.label}</span>
+                {showCursor && <LiveBadge />}
+              </div>
+              <p className="digest-fieldnotes-body">
+                {renderInlineItalics(section.content)}
                 {showCursor && cursor}
               </p>
             </div>

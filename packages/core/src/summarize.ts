@@ -184,6 +184,32 @@ BAD Left Off bullet:
 "Payment form - Not finished"
 Why it's bad: No context, no next step, no specifics.
 
+\ud83e\udded Field Notes
+[OPTIONAL section. 3-4 sentences max, single paragraph. ONE editorial observation about the SHAPE of today's work as an example of a broader pattern that exists outside this codebase. Open by naming the concept in the first sentence with asterisks for italics, like *grounding* or *vocabulary debt*. Cite at least one external comparison (another tool, prior art, a named pattern in the field). End on a tradeoff, principle, or insight worth keeping. NO project-specific next-steps (those belong to Key Takeaways). NO bullets, NO em dashes, NO semicolons. NEVER use "you should..." or "you need to..." framing.
+
+WHEN TO WRITE Field Notes:
+- The day's work has a recognizable character (refactor pass, deterministic-extraction work, naming pass, prompt iteration, dependency adoption, architectural pivot, performance push, dead-code cleanup, etc.) that fits a broader concept
+- A file or feature was touched 5+ times (wrestling)
+- A new dependency or framework was adopted
+- Multiple reverts in the same area
+- A pattern emerging across 3+ files in one direction
+
+WHEN TO SKIP Field Notes ENTIRELY (do NOT emit the "\ud83e\udded Field Notes" header):
+- The day is scattered with no clear theme
+- The day was quiet (1-2 commits, no clear pattern)
+- You can only produce generic advice that could apply to any developer
+- You have no specific external comparison to cite
+- The observation duplicates content that belongs in Key Takeaways
+
+CRITICAL: Writing nothing is acceptable. Writing something generic is not. If you cannot write a specific, pattern-naming observation grounded in today's actual work with a real external comparison, omit the entire section, including the header.]
+
+GOOD Field Notes example:
+"Today's pattern was *grounding*: feeding the LLM detected facts instead of letting it guess, the way Cursor does with codebase RAG and Perplexity with web citations. The tradeoff worth knowing is that the more facts you inject, the less voice the output has. Stack detection is a free win because facts have no voice anyway, but Heads Up signals are riskier because they bleed into Scout's tone."
+
+BAD Field Notes example (overlaps with Key Takeaways):
+"You added grounding logic today. Run the same prompt three times against today's diffs to verify outputs stay consistent. Cursor does this kind of thing too."
+Why it's bad: "Run the same prompt three times" is a project next-step which belongs in Key Takeaways. The first sentence recaps what shipped instead of teaching the pattern. There is no tradeoff or insight worth keeping.
+
 \ud83d\udd11 Key Takeaways
 [2-3 sentences. Open with the day's SHAPE observation \u2014 what kind of session this was, not what got done. (Long arc / short pruning sprint / one-thing-circled-all-day / scattered cleanup, etc.) Then the sharpest call about what to do next. End on a wry, rueful, or warm beat \u2014 "here we are" energy, not "keep it up" energy. Ground every sentence in specifics from the digest above. Never motivational, never generic.]
 
@@ -203,7 +229,8 @@ Section definitions (do NOT include these in the output, they are instructions f
 - Changed = things that already existed but got modified. Redesigns, refactors, config changes.
 - Still Shifting = areas reworked 3+ times. Use the Churn data to identify these. Describe as FEATURES ("the checkout flow"), NEVER file names. Observational, not alarming.
 - Left Off = everything in progress when the session ended. Include ALL of them, not just one.
-- Key Takeaways = Scout's sign-off. Grounded, specific, warm, honest. Observation + next move + a small human moment. Never motivational filler, never generic praise.
+- Field Notes = OPTIONAL editorial observation about the broader pattern your work fits into. Names a concept (italicized), cites external prior art, ends on a tradeoff. Never project-specific next-steps. Skip entirely on days with no clear theme.
+- Key Takeaways = Scout's sign-off on YOUR project. Grounded, specific, warm, honest. Observation + next move + a small human moment. Never motivational filler, never generic praise. If you find yourself naming a broader pattern with external comparisons, that content belongs in Field Notes, not here.
 
 Rules:
 - Output ONLY the emoji + section name as the header (e.g. "\ud83d\ude80 Shipped"), nothing else on that line.
@@ -211,6 +238,7 @@ Rules:
 - Every bullet in Shipped, Changed, Still Shifting, and Left Off MUST follow this exact format: "Title - body". The title is 2-5 plain-language words. Then a single space, a hyphen, a single space (" - "). Then 1-2 full sentences of context. NEVER write a bullet without the "Title - " prefix. A bullet that starts with body text and no title is a format failure. This rule has zero exceptions.
 - NEVER use file names, function names, or code paths anywhere in the digest. Translate everything to features and behaviors.
 - Left Off must always have at least 1 item and should list everything in progress.
+- Field Notes is OPTIONAL. Omit the entire section, including the "\ud83e\udded Field Notes" header, when no specific pattern can be taught. Writing nothing is correct behavior on scattered or quiet days.
 - Key Takeaways is 2-3 sentences. Must always be included. Must reference something specific from the digest above.
 - Skip empty sections except Left Off and Key Takeaways.
 
@@ -400,7 +428,10 @@ ${churnList ? `\n## Churn (files edited 3+ times — these are your Still Shifti
 - **unstable**: Areas reworked 3+ times. Use the Churn data above. Describe as features, NEVER file names. Explain what keeps changing and why it hasn't settled. Include changeCount.
 - **leftOff**: Everything in progress when the session ended. Include ALL of them. Be concrete about what works vs what doesn't and what the next step is.
 - **vibeCheck**: 3-4 casual PRESENT-TENSE sentences about where the project stands RIGHT NOW. Not a recap. Have a point of view. Notice what they're avoiding or circling. Sneak in one genuinely witty observation.
-- **keyTakeaways**: 2-3 sentences. Scout's honest sign-off. Start with the sharpest observation about what actually happened. Then a nudge about the next meaningful move. End with a moment of warmth or wit. NO motivational filler, NO "keep it up" energy.
+- **fieldNotes**: OPTIONAL editorial observation. 3-4 sentences max, single paragraph. ONE pattern observation about the SHAPE of today's work as an example of a broader concept that exists outside this codebase. Open by naming the concept in the first sentence, wrapping it with single asterisks for italics like *grounding* or *vocabulary debt*. Cite at least one external comparison (another tool, prior art, named pattern in the field). End on a tradeoff, principle, or insight worth keeping. NO project-specific next-steps (those belong in keyTakeaways). NO bullets, NO "you should..." framing. WRITE EMPTY STRING ("") ON SCATTERED OR QUIET DAYS, OR WHEN ONLY GENERIC ADVICE IS POSSIBLE. Empty string means the renderer omits the section entirely. Writing nothing is correct behavior; writing something generic is not.
+  GOOD fieldNotes example: "Today's pattern was *grounding*: feeding the LLM detected facts instead of letting it guess, the way Cursor does with codebase RAG and Perplexity with web citations. The tradeoff worth knowing is that the more facts you inject, the less voice the output has. Stack detection is a free win because facts have no voice anyway, but Heads Up signals are riskier because they bleed into Scout's tone."
+  BAD fieldNotes example (overlaps with keyTakeaways, do NOT do this): "You added grounding logic today. Run the same prompt three times against today's diffs to verify outputs stay consistent. Cursor does this kind of thing too."
+- **keyTakeaways**: 2-3 sentences. Scout's honest sign-off on YOUR project. Start with the sharpest observation about what actually happened. Then a nudge about the next meaningful move. End with a moment of warmth or wit. NO motivational filler, NO "keep it up" energy. If you find yourself naming a broader pattern with external comparisons, that content belongs in fieldNotes, not here.
 - **resumeContext**: Rich context for AI coding tools:
   - **techStack**: What the project is built with. Be specific.
   - **recentWork**: 2-3 sentences about what was recently built, referencing files from the diffs.
@@ -422,6 +453,7 @@ Respond with this exact JSON schema:
   "changed": [{ "summary": "..." }],
   "unstable": [{ "summary": "...", "changeCount": 0 }],
   "leftOff": [{ "summary": "..." }],
+  "fieldNotes": "",
   "keyTakeaways": "...",
   "resumeContext": {
     "techStack": "...",
@@ -562,6 +594,11 @@ export async function summarize(
   const unstable = Array.isArray(parsed.unstable) ? parsed.unstable : [];
   const leftOff = Array.isArray(parsed.leftOff) ? parsed.leftOff : [];
   const health = Array.isArray(parsed.health) ? (parsed.health as HealthIndicator[]) : null;
+  // Field Notes is OPTIONAL. Empty string means the LLM correctly skipped
+  // the section because the day had no clear pattern to teach. Renderers
+  // (web + CLI) treat empty string as "omit entirely" — never display an
+  // empty Field Notes.
+  const fieldNotes = typeof parsed.fieldNotes === "string" ? parsed.fieldNotes.trim() : "";
   const keyTakeaways = typeof parsed.keyTakeaways === "string" ? parsed.keyTakeaways : "";
   const updatedSummary = typeof parsed.updatedSummary === "string" ? parsed.updatedSummary : "";
 
@@ -607,6 +644,7 @@ export async function summarize(
     leftOff: leftOff as Digest["leftOff"],
     stats: computeStats(commits, diffs),
     health,
+    fieldNotes,
     keyTakeaways,
     resumeContext,
     standupNotes,

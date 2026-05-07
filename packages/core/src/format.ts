@@ -30,8 +30,24 @@ const PLAIN_HEADERS = {
   changed: "[Changed]",
   unstable: "[Still Shifting]",
   leftOff: "[Left Off]",
+  fieldNotes: "[Field Notes]",
   takeaways: "[Key Takeaways]",
 };
+
+/** Convert the LLM's `*concept*` italic markers into terminal output.
+ *  In rich-output mode (interactive TTY, color allowed) we wrap the
+ *  match in ANSI italic escape codes (CSI 3 m / CSI 23 m). In
+ *  plain-text mode (piped, NO_COLOR, JSON) we strip the asterisks so
+ *  the prose reads cleanly without leaking markdown. Field Notes is
+ *  the only digest section that uses inline italics today. */
+function renderInlineItalics(text: string, rich: boolean): string {
+  const pattern = /\*([^*\n]+)\*/g;
+  if (!rich) return text.replace(pattern, "$1");
+  // Literal escape character — kept as a hex escape so the source
+  // file is plain ASCII rather than carrying an embedded control byte.
+  const ESC = "\x1b";
+  return text.replace(pattern, `${ESC}[3m$1${ESC}[23m`);
+}
 
 export interface FormatOptions {
   repoName: string;
@@ -103,6 +119,16 @@ export function formatDigest(digest: Digest, options: FormatOptions): string {
     const items = digest.leftOff.map((i) => `  ${bullet} ${i.summary}`).join("\n");
     const header = rich ? "\ud83d\udccd Left Off" : PLAIN_HEADERS.leftOff;
     sections.push(`${header}  ${digest.leftOff.length}\n${items}`);
+  }
+
+  // Field Notes \u2014 OPTIONAL editorial observation. Empty string means
+  // the LLM correctly skipped the section because the day had no clear
+  // pattern to teach. We render only when there is content. The inline
+  // `*concept*` markers from the LLM get converted to ANSI italics in
+  // rich-output mode and stripped in plain-text mode.
+  if (digest.fieldNotes) {
+    const header = rich ? "\ud83e\udded Field Notes" : PLAIN_HEADERS.fieldNotes;
+    sections.push(`${header}\n${renderInlineItalics(digest.fieldNotes, rich)}`);
   }
 
   // Key Takeaways
