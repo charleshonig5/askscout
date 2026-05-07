@@ -43,6 +43,12 @@ export const SECTION_SKELETONS: SkeletonShape[] = [
   { key: "changed", emoji: "\u{1F527}", label: "Changed" },
   { key: "unstable", emoji: "\u{1F501}", label: "Still Shifting" },
   { key: "leftOff", emoji: "\u{1F4CD}", label: "Left Off" },
+  // Field Notes is OPTIONAL — the LLM may correctly skip it on a quiet
+  // day. The skeleton shows during streaming so the layout doesn't
+  // shift if the section does fire; if it doesn't, the skeleton
+  // disappears with the rest when isStreaming flips false. No "stuck
+  // loading" risk because the consumer gates on isStreaming itself.
+  { key: "fieldNotes", emoji: "\u{1F9ED}", label: "Field Notes" },
   { key: "takeaway", emoji: "\u{1F511}", label: "Key Takeaways" },
 ];
 

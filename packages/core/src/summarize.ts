@@ -185,7 +185,13 @@ BAD Left Off bullet:
 Why it's bad: No context, no next step, no specifics.
 
 \ud83e\udded Field Notes
-[OPTIONAL section. 3-4 sentences max, single paragraph. ONE editorial observation about the SHAPE of today's work as an example of a broader pattern that exists outside this codebase. Open by naming the concept in the first sentence with asterisks for italics, like *grounding* or *vocabulary debt*. Cite at least one external comparison (another tool, prior art, a named pattern in the field). End on a tradeoff, principle, or insight worth keeping. NO project-specific next-steps (those belong to Key Takeaways). NO bullets, NO em dashes, NO semicolons. NEVER use "you should..." or "you need to..." framing.
+[OPTIONAL section. Two parts separated by ONE blank line:
+
+LINE 1 (subtitle): A short headline naming the concept thesis. Aphoristic ("The model is most useful when you give it less to invent") OR concept-first ("Vocabulary debt is the smallest tax with the biggest interest rate"). Max ~12 words. ONE line, no period required, no italic asterisks here.
+
+[blank line]
+
+LINES 2+ (body): 3-4 sentences max, single paragraph. Open by naming the concept in the first sentence with asterisks for italics, like *grounding* or *vocabulary debt*. Cite at least one external comparison (another tool, prior art, a named pattern in the field). End on a tradeoff, principle, or insight worth keeping. NO project-specific next-steps (those belong to Key Takeaways). NO bullets, NO em dashes, NO semicolons. NEVER use "you should..." or "you need to..." framing.
 
 WHEN TO WRITE Field Notes:
 - The day's work has a recognizable character (refactor pass, deterministic-extraction work, naming pass, prompt iteration, dependency adoption, architectural pivot, performance push, dead-code cleanup, etc.) that fits a broader concept
@@ -204,11 +210,15 @@ WHEN TO SKIP Field Notes ENTIRELY (do NOT emit the "\ud83e\udded Field Notes" he
 CRITICAL: Writing nothing is acceptable. Writing something generic is not. If you cannot write a specific, pattern-naming observation grounded in today's actual work with a real external comparison, omit the entire section, including the header.]
 
 GOOD Field Notes example:
-"Today's pattern was *grounding*: feeding the LLM detected facts instead of letting it guess, the way Cursor does with codebase RAG and Perplexity with web citations. The tradeoff worth knowing is that the more facts you inject, the less voice the output has. Stack detection is a free win because facts have no voice anyway, but Heads Up signals are riskier because they bleed into Scout's tone."
+"The model is most useful when you give it less to invent
 
-BAD Field Notes example (overlaps with Key Takeaways):
-"You added grounding logic today. Run the same prompt three times against today's diffs to verify outputs stay consistent. Cursor does this kind of thing too."
-Why it's bad: "Run the same prompt three times" is a project next-step which belongs in Key Takeaways. The first sentence recaps what shipped instead of teaching the pattern. There is no tradeoff or insight worth keeping.
+Today's pattern was *grounding*: feeding the LLM detected facts instead of letting it guess, the way Cursor does with codebase RAG and Perplexity with web citations. The tradeoff worth knowing is that the more facts you inject, the less voice the output has. Stack detection is a free win because facts have no voice anyway, but Heads Up signals are riskier because they bleed into Scout's tone."
+
+BAD Field Notes example (overlaps with Key Takeaways, do NOT do this):
+"You added grounding logic today
+
+Run the same prompt three times against today's diffs to verify outputs stay consistent. Cursor does this kind of thing too."
+Why it's bad: "Run the same prompt three times" is a project next-step which belongs in Key Takeaways. The first line recaps what shipped instead of naming a concept. There is no tradeoff or insight worth keeping.
 
 \ud83d\udd11 Key Takeaways
 [2-3 sentences. Open with the day's SHAPE observation \u2014 what kind of session this was, not what got done. (Long arc / short pruning sprint / one-thing-circled-all-day / scattered cleanup, etc.) Then the sharpest call about what to do next. End on a wry, rueful, or warm beat \u2014 "here we are" energy, not "keep it up" energy. Ground every sentence in specifics from the digest above. Never motivational, never generic.]
@@ -428,9 +438,12 @@ ${churnList ? `\n## Churn (files edited 3+ times — these are your Still Shifti
 - **unstable**: Areas reworked 3+ times. Use the Churn data above. Describe as features, NEVER file names. Explain what keeps changing and why it hasn't settled. Include changeCount.
 - **leftOff**: Everything in progress when the session ended. Include ALL of them. Be concrete about what works vs what doesn't and what the next step is.
 - **vibeCheck**: 3-4 casual PRESENT-TENSE sentences about where the project stands RIGHT NOW. Not a recap. Have a point of view. Notice what they're avoiding or circling. Sneak in one genuinely witty observation.
-- **fieldNotes**: OPTIONAL editorial observation. 3-4 sentences max, single paragraph. ONE pattern observation about the SHAPE of today's work as an example of a broader concept that exists outside this codebase. Open by naming the concept in the first sentence, wrapping it with single asterisks for italics like *grounding* or *vocabulary debt*. Cite at least one external comparison (another tool, prior art, named pattern in the field). End on a tradeoff, principle, or insight worth keeping. NO project-specific next-steps (those belong in keyTakeaways). NO bullets, NO "you should..." framing. WRITE EMPTY STRING ("") ON SCATTERED OR QUIET DAYS, OR WHEN ONLY GENERIC ADVICE IS POSSIBLE. Empty string means the renderer omits the section entirely. Writing nothing is correct behavior; writing something generic is not.
-  GOOD fieldNotes example: "Today's pattern was *grounding*: feeding the LLM detected facts instead of letting it guess, the way Cursor does with codebase RAG and Perplexity with web citations. The tradeoff worth knowing is that the more facts you inject, the less voice the output has. Stack detection is a free win because facts have no voice anyway, but Heads Up signals are riskier because they bleed into Scout's tone."
-  BAD fieldNotes example (overlaps with keyTakeaways, do NOT do this): "You added grounding logic today. Run the same prompt three times against today's diffs to verify outputs stay consistent. Cursor does this kind of thing too."
+- **fieldNotes**: OPTIONAL editorial observation. STRING containing TWO parts separated by exactly one blank line ("\\n\\n"):
+  PART 1 (subtitle): a short headline naming the concept thesis. Aphoristic ("The model is most useful when you give it less to invent") OR concept-first ("Vocabulary debt is the smallest tax with the biggest interest rate"). Max ~12 words. ONE line, no italic asterisks.
+  PART 2 (body): 3-4 sentences max, single paragraph. Open by naming the concept in the first sentence, wrapping it with single asterisks for italics like *grounding* or *vocabulary debt*. Cite at least one external comparison (another tool, prior art, named pattern in the field). End on a tradeoff, principle, or insight worth keeping.
+  Rules: NO project-specific next-steps (those belong in keyTakeaways). NO bullets, NO "you should..." framing. WRITE EMPTY STRING ("") ON SCATTERED OR QUIET DAYS, OR WHEN ONLY GENERIC ADVICE IS POSSIBLE. Empty string means the renderer omits the section entirely. Writing nothing is correct behavior; writing something generic is not.
+  GOOD fieldNotes example: "The model is most useful when you give it less to invent\\n\\nToday's pattern was *grounding*: feeding the LLM detected facts instead of letting it guess, the way Cursor does with codebase RAG and Perplexity with web citations. The tradeoff worth knowing is that the more facts you inject, the less voice the output has. Stack detection is a free win because facts have no voice anyway, but Heads Up signals are riskier because they bleed into Scout's tone."
+  BAD fieldNotes example (overlaps with keyTakeaways, do NOT do this): "You added grounding logic today\\n\\nRun the same prompt three times against today's diffs to verify outputs stay consistent. Cursor does this kind of thing too."
 - **keyTakeaways**: 2-3 sentences. Scout's honest sign-off on YOUR project. Start with the sharpest observation about what actually happened. Then a nudge about the next meaningful move. End with a moment of warmth or wit. NO motivational filler, NO "keep it up" energy. If you find yourself naming a broader pattern with external comparisons, that content belongs in fieldNotes, not here.
 - **resumeContext**: Rich context for AI coding tools:
   - **techStack**: What the project is built with. Be specific.

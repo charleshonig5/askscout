@@ -121,14 +121,28 @@ export function formatDigest(digest: Digest, options: FormatOptions): string {
     sections.push(`${header}  ${digest.leftOff.length}\n${items}`);
   }
 
-  // Field Notes \u2014 OPTIONAL editorial observation. Empty string means
-  // the LLM correctly skipped the section because the day had no clear
-  // pattern to teach. We render only when there is content. The inline
-  // `*concept*` markers from the LLM get converted to ANSI italics in
-  // rich-output mode and stripped in plain-text mode.
+  // Field Notes \u2014 OPTIONAL editorial observation. Stored as
+  // "subtitle\n\nbody"; we split on the first blank line so the subtitle
+  // gets bold treatment and the body keeps the inline-italic concept
+  // markers. Empty fieldNotes means the LLM correctly skipped the
+  // section because the day had no clear pattern to teach, in which
+  // case the entire section (header included) is omitted.
   if (digest.fieldNotes) {
-    const header = rich ? "\ud83e\udded Field Notes" : PLAIN_HEADERS.fieldNotes;
-    sections.push(`${header}\n${renderInlineItalics(digest.fieldNotes, rich)}`);
+    const splitIdx = digest.fieldNotes.indexOf("\n\n");
+    const subtitle =
+      splitIdx === -1 ? digest.fieldNotes.trim() : digest.fieldNotes.slice(0, splitIdx).trim();
+    const body =
+      splitIdx === -1 ? "" : digest.fieldNotes.slice(splitIdx + 2).trim();
+    if (subtitle || body) {
+      const header = rich ? "\ud83e\udded Field Notes" : PLAIN_HEADERS.fieldNotes;
+      const ESC = "\x1b";
+      const renderedSubtitle =
+        subtitle && rich ? `${ESC}[1m${subtitle}${ESC}[22m` : subtitle;
+      const parts = [header];
+      if (subtitle) parts.push(renderedSubtitle);
+      if (body) parts.push(renderInlineItalics(body, rich));
+      sections.push(parts.join("\n"));
+    }
   }
 
   // Key Takeaways

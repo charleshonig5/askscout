@@ -209,7 +209,23 @@ function formatNarrativeBody(key: string, content: string): string {
       .join("\n");
   }
 
-  // Vibe Check / Field Notes / Key Takeaways: prose. Preserve as-is.
+  // Field Notes is "subtitle\n\nbody". Render subtitle as bold so the
+  // markdown export keeps the same editorial weight users see in the
+  // rendered digest, then a blank line, then the body paragraph (with
+  // its native *italic* asterisks intact since markdown already
+  // interprets them as emphasis).
+  if (key === "fieldNotes") {
+    const splitIdx = trimmed.indexOf("\n\n");
+    const subtitle =
+      splitIdx === -1 ? trimmed : trimmed.slice(0, splitIdx).trim();
+    const body = splitIdx === -1 ? "" : trimmed.slice(splitIdx + 2).trim();
+    const parts: string[] = [];
+    if (subtitle) parts.push(`**${subtitle}**`);
+    if (body) parts.push(body);
+    return parts.join("\n\n");
+  }
+
+  // Vibe Check / Key Takeaways: prose. Preserve as-is.
   return trimmed;
 }
 
@@ -619,12 +635,18 @@ function StreamingDigest({
         }
 
         if (section.key === "fieldNotes") {
-          // Field Notes is the only digest section that uses inline italics
-          // (the LLM marks the named concept on first mention with *asterisks*).
-          // renderInlineItalics splits the prose around those markers so the
-          // concept renders in <em> while the rest stays plain text. No other
-          // markdown is interpreted, keeping the section visually consistent
-          // with Vibe Check and Key Takeaways.
+          // Field Notes content is "subtitle\n\nbody" — the LLM emits a short
+          // bold headline on the first line, a blank line, then the 3-4
+          // sentence body paragraph. We split on the first blank-line so the
+          // subtitle and body render distinctly (per the Figma editorial
+          // treatment). During streaming, before the blank line arrives, the
+          // entire content lives in the subtitle slot and the body stays
+          // empty until the separator streams in.
+          const splitIdx = section.content.indexOf("\n\n");
+          const subtitle =
+            splitIdx === -1 ? section.content.trim() : section.content.slice(0, splitIdx).trim();
+          const body =
+            splitIdx === -1 ? "" : section.content.slice(splitIdx + 2).trim();
           return (
             <div key={section.key} className="digest-section digest-fieldnotes">
               <div className="digest-fieldnotes-title">
@@ -632,10 +654,25 @@ function StreamingDigest({
                 <span>{section.label}</span>
                 {showCursor && <LiveBadge />}
               </div>
-              <p className="digest-fieldnotes-body">
-                {renderInlineItalics(section.content)}
-                {showCursor && cursor}
-              </p>
+              {(subtitle || body) && (
+                <div className="digest-fieldnotes-body-row">
+                  <div className="digest-fieldnotes-rule" aria-hidden />
+                  <div className="digest-fieldnotes-content">
+                    {subtitle && (
+                      <p className="digest-fieldnotes-subtitle">{subtitle}</p>
+                    )}
+                    {body && (
+                      <p className="digest-fieldnotes-body">
+                        {renderInlineItalics(body)}
+                        {showCursor && cursor}
+                      </p>
+                    )}
+                    {!body && showCursor && (
+                      <p className="digest-fieldnotes-body">{cursor}</p>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           );
         }

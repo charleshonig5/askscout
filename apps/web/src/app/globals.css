@@ -1376,12 +1376,13 @@ a:hover {
 }
 
 /* Field Notes — optional editorial observation that sits between Left
-   Off and Key Takeaways. Visual rhythm is intentionally identical to
-   Key Takeaways so the digest scans cleanly. The only inline formatting
-   is an italic emphasis on the named concept (rendered via <em>),
-   which uses the secondary-text color so the concept reads as a
-   semantic handle without competing with the body copy. Light/dark
-   modes inherit from existing tokens automatically. */
+   Off and Key Takeaways (Figma node 260:5347). Header row mirrors the
+   other prose sections; the body row introduces a thin vertical hairline
+   on the left as a visual signal that this is observation, not status
+   reporting. The subtitle line above the body is rendered in the same
+   weight (600) as bullet titles so the editorial pull-quote feels at
+   home with the rest of the digest. All colors use existing theme tokens
+   so light and dark mode both come for free. */
 .digest-fieldnotes {
   display: flex;
   flex-direction: column;
@@ -1397,6 +1398,45 @@ a:hover {
   font-size: 16px;
   line-height: normal;
   color: var(--color-text-primary);
+}
+
+/* Body row: vertical hairline + text column. 4px left padding aligns
+   the line slightly inside the section's content area; 14px gap matches
+   the design's measured spacing between the line and the text. */
+.digest-fieldnotes-body-row {
+  display: flex;
+  gap: 14px;
+  padding-left: 4px;
+}
+
+/* The thin vertical accent. align-self: stretch makes it grow to the
+   exact height of the text column, so a 2-line body shows a 2-line
+   accent and a 5-line body shows a 5-line accent — scales with content. */
+.digest-fieldnotes-rule {
+  width: 1px;
+  align-self: stretch;
+  flex-shrink: 0;
+  background: var(--color-border);
+}
+
+.digest-fieldnotes-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Subtitle weight matches .digest-item-title (600) so editorial pull-
+   quote text scans with the same authority as bullet titles elsewhere
+   in the digest. */
+.digest-fieldnotes-subtitle {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-text-primary);
+  margin: 0;
 }
 
 .digest-fieldnotes-body {

@@ -36,9 +36,13 @@ export interface Digest {
   stats: DigestStats;
   health: HealthIndicator[] | null; // null if < 3 runs
   /** Optional editorial observation about the broader pattern today's
-   *  work fits into. Empty string when the LLM correctly skipped the
-   *  section because the day had no clear theme. Renderers MUST treat
-   *  empty as "omit entirely" — never display an empty Field Notes. */
+   *  work fits into. Stored as a single string in `subtitle\n\nbody`
+   *  format: the first paragraph is the bold headline naming the concept
+   *  thesis; the rest is the 3-4 sentence body where the concept gets
+   *  named inline with *italic asterisks* and an external comparison is
+   *  cited. Empty string means the LLM correctly skipped the section
+   *  because the day had no clear theme. Renderers MUST treat empty as
+   *  "omit entirely" — never display an empty Field Notes. */
   fieldNotes: string;
   keyTakeaways: string;
   resumeContext: ResumeContext;
