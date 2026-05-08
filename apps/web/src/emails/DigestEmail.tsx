@@ -415,6 +415,31 @@ export function DigestEmail({
 // Sub-components
 // ---------------------------------------------------------------------------
 
+/** Section-header emoji rendered at 20px to match the web's
+ *  `<Emoji size={20} />` treatment alongside a 16px Work Sans label.
+ *  The web uses Microsoft Fluent Emoji 3D PNGs via jsdelivr, but
+ *  remote-image rendering in email is unreliable (Gmail proxies and
+ *  caches; Apple Mail blocks by default in some configs; Outlook
+ *  varies). Falling back to the Unicode emoji at 20px font-size
+ *  lands the same visual weight in every client, since modern email
+ *  clients render Unicode emoji at the specified font size.
+ *  marginRight 8px reproduces the web's `gap: 8px` on the title flex
+ *  container. */
+function SectionEmoji({ char }: { char: string }) {
+  return (
+    <span
+      style={{
+        fontSize: "20px",
+        lineHeight: "1",
+        verticalAlign: "middle",
+        marginRight: "8px",
+      }}
+    >
+      {char}
+    </span>
+  );
+}
+
 /** Vibe Check — bordered card surface, the only digest section that
  *  carries the card chrome on the web (.digest-vibe). Mirrors the
  *  exact styling: bg-secondary fill, 1px border, 8px radius, 13px
@@ -449,7 +474,8 @@ function VibeCheckCard({ body }: { body: string }) {
             color: c.textPrimary,
           }}
         >
-          💬 Vibe Check
+          <SectionEmoji char="💬" />
+          Vibe Check
         </Text>
         <Text
           style={{
@@ -512,7 +538,8 @@ function BulletSection({
               whiteSpace: "nowrap",
             }}
           >
-            {emoji} {label}
+            <SectionEmoji char={emoji} />
+            {label}
           </Text>
         </Column>
         <Column style={{ width: "auto", verticalAlign: "middle" }}>
@@ -631,7 +658,8 @@ function FieldNotesSection({ subtitle, body }: { subtitle: string; body: string 
           color: c.textPrimary,
         }}
       >
-        🧭 Field Notes
+        <SectionEmoji char="🧭" />
+        Field Notes
       </Text>
 
       {/* Body row — .digest-fieldnotes-body-row */}
@@ -703,7 +731,8 @@ function ProseSection({
           color: c.textPrimary,
         }}
       >
-        {emoji} {label}
+        <SectionEmoji char={emoji} />
+        {label}
       </Text>
       <Text
         style={{
@@ -745,7 +774,8 @@ function StatsSection({
           color: c.textPrimary,
         }}
       >
-        📊 Statistics
+        <SectionEmoji char="📊" />
+        Statistics
       </Text>
 
       {/* Cards row */}
