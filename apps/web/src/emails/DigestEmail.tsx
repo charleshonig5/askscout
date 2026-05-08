@@ -73,6 +73,11 @@ const fonts = {
   // and many clients refuse to load custom fonts at all — the system
   // stack covers that case without re-flowing the layout.
   sans: '"Work Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+  // Pridi (serif display) is reserved for digest titles in the web app.
+  // Email clients vary on custom-font support — Apple Mail respects
+  // the @font-face import; Gmail and Outlook strip it. Fall back to a
+  // serif system stack so the display character survives.
+  display: '"Pridi", Georgia, "Times New Roman", "Cambria", serif',
 };
 
 // Spacing scale roughly mirroring globals.css var(--space-*) tokens.
@@ -95,7 +100,25 @@ export interface BulletItem {
 }
 
 export interface DigestEmailProps {
+  /**
+   * Title text matching the web's `formatDigestTitle()` helper:
+   * "Today's Digest", "Yesterday's Digest", or "April 12th's Digest".
+   * Rendered in Pridi serif at 24px / weight 400, same as the
+   * dashboard's `.digest-page-name`.
+   */
+  digestTitle: string;
+  /**
+   * Repository slug (e.g. "owner/repo"). Renders as a small Work Sans
+   * Light 12 chip under the title — mirrors the dashboard's
+   * `.digest-repo-chip` pattern so email recipients can immediately
+   * see which repo this digest is for when they have multiple.
+   */
   repoName: string;
+  /**
+   * Full date label (e.g. "Thursday, May 8, 2026"). Renders in
+   * Work Sans Light 12 / text-primary, 4px below the title — matches
+   * the dashboard's `.digest-page-date`.
+   */
   dateLabel: string;
   vibeCheck?: string;
   shipped: BulletItem[];
@@ -132,6 +155,7 @@ const collapseNewlines = (s: string) => s.replace(/\s*\n+\s*/g, " ").trim();
 // ---------------------------------------------------------------------------
 
 export function DigestEmail({
+  digestTitle,
   repoName,
   dateLabel,
   vibeCheck,
@@ -187,47 +211,77 @@ export function DigestEmail({
             backgroundColor: c.bgPrimary,
           }}
         >
-          {/* --- Header: wordmark + repo + date ------------------- */}
-          <Section style={{ paddingBottom: "24px" }}>
-            <Text
-              style={{
-                margin: 0,
-                fontFamily: fonts.sans,
-                fontWeight: 600,
-                fontSize: "16px",
-                lineHeight: "normal",
-                color: c.textPrimary,
-                letterSpacing: "-0.01em",
-              }}
-            >
-              AskScout
-            </Text>
-          </Section>
+          {/* --- Header: wordmark + Pridi serif title + repo + date
+              Mirrors the dashboard header exactly:
+                - .digest-page-name: Pridi serif display, 24px, weight
+                  400, color text-primary, no letter-spacing
+                - .digest-page-date: Work Sans Light 12, color
+                  text-primary, 4px margin-top
+              The repo chip pattern (.digest-repo-chip) sits below the
+              date as a small Work Sans Light 12 pill — bg-tertiary,
+              90px radius, 4×8 padding — matching the dashboard's
+              "quiet metadata next to the serif title" treatment. */}
           <Section style={{ paddingBottom: "20px" }}>
             <Text
               style={{
                 margin: 0,
                 fontFamily: fonts.sans,
-                fontWeight: 600,
-                fontSize: "26px",
-                lineHeight: "1.2",
-                color: c.textPrimary,
-                letterSpacing: "-0.02em",
+                fontWeight: 500,
+                fontSize: "13px",
+                lineHeight: "1",
+                color: c.textSecondary,
+                letterSpacing: "0.04em",
+                textTransform: "uppercase",
               }}
             >
-              {repoName}
+              AskScout
+            </Text>
+          </Section>
+          <Section style={{ paddingBottom: "12px" }}>
+            <Text
+              style={{
+                margin: 0,
+                fontFamily: fonts.display,
+                fontWeight: 400,
+                fontSize: "24px",
+                lineHeight: "normal",
+                color: c.textPrimary,
+                letterSpacing: 0,
+              }}
+            >
+              {digestTitle}
             </Text>
             <Text
               style={{
-                margin: "6px 0 0",
+                margin: "4px 0 0",
                 fontFamily: fonts.sans,
                 fontWeight: 300,
-                fontSize: "13px",
-                lineHeight: "18px",
-                color: c.textSecondary,
+                fontSize: "12px",
+                lineHeight: "normal",
+                color: c.textPrimary,
+                letterSpacing: 0,
               }}
             >
               {dateLabel}
+            </Text>
+          </Section>
+          <Section style={{ paddingBottom: space.xl }}>
+            <Text
+              style={{
+                margin: 0,
+                display: "inline-block",
+                padding: "4px 8px",
+                borderRadius: "90px",
+                backgroundColor: c.bgTertiary,
+                fontFamily: fonts.sans,
+                fontWeight: 300,
+                fontSize: "12px",
+                lineHeight: "1",
+                color: c.textPrimary,
+                letterSpacing: 0,
+              }}
+            >
+              {repoName}
             </Text>
           </Section>
 

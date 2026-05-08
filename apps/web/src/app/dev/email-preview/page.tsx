@@ -16,8 +16,9 @@ import { render } from "@react-email/components";
 import { DigestEmail } from "@/emails/DigestEmail";
 
 const SAMPLE: Parameters<typeof DigestEmail>[0] = {
+  digestTitle: "Today’s Digest",
   repoName: "BragBook",
-  dateLabel: "Thursday, May 7, 2026",
+  dateLabel: "Thursday, May 8, 2026",
   vibeCheck:
     "You spent the whole session building out a single new job search article page, and you kept polishing it right up to the end. The work rhythm is pretty clean: first you added the core page and FAQ UI, then you tightened the surrounding SEO and discovery pieces like sitemap, layout title mapping, and related resources. The only real loop is that one article page got revisited over and over, which usually means content tweaks plus metadata tuning until it felt right. It reads like it should have been perfect on the first pass, but here we are doing the last 10 percent properly.",
   shipped: [
