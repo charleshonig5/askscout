@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Code2 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Logo } from "@/components/Logo";
 
 /**
  * Shared footer used on every public page (homepage, articles, docs,
@@ -14,7 +15,9 @@ export function SiteFooter() {
       <div className="home-footer-inner">
         <div className="home-footer-top">
           <div className="home-footer-brand">
-            <span className="home-footer-logo">AskScout</span>
+            <span className="home-footer-logo">
+              <Logo height={22} />
+            </span>
             <span className="home-footer-tagline">The daily digest for vibe coders.</span>
           </div>
           <div className="home-footer-cols">
@@ -45,7 +48,7 @@ export function SiteFooter() {
         </div>
 
         <div className="home-footer-wordmark" aria-hidden>
-          AskScout
+          <Logo className="brand-logo--fluid" height={120} alt="" />
         </div>
 
         <div className="home-footer-bottom">

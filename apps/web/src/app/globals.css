@@ -2331,27 +2331,9 @@ a:hover {
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-
-/* Rounded white square placeholder for the logo mark. Will be swapped
-   for the real telescope SVG later. Sized ~25% smaller than the Figma
-   default so the logo doesn't dominate the sidebar. */
-.sidebar-brand-mark {
-  width: 18px;
-  height: 18px;
-  border-radius: 5px;
-  background: var(--color-text-primary);
-  flex-shrink: 0;
-}
-
-.sidebar-brand-name {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 1;
-  color: var(--color-text-primary);
-  letter-spacing: 0;
+  /* Logo lockup is icon + wordmark in one image now, so no inter-
+     element gap is needed. */
+  gap: 0;
 }
 
 .sidebar-top-actions {
@@ -3001,12 +2983,51 @@ a:hover {
 }
 
 .home-nav-logo {
-  font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--color-text-primary);
+  /* Layout-only now; the brand mark is rendered as an <img> via the
+     <Logo> component inside this anchor. Typography rules are gone
+     because the wordmark is no longer text. */
+  display: inline-flex;
+  align-items: center;
   text-decoration: none;
-  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+
+/* AskScout logo lockup. Two <img> elements per <Logo>, one per
+   theme. Default flow shows the dark-on-light variant
+   (logo-black.svg). When [data-theme="dark"] is set on <html>,
+   the rule below hides logo-black and shows logo-white. The theme
+   attribute is set server-side from the user's cookie, so SSR
+   renders the correct variant on first paint — no flash. */
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+}
+
+.brand-logo-light {
+  display: inline-block;
+}
+
+.brand-logo-dark {
+  display: none;
+}
+
+[data-theme="dark"] .brand-logo-light {
+  display: none;
+}
+
+[data-theme="dark"] .brand-logo-dark {
+  display: inline-block;
+}
+
+/* Fluid-sizing variant for the marketing footer's giant wordmark
+   treatment. Heights inherit from the parent's font-size scaling
+   so the logo grows/shrinks responsively the way the old
+   .home-footer-wordmark text did. The img element's intrinsic
+   width/height attributes still prevent layout shift on load. */
+.brand-logo--fluid img {
+  height: 100%;
+  width: auto;
 }
 
 .home-nav-links {
@@ -4952,13 +4973,15 @@ a:hover {
    anchors the footer the way Letta's marquee mark does. We don't
    marquee since the brand reads cleaner static. */
 .home-footer-wordmark {
-  font-family: var(--font-display);
-  font-size: clamp(72px, 18vw, 220px);
-  font-weight: 600;
-  letter-spacing: -0.05em;
-  line-height: 0.85;
-  color: var(--color-text-primary);
-  text-align: center;
+  /* Display treatment for the giant footer logo lockup. Same fluid
+     scaling the old text wordmark used (clamp 72→220px), now driven
+     into the <Logo> by the .brand-logo--fluid wrapper which makes
+     the inner <img> height: 100% and width: auto so the lockup
+     scales without distorting its 5.59:1 aspect ratio. */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: clamp(72px, 18vw, 220px);
   padding: 8px 0 0;
   border-top: 1px solid var(--color-border);
   user-select: none;

@@ -17,6 +17,7 @@ import FAQTabs from "@/components/FAQTabs";
 import { SiteFooter } from "@/components/SiteFooter";
 import { FAQ_PLAIN } from "@/lib/faq-data";
 import { MOCK_STREAMING_TEXT } from "@/lib/mock-data";
+import { Logo } from "@/components/Logo";
 
 /* JSON-LD FAQPage schema generated from FAQ_PLAIN so the structured
    data stays in lockstep with the rendered tabbed FAQ. Google
@@ -47,7 +48,7 @@ export default function MarketingHome() {
           hero. =========================================================== */}
       <nav className="home-nav" aria-label="Site">
         <Link href="/home" className="home-nav-logo">
-          AskScout
+          <Logo height={20} />
         </Link>
         <div className="home-nav-links">
           <Link href="/articles">Articles</Link>

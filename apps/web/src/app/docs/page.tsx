@@ -5,6 +5,7 @@ import { CommandChip } from "@/components/CommandChip";
 import DocsFAQ from "@/components/DocsFAQ";
 import { SiteFooter } from "@/components/SiteFooter";
 import { DOCS_FAQ_PLAIN } from "@/lib/docs-faq-data";
+import { Logo } from "@/components/Logo";
 
 export const metadata = {
   title: "Docs | AskScout",
@@ -31,7 +32,7 @@ export default function DocsPage() {
       />
       <nav className="home-nav" aria-label="Site">
         <Link href="/home" className="home-nav-logo">
-          AskScout
+          <Logo height={20} />
         </Link>
         <div className="home-nav-links">
           <Link href="/articles">Articles</Link>

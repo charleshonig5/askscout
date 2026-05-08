@@ -18,6 +18,7 @@ import type { HistoryEntry } from "@/lib/mock-data";
 import { useCountUp } from "@/lib/use-count-up";
 import { RepoSelector } from "./RepoSelector";
 import { ThemeToggle } from "./ThemeToggle";
+import { Logo } from "./Logo";
 
 interface SidebarProps {
   entries: HistoryEntry[];
@@ -121,8 +122,7 @@ export function Sidebar({
         <div className="sidebar-main">
           <div className="sidebar-top">
             <div className="sidebar-brand">
-              <span className="sidebar-brand-mark" aria-hidden />
-              <span className="sidebar-brand-name">AskScout</span>
+              <Logo height={22} />
             </div>
             <div className="sidebar-top-actions">
               <button

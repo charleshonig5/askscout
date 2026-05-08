@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SiteFooter } from "@/components/SiteFooter";
+import { Logo } from "@/components/Logo";
 
 export const metadata = {
   title:
@@ -59,7 +60,7 @@ export default function FastestWayToContextPage() {
       />
       <nav className="home-nav" aria-label="Site">
         <Link href="/home" className="home-nav-logo">
-          AskScout
+          <Logo height={20} />
         </Link>
         <div className="home-nav-links">
           <Link href="/articles">Articles</Link>
