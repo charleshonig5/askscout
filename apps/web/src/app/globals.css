@@ -2315,7 +2315,11 @@ a:hover {
 .sidebar-main {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  /* 34px between the logo/action row and the repo section gives the
+     header a clear visual break from the content below. The
+     repo→history gap stays at 24px (set on .sidebar-content) so only
+     the top divide changes. */
+  gap: 34px;
   flex: 1;
   min-height: 0;
 }
