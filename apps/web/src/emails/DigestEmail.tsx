@@ -469,8 +469,23 @@ function VibeCheckCard({ body }: { body: string }) {
 }
 
 /** Bulleted section (Shipped / Changed / Still Shifting / Left Off).
- *  Header row with emoji + label + count pill, then a list of items
- *  each with a small round dot + bold title + light context. */
+ *  Header row with emoji + Work Sans Medium 16 label + count pill;
+ *  then a 14px-gapped list of items, each rendered as a 16×20 bullet
+ *  frame with a 4×4 round dot (text-secondary), followed by Work Sans
+ *  Light 12/18 text where the title is weight 600 and the context is
+ *  weight 300, separated by a literal " - ". Mirrors the web's
+ *  .digest-bulleted / .digest-item / .digest-item-title / .digest-item-context
+ *  treatment exactly.
+ *
+ *  The count pill carries the inset glow (.digest-bulleted-count uses
+ *  inset 0 8px 20px 0 var(--color-inner-glow) on the web). Apple Mail
+ *  honors the inset box-shadow; Gmail and Outlook silently strip it
+ *  and the pill degrades to a flat bg-tertiary chip.
+ *
+ *  Bullet dot: a real 4×4 round div (display: inline-block,
+ *  border-radius: 50%, bg text-secondary). Modern email clients
+ *  render it as a circle; Outlook's mso engine ignores border-radius
+ *  and renders a 4×4 square. Both read clearly as a list marker. */
 function BulletSection({
   emoji,
   label,
@@ -482,7 +497,7 @@ function BulletSection({
 }) {
   return (
     <Section style={{ paddingBottom: space.xl }}>
-      {/* Header row: emoji + label + count pill */}
+      {/* Header row: emoji + label + count pill, .digest-bulleted-header */}
       <Row>
         <Column style={{ width: "auto", verticalAlign: "middle" }}>
           <Text
@@ -508,6 +523,7 @@ function BulletSection({
               padding: "3px 6px",
               borderRadius: "60px",
               backgroundColor: c.bgTertiary,
+              boxShadow: "inset 0 8px 20px 0 rgba(255, 255, 255, 0.04)",
               fontFamily: fonts.sans,
               fontWeight: 300,
               fontSize: "12px",
@@ -521,7 +537,7 @@ function BulletSection({
         <Column />
       </Row>
 
-      {/* Bullet list */}
+      {/* Bullet list — .digest-bulleted-list, gap: 14px */}
       <Section style={{ paddingTop: space.gap14 }}>
         {items.map((item, i) => (
           <Section
@@ -529,34 +545,35 @@ function BulletSection({
             style={{ paddingBottom: i === items.length - 1 ? 0 : space.gap14 }}
           >
             <Row>
-              {/* 16px bullet column with a centered round dot. Approximated
-                  in email-safe markup by using a Unicode mid-dot in the
-                  body color set to text-secondary, baseline-aligned with
-                  the text. */}
+              {/* 16×20 bullet frame with a 4×4 round dot centered on
+                  the visual baseline of the first text line.
+                  paddingTop 8px puts the dot at the (20-4)/2 = 8px
+                  centerline of the 18px-line text column. */}
               <Column
                 style={{
                   width: "16px",
                   verticalAlign: "top",
-                  paddingTop: "5px",
+                  paddingTop: "8px",
                 }}
               >
-                <Text
+                <div
                   style={{
-                    margin: 0,
-                    fontFamily: fonts.sans,
-                    fontSize: "12px",
-                    lineHeight: "8px",
-                    color: c.textSecondary,
+                    width: "4px",
+                    height: "4px",
+                    borderRadius: "50%",
+                    backgroundColor: c.textSecondary,
+                    fontSize: 0,
+                    lineHeight: 0,
                   }}
-                >
-                  •
-                </Text>
+                  aria-hidden
+                />
               </Column>
               <Column style={{ verticalAlign: "top", paddingLeft: space.xs }}>
                 <Text
                   style={{
                     margin: 0,
                     fontFamily: fonts.sans,
+                    fontWeight: 300,
                     fontSize: "12px",
                     lineHeight: "18px",
                     color: c.textPrimary,
@@ -565,9 +582,7 @@ function BulletSection({
                   {item.title && (
                     <span style={{ fontWeight: 600 }}>{item.title}</span>
                   )}
-                  {item.title && item.context && (
-                    <span style={{ fontWeight: 300 }}> - </span>
-                  )}
+                  {item.title && item.context && " - "}
                   {item.context && (
                     <span style={{ fontWeight: 300 }}>{item.context}</span>
                   )}
