@@ -80,14 +80,21 @@ const fonts = {
   display: '"Pridi", Georgia, "Times New Roman", "Cambria", serif',
 };
 
-// Spacing scale roughly mirroring globals.css var(--space-*) tokens.
-// Email layout works in tens of pixels; we don't need finer than this.
+// Spacing scale matching globals.css var(--space-*) tokens exactly:
+//   --space-xs: 4px / --space-sm: 8px / --space-md: 16px
+//   --space-lg: 24px / --space-xl: 32px / --space-2xl: 48px
+// `gap14` is the digest's internal section gap (heading → body /
+// bullet → bullet) — a hardcoded 14px on the web, not a CSS token,
+// but used consistently across .digest-bulleted, .digest-takeaway,
+// and .digest-fieldnotes.
 const space = {
   xs: "4px",
   sm: "8px",
-  md: "12px",
-  lg: "14px",
-  xl: "28px",
+  md: "16px",
+  lg: "24px",
+  xl: "32px",
+  xxl: "48px",
+  gap14: "14px",
 };
 
 // ---------------------------------------------------------------------------
@@ -357,7 +364,7 @@ export function DigestEmail({
             <Hr
               style={{
                 borderTop: `1px solid ${c.border}`,
-                margin: `0 0 ${space.lg}`,
+                margin: `0 0 ${space.gap14}`,
               }}
             />
             <Text
@@ -408,9 +415,18 @@ export function DigestEmail({
 // Sub-components
 // ---------------------------------------------------------------------------
 
-/** Vibe Check — the only section that uses the bordered card surface
- *  in the web digest. Drop the inset glow (no email support) and keep
- *  the bg-secondary fill + border. */
+/** Vibe Check — bordered card surface, the only digest section that
+ *  carries the card chrome on the web (.digest-vibe). Mirrors the
+ *  exact styling: bg-secondary fill, 1px border, 8px radius, 13px
+ *  padding, 8px gap between title and body, plus the subtle inset
+ *  glow (rgba(255,255,255,0.04) at 40px blur).
+ *
+ *  Email-client coverage for inset box-shadow:
+ *    - Apple Mail (Mac, iOS): renders the glow correctly
+ *    - Gmail web / iOS / Android: silently strips box-shadow
+ *    - Outlook desktop: ignores box-shadow entirely
+ *  Gracefully degrades to a flat bordered card in clients that strip
+ *  it, which is still on-brand. */
 function VibeCheckCard({ body }: { body: string }) {
   return (
     <Section style={{ paddingBottom: space.xl }}>
@@ -420,6 +436,7 @@ function VibeCheckCard({ body }: { body: string }) {
           border: `1px solid ${c.border}`,
           borderRadius: "8px",
           padding: "13px",
+          boxShadow: "inset 0 0 40px 0 rgba(255, 255, 255, 0.04)",
         }}
       >
         <Text
@@ -505,11 +522,11 @@ function BulletSection({
       </Row>
 
       {/* Bullet list */}
-      <Section style={{ paddingTop: space.lg }}>
+      <Section style={{ paddingTop: space.gap14 }}>
         {items.map((item, i) => (
           <Section
             key={i}
-            style={{ paddingBottom: i === items.length - 1 ? 0 : space.lg }}
+            style={{ paddingBottom: i === items.length - 1 ? 0 : space.gap14 }}
           >
             <Row>
               {/* 16px bullet column with a centered round dot. Approximated
@@ -576,7 +593,7 @@ function FieldNotesSection({ subtitle, body }: { subtitle: string; body: string 
       {/* Header */}
       <Text
         style={{
-          margin: `0 0 ${space.lg}`,
+          margin: `0 0 ${space.gap14}`,
           fontFamily: fonts.sans,
           fontWeight: 500,
           fontSize: "16px",
@@ -598,7 +615,7 @@ function FieldNotesSection({ subtitle, body }: { subtitle: string; body: string 
         <Column
           style={{
             borderLeft: `1px solid ${c.border}`,
-            paddingLeft: space.lg,
+            paddingLeft: space.gap14,
             verticalAlign: "top",
           }}
         >
@@ -650,7 +667,7 @@ function ProseSection({
     <Section style={{ paddingBottom: space.xl }}>
       <Text
         style={{
-          margin: `0 0 ${space.lg}`,
+          margin: `0 0 ${space.gap14}`,
           fontFamily: fonts.sans,
           fontWeight: 500,
           fontSize: "16px",
@@ -692,7 +709,7 @@ function StatsSection({
       {/* Umbrella header */}
       <Text
         style={{
-          margin: `0 0 ${space.lg}`,
+          margin: `0 0 ${space.gap14}`,
           fontFamily: fonts.sans,
           fontWeight: 500,
           fontSize: "16px",
@@ -705,7 +722,7 @@ function StatsSection({
 
       {/* Cards row */}
       {isVisible(visibility, "statistics") && stats.commits != null && (
-        <Section style={{ paddingBottom: space.lg }}>
+        <Section style={{ paddingBottom: space.gap14 }}>
           <Section
             style={{
               backgroundColor: c.bgSecondary,
@@ -733,7 +750,7 @@ function StatsSection({
 
       {/* Most Active Files */}
       {isVisible(visibility, "mostActiveFiles") && (stats.topFiles?.length ?? 0) > 0 && (
-        <Section style={{ paddingBottom: space.lg }}>
+        <Section style={{ paddingBottom: space.gap14 }}>
           <Text
             style={{
               margin: `0 0 ${space.sm}`,
@@ -772,7 +789,7 @@ function StatsSection({
         stats.health?.growth?.level &&
         stats.health.focus?.level &&
         stats.health.churn?.level && (
-          <Section style={{ paddingBottom: space.lg }}>
+          <Section style={{ paddingBottom: space.gap14 }}>
             <Text
               style={{
                 margin: `0 0 ${space.sm}`,
