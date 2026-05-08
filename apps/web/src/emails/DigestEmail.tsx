@@ -378,13 +378,7 @@ export function DigestEmail({
                 textAlign: "center",
               }}
             >
-              You received this because you clicked Email on your AskScout digest.{" "}
-              <Link
-                href={`${WEB_URL}/settings`}
-                style={{ color: c.textSecondary, textDecoration: "underline" }}
-              >
-                Manage settings
-              </Link>
+              You sent this to yourself from your AskScout digest.
             </Text>
             <Text
               style={{
