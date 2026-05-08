@@ -122,7 +122,7 @@ export function Sidebar({
         <div className="sidebar-main">
           <div className="sidebar-top">
             <div className="sidebar-brand">
-              <Logo height={22} />
+              <Logo height={18} />
             </div>
             <div className="sidebar-top-actions">
               <button
