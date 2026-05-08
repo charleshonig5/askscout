@@ -596,16 +596,31 @@ function BulletSection({
   );
 }
 
-/** Field Notes — emoji + label header, then a body row with a
- *  vertical hairline accent on the left and a content column with
- *  bold subtitle + body paragraph. The hairline is a 1px left border
- *  on a table cell, which is the most reliable email-safe equivalent
- *  of the web's flex-stretch rule. */
+/** Field Notes — emoji + Work Sans Medium 16 header, then a body row
+ *  with a vertical hairline accent on the left and a content column
+ *  containing a Work Sans 600 / 12-18 subtitle and a Work Sans 300 /
+ *  12-18 body, separated by a 4px gap. Mirrors the web's
+ *  .digest-fieldnotes layout exactly:
+ *
+ *    .digest-fieldnotes               column gap 14px
+ *    .digest-fieldnotes-body-row      padding-left 4px, gap 14px
+ *      .digest-fieldnotes-rule        width 1px, stretches to row height
+ *      .digest-fieldnotes-content     gap 4px between subtitle & body
+ *
+ *  The 1px rule is implemented as `border-left` on the content
+ *  column. In a CSS-table layout that border stretches to the cell's
+ *  full height — which matches the web's `align-self: stretch`
+ *  behavior — and is the most reliable email-safe approach. Older
+ *  Outlook (Word renderer) does support border on table cells.
+ *
+ *  Spacing math: web has 4px padding from section edge → 1px rule →
+ *  14px gap → content. We get the same result via a 4px-wide spacer
+ *  cell + a 1px border-left + 14px padding-left on the content cell. */
 function FieldNotesSection({ subtitle, body }: { subtitle: string; body: string }) {
   const cleanedBody = collapseNewlines(body);
   return (
     <Section style={{ paddingBottom: space.xl }}>
-      {/* Header */}
+      {/* Header — .digest-fieldnotes-title */}
       <Text
         style={{
           margin: `0 0 ${space.gap14}`,
@@ -619,14 +634,12 @@ function FieldNotesSection({ subtitle, body }: { subtitle: string; body: string 
         🧭 Field Notes
       </Text>
 
-      {/* Body row: 1px left border on the content column = vertical hairline */}
+      {/* Body row — .digest-fieldnotes-body-row */}
       <Row>
-        <Column
-          style={{
-            width: "4px",
-            paddingLeft: "4px",
-          }}
-        />
+        {/* 4px spacer = the body-row's padding-left on the web */}
+        <Column style={{ width: "4px" }} />
+        {/* Content column carries the 1px left border (= the rule)
+            and 14px left padding (= the gap from rule to content). */}
         <Column
           style={{
             borderLeft: `1px solid ${c.border}`,
