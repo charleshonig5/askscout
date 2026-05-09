@@ -203,7 +203,7 @@ export function DigestEmail({
               away from the title. Single cell + inline-blocks +
               explicit margins = chips sit exactly 14px and 8px from
               their neighbors. */}
-          <Section style={{ paddingLeft: "33px", paddingRight: "33px", paddingBottom: "24px" }}>
+          <Section style={{ paddingLeft: "34px", paddingRight: "34px", paddingBottom: "24px" }}>
             <table
               cellPadding={0}
               cellSpacing={0}
@@ -276,7 +276,7 @@ export function DigestEmail({
               column, then 34px gap before the CTA. Wrapped in a div
               that adds the 33px horizontal inset so content sits where
               the Figma frame placed it. */}
-          <div style={{ paddingTop: "24px", paddingLeft: "33px", paddingRight: "33px" }}>
+          <div style={{ paddingTop: "24px", paddingLeft: "34px", paddingRight: "34px" }}>
             {vibeCheck && isVisible(visibility, "vibeCheck") && (
               <SectionWrapper marginBottom={34}>
                 <VibeCheckCard body={vibeCheck} />
@@ -377,7 +377,7 @@ export function DigestEmail({
                 600px width, creating horizontal overflow. Putting
                 the inset on a div keeps the rendered width at
                 exactly 600px. */}
-            <div style={{ padding: "30px 33px 40px" }}>
+            <div style={{ padding: "34px 34px 34px" }}>
               <div style={{ width: "175px" }}>
               <Img
                 src={`${WEB_URL}/logo-white.svg`}
