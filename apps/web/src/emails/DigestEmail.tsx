@@ -278,31 +278,31 @@ export function DigestEmail({
               the Figma frame placed it. */}
           <div style={{ paddingTop: "24px", paddingLeft: "33px", paddingRight: "33px" }}>
             {vibeCheck && isVisible(visibility, "vibeCheck") && (
-              <SectionWrapper marginBottom={44}>
+              <SectionWrapper marginBottom={34}>
                 <VibeCheckCard body={vibeCheck} />
               </SectionWrapper>
             )}
 
             {shipped.length > 0 && isVisible(visibility, "shipped") && (
-              <SectionWrapper marginBottom={44}>
+              <SectionWrapper marginBottom={34}>
                 <BulletSection emoji="🚀" label="Shipped" items={shipped} />
               </SectionWrapper>
             )}
 
             {changed.length > 0 && isVisible(visibility, "changed") && (
-              <SectionWrapper marginBottom={44}>
+              <SectionWrapper marginBottom={34}>
                 <BulletSection emoji="🔧" label="Changed" items={changed} />
               </SectionWrapper>
             )}
 
             {unstable.length > 0 && isVisible(visibility, "unstable") && (
-              <SectionWrapper marginBottom={44}>
+              <SectionWrapper marginBottom={34}>
                 <BulletSection emoji="🔁" label="Still Shifting" items={unstable} />
               </SectionWrapper>
             )}
 
             {leftOff.length > 0 && isVisible(visibility, "leftOff") && (
-              <SectionWrapper marginBottom={44}>
+              <SectionWrapper marginBottom={34}>
                 <BulletSection emoji="📍" label="Left Off" items={leftOff} />
               </SectionWrapper>
             )}
@@ -310,7 +310,7 @@ export function DigestEmail({
             {fieldNotes &&
               (fieldNotes.subtitle || fieldNotes.body) &&
               isVisible(visibility, "fieldNotes") && (
-                <SectionWrapper marginBottom={44}>
+                <SectionWrapper marginBottom={34}>
                   <FieldNotesSection
                     subtitle={fieldNotes.subtitle}
                     body={fieldNotes.body}
@@ -319,7 +319,7 @@ export function DigestEmail({
               )}
 
             {keyTakeaways && isVisible(visibility, "oneTakeaway") && (
-              <SectionWrapper marginBottom={44}>
+              <SectionWrapper marginBottom={34}>
                 <ProseSection emoji="🔑" label="Key Takeaways" body={keyTakeaways} />
               </SectionWrapper>
             )}
@@ -455,9 +455,9 @@ function SectionEmoji({ char }: { char: string }) {
  *  Lucide `SquareArrowUpRight` icon at 20×20 — same glyph the
  *  dashboard's "View Last Digest" / open-digest buttons use. */
 const SVG_FORWARD =
-  '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 0 1 4-4h12"/></svg>';
+  '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 0 1 4-4h12"/></svg>';
 const SVG_SQUARE_ARROW_UP_RIGHT =
-  '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M8 8h8v8"/><path d="m8 16 8-8"/></svg>';
+  '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M8 8h8v8"/><path d="m8 16 8-8"/></svg>';
 
 /** Repo chip — bg-tertiary pill with the repo slug + Lucide Forward
  *  glyph (10×10). Wraps in an <a> that opens the repo on GitHub in
@@ -806,9 +806,9 @@ function ProseSection({
  *  Outlook desktop's mso engine may strip — in that case the row
  *  shows just the text labels, which is still legible. */
 const SVG_GIT_COMMIT =
-  '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="3" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="21" y2="12"/></svg>';
+  '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="3" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="21" y2="12"/></svg>';
 const SVG_FILE_TEXT =
-  '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>';
+  '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>';
 
 /** 16×16 stats icon. Inline SVG via dangerouslySetInnerHTML.
  *  Color set to text-secondary (#a0a0a0) to match how the same
