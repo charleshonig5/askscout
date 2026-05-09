@@ -101,13 +101,22 @@ export default async function EmailPreviewPage() {
             actual canvas is what's visible — no surrounding page bg
             on the sides. Matches the email's `maxWidth: 600px`
             container width. */}
+        {/* scrolling="no" suppresses both axes inside the iframe so
+            no scrollbar artifacts appear — the iframe is sized to
+            fit the email's full height (1500px) and matches the
+            email's exact 600px canvas width, so neither axis ever
+            actually needs to scroll. Without this, webkit reserves
+            ~17px for a phantom vertical scrollbar which then
+            triggers a horizontal scrollbar; the email visibly
+            shifted when the user scrolled the parent page. */}
         <iframe
           title="Digest email preview"
           srcDoc={html}
+          scrolling="no"
           style={{
             width: "600px",
             maxWidth: "100%",
-            height: "1600px",
+            height: "1500px",
             display: "block",
             margin: "0 auto",
             border: "1px solid #222",

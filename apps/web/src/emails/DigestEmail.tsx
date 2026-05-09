@@ -367,11 +367,18 @@ export function DigestEmail({
               maxWidth: "600px",
               width: "600px",
               margin: "0 auto",
-              padding: "30px 33px 40px",
-              boxSizing: "border-box",
+              padding: 0,
             }}
           >
-            <div style={{ width: "175px" }}>
+            {/* Horizontal padding lives on this inner div instead of
+                the Container, because <Container> renders as a
+                <table> and browsers don't reliably honor box-sizing
+                on table elements — padding gets added outside the
+                600px width, creating horizontal overflow. Putting
+                the inset on a div keeps the rendered width at
+                exactly 600px. */}
+            <div style={{ padding: "30px 33px 40px" }}>
+              <div style={{ width: "175px" }}>
               <Img
                 src={`${WEB_URL}/logo-white.svg`}
                 alt="AskScout"
@@ -405,6 +412,7 @@ export function DigestEmail({
               >
                 © 2026 AskScout
               </Text>
+              </div>
             </div>
           </Container>
         </Section>
