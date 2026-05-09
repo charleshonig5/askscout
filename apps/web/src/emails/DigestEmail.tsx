@@ -1,40 +1,19 @@
 /**
- * Digest email template.
+ * Digest email template — implementing Figma node 279:2224.
  *
- * Mirrors the on-screen digest design system exactly: dark-mode color
- * palette pulled from globals.css, same section structures, same
- * typography scale, same Vibe Check bordered card, same Field Notes
- * vertical-line accent, same dot bullets. Email-safe primitives via
- * @react-email so this renders correctly across Gmail, Apple Mail,
- * Outlook.
+ * Outer page (#070707) → email card (600px, rounded-bottom 30px,
+ * 1px border #252525) → header → hr → content sections → CTA button →
+ * (outside the card) footer with logo wordmark + copy.
  *
- * What we keep from the web:
- *   - Section emojis as the only visual marker for each section header
- *   - Work Sans typography (with system-font fallback for clients that
- *     strip web fonts)
- *   - 12 / 18 body, 16px / Medium 500 section labels, 600 weight on
- *     bullet titles + Field Notes subtitle
- *   - Vibe Check rendered as a bordered card with bg-secondary and
- *     border tokens
- *   - Field Notes rendered with a vertical hairline (1px border-left
- *     on a table cell — most reliable email-safe equivalent of the
- *     web's flex-stretch rule)
- *   - Bulleted sections use a small round dot before each item, same
- *     position as on the web
+ * Section spacing inside the card is 44px; internal section spacing
+ * is 14px (heading → body, bullet → bullet). Vibe Check is the only
+ * section wrapped in a bordered card with the inset glow. Field Notes
+ * uses a vertical hairline accent on the left of its body row.
  *
- * What degrades from the web:
- *   - Vibe Check inset glow (box-shadow inset 0 0 40px) is not
- *     reliably supported in email clients — drops cleanly to a flat
- *     border + bg-secondary fill
- *   - Coding Timeline chart is omitted (charts don't render in email).
- *     The CTA at the bottom links back to the web for it.
- *   - Health bars degrade to text rows
- *
- * Light/dark: this template is dark-mode-only. Email-client dark mode
- * handling varies wildly (Gmail iOS recolors, Outlook Mac inverts,
- * Apple Mail respects @media). Forcing dark with the
- * color-scheme/supported-color-schemes meta and inline backgrounds is
- * the most reliable path. We can add a light variant later if needed.
+ * Email-safe primitives only — no Tailwind, no flex math that
+ * doesn't survive Outlook. All sizing/colors via inline styles
+ * pulled from the design tokens hard-coded below (mirroring
+ * globals.css :root[data-theme="dark"]).
  */
 
 import {
@@ -44,6 +23,7 @@ import {
   Head,
   Hr,
   Html,
+  Img,
   Link,
   Preview,
   Row,
@@ -53,52 +33,39 @@ import {
 
 const WEB_URL = "https://askscout.dev";
 
-// Dark-mode palette pulled directly from globals.css :root[data-theme="dark"].
-// Hard-coded as hex literals here because email clients do not support
-// CSS variables. If the web tokens change, mirror them here.
+// Dark-mode palette pulled directly from globals.css.
 const c = {
   bgPrimary: "#070707",
   bgSecondary: "#121212",
   bgTertiary: "#252525",
-  bgElevated: "#141414",
   textPrimary: "#ededed",
   textSecondary: "#a0a0a0",
   textTertiary: "#616161",
-  border: "#222222",
-  borderHover: "#333333",
+  border: "#252525",
+  // Stats colors per the design.
+  green: "#57d32e",
+  red: "#dd1d1d",
 } as const;
 
 const fonts = {
-  // Work Sans first, then web-safe stack. Outlook strips the @import,
-  // and many clients refuse to load custom fonts at all — the system
-  // stack covers that case without re-flowing the layout.
   sans: '"Work Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-  // Pridi (serif display) is reserved for digest titles in the web app.
-  // Email clients vary on custom-font support — Apple Mail respects
-  // the @font-face import; Gmail and Outlook strip it. Fall back to a
-  // serif system stack so the display character survives.
   display: '"Pridi", Georgia, "Times New Roman", "Cambria", serif',
 };
 
-// Spacing scale matching globals.css var(--space-*) tokens exactly:
-//   --space-xs: 4px / --space-sm: 8px / --space-md: 16px
-//   --space-lg: 24px / --space-xl: 32px / --space-2xl: 48px
-// `gap14` is the digest's internal section gap (heading → body /
-// bullet → bullet) — a hardcoded 14px on the web, not a CSS token,
-// but used consistently across .digest-bulleted, .digest-takeaway,
-// and .digest-fieldnotes.
+// Spacing tokens matching globals.css. gap14 is the digest's internal
+// section gap (heading → body, bullet → bullet). The 44px between
+// top-level sections in this email is its own value used inline.
 const space = {
   xs: "4px",
   sm: "8px",
   md: "16px",
   lg: "24px",
   xl: "32px",
-  xxl: "48px",
   gap14: "14px",
-};
+} as const;
 
 // ---------------------------------------------------------------------------
-// Public types
+// Types
 // ---------------------------------------------------------------------------
 
 export interface BulletItem {
@@ -107,25 +74,13 @@ export interface BulletItem {
 }
 
 export interface DigestEmailProps {
-  /**
-   * Title text matching the web's `formatDigestTitle()` helper:
-   * "Today's Digest", "Yesterday's Digest", or "April 12th's Digest".
-   * Rendered in Pridi serif at 24px / weight 400, same as the
-   * dashboard's `.digest-page-name`.
-   */
+  /** Title — e.g. "Today's Digest". Pridi serif 24/400 in the header. */
   digestTitle: string;
-  /**
-   * Repository slug (e.g. "owner/repo"). Renders as a small Work Sans
-   * Light 12 chip under the title — mirrors the dashboard's
-   * `.digest-repo-chip` pattern so email recipients can immediately
-   * see which repo this digest is for when they have multiple.
-   */
+  /** Repo slug, rendered as a chip with a forward arrow next to the title. */
   repoName: string;
-  /**
-   * Full date label (e.g. "Thursday, May 8, 2026"). Renders in
-   * Work Sans Light 12 / text-primary, 4px below the title — matches
-   * the dashboard's `.digest-page-date`.
-   */
+  /** Optional consecutive-days streak. Renders the fire-emoji chip when present. */
+  streak?: number;
+  /** Full date label, e.g. "Thursday, May 8, 2026". */
   dateLabel: string;
   vibeCheck?: string;
   shipped: BulletItem[];
@@ -134,18 +89,13 @@ export interface DigestEmailProps {
   leftOff: BulletItem[];
   fieldNotes?: { subtitle: string; body: string };
   keyTakeaways?: string;
+  /** Headline stats — rendered as a single horizontal line below
+   *  Key Takeaways. The +/- lines use semantic green/red. */
   stats?: {
     commits?: number;
     filesChanged?: number;
     linesAdded?: number;
     linesRemoved?: number;
-    topFiles?: Array<{ file: string; added?: number; removed?: number; commits: number }>;
-    health?: {
-      growth?: { level: string; added: number; removed: number };
-      focus?: { level: string; filesPerCommit: number };
-      churn?: { level: string; files: number };
-    } | null;
-    pace?: { multiplier: number; label: string; todayCommits: number; avgCommits: number } | null;
   } | null;
   visibility?: Record<string, boolean>;
 }
@@ -153,8 +103,6 @@ export interface DigestEmailProps {
 const isVisible = (visibility: Record<string, boolean> | undefined, key: string) =>
   !visibility || visibility[key] !== false;
 
-// Collapse mid-paragraph newlines so prose reads as one flowing paragraph
-// regardless of where the LLM placed line breaks.
 const collapseNewlines = (s: string) => s.replace(/\s*\n+\s*/g, " ").trim();
 
 // ---------------------------------------------------------------------------
@@ -164,6 +112,7 @@ const collapseNewlines = (s: string) => s.replace(/\s*\n+\s*/g, " ").trim();
 export function DigestEmail({
   digestTitle,
   repoName,
+  streak,
   dateLabel,
   vibeCheck,
   shipped,
@@ -180,11 +129,7 @@ export function DigestEmail({
     : `Your AskScout digest for ${repoName}`;
 
   const showStats =
-    !!stats &&
-    (isVisible(visibility, "statistics") ||
-      isVisible(visibility, "mostActiveFiles") ||
-      isVisible(visibility, "codebaseHealth") ||
-      isVisible(visibility, "paceCheck"));
+    !!stats && isVisible(visibility, "statistics") && stats.commits != null;
 
   return (
     <Html>
@@ -192,9 +137,6 @@ export function DigestEmail({
         <meta httpEquiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="x-apple-disable-message-reformatting" />
-        {/* Force the email's color scheme so clients that auto-invert
-            (Outlook, some iOS Gmail) leave our intentional dark theme
-            alone. */}
         <meta name="color-scheme" content="dark" />
         <meta name="supported-color-schemes" content="dark" />
       </Head>
@@ -210,54 +152,52 @@ export function DigestEmail({
           MozOsxFontSmoothing: "grayscale",
         }}
       >
+        {/* The email card. 600px wide, rounded-bottom 30px, 1px border
+            in tertiary (#252525) per the Figma frame. Padding inside is
+            33px sides / 23px top so the header sits exactly where the
+            design places it. */}
         <Container
           style={{
             maxWidth: "600px",
+            width: "600px",
             margin: "0 auto",
-            padding: "32px 24px 48px",
             backgroundColor: c.bgPrimary,
+            border: `1px solid ${c.border}`,
+            borderTop: "none",
+            borderRadius: "0 0 30px 30px",
+            padding: "23px 33px 40px",
           }}
         >
-          {/* --- Header: wordmark + Pridi serif title + repo + date
-              Mirrors the dashboard header exactly:
-                - .digest-page-name: Pridi serif display, 24px, weight
-                  400, color text-primary, no letter-spacing
-                - .digest-page-date: Work Sans Light 12, color
-                  text-primary, 4px margin-top
-              The repo chip pattern (.digest-repo-chip) sits below the
-              date as a small Work Sans Light 12 pill — bg-tertiary,
-              90px radius, 4×8 padding — matching the dashboard's
-              "quiet metadata next to the serif title" treatment. */}
-          <Section style={{ paddingBottom: "20px" }}>
-            <Text
-              style={{
-                margin: 0,
-                fontFamily: fonts.sans,
-                fontWeight: 500,
-                fontSize: "13px",
-                lineHeight: "1",
-                color: c.textSecondary,
-                letterSpacing: "0.04em",
-                textTransform: "uppercase",
-              }}
-            >
-              AskScout
-            </Text>
-          </Section>
-          <Section style={{ paddingBottom: "12px" }}>
-            <Text
-              style={{
-                margin: 0,
-                fontFamily: fonts.display,
-                fontWeight: 400,
-                fontSize: "24px",
-                lineHeight: "normal",
-                color: c.textPrimary,
-                letterSpacing: 0,
-              }}
-            >
-              {digestTitle}
-            </Text>
+          {/* HEADER --------------------------------------------------- */}
+          <Section style={{ paddingBottom: "22px" }}>
+            {/* Title row: serif title + repo chip + streak chip */}
+            <Row>
+              <Column style={{ width: "auto", verticalAlign: "middle", paddingRight: "14px" }}>
+                <Text
+                  style={{
+                    margin: 0,
+                    fontFamily: fonts.display,
+                    fontWeight: 400,
+                    fontSize: "24px",
+                    lineHeight: "normal",
+                    color: c.textPrimary,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {digestTitle}
+                </Text>
+              </Column>
+              <Column style={{ width: "auto", verticalAlign: "middle", paddingRight: "8px" }}>
+                <RepoChip repoName={repoName} />
+              </Column>
+              {streak != null && streak > 0 && (
+                <Column style={{ width: "auto", verticalAlign: "middle" }}>
+                  <StreakChip days={streak} />
+                </Column>
+              )}
+              <Column />
+            </Row>
+            {/* Date below the title row */}
             <Text
               style={{
                 margin: "4px 0 0",
@@ -266,139 +206,121 @@ export function DigestEmail({
                 fontSize: "12px",
                 lineHeight: "normal",
                 color: c.textPrimary,
-                letterSpacing: 0,
               }}
             >
               {dateLabel}
             </Text>
           </Section>
-          <Section style={{ paddingBottom: space.xl }}>
-            <Text
-              style={{
-                margin: 0,
-                display: "inline-block",
-                padding: "4px 8px",
-                borderRadius: "90px",
-                backgroundColor: c.bgTertiary,
-                fontFamily: fonts.sans,
-                fontWeight: 300,
-                fontSize: "12px",
-                lineHeight: "1",
-                color: c.textPrimary,
-                letterSpacing: 0,
-              }}
-            >
-              {repoName}
-            </Text>
-          </Section>
 
-          <Hr style={{ borderTop: `1px solid ${c.border}`, margin: `0 0 ${space.xl}` }} />
+          {/* HR divider — 1px line at full width below the header */}
+          <Hr
+            style={{
+              borderTop: `1px solid ${c.border}`,
+              margin: "0 -33px",
+              width: "calc(100% + 66px)",
+            }}
+          />
 
-          {/* --- Vibe Check (bordered card) ----------------------- */}
-          {vibeCheck && isVisible(visibility, "vibeCheck") && (
-            <VibeCheckCard body={vibeCheck} />
-          )}
-
-          {/* --- Bulleted sections -------------------------------- */}
-          {shipped.length > 0 && isVisible(visibility, "shipped") && (
-            <BulletSection emoji="🚀" label="Shipped" items={shipped} />
-          )}
-          {changed.length > 0 && isVisible(visibility, "changed") && (
-            <BulletSection emoji="🔧" label="Changed" items={changed} />
-          )}
-          {unstable.length > 0 && isVisible(visibility, "unstable") && (
-            <BulletSection emoji="🔁" label="Still Shifting" items={unstable} />
-          )}
-          {leftOff.length > 0 && isVisible(visibility, "leftOff") && (
-            <BulletSection emoji="📍" label="Left Off" items={leftOff} />
-          )}
-
-          {/* --- Field Notes (vertical-line accent) --------------- */}
-          {fieldNotes &&
-            (fieldNotes.subtitle || fieldNotes.body) &&
-            isVisible(visibility, "fieldNotes") && (
-              <FieldNotesSection
-                subtitle={fieldNotes.subtitle}
-                body={fieldNotes.body}
-              />
+          {/* CONTENT SECTIONS — 44px gap between them ------------------ */}
+          <div style={{ paddingTop: "24px" }}>
+            {vibeCheck && isVisible(visibility, "vibeCheck") && (
+              <SectionWrapper marginBottom={44}>
+                <VibeCheckCard body={vibeCheck} />
+              </SectionWrapper>
             )}
 
-          {/* --- Key Takeaways (prose) ---------------------------- */}
-          {keyTakeaways && isVisible(visibility, "oneTakeaway") && (
-            <ProseSection emoji="🔑" label="Key Takeaways" body={keyTakeaways} />
-          )}
+            {shipped.length > 0 && isVisible(visibility, "shipped") && (
+              <SectionWrapper marginBottom={44}>
+                <BulletSection emoji="🚀" label="Shipped" items={shipped} />
+              </SectionWrapper>
+            )}
 
-          {/* --- Statistics (text-only, no charts) ---------------- */}
-          {showStats && stats && <StatsSection stats={stats} visibility={visibility} />}
+            {changed.length > 0 && isVisible(visibility, "changed") && (
+              <SectionWrapper marginBottom={44}>
+                <BulletSection emoji="🔧" label="Changed" items={changed} />
+              </SectionWrapper>
+            )}
 
-          {/* --- CTA back to web for the visual experience -------- */}
-          <Section style={{ paddingTop: space.lg }}>
-            <Hr
-              style={{
-                borderTop: `1px solid ${c.border}`,
-                margin: `0 0 ${space.xl}`,
-              }}
-            />
-            <Link
-              href={`${WEB_URL}/dashboard`}
-              style={{
-                display: "inline-block",
-                padding: "10px 16px",
-                backgroundColor: c.bgTertiary,
-                color: c.textPrimary,
-                fontFamily: fonts.sans,
-                fontWeight: 500,
-                fontSize: "13px",
-                lineHeight: "1",
-                textDecoration: "none",
-                borderRadius: "8px",
-                border: `1px solid ${c.border}`,
-              }}
-            >
-              Open in AskScout for full stats
-            </Link>
-          </Section>
+            {unstable.length > 0 && isVisible(visibility, "unstable") && (
+              <SectionWrapper marginBottom={44}>
+                <BulletSection emoji="🔁" label="Still Shifting" items={unstable} />
+              </SectionWrapper>
+            )}
 
-          {/* --- Footer ------------------------------------------- */}
-          <Section style={{ paddingTop: "32px" }}>
-            <Hr
-              style={{
-                borderTop: `1px solid ${c.border}`,
-                margin: `0 0 ${space.gap14}`,
-              }}
-            />
-            <Text
-              style={{
-                margin: 0,
-                fontFamily: fonts.sans,
-                fontWeight: 300,
-                fontSize: "11px",
-                lineHeight: "16px",
-                color: c.textTertiary,
-                textAlign: "center",
-              }}
-            >
-              You sent this to yourself from your AskScout digest.
-            </Text>
-            <Text
-              style={{
-                margin: "8px 0 0",
-                fontFamily: fonts.sans,
-                fontWeight: 300,
-                fontSize: "11px",
-                lineHeight: "16px",
-                color: c.textTertiary,
-                textAlign: "center",
-              }}
-            >
-              <Link
-                href={WEB_URL}
-                style={{ color: c.textTertiary, textDecoration: "none" }}
-              >
-                askscout.dev
-              </Link>
-            </Text>
-          </Section>
+            {leftOff.length > 0 && isVisible(visibility, "leftOff") && (
+              <SectionWrapper marginBottom={44}>
+                <BulletSection emoji="📍" label="Left Off" items={leftOff} />
+              </SectionWrapper>
+            )}
+
+            {fieldNotes &&
+              (fieldNotes.subtitle || fieldNotes.body) &&
+              isVisible(visibility, "fieldNotes") && (
+                <SectionWrapper marginBottom={44}>
+                  <FieldNotesSection
+                    subtitle={fieldNotes.subtitle}
+                    body={fieldNotes.body}
+                  />
+                </SectionWrapper>
+              )}
+
+            {keyTakeaways && isVisible(visibility, "oneTakeaway") && (
+              <SectionWrapper marginBottom={44}>
+                <ProseSection emoji="🔑" label="Key Takeaways" body={keyTakeaways} />
+              </SectionWrapper>
+            )}
+
+            {showStats && stats && (
+              <SectionWrapper marginBottom={44}>
+                <StatsLine stats={stats} />
+              </SectionWrapper>
+            )}
+
+            {/* CTA — Open Full Digest button */}
+            <CTAButton href={`${WEB_URL}/dashboard`} />
+          </div>
+        </Container>
+
+        {/* FOOTER — outside the card. Logo wordmark + copy. ----------- */}
+        <Container
+          style={{
+            maxWidth: "600px",
+            width: "600px",
+            margin: "0 auto",
+            padding: "30px 33px 40px",
+          }}
+        >
+          <Img
+            src={`${WEB_URL}/logo-white.svg`}
+            alt="AskScout"
+            width="113"
+            height="20"
+            style={{ display: "block", border: 0, outline: "none" }}
+          />
+          <Text
+            style={{
+              margin: "25px 0 0",
+              fontFamily: fonts.sans,
+              fontWeight: 300,
+              fontSize: "12px",
+              lineHeight: "18px",
+              color: c.textPrimary,
+            }}
+          >
+            You sent this to yourself from your AskScout digest.
+          </Text>
+          <Text
+            style={{
+              margin: "14px 0 0",
+              fontFamily: fonts.sans,
+              fontWeight: 300,
+              fontSize: "12px",
+              lineHeight: "18px",
+              color: c.textPrimary,
+            }}
+          >
+            © 2026 AskScout
+          </Text>
         </Container>
       </Body>
     </Html>
@@ -409,16 +331,21 @@ export function DigestEmail({
 // Sub-components
 // ---------------------------------------------------------------------------
 
-/** Section-header emoji rendered at 20px to match the web's
- *  `<Emoji size={20} />` treatment alongside a 16px Work Sans label.
- *  The web uses Microsoft Fluent Emoji 3D PNGs via jsdelivr, but
- *  remote-image rendering in email is unreliable (Gmail proxies and
- *  caches; Apple Mail blocks by default in some configs; Outlook
- *  varies). Falling back to the Unicode emoji at 20px font-size
- *  lands the same visual weight in every client, since modern email
- *  clients render Unicode emoji at the specified font size.
- *  marginRight 8px reproduces the web's `gap: 8px` on the title flex
- *  container. */
+/** Wrapper that gives a section consistent bottom margin. Used so
+ *  every top-level section block is preceded by 44px of breathing
+ *  room without each component setting its own paddingBottom. */
+function SectionWrapper({
+  children,
+  marginBottom,
+}: {
+  children: React.ReactNode;
+  marginBottom: number;
+}) {
+  return <div style={{ marginBottom: `${marginBottom}px` }}>{children}</div>;
+}
+
+/** Section-header emoji rendered at 20px, 8px right margin. Mirrors
+ *  the web's <Emoji size={20} /> + flex gap:8 on the title row. */
 function SectionEmoji({ char }: { char: string }) {
   return (
     <span
@@ -434,78 +361,116 @@ function SectionEmoji({ char }: { char: string }) {
   );
 }
 
-/** Vibe Check — bordered card surface, the only digest section that
- *  carries the card chrome on the web (.digest-vibe). Mirrors the
- *  exact styling: bg-secondary fill, 1px border, 8px radius, 13px
- *  padding, 8px gap between title and body, plus the subtle inset
- *  glow (rgba(255,255,255,0.04) at 40px blur).
- *
- *  Email-client coverage for inset box-shadow:
- *    - Apple Mail (Mac, iOS): renders the glow correctly
- *    - Gmail web / iOS / Android: silently strips box-shadow
- *    - Outlook desktop: ignores box-shadow entirely
- *  Gracefully degrades to a flat bordered card in clients that strip
- *  it, which is still on-brand. */
-function VibeCheckCard({ body }: { body: string }) {
+/** Repo chip — small bg-tertiary pill with the repo slug + a forward
+ *  arrow glyph, matching .digest-repo-chip on the web. */
+function RepoChip({ repoName }: { repoName: string }) {
   return (
-    <Section style={{ paddingBottom: space.xl }}>
-      <Section
+    <span
+      style={{
+        display: "inline-block",
+        padding: "4px 8px",
+        borderRadius: "90px",
+        backgroundColor: c.bgTertiary,
+        boxShadow: "inset 0 8px 20px 0 rgba(255, 255, 255, 0.04)",
+        fontFamily: fonts.sans,
+        fontWeight: 300,
+        fontSize: "12px",
+        lineHeight: "1",
+        color: c.textPrimary,
+      }}
+    >
+      {repoName}
+      <span
         style={{
-          backgroundColor: c.bgSecondary,
-          border: `1px solid ${c.border}`,
-          borderRadius: "8px",
-          padding: "13px",
-          boxShadow: "inset 0 0 40px 0 rgba(255, 255, 255, 0.04)",
+          display: "inline-block",
+          marginLeft: "4px",
+          fontSize: "10px",
+          lineHeight: "1",
+          verticalAlign: "middle",
+          color: c.textSecondary,
         }}
       >
-        <Text
-          style={{
-            margin: `0 0 ${space.sm}`,
-            fontFamily: fonts.sans,
-            fontWeight: 500,
-            fontSize: "16px",
-            lineHeight: "normal",
-            color: c.textPrimary,
-          }}
-        >
-          <SectionEmoji char="💬" />
-          Vibe Check
-        </Text>
-        <Text
-          style={{
-            margin: 0,
-            fontFamily: fonts.sans,
-            fontWeight: 300,
-            fontSize: "12px",
-            lineHeight: "18px",
-            color: c.textPrimary,
-          }}
-        >
-          {collapseNewlines(body)}
-        </Text>
-      </Section>
+        ↗
+      </span>
+    </span>
+  );
+}
+
+/** Streak chip — fire-emoji + "N Day Streak" pill that mirrors
+ *  .digest-streak on the web. Rendered next to the repo chip in the
+ *  email header. */
+function StreakChip({ days }: { days: number }) {
+  return (
+    <span
+      style={{
+        display: "inline-block",
+        padding: "4px 8px",
+        borderRadius: "90px",
+        backgroundColor: c.bgTertiary,
+        boxShadow: "inset 0 8px 20px 0 rgba(255, 255, 255, 0.04)",
+        fontFamily: fonts.sans,
+        fontWeight: 300,
+        fontSize: "12px",
+        lineHeight: "1",
+        color: c.textPrimary,
+      }}
+    >
+      <span style={{ fontSize: "14px", lineHeight: "1", verticalAlign: "middle", marginRight: "4px" }}>
+        🔥
+      </span>
+      {days} Day Streak
+    </span>
+  );
+}
+
+/** Vibe Check — bordered card surface with bg-secondary, 1px border,
+ *  8px radius, 14px padding, 8px gap between heading and body, plus
+ *  the strong inset glow per the Figma frame
+ *  (inset 0 0 40px rgba(255,255,255,0.04)). */
+function VibeCheckCard({ body }: { body: string }) {
+  return (
+    <Section
+      style={{
+        backgroundColor: c.bgSecondary,
+        border: `1px solid ${c.border}`,
+        borderRadius: "8px",
+        padding: "14px",
+        boxShadow: "inset 0 0 40px 0 rgba(255, 255, 255, 0.04)",
+      }}
+    >
+      <Text
+        style={{
+          margin: `0 0 ${space.sm}`,
+          fontFamily: fonts.sans,
+          fontWeight: 500,
+          fontSize: "16px",
+          lineHeight: "normal",
+          color: c.textPrimary,
+        }}
+      >
+        <SectionEmoji char="💬" />
+        Vibe Check
+      </Text>
+      <Text
+        style={{
+          margin: 0,
+          fontFamily: fonts.sans,
+          fontWeight: 300,
+          fontSize: "12px",
+          lineHeight: "18px",
+          color: c.textPrimary,
+        }}
+      >
+        {collapseNewlines(body)}
+      </Text>
     </Section>
   );
 }
 
-/** Bulleted section (Shipped / Changed / Still Shifting / Left Off).
- *  Header row with emoji + Work Sans Medium 16 label + count pill;
- *  then a 14px-gapped list of items, each rendered as a 16×20 bullet
- *  frame with a 4×4 round dot (text-secondary), followed by Work Sans
- *  Light 12/18 text where the title is weight 600 and the context is
- *  weight 300, separated by a literal " - ". Mirrors the web's
- *  .digest-bulleted / .digest-item / .digest-item-title / .digest-item-context
- *  treatment exactly.
- *
- *  The count pill carries the inset glow (.digest-bulleted-count uses
- *  inset 0 8px 20px 0 var(--color-inner-glow) on the web). Apple Mail
- *  honors the inset box-shadow; Gmail and Outlook silently strip it
- *  and the pill degrades to a flat bg-tertiary chip.
- *
- *  Bullet dot: a real 4×4 round div (display: inline-block,
- *  border-radius: 50%, bg text-secondary). Modern email clients
- *  render it as a circle; Outlook's mso engine ignores border-radius
- *  and renders a 4×4 square. Both read clearly as a list marker. */
+/** Bulleted section — emoji + Medium 16 label + count pill ("N items"),
+ *  then a 14px-gapped list of bullets. Each bullet is a 16×20 frame
+ *  with a 4×4 round dot, followed by Medium 12 title + Light 12
+ *  context separated by " - ". */
 function BulletSection({
   emoji,
   label,
@@ -516,8 +481,8 @@ function BulletSection({
   items: BulletItem[];
 }) {
   return (
-    <Section style={{ paddingBottom: space.xl }}>
-      {/* Header row: emoji + label + count pill, .digest-bulleted-header */}
+    <div>
+      {/* Header row */}
       <Row>
         <Column style={{ width: "auto", verticalAlign: "middle" }}>
           <Text
@@ -537,9 +502,8 @@ function BulletSection({
           </Text>
         </Column>
         <Column style={{ width: "auto", verticalAlign: "middle" }}>
-          <Text
+          <span
             style={{
-              margin: 0,
               display: "inline-block",
               padding: "3px 6px",
               borderRadius: "60px",
@@ -552,24 +516,20 @@ function BulletSection({
               color: c.textPrimary,
             }}
           >
-            {items.length}
-          </Text>
+            {items.length} {items.length === 1 ? "item" : "items"}
+          </span>
         </Column>
         <Column />
       </Row>
 
-      {/* Bullet list — .digest-bulleted-list, gap: 14px */}
-      <Section style={{ paddingTop: space.gap14 }}>
+      {/* Bullet list — 14px gap below the header, 14px between items */}
+      <div style={{ paddingTop: space.gap14 }}>
         {items.map((item, i) => (
-          <Section
+          <div
             key={i}
             style={{ paddingBottom: i === items.length - 1 ? 0 : space.gap14 }}
           >
             <Row>
-              {/* 16×20 bullet frame with a 4×4 round dot centered on
-                  the visual baseline of the first text line.
-                  paddingTop 8px puts the dot at the (20-4)/2 = 8px
-                  centerline of the 18px-line text column. */}
               <Column
                 style={{
                   width: "16px",
@@ -600,48 +560,26 @@ function BulletSection({
                     color: c.textPrimary,
                   }}
                 >
-                  {item.title && (
-                    <span style={{ fontWeight: 600 }}>{item.title}</span>
-                  )}
+                  {item.title && <span style={{ fontWeight: 500 }}>{item.title}</span>}
                   {item.title && item.context && " - "}
-                  {item.context && (
-                    <span style={{ fontWeight: 300 }}>{item.context}</span>
-                  )}
+                  {item.context && <span style={{ fontWeight: 300 }}>{item.context}</span>}
                 </Text>
               </Column>
             </Row>
-          </Section>
+          </div>
         ))}
-      </Section>
-    </Section>
+      </div>
+    </div>
   );
 }
 
-/** Field Notes — emoji + Work Sans Medium 16 header, then a body row
- *  with a vertical hairline accent on the left and a content column
- *  containing a Work Sans 600 / 12-18 subtitle and a Work Sans 300 /
- *  12-18 body, separated by a 4px gap. Mirrors the web's
- *  .digest-fieldnotes layout exactly:
- *
- *    .digest-fieldnotes               column gap 14px
- *    .digest-fieldnotes-body-row      padding-left 4px, gap 14px
- *      .digest-fieldnotes-rule        width 1px, stretches to row height
- *      .digest-fieldnotes-content     gap 4px between subtitle & body
- *
- *  The 1px rule is implemented as `border-left` on the content
- *  column. In a CSS-table layout that border stretches to the cell's
- *  full height — which matches the web's `align-self: stretch`
- *  behavior — and is the most reliable email-safe approach. Older
- *  Outlook (Word renderer) does support border on table cells.
- *
- *  Spacing math: web has 4px padding from section edge → 1px rule →
- *  14px gap → content. We get the same result via a 4px-wide spacer
- *  cell + a 1px border-left + 14px padding-left on the content cell. */
+/** Field Notes — emoji + label header, then a body row with a 1px
+ *  vertical hairline accent on the left and a content column with
+ *  Medium 12 subtitle + Light 12 body, 4px gap between them. */
 function FieldNotesSection({ subtitle, body }: { subtitle: string; body: string }) {
   const cleanedBody = collapseNewlines(body);
   return (
-    <Section style={{ paddingBottom: space.xl }}>
-      {/* Header — .digest-fieldnotes-title */}
+    <div>
       <Text
         style={{
           margin: `0 0 ${space.gap14}`,
@@ -655,13 +593,8 @@ function FieldNotesSection({ subtitle, body }: { subtitle: string; body: string 
         <SectionEmoji char="🧭" />
         Field Notes
       </Text>
-
-      {/* Body row — .digest-fieldnotes-body-row */}
       <Row>
-        {/* 4px spacer = the body-row's padding-left on the web */}
         <Column style={{ width: "4px" }} />
-        {/* Content column carries the 1px left border (= the rule)
-            and 14px left padding (= the gap from rule to content). */}
         <Column
           style={{
             borderLeft: `1px solid ${c.border}`,
@@ -674,7 +607,7 @@ function FieldNotesSection({ subtitle, body }: { subtitle: string; body: string 
               style={{
                 margin: `0 0 ${space.xs}`,
                 fontFamily: fonts.sans,
-                fontWeight: 600,
+                fontWeight: 500,
                 fontSize: "12px",
                 lineHeight: "18px",
                 color: c.textPrimary,
@@ -699,7 +632,7 @@ function FieldNotesSection({ subtitle, body }: { subtitle: string; body: string 
           )}
         </Column>
       </Row>
-    </Section>
+    </div>
   );
 }
 
@@ -714,7 +647,7 @@ function ProseSection({
   body: string;
 }) {
   return (
-    <Section style={{ paddingBottom: space.xl }}>
+    <div>
       <Text
         style={{
           margin: `0 0 ${space.gap14}`,
@@ -740,201 +673,130 @@ function ProseSection({
       >
         {collapseNewlines(body)}
       </Text>
-    </Section>
+    </div>
   );
 }
 
-/** Statistics — text-only summary. Cards row, top files list,
- *  codebase health, pace check. Coding Timeline is intentionally
- *  omitted (charts don't render in email; CTA links back to web). */
-function StatsSection({
-  stats,
-  visibility,
-}: {
-  stats: NonNullable<DigestEmailProps["stats"]>;
-  visibility: DigestEmailProps["visibility"];
-}) {
+/** Stats line — single horizontal row at Work Sans Regular 12 with
+ *  +N lines (green), -N lines (red), N commits, N files, separated
+ *  by 14px gaps. No emoji header — just the numbers. */
+function StatsLine({ stats }: { stats: NonNullable<DigestEmailProps["stats"]> }) {
   const fmt = (n: number) => n.toLocaleString("en-US");
   return (
-    <Section style={{ paddingBottom: space.xl }}>
-      {/* Umbrella header */}
-      <Text
+    <Row>
+      <Column style={{ width: "auto", paddingRight: "14px", verticalAlign: "middle" }}>
+        <Text
+          style={{
+            margin: 0,
+            fontFamily: fonts.sans,
+            fontWeight: 400,
+            fontSize: "12px",
+            lineHeight: "normal",
+            color: c.green,
+            whiteSpace: "nowrap",
+          }}
+        >
+          +{fmt(stats.linesAdded ?? 0)} lines
+        </Text>
+      </Column>
+      <Column style={{ width: "auto", paddingRight: "14px", verticalAlign: "middle" }}>
+        <Text
+          style={{
+            margin: 0,
+            fontFamily: fonts.sans,
+            fontWeight: 400,
+            fontSize: "12px",
+            lineHeight: "normal",
+            color: c.red,
+            whiteSpace: "nowrap",
+          }}
+        >
+          -{fmt(stats.linesRemoved ?? 0)} lines
+        </Text>
+      </Column>
+      <Column style={{ width: "auto", paddingRight: "14px", verticalAlign: "middle" }}>
+        <Text
+          style={{
+            margin: 0,
+            fontFamily: fonts.sans,
+            fontWeight: 400,
+            fontSize: "12px",
+            lineHeight: "normal",
+            color: c.textPrimary,
+            whiteSpace: "nowrap",
+          }}
+        >
+          <span style={{ fontSize: "14px", marginRight: "4px", verticalAlign: "middle" }}>
+            ⎇
+          </span>
+          {fmt(stats.commits ?? 0)} commits
+        </Text>
+      </Column>
+      <Column style={{ width: "auto", verticalAlign: "middle" }}>
+        <Text
+          style={{
+            margin: 0,
+            fontFamily: fonts.sans,
+            fontWeight: 400,
+            fontSize: "12px",
+            lineHeight: "normal",
+            color: c.textPrimary,
+            whiteSpace: "nowrap",
+          }}
+        >
+          <span style={{ fontSize: "14px", marginRight: "4px", verticalAlign: "middle" }}>
+            📄
+          </span>
+          {fmt(stats.filesChanged ?? 0)} files
+        </Text>
+      </Column>
+      <Column />
+    </Row>
+  );
+}
+
+/** Open Full Digest CTA — bordered card with icon + Light 16 label,
+ *  inset glow, mirroring the design's button treatment. */
+function CTAButton({ href }: { href: string }) {
+  return (
+    <Link
+      href={href}
+      style={{
+        display: "inline-block",
+        padding: "10px 14px",
+        backgroundColor: c.bgPrimary,
+        border: `1px solid ${c.border}`,
+        borderRadius: "8px",
+        boxShadow: "inset 0 0 20px 0 rgba(255, 255, 255, 0.04)",
+        textDecoration: "none",
+        color: c.textPrimary,
+      }}
+    >
+      <span
         style={{
-          margin: `0 0 ${space.gap14}`,
+          display: "inline-block",
+          fontSize: "16px",
+          lineHeight: "1",
+          verticalAlign: "middle",
+          marginRight: "8px",
+        }}
+      >
+        ↗
+      </span>
+      <span
+        style={{
           fontFamily: fonts.sans,
-          fontWeight: 500,
+          fontWeight: 300,
           fontSize: "16px",
           lineHeight: "normal",
           color: c.textPrimary,
+          verticalAlign: "middle",
+          whiteSpace: "nowrap",
         }}
       >
-        <SectionEmoji char="📊" />
-        Statistics
-      </Text>
-
-      {/* Cards row */}
-      {isVisible(visibility, "statistics") && stats.commits != null && (
-        <Section style={{ paddingBottom: space.gap14 }}>
-          <Section
-            style={{
-              backgroundColor: c.bgSecondary,
-              border: `1px solid ${c.border}`,
-              borderRadius: "8px",
-              padding: "12px 14px",
-            }}
-          >
-            <Text
-              style={{
-                margin: 0,
-                fontFamily: fonts.sans,
-                fontWeight: 500,
-                fontSize: "13px",
-                lineHeight: "18px",
-                color: c.textPrimary,
-              }}
-            >
-              +{fmt(stats.linesAdded ?? 0)} lines · -{fmt(stats.linesRemoved ?? 0)} lines ·{" "}
-              {fmt(stats.commits)} commits · {fmt(stats.filesChanged ?? 0)} files
-            </Text>
-          </Section>
-        </Section>
-      )}
-
-      {/* Most Active Files */}
-      {isVisible(visibility, "mostActiveFiles") && (stats.topFiles?.length ?? 0) > 0 && (
-        <Section style={{ paddingBottom: space.gap14 }}>
-          <Text
-            style={{
-              margin: `0 0 ${space.sm}`,
-              fontFamily: fonts.sans,
-              fontWeight: 500,
-              fontSize: "12px",
-              lineHeight: "18px",
-              color: c.textSecondary,
-              textTransform: "uppercase",
-              letterSpacing: "0.04em",
-            }}
-          >
-            Most Active Files
-          </Text>
-          {stats.topFiles!.map((f, i) => (
-            <Text
-              key={i}
-              style={{
-                margin: "0 0 4px",
-                fontFamily: fonts.sans,
-                fontWeight: 300,
-                fontSize: "12px",
-                lineHeight: "18px",
-                color: c.textPrimary,
-              }}
-            >
-              {i + 1}. {f.file} (+{fmt(f.added ?? 0)} / -{fmt(f.removed ?? 0)},{" "}
-              {f.commits} {f.commits === 1 ? "commit" : "commits"})
-            </Text>
-          ))}
-        </Section>
-      )}
-
-      {/* Codebase Health */}
-      {isVisible(visibility, "codebaseHealth") &&
-        stats.health?.growth?.level &&
-        stats.health.focus?.level &&
-        stats.health.churn?.level && (
-          <Section style={{ paddingBottom: space.gap14 }}>
-            <Text
-              style={{
-                margin: `0 0 ${space.sm}`,
-                fontFamily: fonts.sans,
-                fontWeight: 500,
-                fontSize: "12px",
-                lineHeight: "18px",
-                color: c.textSecondary,
-                textTransform: "uppercase",
-                letterSpacing: "0.04em",
-              }}
-            >
-              Codebase Health
-            </Text>
-            <Text
-              style={{
-                margin: "0 0 4px",
-                fontFamily: fonts.sans,
-                fontWeight: 300,
-                fontSize: "12px",
-                lineHeight: "18px",
-                color: c.textPrimary,
-              }}
-            >
-              Growth: {stats.health.growth.level} (+{fmt(stats.health.growth.added)} / -
-              {fmt(stats.health.growth.removed)})
-            </Text>
-            <Text
-              style={{
-                margin: "0 0 4px",
-                fontFamily: fonts.sans,
-                fontWeight: 300,
-                fontSize: "12px",
-                lineHeight: "18px",
-                color: c.textPrimary,
-              }}
-            >
-              Focus: {stats.health.focus.level} ({stats.health.focus.filesPerCommit} files
-              touched per commit)
-            </Text>
-            <Text
-              style={{
-                margin: 0,
-                fontFamily: fonts.sans,
-                fontWeight: 300,
-                fontSize: "12px",
-                lineHeight: "18px",
-                color: c.textPrimary,
-              }}
-            >
-              Churn: {stats.health.churn.level} ({stats.health.churn.files}{" "}
-              {stats.health.churn.files === 1 ? "file" : "files"} reworked)
-            </Text>
-          </Section>
-        )}
-
-      {/* Pace Check */}
-      {isVisible(visibility, "paceCheck") &&
-        stats.pace &&
-        typeof stats.pace.multiplier === "number" && (
-          <Section>
-            <Text
-              style={{
-                margin: `0 0 ${space.sm}`,
-                fontFamily: fonts.sans,
-                fontWeight: 500,
-                fontSize: "12px",
-                lineHeight: "18px",
-                color: c.textSecondary,
-                textTransform: "uppercase",
-                letterSpacing: "0.04em",
-              }}
-            >
-              Pace Check
-            </Text>
-            <Text
-              style={{
-                margin: 0,
-                fontFamily: fonts.sans,
-                fontWeight: 300,
-                fontSize: "12px",
-                lineHeight: "18px",
-                color: c.textPrimary,
-              }}
-            >
-              <span style={{ fontWeight: 500 }}>{stats.pace.multiplier}x</span> ·{" "}
-              {stats.pace.label}
-              <br />
-              {stats.pace.todayCommits} commits today · {stats.pace.avgCommits}-commit avg
-            </Text>
-          </Section>
-        )}
-    </Section>
+        Open Full Digest
+      </span>
+    </Link>
   );
 }
 

@@ -17,7 +17,8 @@ import { DigestEmail } from "@/emails/DigestEmail";
 
 const SAMPLE: Parameters<typeof DigestEmail>[0] = {
   digestTitle: "Today’s Digest",
-  repoName: "BragBook",
+  repoName: "askscout",
+  streak: 7,
   dateLabel: "Thursday, May 8, 2026",
   vibeCheck:
     "You spent the whole session building out a single new job search article page, and you kept polishing it right up to the end. The work rhythm is pretty clean: first you added the core page and FAQ UI, then you tightened the surrounding SEO and discovery pieces like sitemap, layout title mapping, and related resources. The only real loop is that one article page got revisited over and over, which usually means content tweaks plus metadata tuning until it felt right. It reads like it should have been perfect on the first pass, but here we are doing the last 10 percent properly.",
@@ -56,36 +57,10 @@ const SAMPLE: Parameters<typeof DigestEmail>[0] = {
   keyTakeaways:
     "This was a long arc around one thing: shipping a complete brag document for job search resource while repeatedly refining its main page until it stopped feeling drafty. Next move is to do one quick sanity pass on that same article surface for consistency between what metadata promises and what sections deliver since that file had six touches today. Then let everything else stay quiet because your sitemap and navigation hooks already look wired correctly for discovery.",
   stats: {
-    commits: 7,
-    filesChanged: 7,
-    linesAdded: 565,
-    linesRemoved: 17,
-    topFiles: [
-      {
-        file: "src/app/how-to-use-brag-document-job-search/page.tsx",
-        added: 455,
-        removed: 0,
-        commits: 6,
-      },
-      {
-        file: "public/resources/job-search.png",
-        added: 0,
-        removed: 0,
-        commits: 1,
-      },
-      {
-        file: "src/app/how-to-use-brag-document-job-search/JobSearchFAQ.tsx",
-        added: 72,
-        removed: 0,
-        commits: 1,
-      },
-    ],
-    health: {
-      growth: { level: "Heavy", added: 565, removed: 17 },
-      focus: { level: "Tight", filesPerCommit: 1.7 },
-      churn: { level: "Minimal", files: 1 },
-    },
-    pace: null,
+    commits: 19,
+    filesChanged: 8,
+    linesAdded: 425,
+    linesRemoved: 86,
   },
   visibility: undefined,
 };
