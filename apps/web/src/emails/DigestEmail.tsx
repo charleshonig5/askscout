@@ -145,11 +145,10 @@ export function DigestEmail({
       <Preview>{previewText}</Preview>
       <Body
         style={{
-          // Page background — Figma's outer canvas is #121212 (the
-          // lighter dark token). The email card sits on top in the
-          // darker #070707, which gives the design's "card on a
-          // lighter page" depth and lets the footer sit directly on
-          // the page color.
+          // Body bg is the lighter #121212 ("page" color). The dark
+          // digest area sits on top and fills the email-pane width
+          // edge-to-edge, so the lighter color is only visible BELOW
+          // the digest where the footer lives, never on the sides.
           backgroundColor: c.bgSecondary,
           fontFamily: fonts.sans,
           margin: 0,
@@ -159,26 +158,37 @@ export function DigestEmail({
           MozOsxFontSmoothing: "grayscale",
         }}
       >
-        {/* The email card. 600px wide, rounded-bottom 30px, 1px border
-            in tertiary (#252525) per the Figma frame. Padding inside is
-            33px sides / 23px top so the header sits exactly where the
-            design places it. */}
-        <Container
+        {/* TOP DIGEST SECTION — full pane width, bg #070707, rounded
+            BOTTOM corners only. Renders as a 100%-wide table with the
+            dark fill, so the email-pane edges are dark with no lighter
+            color visible on the sides. The 30px rounded-bottom corners
+            "scoop" into the lighter body bg below, giving the visual
+            transition from digest to footer. Sides have no border (a
+            border at the email pane edge looks awkward in most
+            clients); the rounded curve + color contrast does the
+            visual separation work. */}
+        <Section
           style={{
-            maxWidth: "600px",
-            width: "600px",
-            margin: "0 auto",
             backgroundColor: c.bgPrimary,
-            border: `1px solid ${c.border}`,
-            borderTop: "none",
-            borderRadius: "0 0 30px 30px",
-            // Container has zero horizontal padding so the Hr below
-            // can sit edge-to-edge naturally. Each inner Section adds
-            // its own 33px left/right padding to match the design's
-            // content inset.
-            padding: "23px 0 40px",
+            borderBottomLeftRadius: "30px",
+            borderBottomRightRadius: "30px",
+            margin: 0,
           }}
         >
+          {/* Inner Container holds the 600px-centered digest content.
+              boxSizing: border-box ensures padding is included inside
+              the 600px width rather than added to it, so the rendered
+              element is exactly 600px wide and never overflows the
+              email pane. */}
+          <Container
+            style={{
+              maxWidth: "600px",
+              width: "600px",
+              margin: "0 auto",
+              padding: "23px 0 40px",
+              boxSizing: "border-box",
+            }}
+          >
           {/* HEADER ---------------------------------------------------
               Header inset is 33px sides + 23px top from container.
               paddingBottom is sized so the divider lands at the
@@ -328,57 +338,69 @@ export function DigestEmail({
             <CTAButton href={`${WEB_URL}/dashboard`} />
           </div>
         </Container>
+        </Section>
 
-        {/* FOOTER — outside the card. Container is 600px wide for
-            alignment with the email card; inner content sits at
-            left:33px in a narrow 175px column matching the Figma
-            footer's left:33 / w:175 frame. The 175px constraint
-            wraps the "You sent this to yourself..." line to two
-            narrow lines, which is intentional in the design. */}
-        <Container
+        {/* FOOTER SECTION — full pane width, bg #121212. Sits directly
+            below the rounded-bottom of the digest section so the
+            lighter surface is visible only here, never on the sides
+            of the digest. Inner Container holds 600px-centered
+            content; inside that, the footer block is left-aligned at
+            33px in a narrow 175px column matching the Figma frame
+            (left:33, w:175). The 175px constraint wraps the
+            "You sent this to yourself..." line to two narrow lines
+            intentionally per the design. */}
+        <Section
           style={{
-            maxWidth: "600px",
-            width: "600px",
-            margin: "0 auto",
-            padding: "30px 33px 40px",
+            backgroundColor: c.bgSecondary,
+            margin: 0,
           }}
         >
-          <div style={{ width: "175px" }}>
-            <Img
-              src={`${WEB_URL}/logo-white.svg`}
-              alt="AskScout"
-              width="113"
-              height="20"
-              style={{ display: "block", border: 0, outline: "none" }}
-            />
-            <Text
-              style={{
-                margin: "25px 0 0",
-                fontFamily: fonts.sans,
-                fontWeight: 300,
-                fontSize: "12px",
-                lineHeight: "18px",
-                color: c.textPrimary,
-                width: "175px",
-              }}
-            >
-              You sent this to yourself from your AskScout digest.
-            </Text>
-            <Text
-              style={{
-                margin: "14px 0 0",
-                fontFamily: fonts.sans,
-                fontWeight: 300,
-                fontSize: "12px",
-                lineHeight: "18px",
-                color: c.textPrimary,
-                whiteSpace: "nowrap",
-              }}
-            >
-              © 2026 AskScout
-            </Text>
-          </div>
-        </Container>
+          <Container
+            style={{
+              maxWidth: "600px",
+              width: "600px",
+              margin: "0 auto",
+              padding: "30px 33px 40px",
+              boxSizing: "border-box",
+            }}
+          >
+            <div style={{ width: "175px" }}>
+              <Img
+                src={`${WEB_URL}/logo-white.svg`}
+                alt="AskScout"
+                width="113"
+                height="20"
+                style={{ display: "block", border: 0, outline: "none" }}
+              />
+              <Text
+                style={{
+                  margin: "25px 0 0",
+                  fontFamily: fonts.sans,
+                  fontWeight: 300,
+                  fontSize: "12px",
+                  lineHeight: "18px",
+                  color: c.textPrimary,
+                  width: "175px",
+                }}
+              >
+                You sent this to yourself from your AskScout digest.
+              </Text>
+              <Text
+                style={{
+                  margin: "14px 0 0",
+                  fontFamily: fonts.sans,
+                  fontWeight: 300,
+                  fontSize: "12px",
+                  lineHeight: "18px",
+                  color: c.textPrimary,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                © 2026 AskScout
+              </Text>
+            </div>
+          </Container>
+        </Section>
       </Body>
     </Html>
   );
