@@ -97,15 +97,22 @@ export default async function EmailPreviewPage() {
           </p>
         </header>
 
+        {/* iframe constrained to exactly 600px wide so the email's
+            actual canvas is what's visible — no surrounding page bg
+            on the sides. Matches the email's `maxWidth: 600px`
+            container width. */}
         <iframe
           title="Digest email preview"
           srcDoc={html}
           style={{
-            width: "100%",
+            width: "600px",
+            maxWidth: "100%",
             height: "1600px",
+            display: "block",
+            margin: "0 auto",
             border: "1px solid #222",
             borderRadius: "8px",
-            backgroundColor: "#070707",
+            backgroundColor: "#121212",
           }}
         />
       </div>
