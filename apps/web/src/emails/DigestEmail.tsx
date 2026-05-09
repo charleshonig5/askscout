@@ -237,12 +237,12 @@ export function DigestEmail({
                 </tr>
               </tbody>
             </table>
-            {/* Date below the title row — Figma stacks title + date in
-                a flex column with no gap; line-height creates the
-                visual separation. margin: 0 to remove browser default. */}
+            {/* Date below the title row — 4px margin-top per the
+                user's spec, slightly more breathing room than the
+                Figma's tight line-height-only stack. */}
             <Text
               style={{
-                margin: 0,
+                margin: "4px 0 0",
                 fontFamily: fonts.sans,
                 fontWeight: 300,
                 fontSize: "12px",
