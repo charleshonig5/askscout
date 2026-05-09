@@ -21,7 +21,6 @@ import {
   Column,
   Container,
   Head,
-  Hr,
   Html,
   Img,
   Link,
@@ -146,7 +145,12 @@ export function DigestEmail({
       <Preview>{previewText}</Preview>
       <Body
         style={{
-          backgroundColor: c.bgPrimary,
+          // Page background — Figma's outer canvas is #121212 (the
+          // lighter dark token). The email card sits on top in the
+          // darker #070707, which gives the design's "card on a
+          // lighter page" depth and lets the footer sit directly on
+          // the page color.
+          backgroundColor: c.bgSecondary,
           fontFamily: fonts.sans,
           margin: 0,
           padding: 0,
@@ -177,43 +181,55 @@ export function DigestEmail({
         >
           {/* HEADER ---------------------------------------------------
               Header inset is 33px sides + 23px top from container.
-              paddingBottom is sized so the Hr divider lands at the
-              Figma's top:98 from the card edge. With a Pridi 24
-              title (~30px tall) + Light 12 date (~14px tall) +
-              23px top padding, paddingBottom 30 puts the Hr at
-              ~97-98 — matching the design. */}
+              paddingBottom is sized so the divider lands at the
+              Figma's top:98. With a Pridi 24 title (~30px tall) +
+              Light 12 date (~14px tall) + 23px top padding,
+              paddingBottom 30 puts the divider at ~97-98 — matching
+              the design.
+
+              Title row uses a single-cell table with inline elements
+              for the same reason BulletSection does — Row/Column
+              redistributes width across cells, pushing the chips
+              away from the title. Single cell + inline-blocks +
+              explicit margins = chips sit exactly 14px and 8px from
+              their neighbors. */}
           <Section style={{ paddingLeft: "33px", paddingRight: "33px", paddingBottom: "30px" }}>
-            {/* Title row: serif title + repo chip + streak chip */}
-            <Row>
-              <Column style={{ width: "auto", verticalAlign: "middle", paddingRight: "14px" }}>
-                <Text
-                  style={{
-                    margin: 0,
-                    fontFamily: fonts.display,
-                    fontWeight: 400,
-                    fontSize: "24px",
-                    lineHeight: "normal",
-                    color: c.textPrimary,
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {digestTitle}
-                </Text>
-              </Column>
-              <Column style={{ width: "auto", verticalAlign: "middle", paddingRight: "8px" }}>
-                <RepoChip repoName={repoName} />
-              </Column>
-              {streak != null && streak > 0 && (
-                <Column style={{ width: "auto", verticalAlign: "middle" }}>
-                  <StreakChip days={streak} />
-                </Column>
-              )}
-              <Column />
-            </Row>
-            {/* Date below the title row. Figma stacks title row + date
-                in a flex column with no explicit gap; line-height
-                creates the natural visual separation. margin: 0 to
-                avoid extra browser-default spacing on the <p>. */}
+            <table
+              cellPadding={0}
+              cellSpacing={0}
+              border={0}
+              role="presentation"
+              style={{ borderCollapse: "collapse" }}
+            >
+              <tbody>
+                <tr>
+                  <td style={{ padding: 0, verticalAlign: "middle", whiteSpace: "nowrap" }}>
+                    <span
+                      style={{
+                        fontFamily: fonts.display,
+                        fontWeight: 400,
+                        fontSize: "24px",
+                        lineHeight: "normal",
+                        color: c.textPrimary,
+                        verticalAlign: "middle",
+                        marginRight: "14px",
+                      }}
+                    >
+                      {digestTitle}
+                    </span>
+                    <RepoChip repoName={repoName} />
+                    {streak != null && streak > 0 && (
+                      <span style={{ marginLeft: "8px" }}>
+                        <StreakChip days={streak} />
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            {/* Date below the title row — Figma stacks title + date in
+                a flex column with no gap; line-height creates the
+                visual separation. margin: 0 to remove browser default. */}
             <Text
               style={{
                 margin: 0,
@@ -228,18 +244,22 @@ export function DigestEmail({
             </Text>
           </Section>
 
-          {/* HR divider — sits edge-to-edge across the card. Container
-              has zero horizontal padding so this Hr renders cleanly
-              from one side of the 600px card to the other without
-              any calc() trick. */}
-          <Hr
+          {/* Divider — pixel-clean 1px line edge-to-edge. Implemented as
+              a <div> with explicit height + background-color rather
+              than <Hr>, because <hr> elements render with browser-
+              default anti-aliasing quirks (often visually thinner or
+              thicker than a 1px css border). A solid-fill div at
+              height:1 paints exactly 1px and matches the card's 1px
+              #252525 border weight perfectly. */}
+          <div
             style={{
-              borderTop: `1px solid ${c.border}`,
+              height: "1px",
+              backgroundColor: c.border,
+              fontSize: 0,
+              lineHeight: 0,
               margin: 0,
-              border: "none",
-              borderBottom: `1px solid ${c.border}`,
-              height: "0",
             }}
+            aria-hidden
           />
 
           {/* CONTENT SECTIONS — 44px gap between sections in the inner
@@ -519,45 +539,66 @@ function BulletSection({
 }) {
   return (
     <div>
-      {/* Header row */}
-      <Row>
-        <Column style={{ width: "auto", verticalAlign: "middle" }}>
-          <Text
-            style={{
-              margin: 0,
-              fontFamily: fonts.sans,
-              fontWeight: 500,
-              fontSize: "16px",
-              lineHeight: "normal",
-              color: c.textPrimary,
-              paddingRight: space.sm,
-              whiteSpace: "nowrap",
-            }}
-          >
-            <SectionEmoji char={emoji} />
-            {label}
-          </Text>
-        </Column>
-        <Column style={{ width: "auto", verticalAlign: "middle" }}>
-          <span
-            style={{
-              display: "inline-block",
-              padding: "3px 6px",
-              borderRadius: "60px",
-              backgroundColor: c.bgTertiary,
-              boxShadow: "inset 0 8px 20px 0 rgba(255, 255, 255, 0.04)",
-              fontFamily: fonts.sans,
-              fontWeight: 300,
-              fontSize: "12px",
-              lineHeight: "1",
-              color: c.textPrimary,
-            }}
-          >
-            {items.length} {items.length === 1 ? "item" : "items"}
-          </span>
-        </Column>
-        <Column />
-      </Row>
+      {/* Header row — a single-cell table with inline elements rather
+          than Row/Column. The Row/Column pattern renders as a multi-
+          cell <table> where browsers distribute width across cells,
+          which was pushing the count pill far away from the label.
+          Single cell + inline-block elements = the pill sits exactly
+          8px after the label as the design intends. */}
+      <table
+        cellPadding={0}
+        cellSpacing={0}
+        border={0}
+        role="presentation"
+        style={{ borderCollapse: "collapse" }}
+      >
+        <tbody>
+          <tr>
+            <td style={{ padding: 0, verticalAlign: "middle", whiteSpace: "nowrap" }}>
+              <span
+                style={{
+                  fontSize: "20px",
+                  lineHeight: "1",
+                  verticalAlign: "middle",
+                  marginRight: "8px",
+                }}
+              >
+                {emoji}
+              </span>
+              <span
+                style={{
+                  fontFamily: fonts.sans,
+                  fontWeight: 500,
+                  fontSize: "16px",
+                  lineHeight: "normal",
+                  color: c.textPrimary,
+                  verticalAlign: "middle",
+                  marginRight: "8px",
+                }}
+              >
+                {label}
+              </span>
+              <span
+                style={{
+                  display: "inline-block",
+                  padding: "3px 6px",
+                  borderRadius: "60px",
+                  backgroundColor: c.bgTertiary,
+                  boxShadow: "inset 0 8px 20px 0 rgba(255, 255, 255, 0.04)",
+                  fontFamily: fonts.sans,
+                  fontWeight: 300,
+                  fontSize: "12px",
+                  lineHeight: "1",
+                  color: c.textPrimary,
+                  verticalAlign: "middle",
+                }}
+              >
+                {items.length} {items.length === 1 ? "item" : "items"}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
       {/* Bullet list — 14px gap below the header, 14px between items */}
       <div style={{ paddingTop: space.gap14 }}>
