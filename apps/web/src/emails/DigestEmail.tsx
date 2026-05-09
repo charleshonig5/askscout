@@ -810,6 +810,11 @@ const SVG_GIT_COMMIT =
 const SVG_FILE_TEXT =
   '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>';
 
+/** 16×16 stats icon. Inline SVG via dangerouslySetInnerHTML.
+ *  Color set to text-secondary (#a0a0a0) to match how the same
+ *  icons are tinted in the dashboard's stat rows — quieter than
+ *  the labels next to them. SVGs use stroke="currentColor" so the
+ *  span's color attribute drives the stroke color. */
 function StatsIcon({ svg }: { svg: string }) {
   return (
     <span
@@ -819,86 +824,96 @@ function StatsIcon({ svg }: { svg: string }) {
         height: "16px",
         verticalAlign: "middle",
         marginRight: "4px",
-        color: c.textPrimary,
+        color: c.textSecondary,
       }}
       dangerouslySetInnerHTML={{ __html: svg }}
     />
   );
 }
 
-/** Stats line — single horizontal row at Work Sans Regular 12 with
- *  +N lines (green #57d32e), -N lines (red #dd1d1d), an inline
- *  git-commit icon + N commits, an inline file-text icon + N Files,
- *  separated by 14px gaps. Capitalization matches the Figma copy
- *  ("commits" lowercase, "Files" capital F). */
+/** Stats line — single horizontal row, Work Sans Regular 12, with
+ *  +N lines (green #57d32e), -N lines (red #dd1d1d), git-commit
+ *  icon + "N commits", file-text icon + "N Files". Items separated
+ *  by exactly 14px via marginLeft on each subsequent block.
+ *
+ *  Implemented as a single-cell table with inline-block spans
+ *  rather than Row/Column, because Row/Column renders as a multi-
+ *  cell <table> where browsers distribute width across cells —
+ *  spreading items out to fill the available width. Single cell +
+ *  inline-block + explicit margins keeps items at the design's
+ *  exact 14px spacing. */
 function StatsLine({ stats }: { stats: NonNullable<DigestEmailProps["stats"]> }) {
   const fmt = (n: number) => n.toLocaleString("en-US");
   return (
-    <Row>
-      <Column style={{ width: "auto", paddingRight: "14px", verticalAlign: "middle" }}>
-        <Text
-          style={{
-            margin: 0,
-            fontFamily: fonts.sans,
-            fontWeight: 400,
-            fontSize: "12px",
-            lineHeight: "normal",
-            color: c.green,
-            whiteSpace: "nowrap",
-          }}
-        >
-          +{fmt(stats.linesAdded ?? 0)} lines
-        </Text>
-      </Column>
-      <Column style={{ width: "auto", paddingRight: "14px", verticalAlign: "middle" }}>
-        <Text
-          style={{
-            margin: 0,
-            fontFamily: fonts.sans,
-            fontWeight: 400,
-            fontSize: "12px",
-            lineHeight: "normal",
-            color: c.red,
-            whiteSpace: "nowrap",
-          }}
-        >
-          -{fmt(stats.linesRemoved ?? 0)} lines
-        </Text>
-      </Column>
-      <Column style={{ width: "auto", paddingRight: "14px", verticalAlign: "middle" }}>
-        <Text
-          style={{
-            margin: 0,
-            fontFamily: fonts.sans,
-            fontWeight: 400,
-            fontSize: "12px",
-            lineHeight: "normal",
-            color: c.textPrimary,
-            whiteSpace: "nowrap",
-          }}
-        >
-          <StatsIcon svg={SVG_GIT_COMMIT} />
-          {fmt(stats.commits ?? 0)} commits
-        </Text>
-      </Column>
-      <Column style={{ width: "auto", verticalAlign: "middle" }}>
-        <Text
-          style={{
-            margin: 0,
-            fontFamily: fonts.sans,
-            fontWeight: 400,
-            fontSize: "12px",
-            lineHeight: "normal",
-            color: c.textPrimary,
-            whiteSpace: "nowrap",
-          }}
-        >
-          <StatsIcon svg={SVG_FILE_TEXT} />
-          {fmt(stats.filesChanged ?? 0)} Files
-        </Text>
-      </Column>
-      <Column />
-    </Row>
+    <table
+      cellPadding={0}
+      cellSpacing={0}
+      border={0}
+      role="presentation"
+      style={{ borderCollapse: "collapse" }}
+    >
+      <tbody>
+        <tr>
+          <td style={{ padding: 0, verticalAlign: "middle", whiteSpace: "nowrap" }}>
+            <span
+              style={{
+                fontFamily: fonts.sans,
+                fontWeight: 400,
+                fontSize: "12px",
+                lineHeight: "normal",
+                color: c.green,
+                verticalAlign: "middle",
+              }}
+            >
+              +{fmt(stats.linesAdded ?? 0)} lines
+            </span>
+            <span
+              style={{
+                fontFamily: fonts.sans,
+                fontWeight: 400,
+                fontSize: "12px",
+                lineHeight: "normal",
+                color: c.red,
+                verticalAlign: "middle",
+                marginLeft: "14px",
+              }}
+            >
+              -{fmt(stats.linesRemoved ?? 0)} lines
+            </span>
+            <span style={{ marginLeft: "14px", verticalAlign: "middle" }}>
+              <StatsIcon svg={SVG_GIT_COMMIT} />
+              <span
+                style={{
+                  fontFamily: fonts.sans,
+                  fontWeight: 400,
+                  fontSize: "12px",
+                  lineHeight: "normal",
+                  color: c.textPrimary,
+                  verticalAlign: "middle",
+                }}
+              >
+                {fmt(stats.commits ?? 0)} commits
+              </span>
+            </span>
+            <span style={{ marginLeft: "14px", verticalAlign: "middle" }}>
+              <StatsIcon svg={SVG_FILE_TEXT} />
+              <span
+                style={{
+                  fontFamily: fonts.sans,
+                  fontWeight: 400,
+                  fontSize: "12px",
+                  lineHeight: "normal",
+                  color: c.textPrimary,
+                  verticalAlign: "middle",
+                }}
+              >
+                {fmt(stats.filesChanged ?? 0)} Files
+              </span>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   );
 }
 
