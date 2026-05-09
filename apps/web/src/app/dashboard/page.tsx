@@ -180,11 +180,28 @@ export default function DashboardPage() {
           setRepos(data.repos);
           setActiveRepos(data.activeRepos ?? []);
           if (data.repos.length > 0 && !selectedRepo) {
-            // Use saved default repo if it exists and is in the list
+            // Selection priority:
+            //   1. ?repo= URL param (used by deep-links from emails
+            //      and external surfaces) — only honored when the
+            //      requested repo is in the user's accessible list.
+            //   2. Saved default repo from settings.
+            //   3. First repo in the list as a final fallback.
+            // Reading directly from window.location keeps this in
+            // the existing useEffect; using useSearchParams would
+            // require flipping the component to a Suspense boundary.
+            let urlRepo: string | null = null;
+            if (typeof window !== "undefined") {
+              const params = new URLSearchParams(window.location.search);
+              const requested = params.get("repo");
+              if (requested && data.repos.includes(requested)) {
+                urlRepo = requested;
+              }
+            }
             const preferred =
-              defaultRepoSetting && data.repos.includes(defaultRepoSetting)
+              urlRepo ??
+              (defaultRepoSetting && data.repos.includes(defaultRepoSetting)
                 ? defaultRepoSetting
-                : data.repos[0]!;
+                : data.repos[0]!);
             setSelectedRepo(preferred);
           }
         }

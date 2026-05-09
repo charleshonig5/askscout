@@ -334,8 +334,15 @@ export function DigestEmail({
               </SectionWrapper>
             )}
 
-            {/* CTA — Open Full Digest button */}
-            <CTAButton href={`${WEB_URL}/dashboard`} />
+            {/* CTA — Open Full Digest button. Deep-links to the
+                dashboard with the specific repo selected via the
+                `?repo=` query param so the user lands on the exact
+                digest the email is for, regardless of whether it's
+                their default repo. The dashboard reads this param
+                on mount and selects the matching repo. */}
+            <CTAButton
+              href={`${WEB_URL}/dashboard?repo=${encodeURIComponent(repoName)}`}
+            />
           </div>
         </Container>
         </Section>
@@ -440,11 +447,25 @@ function SectionEmoji({ char }: { char: string }) {
   );
 }
 
-/** Repo chip — small bg-tertiary pill with the repo slug + a forward
- *  arrow glyph, matching .digest-repo-chip on the web. */
+/** Lucide `Forward` icon at 10×10 — same glyph the dashboard's
+ *  .digest-repo-chip uses (see Dashboard.tsx where <Forward
+ *  size={10} /> is rendered next to the repo name). Inline SVG so
+ *  it embeds directly into the email HTML.
+ *
+ *  Lucide `SquareArrowUpRight` icon at 20×20 — same glyph the
+ *  dashboard's "View Last Digest" / open-digest buttons use. */
+const SVG_FORWARD =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 0 1 4-4h12"/></svg>';
+const SVG_SQUARE_ARROW_UP_RIGHT =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M8 8h8v8"/><path d="m8 16 8-8"/></svg>';
+
+/** Repo chip — bg-tertiary pill with the repo slug + Lucide Forward
+ *  glyph (10×10). Wraps in an <a> that opens the repo on GitHub in
+ *  a new tab, matching the dashboard's .digest-repo-chip behavior. */
 function RepoChip({ repoName }: { repoName: string }) {
   return (
-    <span
+    <Link
+      href={`https://github.com/${repoName}`}
       style={{
         display: "inline-block",
         padding: "4px 8px",
@@ -456,22 +477,23 @@ function RepoChip({ repoName }: { repoName: string }) {
         fontSize: "12px",
         lineHeight: "1",
         color: c.textPrimary,
+        textDecoration: "none",
+        verticalAlign: "middle",
       }}
     >
       {repoName}
       <span
         style={{
           display: "inline-block",
+          width: "10px",
+          height: "10px",
           marginLeft: "4px",
-          fontSize: "10px",
-          lineHeight: "1",
           verticalAlign: "middle",
-          color: c.textSecondary,
+          color: c.textPrimary,
         }}
-      >
-        ↗
-      </span>
-    </span>
+        dangerouslySetInnerHTML={{ __html: SVG_FORWARD }}
+      />
+    </Link>
   );
 }
 
@@ -881,13 +903,11 @@ function StatsLine({ stats }: { stats: NonNullable<DigestEmailProps["stats"]> })
 }
 
 /** Open Full Digest CTA — bordered card with a 20×20 Lucide
- *  ArrowUpRight icon + Work Sans Light 16 label and an inset glow.
- *  Background is bg-secondary (#121212) per the Figma frame's
- *  gradient-top layer; padding 10px vertical / 14px horizontal
- *  matches the design's `py-10 px-14`. */
-const SVG_ARROW_UP_RIGHT =
-  '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
-
+ *  SquareArrowUpRight icon (the same glyph the dashboard's
+ *  "View Last Digest" / open-digest buttons use) + Work Sans Light
+ *  16 label and an inset glow. Background is bg-secondary
+ *  (#121212) per the Figma frame; padding 10px vertical / 14px
+ *  horizontal matches `py-10 px-14`. */
 function CTAButton({ href }: { href: string }) {
   return (
     <Link
@@ -912,7 +932,7 @@ function CTAButton({ href }: { href: string }) {
           marginRight: "8px",
           color: c.textPrimary,
         }}
-        dangerouslySetInnerHTML={{ __html: SVG_ARROW_UP_RIGHT }}
+        dangerouslySetInnerHTML={{ __html: SVG_SQUARE_ARROW_UP_RIGHT }}
       />
       <span
         style={{
