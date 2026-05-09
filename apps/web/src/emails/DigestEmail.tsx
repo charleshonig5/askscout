@@ -185,7 +185,7 @@ export function DigestEmail({
               maxWidth: "600px",
               width: "600px",
               margin: "0 auto",
-              padding: "23px 0 40px",
+              padding: "24px 0 40px",
               boxSizing: "border-box",
             }}
           >
@@ -203,7 +203,7 @@ export function DigestEmail({
               away from the title. Single cell + inline-blocks +
               explicit margins = chips sit exactly 14px and 8px from
               their neighbors. */}
-          <Section style={{ paddingLeft: "33px", paddingRight: "33px", paddingBottom: "30px" }}>
+          <Section style={{ paddingLeft: "33px", paddingRight: "33px", paddingBottom: "24px" }}>
             <table
               cellPadding={0}
               cellSpacing={0}
