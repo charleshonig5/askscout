@@ -175,8 +175,14 @@ export function DigestEmail({
             padding: "23px 0 40px",
           }}
         >
-          {/* HEADER --------------------------------------------------- */}
-          <Section style={{ paddingLeft: "33px", paddingRight: "33px", paddingBottom: "22px" }}>
+          {/* HEADER ---------------------------------------------------
+              Header inset is 33px sides + 23px top from container.
+              paddingBottom is sized so the Hr divider lands at the
+              Figma's top:98 from the card edge. With a Pridi 24
+              title (~30px tall) + Light 12 date (~14px tall) +
+              23px top padding, paddingBottom 30 puts the Hr at
+              ~97-98 — matching the design. */}
+          <Section style={{ paddingLeft: "33px", paddingRight: "33px", paddingBottom: "30px" }}>
             {/* Title row: serif title + repo chip + streak chip */}
             <Row>
               <Column style={{ width: "auto", verticalAlign: "middle", paddingRight: "14px" }}>
@@ -204,10 +210,13 @@ export function DigestEmail({
               )}
               <Column />
             </Row>
-            {/* Date below the title row */}
+            {/* Date below the title row. Figma stacks title row + date
+                in a flex column with no explicit gap; line-height
+                creates the natural visual separation. margin: 0 to
+                avoid extra browser-default spacing on the <p>. */}
             <Text
               style={{
-                margin: "4px 0 0",
+                margin: 0,
                 fontFamily: fonts.sans,
                 fontWeight: 300,
                 fontSize: "12px",
@@ -300,7 +309,12 @@ export function DigestEmail({
           </div>
         </Container>
 
-        {/* FOOTER — outside the card. Logo wordmark + copy. ----------- */}
+        {/* FOOTER — outside the card. Container is 600px wide for
+            alignment with the email card; inner content sits at
+            left:33px in a narrow 175px column matching the Figma
+            footer's left:33 / w:175 frame. The 175px constraint
+            wraps the "You sent this to yourself..." line to two
+            narrow lines, which is intentional in the design. */}
         <Container
           style={{
             maxWidth: "600px",
@@ -309,37 +323,41 @@ export function DigestEmail({
             padding: "30px 33px 40px",
           }}
         >
-          <Img
-            src={`${WEB_URL}/logo-white.svg`}
-            alt="AskScout"
-            width="113"
-            height="20"
-            style={{ display: "block", border: 0, outline: "none" }}
-          />
-          <Text
-            style={{
-              margin: "25px 0 0",
-              fontFamily: fonts.sans,
-              fontWeight: 300,
-              fontSize: "12px",
-              lineHeight: "18px",
-              color: c.textPrimary,
-            }}
-          >
-            You sent this to yourself from your AskScout digest.
-          </Text>
-          <Text
-            style={{
-              margin: "14px 0 0",
-              fontFamily: fonts.sans,
-              fontWeight: 300,
-              fontSize: "12px",
-              lineHeight: "18px",
-              color: c.textPrimary,
-            }}
-          >
-            © 2026 AskScout
-          </Text>
+          <div style={{ width: "175px" }}>
+            <Img
+              src={`${WEB_URL}/logo-white.svg`}
+              alt="AskScout"
+              width="113"
+              height="20"
+              style={{ display: "block", border: 0, outline: "none" }}
+            />
+            <Text
+              style={{
+                margin: "25px 0 0",
+                fontFamily: fonts.sans,
+                fontWeight: 300,
+                fontSize: "12px",
+                lineHeight: "18px",
+                color: c.textPrimary,
+                width: "175px",
+              }}
+            >
+              You sent this to yourself from your AskScout digest.
+            </Text>
+            <Text
+              style={{
+                margin: "14px 0 0",
+                fontFamily: fonts.sans,
+                fontWeight: 300,
+                fontSize: "12px",
+                lineHeight: "18px",
+                color: c.textPrimary,
+                whiteSpace: "nowrap",
+              }}
+            >
+              © 2026 AskScout
+            </Text>
+          </div>
         </Container>
       </Body>
     </Html>
@@ -799,8 +817,14 @@ function StatsLine({ stats }: { stats: NonNullable<DigestEmailProps["stats"]> })
   );
 }
 
-/** Open Full Digest CTA — bordered card with icon + Light 16 label,
- *  inset glow, mirroring the design's button treatment. */
+/** Open Full Digest CTA — bordered card with a 20×20 Lucide
+ *  ArrowUpRight icon + Work Sans Light 16 label and an inset glow.
+ *  Background is bg-secondary (#121212) per the Figma frame's
+ *  gradient-top layer; padding 10px vertical / 14px horizontal
+ *  matches the design's `py-10 px-14`. */
+const SVG_ARROW_UP_RIGHT =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
+
 function CTAButton({ href }: { href: string }) {
   return (
     <Link
@@ -808,7 +832,7 @@ function CTAButton({ href }: { href: string }) {
       style={{
         display: "inline-block",
         padding: "10px 14px",
-        backgroundColor: c.bgPrimary,
+        backgroundColor: c.bgSecondary,
         border: `1px solid ${c.border}`,
         borderRadius: "8px",
         boxShadow: "inset 0 0 20px 0 rgba(255, 255, 255, 0.04)",
@@ -819,14 +843,14 @@ function CTAButton({ href }: { href: string }) {
       <span
         style={{
           display: "inline-block",
-          fontSize: "16px",
-          lineHeight: "1",
+          width: "20px",
+          height: "20px",
           verticalAlign: "middle",
           marginRight: "8px",
+          color: c.textPrimary,
         }}
-      >
-        ↗
-      </span>
+        dangerouslySetInnerHTML={{ __html: SVG_ARROW_UP_RIGHT }}
+      />
       <span
         style={{
           fontFamily: fonts.sans,
