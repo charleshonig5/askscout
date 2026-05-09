@@ -33,12 +33,15 @@ import {
 
 const WEB_URL = "https://askscout.dev";
 
-// Dark-mode palette pulled directly from globals.css.
+// Dark-mode palette. Bg/border colors mirror globals.css; text color
+// uses pure white #ffffff to match the Figma email design exactly
+// (the web app uses #ededed but the email design specifies #ffffff
+// — slightly higher contrast for inbox rendering).
 const c = {
   bgPrimary: "#070707",
   bgSecondary: "#121212",
   bgTertiary: "#252525",
-  textPrimary: "#ededed",
+  textPrimary: "#ffffff",
   textSecondary: "#a0a0a0",
   textTertiary: "#616161",
   border: "#252525",
@@ -165,11 +168,15 @@ export function DigestEmail({
             border: `1px solid ${c.border}`,
             borderTop: "none",
             borderRadius: "0 0 30px 30px",
-            padding: "23px 33px 40px",
+            // Container has zero horizontal padding so the Hr below
+            // can sit edge-to-edge naturally. Each inner Section adds
+            // its own 33px left/right padding to match the design's
+            // content inset.
+            padding: "23px 0 40px",
           }}
         >
           {/* HEADER --------------------------------------------------- */}
-          <Section style={{ paddingBottom: "22px" }}>
+          <Section style={{ paddingLeft: "33px", paddingRight: "33px", paddingBottom: "22px" }}>
             {/* Title row: serif title + repo chip + streak chip */}
             <Row>
               <Column style={{ width: "auto", verticalAlign: "middle", paddingRight: "14px" }}>
@@ -212,17 +219,25 @@ export function DigestEmail({
             </Text>
           </Section>
 
-          {/* HR divider — 1px line at full width below the header */}
+          {/* HR divider — sits edge-to-edge across the card. Container
+              has zero horizontal padding so this Hr renders cleanly
+              from one side of the 600px card to the other without
+              any calc() trick. */}
           <Hr
             style={{
               borderTop: `1px solid ${c.border}`,
-              margin: "0 -33px",
-              width: "calc(100% + 66px)",
+              margin: 0,
+              border: "none",
+              borderBottom: `1px solid ${c.border}`,
+              height: "0",
             }}
           />
 
-          {/* CONTENT SECTIONS — 44px gap between them ------------------ */}
-          <div style={{ paddingTop: "24px" }}>
+          {/* CONTENT SECTIONS — 44px gap between sections in the inner
+              column, then 34px gap before the CTA. Wrapped in a div
+              that adds the 33px horizontal inset so content sits where
+              the Figma frame placed it. */}
+          <div style={{ paddingTop: "24px", paddingLeft: "33px", paddingRight: "33px" }}>
             {vibeCheck && isVisible(visibility, "vibeCheck") && (
               <SectionWrapper marginBottom={44}>
                 <VibeCheckCard body={vibeCheck} />
@@ -271,7 +286,11 @@ export function DigestEmail({
             )}
 
             {showStats && stats && (
-              <SectionWrapper marginBottom={44}>
+              // Stats line is the last item in the gap-44 section group.
+              // The gap between the stats line and the CTA below is
+              // 34px (the outer-column gap-34 in the Figma layout),
+              // not 44px — so this wrapper uses 34 instead of 44.
+              <SectionWrapper marginBottom={34}>
                 <StatsLine stats={stats} />
               </SectionWrapper>
             )}
@@ -677,9 +696,38 @@ function ProseSection({
   );
 }
 
+/** Inline SVG icons for the stats line. Lucide-style strokes, 16×16,
+ *  rendered via `dangerouslySetInnerHTML` inside a span so the SVG
+ *  embeds in the email HTML directly. Modern email clients
+ *  (Apple Mail, Gmail web/iOS, Outlook web) render inline SVG;
+ *  Outlook desktop's mso engine may strip — in that case the row
+ *  shows just the text labels, which is still legible. */
+const SVG_GIT_COMMIT =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="3" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="21" y2="12"/></svg>';
+const SVG_FILE_TEXT =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>';
+
+function StatsIcon({ svg }: { svg: string }) {
+  return (
+    <span
+      style={{
+        display: "inline-block",
+        width: "16px",
+        height: "16px",
+        verticalAlign: "middle",
+        marginRight: "4px",
+        color: c.textPrimary,
+      }}
+      dangerouslySetInnerHTML={{ __html: svg }}
+    />
+  );
+}
+
 /** Stats line — single horizontal row at Work Sans Regular 12 with
- *  +N lines (green), -N lines (red), N commits, N files, separated
- *  by 14px gaps. No emoji header — just the numbers. */
+ *  +N lines (green #57d32e), -N lines (red #dd1d1d), an inline
+ *  git-commit icon + N commits, an inline file-text icon + N Files,
+ *  separated by 14px gaps. Capitalization matches the Figma copy
+ *  ("commits" lowercase, "Files" capital F). */
 function StatsLine({ stats }: { stats: NonNullable<DigestEmailProps["stats"]> }) {
   const fmt = (n: number) => n.toLocaleString("en-US");
   return (
@@ -726,9 +774,7 @@ function StatsLine({ stats }: { stats: NonNullable<DigestEmailProps["stats"]> })
             whiteSpace: "nowrap",
           }}
         >
-          <span style={{ fontSize: "14px", marginRight: "4px", verticalAlign: "middle" }}>
-            ⎇
-          </span>
+          <StatsIcon svg={SVG_GIT_COMMIT} />
           {fmt(stats.commits ?? 0)} commits
         </Text>
       </Column>
@@ -744,10 +790,8 @@ function StatsLine({ stats }: { stats: NonNullable<DigestEmailProps["stats"]> })
             whiteSpace: "nowrap",
           }}
         >
-          <span style={{ fontSize: "14px", marginRight: "4px", verticalAlign: "middle" }}>
-            📄
-          </span>
-          {fmt(stats.filesChanged ?? 0)} files
+          <StatsIcon svg={SVG_FILE_TEXT} />
+          {fmt(stats.filesChanged ?? 0)} Files
         </Text>
       </Column>
       <Column />
