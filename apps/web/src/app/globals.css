@@ -417,15 +417,17 @@ a:hover {
   gap: 4px;
 }
 
-/* Bare 20×20 icons in the right cluster per Figma 287:3361 — no
-   button chrome. The 14px sibling gap + 24px outer padding give the
-   tap area enough visual breathing room. */
+/* Bare 24×24 icons in the right cluster — bumped from 20 to land
+   a friendlier mobile tap target without altering the chrome
+   header's chrome (still no button background, just a slightly
+   larger glyph). Sidebar usages override back to 20×20 via the
+   .sidebar-top-actions / .sidebar-profile-actions rules below. */
 .header-icon-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   padding: 0;
   border: none;
   background: transparent;

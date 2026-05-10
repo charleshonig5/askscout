@@ -66,7 +66,7 @@ export function Header({ onMenuToggle, isOpen = false, showMenu = true }: Header
           onClick={() => router.push("/insights")}
           aria-label="Insights"
         >
-          <ChartPie size={20} strokeWidth={1} aria-hidden />
+          <ChartPie size={24} strokeWidth={1} aria-hidden />
         </button>
         <button
           type="button"
@@ -74,7 +74,7 @@ export function Header({ onMenuToggle, isOpen = false, showMenu = true }: Header
           onClick={() => router.push("/settings")}
           aria-label="Settings"
         >
-          <Settings2 size={20} strokeWidth={1} aria-hidden />
+          <Settings2 size={24} strokeWidth={1} aria-hidden />
         </button>
       </div>
     </header>
