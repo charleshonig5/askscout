@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, X, ChartPie, Settings2 } from "lucide-react";
+import { Menu, CircleX, ChartPie, Settings2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Logo } from "./Logo";
@@ -50,7 +50,7 @@ export function Header({ onMenuToggle, isOpen = false, showMenu = true }: Header
           aria-expanded={isOpen}
         >
           {isOpen ? (
-            <X size={20} strokeWidth={1} aria-hidden />
+            <CircleX size={20} strokeWidth={1} aria-hidden />
           ) : (
             <Menu size={20} strokeWidth={1} aria-hidden />
           )}
