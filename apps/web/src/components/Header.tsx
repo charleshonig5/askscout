@@ -38,7 +38,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
         <Menu size={20} strokeWidth={1} aria-hidden />
       </button>
       <div className="header-logo">
-        <Logo height={20} />
+        <Logo height={21} />
       </div>
       <div className="header-actions">
         <button
