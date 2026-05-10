@@ -385,7 +385,23 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
 }
 
 function ActivityCalendar({ days }: { days: ActivityDay[] }) {
-  const weeks = buildWeeks(days);
+  // Mobile detection: full 53-week year is too cramped under 768px
+  // (cells shrink to ~5px each), so we trim to the last 26 weeks
+  // (~6 months) on mobile while keeping the same look + month
+  // labels. useEffect-based so SSR renders the desktop layout
+  // initially; the trim happens on the client once we know the
+  // viewport. The brief flash is acceptable for a stats display.
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  const allWeeks = buildWeeks(days);
+  const weeks = isMobile ? allWeeks.slice(-26) : allWeeks;
   const monthLabels = buildMonthLabels(weeks);
 
   // Custom hover-tooltip state. Uses `position: fixed` for the
@@ -421,7 +437,11 @@ function ActivityCalendar({ days }: { days: ActivityDay[] }) {
       {/* Month labels row — each label spans its full month-of-weeks
           range and centers within it, so the labels stay visually
           even regardless of how many weeks each month occupies. */}
-      <div className="insights-calendar-months" aria-hidden>
+      <div
+        className="insights-calendar-months"
+        aria-hidden
+        style={{ gridTemplateColumns: `repeat(${weeks.length}, 1fr)` }}
+      >
         {monthLabels.map((m) => (
           <span
             key={`${m.startCol}-${m.label}`}
