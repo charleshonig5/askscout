@@ -1174,6 +1174,10 @@ a:hover {
   .digest-page-date {
     margin-top: 0;
   }
+
+  /* (Mobile digest body overrides moved to the bottom of globals.css
+     so they win the cascade against later-defined desktop rules for
+     .digest-main / .digest-stats-sidebar / .stats-column-body.) */
 }
 
 .digest-meta {
@@ -8313,5 +8317,55 @@ a:hover {
   @keyframes toast-fade {
     from { opacity: 0; }
     to { opacity: 1; }
+  }
+}
+
+/* ==========================================================================
+   Mobile digest body — final cascade pass (Figma node 287:3571)
+   --------------------------------------------------------------------------
+   These rules live at the very end of globals.css so they win against the
+   desktop .digest-main / .digest-stats-sidebar / .stats-column-body rules
+   that appear later in source order than the main mobile @media block
+   above. Same specificity = source-order wins, so this block has to come
+   last.
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* Outer container becomes a 24px-inset single-column flow. The page
+     header above already supplies the top inset, so .digest-main and
+     .digest-stats-sidebar drop their own vertical padding and only
+     carry the horizontal gutters. */
+  .digest-main,
+  .digest-stats-sidebar {
+    padding: 0 var(--space-lg);
+  }
+
+  /* Outer section gap = 34px per Figma. Desktop uses --space-xl (32);
+     mobile bumps 2px to match the spec exactly. */
+  .digest-section,
+  .digest-vibe {
+    margin-bottom: 34px;
+  }
+
+  /* Restore margin-bottom on the last narrative section: desktop kills
+     it because .digest-main has its own 34px bottom padding; mobile
+     drops that padding, so the section's own bottom margin carries
+     the rhythm into the stats column that follows. */
+  .digest-main > .digest-section:last-child,
+  .digest-main > .digest-vibe:last-child {
+    margin-bottom: 34px;
+  }
+
+  /* Vibe Check card padding 13 -> 14 to match Figma exactly. 1px
+     nudge that only matters when we're auditing the mobile frame. */
+  .digest-vibe {
+    padding: 14px;
+  }
+
+  /* Stats column body — desktop sets 44px between subsections (the
+     sidebar reads denser when visually separate); mobile pulls them
+     into the same 34px outer rhythm so the column feels continuous
+     with the narrative above. */
+  .stats-column-body {
+    gap: 34px;
   }
 }
