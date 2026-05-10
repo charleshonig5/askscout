@@ -285,25 +285,25 @@ export function DigestEmail({
 
             {shipped.length > 0 && isVisible(visibility, "shipped") && (
               <SectionWrapper marginBottom={34}>
-                <BulletSection emoji="🚀" label="Shipped" items={shipped} />
+                <BulletSection emojiKey="shipped" label="Shipped" items={shipped} />
               </SectionWrapper>
             )}
 
             {changed.length > 0 && isVisible(visibility, "changed") && (
               <SectionWrapper marginBottom={34}>
-                <BulletSection emoji="🔧" label="Changed" items={changed} />
+                <BulletSection emojiKey="changed" label="Changed" items={changed} />
               </SectionWrapper>
             )}
 
             {unstable.length > 0 && isVisible(visibility, "unstable") && (
               <SectionWrapper marginBottom={34}>
-                <BulletSection emoji="🔁" label="Still Shifting" items={unstable} />
+                <BulletSection emojiKey="unstable" label="Still Shifting" items={unstable} />
               </SectionWrapper>
             )}
 
             {leftOff.length > 0 && isVisible(visibility, "leftOff") && (
               <SectionWrapper marginBottom={34}>
-                <BulletSection emoji="📍" label="Left Off" items={leftOff} />
+                <BulletSection emojiKey="leftOff" label="Left Off" items={leftOff} />
               </SectionWrapper>
             )}
 
@@ -320,7 +320,7 @@ export function DigestEmail({
 
             {keyTakeaways && isVisible(visibility, "oneTakeaway") && (
               <SectionWrapper marginBottom={34}>
-                <ProseSection emoji="🔑" label="Key Takeaways" body={keyTakeaways} />
+                <ProseSection emojiKey="takeaway" label="Key Takeaways" body={keyTakeaways} />
               </SectionWrapper>
             )}
 
@@ -438,20 +438,49 @@ function SectionWrapper({
   return <div style={{ marginBottom: `${marginBottom}px` }}>{children}</div>;
 }
 
-/** Section-header emoji rendered at 20px, 8px right margin. Mirrors
- *  the web's <Emoji size={20} /> + flex gap:8 on the title row. */
-function SectionEmoji({ char }: { char: string }) {
+/** Microsoft Fluent Emoji 3D assets — mirrors the product's
+ *  apps/web/src/components/Emoji.tsx EMOJI_MAP. Email uses <img>
+ *  pointing at the same jsdelivr CDN so the rendered glyphs are
+ *  identical to what the dashboard shows, instead of OS-default
+ *  Unicode emoji which differ per platform. */
+const FLUENT_BASE =
+  "https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets";
+const FLUENT_EMOJI: Record<string, { folder: string; file: string }> = {
+  vibe: { folder: "Megaphone", file: "megaphone_3d.png" },
+  shipped: { folder: "Rocket", file: "rocket_3d.png" },
+  changed: { folder: "Hammer and wrench", file: "hammer_and_wrench_3d.png" },
+  unstable: { folder: "Construction", file: "construction_3d.png" },
+  leftOff: { folder: "Round pushpin", file: "round_pushpin_3d.png" },
+  fieldNotes: { folder: "Compass", file: "compass_3d.png" },
+  takeaway: { folder: "Old key", file: "old_key_3d.png" },
+  streak: { folder: "Fire", file: "fire_3d.png" },
+};
+
+function fluentEmojiUrl(key: keyof typeof FLUENT_EMOJI) {
+  const a = FLUENT_EMOJI[key];
+  return `${FLUENT_BASE}/${encodeURIComponent(a.folder)}/3D/${a.file}`;
+}
+
+/** Section-header emoji rendered as a 20×20 Fluent Emoji <img>, with
+ *  8px right margin. Mirrors the web's <Emoji size={20} /> + flex
+ *  gap:8 on the title row, using the exact same CDN asset. */
+function SectionEmoji({ name }: { name: keyof typeof FLUENT_EMOJI }) {
   return (
-    <span
+    <img
+      src={fluentEmojiUrl(name)}
+      alt=""
+      width={20}
+      height={20}
       style={{
-        fontSize: "20px",
-        lineHeight: "1",
+        display: "inline-block",
+        width: "20px",
+        height: "20px",
         verticalAlign: "middle",
         marginRight: "8px",
+        border: 0,
+        outline: "none",
       }}
-    >
-      {char}
-    </span>
+    />
   );
 }
 
@@ -524,9 +553,21 @@ function StreakChip({ days }: { days: number }) {
         color: c.textPrimary,
       }}
     >
-      <span style={{ fontSize: "14px", lineHeight: "1", verticalAlign: "middle", marginRight: "4px" }}>
-        🔥
-      </span>
+      <img
+        src={fluentEmojiUrl("streak")}
+        alt=""
+        width={14}
+        height={14}
+        style={{
+          display: "inline-block",
+          width: "14px",
+          height: "14px",
+          verticalAlign: "middle",
+          marginRight: "4px",
+          border: 0,
+          outline: "none",
+        }}
+      />
       {days} Day Streak
     </span>
   );
@@ -557,7 +598,7 @@ function VibeCheckCard({ body }: { body: string }) {
           color: c.textPrimary,
         }}
       >
-        <SectionEmoji char="💬" />
+        <SectionEmoji name="vibe" />
         Vibe Check
       </Text>
       <Text
@@ -581,11 +622,11 @@ function VibeCheckCard({ body }: { body: string }) {
  *  with a 4×4 round dot, followed by Medium 12 title + Light 12
  *  context separated by " - ". */
 function BulletSection({
-  emoji,
+  emojiKey,
   label,
   items,
 }: {
-  emoji: string;
+  emojiKey: keyof typeof FLUENT_EMOJI;
   label: string;
   items: BulletItem[];
 }) {
@@ -607,16 +648,21 @@ function BulletSection({
         <tbody>
           <tr>
             <td style={{ padding: 0, verticalAlign: "middle", whiteSpace: "nowrap" }}>
-              <span
+              <img
+                src={fluentEmojiUrl(emojiKey)}
+                alt=""
+                width={20}
+                height={20}
                 style={{
-                  fontSize: "20px",
-                  lineHeight: "1",
+                  display: "inline-block",
+                  width: "20px",
+                  height: "20px",
                   verticalAlign: "middle",
                   marginRight: "8px",
+                  border: 0,
+                  outline: "none",
                 }}
-              >
-                {emoji}
-              </span>
+              />
               <span
                 style={{
                   fontFamily: fonts.sans,
@@ -720,7 +766,7 @@ function FieldNotesSection({ subtitle, body }: { subtitle: string; body: string 
           color: c.textPrimary,
         }}
       >
-        <SectionEmoji char="🧭" />
+        <SectionEmoji name="fieldNotes" />
         Field Notes
       </Text>
       <Row>
@@ -768,11 +814,11 @@ function FieldNotesSection({ subtitle, body }: { subtitle: string; body: string 
 
 /** Plain prose section (Key Takeaways). Header + body, no card. */
 function ProseSection({
-  emoji,
+  emojiKey,
   label,
   body,
 }: {
-  emoji: string;
+  emojiKey: keyof typeof FLUENT_EMOJI;
   label: string;
   body: string;
 }) {
@@ -788,7 +834,7 @@ function ProseSection({
           color: c.textPrimary,
         }}
       >
-        <SectionEmoji char={emoji} />
+        <SectionEmoji name={emojiKey} />
         {label}
       </Text>
       <Text
@@ -946,30 +992,58 @@ function CTAButton({ href }: { href: string }) {
         color: c.textPrimary,
       }}
     >
-      <span
-        style={{
-          display: "inline-block",
-          width: "20px",
-          height: "20px",
-          verticalAlign: "middle",
-          marginRight: "8px",
-          color: c.textPrimary,
-        }}
-        dangerouslySetInnerHTML={{ __html: SVG_SQUARE_ARROW_UP_RIGHT }}
-      />
-      <span
-        style={{
-          fontFamily: fonts.sans,
-          fontWeight: 300,
-          fontSize: "16px",
-          lineHeight: "normal",
-          color: c.textPrimary,
-          verticalAlign: "middle",
-          whiteSpace: "nowrap",
-        }}
+      {/* Inner layout is a single-row table so each cell can use
+          vertical-align: middle against the cell box (not text
+          baseline). With inline-block + vertical-align: middle, a
+          16px text glyph and a 20px icon look slightly offset
+          because "middle" aligns to the text's x-height, not the
+          glyph's geometric center. Table cells don't have that
+          quirk — each cell's content is genuinely centered against
+          the row height. */}
+      <table
+        cellPadding={0}
+        cellSpacing={0}
+        border={0}
+        role="presentation"
+        style={{ borderCollapse: "collapse" }}
       >
-        Open Full Digest
-      </span>
+        <tbody>
+          <tr>
+            <td
+              style={{
+                padding: 0,
+                verticalAlign: "middle",
+                width: "20px",
+                lineHeight: 0,
+              }}
+            >
+              <span
+                style={{
+                  display: "block",
+                  width: "20px",
+                  height: "20px",
+                  color: c.textPrimary,
+                }}
+                dangerouslySetInnerHTML={{ __html: SVG_SQUARE_ARROW_UP_RIGHT }}
+              />
+            </td>
+            <td
+              style={{
+                padding: "0 0 0 8px",
+                verticalAlign: "middle",
+                fontFamily: fonts.sans,
+                fontWeight: 300,
+                fontSize: "16px",
+                lineHeight: "normal",
+                color: c.textPrimary,
+                whiteSpace: "nowrap",
+              }}
+            >
+              Open Full Digest
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </Link>
   );
 }
