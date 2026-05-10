@@ -7293,6 +7293,30 @@ a:hover {
   .settings-divider {
     margin: 0;
   }
+
+  /* Clear History — on desktop the "Clear All History" button sits
+     in the upper-right of the section header; on mobile that
+     squeezes the title block to two lines. Flatten the section-
+     head--with-action (display: contents) so its children become
+     direct children of the section, then reorder so the button
+     drops to the bottom of the section below the panel. Button
+     also stretches to full-width for a more confident affordance
+     at the bottom of the section. */
+  .settings-section-head--with-action {
+    display: contents;
+  }
+  .settings-section-head--with-action .settings-section-text {
+    order: 1;
+  }
+  .settings-section-head--with-action ~ .settings-panel,
+  .settings-section:has(.settings-section-head--with-action) > .settings-panel {
+    order: 2;
+  }
+  .settings-clear-all-btn {
+    order: 3;
+    align-self: stretch;
+    justify-content: center;
+  }
 }
 
 /* ============================================================
