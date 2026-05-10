@@ -1,6 +1,7 @@
 "use client";
 
 import { Menu, X, ChartPie, Settings2 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Logo } from "./Logo";
 
@@ -55,9 +56,9 @@ export function Header({ onMenuToggle, isOpen = false, showMenu = true }: Header
           )}
         </button>
       )}
-      <div className="header-logo">
+      <Link href="/dashboard" className="header-logo" aria-label="AskScout home">
         <Logo height={21} />
-      </div>
+      </Link>
       <div className="header-actions">
         <button
           type="button"

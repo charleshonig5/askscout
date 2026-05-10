@@ -10,6 +10,7 @@ import {
   Forward,
 } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
+import { Header } from "@/components/Header";
 
 /**
  * Insights page (`/insights`).
@@ -574,6 +575,9 @@ export default function InsightsPage() {
 
   return (
     <div className="settings-page">
+      {/* Mobile chrome Header (logo + Insights/Settings icons, no
+          hamburger). Hidden on desktop via the base .header rule. */}
+      <Header showMenu={false} />
       <div className="settings-card">
         {/* Header strip — mirrors settings/page.tsx exactly so the two
             sibling pages share the same arrival feel. */}

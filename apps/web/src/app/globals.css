@@ -389,6 +389,11 @@ a:hover {
   margin-left: 14px;
   display: inline-flex;
   align-items: center;
+  /* Renders as <a> to /dashboard on mobile so tapping the wordmark
+     always returns the user to the digest from Settings / Insights.
+     Reset link defaults so the chrome look is unchanged. */
+  color: inherit;
+  text-decoration: none;
 }
 
 .header-actions {
