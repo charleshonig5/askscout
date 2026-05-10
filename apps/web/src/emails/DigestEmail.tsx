@@ -708,7 +708,7 @@ function BulletSection({
             <Row>
               <Column
                 style={{
-                  width: "16px",
+                  width: "12px",
                   verticalAlign: "top",
                   paddingTop: "8px",
                 }}
