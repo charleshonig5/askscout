@@ -7677,46 +7677,45 @@ a:hover {
 }
 
 @media (max-width: 768px) {
-  /* Hide the desktop header row — labels move inline with each cell. */
+  /* Compact mobile list per-repo: name heading on its own line,
+     then a stats row below using the same typography + spacing as
+     .sidebar-item-stats elsewhere on the site — 14px flex gap, no
+     bullet characters, 12px Work Sans Regular, primary color. */
   .insights-repos-header {
     display: none;
   }
 
-  /* Each row becomes a stacked card. Padding + gap give the rows
-     visual separation; the existing border-top between rows still
-     applies. */
+  /* Row becomes a wrapping flex container: repo cell forces a
+     full-width wrap (flex-basis: 100%) so the three stat cells
+     drop to the next line and share a single row separated by a
+     14px gap — same as .sidebar-item-stats. */
   .insights-repos-row {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    row-gap: 4px;
+    column-gap: 14px;
     padding: 14px 16px;
   }
 
-  /* Cell flips to label-on-left, value-on-right so the row scans
-     like a key-value list. */
+  /* Stats row uses flex/gap (not bullets) so cells separate via
+     whitespace alone, matching every other stats strip on the
+     site. The row itself is the row container; cells are inline-
+     flex like .sidebar-item-stat so label + value share a 4px gap. */
   .insights-repos-cell {
-    flex-direction: row;
+    display: inline-flex;
     align-items: baseline;
-    justify-content: space-between;
-    gap: 12px;
+    gap: 4px;
+    min-width: 0;
   }
 
-  .insights-repos-cell-label {
-    display: inline;
-    font-family: var(--font-sans);
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--color-text-secondary);
-    text-transform: none;
-    letter-spacing: 0;
-  }
-
-  /* Repo name still anchors the card — bump it to a heavier
-     "title" treatment, no inline label. */
+  /* Repo name still anchors the card on its own line above the
+     stats row — full-width, heavier "title" treatment, no inline
+     label, ignores the flex/gap layout the stat cells use. */
   .insights-repos-cell[data-col="repo"] {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0;
+    display: block;
+    width: 100%;
   }
 
   .insights-repos-cell[data-col="repo"] .insights-repos-cell-label {
@@ -7726,6 +7725,31 @@ a:hover {
   .insights-repos-cell[data-col="repo"] .insights-repos-cell-value {
     font-size: 14px;
     font-weight: 500;
+  }
+
+  /* Stat-cell label sits inline before the value — same 12 / 400
+     type as the value so the row reads as one continuous line.
+     Color drops to tertiary so the label fades behind the value
+     without disappearing, matching how desktop column headers
+     read as quieter than their data rows. */
+  .insights-repos-cell:not([data-col="repo"]) .insights-repos-cell-label {
+    display: inline;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--color-text-tertiary);
+  }
+
+  /* Stat cells share the site's standard 12 Work Sans Regular
+     primary look. 14px gap between cells comes from the parent
+     row's flex-wrap layout below. */
+  .insights-repos-cell:not([data-col="repo"]) .insights-repos-cell-value {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--color-text-primary);
   }
 }
 
