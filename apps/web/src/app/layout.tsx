@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { SessionProvider } from "next-auth/react";
 import { Pridi, Work_Sans } from "next/font/google";
+import { ToastProvider } from "@/components/Toast";
 import "./globals.css";
 
 // Body / UI typeface. Light + regular + medium + semibold covers every
@@ -88,7 +89,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" data-theme={theme} className={`${workSans.variable} ${pridi.variable}`}>
       <body>
-        <SessionProvider>{children}</SessionProvider>
+        {/* ToastProvider sits OUTSIDE SessionProvider so toasts keep
+            working even if auth has a transient client-side error. */}
+        <ToastProvider>
+          <SessionProvider>{children}</SessionProvider>
+        </ToastProvider>
       </body>
     </html>
   );

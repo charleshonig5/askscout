@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, CircleX, Trash2, ShieldCheck, ShieldX } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
 import { RepoSelector } from "@/components/RepoSelector";
+import { useToast } from "@/components/Toast";
 import { useBodyScrollLock } from "@/lib/useBodyScrollLock";
 
 /**
@@ -89,6 +90,7 @@ const PRIVACY_NEVER = [
 
 export default function SettingsPage() {
   const router = useRouter();
+  const { showError } = useToast();
   const [repos, setRepos] = useState<string[]>([]);
   /** Subset of `repos` that have at least one saved digest — i.e. things to
    *  actually clear. Drives the Clear History list so users don't see
@@ -161,34 +163,47 @@ export default function SettingsPage() {
   }, []);
 
   const saveDefaultRepo = useCallback(async (repo: string) => {
+    // Optimistic update — capture the prior value first so we can
+    // roll the combobox back if the save fails. Without this, a
+    // network drop would leave the UI showing a default that didn't
+    // actually persist, and the user would only discover the mismatch
+    // on reload.
+    const previous = defaultRepo;
     setDefaultRepo(repo);
     try {
-      await fetch("/api/settings", {
+      const res = await fetch("/api/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ default_repo: repo }),
       });
+      if (!res.ok) throw new Error(`Server returned ${res.status}`);
     } catch {
-      /* silent */
+      setDefaultRepo(previous);
+      showError("Couldn't save default repo", "Check your connection and try again.");
     }
-  }, []);
+  }, [defaultRepo, showError]);
 
   const deleteRepoHistory = useCallback(
     async (repo: string) => {
       try {
-        await fetch(`/api/account?action=delete-repo-history&repo=${encodeURIComponent(repo)}`, {
-          method: "DELETE",
-        });
+        const res = await fetch(
+          `/api/account?action=delete-repo-history&repo=${encodeURIComponent(repo)}`,
+          { method: "DELETE" },
+        );
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
         setConfirmDelete(null);
         // Refetch active repos so the cleared repo drops out of the
         // Clear History list immediately. Without this, a row would
         // sit there with a "Clear" button that does nothing.
         void refreshRepos();
       } catch {
-        /* silent */
+        showError(
+          `Couldn't clear ${repo}`,
+          "The history is still intact. Please try again.",
+        );
       }
     },
-    [refreshRepos],
+    [refreshRepos, showError],
   );
 
   /** Wipe all saved digests across every repo. Heavier scope than
@@ -279,16 +294,21 @@ export default function SettingsPage() {
       const updated = { ...sectionPrefs, [key]: enabled };
       setSectionPrefs(updated);
       try {
-        await fetch("/api/settings", {
+        const res = await fetch("/api/settings", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ digest_sections: updated }),
         });
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
       } catch {
+        // Roll back the optimistic toggle and tell the user why it
+        // snapped back. Without the toast the toggle would just
+        // visibly bounce and the user would think they misclicked.
         setSectionPrefs((prev) => ({ ...prev, [key]: !enabled }));
+        showError("Couldn't save section preference", "Try again in a moment.");
       }
     },
-    [sectionPrefs],
+    [sectionPrefs, showError],
   );
 
   const goBack = () => router.push("/dashboard");
