@@ -1,6 +1,16 @@
 "use client";
 
-import { Copy, Download, Mail, Forward, Folder, GitCommitHorizontal } from "lucide-react";
+import {
+  Copy,
+  Download,
+  Mail,
+  Forward,
+  Folder,
+  GitCommitHorizontal,
+  Sparkles,
+  BookText,
+  LayoutList,
+} from "lucide-react";
 import { Header } from "@/components/Header";
 import { Emoji } from "@/components/Emoji";
 
@@ -178,6 +188,22 @@ export default function HeaderPreview() {
                 by waiting for completion. Next meaningful move is making sure keyTakeaways are
                 generated reliably in real runs.
               </p>
+            </div>
+
+            {/* Section 4: bottom action buttons + divider line above. */}
+            <div className="digest-bottom-actions">
+              <button type="button" className="standup-btn">
+                <Sparkles size={18} strokeWidth={1} aria-hidden />
+                AI Resume Prompt
+              </button>
+              <button type="button" className="standup-btn">
+                <BookText size={18} strokeWidth={1} aria-hidden />
+                Generate Standup
+              </button>
+              <button type="button" className="standup-btn">
+                <LayoutList size={18} strokeWidth={1} aria-hidden />
+                Todo List
+              </button>
             </div>
           </div>
 
