@@ -5,6 +5,7 @@ import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, CircleX, Trash2, ShieldCheck, ShieldX } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
+import { Header } from "@/components/Header";
 import { RepoSelector } from "@/components/RepoSelector";
 import { useToast } from "@/components/Toast";
 import { useBodyScrollLock } from "@/lib/useBodyScrollLock";
@@ -315,6 +316,10 @@ export default function SettingsPage() {
 
   return (
     <div className="settings-page">
+      {/* Mobile chrome Header (logo + Insights/Settings icons, no
+          hamburger because Settings has no repo/history drawer).
+          Hidden on desktop via the base .header rule. */}
+      <Header showMenu={false} />
       <div className="settings-card">
         {/* Header strip — Settings title on the left, Back-to-Digest
             button on the right, divider underneath. Reuses the

@@ -5,11 +5,16 @@ import { useRouter } from "next/navigation";
 import { Logo } from "./Logo";
 
 interface HeaderProps {
-  onMenuToggle: () => void;
+  onMenuToggle?: () => void;
   /** When the mobile drawer is open the hamburger flips to an X
    *  glyph so the same 40×40 button doubles as a close affordance,
    *  matching Figma node 287:3311. */
   isOpen?: boolean;
+  /** Settings + Insights pages have no repo/history switcher to
+   *  open, so the hamburger is hidden and the logo lockup shifts
+   *  to the 24px gutter (Figma node 289:7570). Default true for the
+   *  dashboard. */
+  showMenu?: boolean;
 }
 
 /**
@@ -29,23 +34,27 @@ interface HeaderProps {
  * the page on mobile, where the sidebar carries its own copies of
  * the same controls plus repo picker + history list.
  */
-export function Header({ onMenuToggle, isOpen = false }: HeaderProps) {
+export function Header({ onMenuToggle, isOpen = false, showMenu = true }: HeaderProps) {
   const router = useRouter();
   return (
-    <header className={`header${isOpen ? " header--drawer-open" : ""}`}>
-      <button
-        type="button"
-        className="header-hamburger"
-        onClick={onMenuToggle}
-        aria-label={isOpen ? "Close menu" : "Open menu"}
-        aria-expanded={isOpen}
-      >
-        {isOpen ? (
-          <X size={20} strokeWidth={1} aria-hidden />
-        ) : (
-          <Menu size={20} strokeWidth={1} aria-hidden />
-        )}
-      </button>
+    <header
+      className={`header${isOpen ? " header--drawer-open" : ""}${showMenu ? "" : " header--no-menu"}`}
+    >
+      {showMenu && (
+        <button
+          type="button"
+          className="header-hamburger"
+          onClick={onMenuToggle}
+          aria-label={isOpen ? "Close menu" : "Open menu"}
+          aria-expanded={isOpen}
+        >
+          {isOpen ? (
+            <X size={20} strokeWidth={1} aria-hidden />
+          ) : (
+            <Menu size={20} strokeWidth={1} aria-hidden />
+          )}
+        </button>
+      )}
       <div className="header-logo">
         <Logo height={21} />
       </div>

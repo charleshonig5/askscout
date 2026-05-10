@@ -346,6 +346,15 @@ a:hover {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
+
+  /* Settings + Insights variant: no drawer to open, so the hamburger
+     is omitted entirely and the logo lockup slides over to sit at
+     the 24px gutter (matching Figma node 289:7570). The margin-left
+     reset cancels the 14px hamburger-following gap from the base
+     .header-logo rule. */
+  .header--no-menu .header-logo {
+    margin-left: 0;
+  }
 }
 
 /* Bordered hamburger that mirrors the digest action buttons (Copy/
@@ -7173,6 +7182,106 @@ a:hover {
   }
   .settings-header {
     padding: 18px 16px;
+  }
+}
+
+/* ============================================================
+   Mobile Settings page (Figma node 289:7324)
+   ------------------------------------------------------------
+   Structure-only pass: drop the desktop floating-card chrome,
+   render full-bleed under the chrome .header, swap the desktop
+   stacked back-pill + Back-to-Digest button for a single 40×40
+   bordered icon button next to a Pridi 20 title. Section
+   internals (toggles, repo selector, clear rows, privacy cards)
+   keep their desktop styling for now — the content pass will
+   refine each one against the Figma frame.
+   ============================================================ */
+@media (max-width: 768px) {
+  .settings-page {
+    /* Full-bleed: chrome .header above provides the top inset,
+       and the settings-content block below handles its own 24px
+       gutter. Drop the desktop 24px wall padding and the
+       lighter bg-secondary background; mobile sits flush on
+       bg-primary like the dashboard. */
+    padding: 0;
+    background: var(--color-bg-primary);
+    display: block;
+  }
+
+  .settings-card {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    max-width: none;
+  }
+
+  /* Mobile header strip: 40x40 back button on the left + Settings
+     title to its right, full-bleed underneath. Order reverses on
+     mobile so the close button sits FIRST in flex order even
+     though it's still last in the source DOM. */
+  .settings-header {
+    padding: var(--space-lg);
+    justify-content: flex-start;
+    gap: 14px;
+  }
+
+  .settings-header-left {
+    order: 2;
+  }
+
+  /* Settings title at 20 Pridi on mobile (was 24 desktop) per
+     Figma. */
+  .settings-title {
+    font-size: 20px;
+  }
+
+  /* Promote .settings-close-btn to a 40x40 icon-only chip that
+     mirrors the digest header buttons (10x14 pad on a 20x20 icon
+     reads as a 40x40 box; same 1px tertiary border + bg-secondary
+     fill + inset glow). Drop the "Back to Digest" text label. */
+  .settings-close-btn {
+    order: 1;
+    width: 40px;
+    height: 40px;
+    padding: 10px 14px;
+    gap: 0;
+    box-sizing: border-box;
+    flex-shrink: 0;
+  }
+  .settings-close-btn > span {
+    display: none;
+  }
+
+  /* Header divider inset 24/24 like the dashboard's page-header
+     border-bottom — uses margin-left/right (not full-bleed) so
+     the line lines up column-true with the section content
+     below. */
+  .settings-header-divider {
+    margin: 0 var(--space-lg);
+  }
+
+  /* Sections drop the 527px fixed width + max-width: calc(100% -
+     68px) box and stretch edge-to-edge inside the 24px gutter.
+     34px gap shrinks to 24px so the content reads denser at
+     mobile widths. */
+  .settings-content {
+    align-items: stretch;
+    gap: var(--space-lg);
+    padding: var(--space-lg);
+  }
+
+  .settings-section {
+    width: 100%;
+    max-width: none;
+  }
+
+  /* Section dividers (between Default Repo / Customize Digest /
+     Clear History / Privacy & Security) match the header divider:
+     full content width within the 24px inset. The desktop rule
+     already lives inside .settings-content padding, so no margin
+     reset needed here. */
+  .settings-divider {
+    margin: 0;
   }
 }
 
