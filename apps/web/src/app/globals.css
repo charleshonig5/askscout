@@ -118,7 +118,7 @@
   --color-skeleton-shimmer: #f6f6f6;
 
   /* Sizing */
-  --header-height: 56px;
+  --header-height: 68px;
   /* Matches Figma left-nav frame: 324px content + 24px padding each side. */
   --sidebar-width: 372px;
   --max-width: 720px;
@@ -284,9 +284,12 @@ a:hover {
    Header
    ============================================ */
 
-/* Minimal top bar. Mobile only — shows the hamburger to open the sidebar.
-   Hidden on desktop since the sidebar owns all navigation (logo, settings,
-   theme, profile). The desktop layout uses the full viewport height. */
+/* Minimal top bar. Mobile only — shows the hamburger to open the sidebar
+   plus the AskScout logo and the two primary nav icons (Insights +
+   Settings). Hidden on desktop since the sidebar owns all navigation.
+   Layout mirrors Figma node 287:3361: 68px tall, hamburger at 24px in
+   on the left, logo lockup next to it, action icons flush right.
+   The desktop layout uses the full viewport height with no top bar. */
 .header {
   display: none;
 }
@@ -295,15 +298,63 @@ a:hover {
   .header {
     display: flex;
     align-items: center;
-    gap: var(--space-md);
+    /* 68px header height per the mobile Figma frame (token bumped
+       from the legacy 56px so the bordered hamburger has room to
+       breathe top + bottom). */
     height: var(--header-height);
-    padding: 0 var(--space-lg);
+    /* 24px inset on the left matches the Figma frame, 14px on the
+       right gives the action cluster the same gutter the email + the
+       digest content use. */
+    padding: 0 14px 0 24px;
     border-bottom: 1px solid var(--color-border);
     background: var(--color-bg-primary);
     position: sticky;
     top: 0;
     z-index: 10;
   }
+}
+
+/* Bordered hamburger that mirrors the digest action buttons (Copy/
+   Download/Email below the hero). Same 1px border + bg-secondary fill
+   + inset glow, just sized to a 40×40 square so the menu glyph reads
+   as a chrome-level control rather than inline content. */
+.header-hamburger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-secondary);
+  box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: border-color 0.12s ease;
+}
+
+.header-hamburger:hover {
+  border-color: var(--color-border-hover);
+}
+
+/* Logo sits 14px to the right of the hamburger and pushes the action
+   cluster to the right via margin-left:auto, matching the Figma's
+   left:78px logo placement (24 inset + 40 hamburger + 14 gap = 78). */
+.header-logo {
+  margin-left: 14px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.header-actions {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  /* 14px between Insights and Settings — matches the Figma right-
+     side action cluster spacing exactly. */
+  gap: 14px;
 }
 
 .header-left {

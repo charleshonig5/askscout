@@ -1,24 +1,63 @@
 "use client";
 
-import { Menu } from "lucide-react";
+import { Menu, ChartPie, Settings2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Logo } from "./Logo";
 
 interface HeaderProps {
   onMenuToggle: () => void;
 }
 
 /**
- * Minimal top chrome. Only visible on mobile (CSS hides it on desktop) and
- * only contains the hamburger toggle for opening the sidebar. On desktop the
- * sidebar is always visible with the logo / settings / theme / profile all
- * living inside it, so no top bar is needed.
+ * Mobile-only top chrome (Figma node 287:3361).
+ *
+ * Matches the digest-page mobile header exactly:
+ *   - 68px tall, full width, dark bg, 1px bottom border.
+ *   - Bordered 40×40 hamburger button on the left at 24px inset.
+ *   - AskScout logo lockup centered horizontally to the left of the
+ *     right-side action cluster (logo + 14px gap + 2 icons).
+ *   - Two icon buttons on the right (Insights + Settings) with 14px
+ *     between them, mirroring the top of the desktop sidebar's
+ *     action group so navigation feels continuous between layouts.
+ *
+ * Hidden on desktop (the sidebar handles all this when it's visible).
+ * The hamburger calls `onMenuToggle` to slide the sidebar in over
+ * the page on mobile, where the sidebar carries its own copies of
+ * the same controls plus repo picker + history list.
  */
 export function Header({ onMenuToggle }: HeaderProps) {
+  const router = useRouter();
   return (
     <header className="header">
-      <button className="header-icon-btn sidebar-toggle" onClick={onMenuToggle} aria-label="Menu">
-        <Menu size={16} />
+      <button
+        type="button"
+        className="header-hamburger"
+        onClick={onMenuToggle}
+        aria-label="Open menu"
+      >
+        <Menu size={20} strokeWidth={1} aria-hidden />
       </button>
-      <span className="logo">AskScout</span>
+      <div className="header-logo">
+        <Logo height={20} />
+      </div>
+      <div className="header-actions">
+        <button
+          type="button"
+          className="header-icon-btn"
+          onClick={() => router.push("/insights")}
+          aria-label="Insights"
+        >
+          <ChartPie size={20} strokeWidth={1} aria-hidden />
+        </button>
+        <button
+          type="button"
+          className="header-icon-btn"
+          onClick={() => router.push("/settings")}
+          aria-label="Settings"
+        >
+          <Settings2 size={20} strokeWidth={1} aria-hidden />
+        </button>
+      </div>
     </header>
   );
 }
