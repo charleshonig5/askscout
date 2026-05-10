@@ -953,13 +953,9 @@ a:hover {
   align-self: center;
 }
 
-/* Stack header on narrow viewports — actions drop below title */
-@media (max-width: 640px) {
-  .digest-page-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
+/* (Mobile digest-header overrides moved below the desktop typography
+   block so they win the cascade — see the @media block right after
+   .digest-page-subtitle.) */
 
 /* Pills cluster sits next to the title, 14px off the title baseline,
    pills spaced 8px apart. Matches the Figma header frame (node 52:1495). */
@@ -1149,6 +1145,35 @@ a:hover {
   font-size: 13px;
   color: var(--color-text-secondary);
   margin-top: var(--space-xs);
+}
+
+/* Mobile digest header per Figma node 289:7288. Breakpoint matches the
+   chrome .header so the whole mobile experience flips together. Outer
+   block becomes a 24px-gap column, the title drops a type-step
+   (24 -> 20), the date sits flush under it (no 4px top margin), and
+   the desktop border-bottom is dropped — mobile uses inter-section
+   padding instead of a hairline rule. Placed AFTER the desktop
+   typography rules so it wins the cascade at equal specificity. */
+@media (max-width: 768px) {
+  .digest-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-lg);
+    padding: var(--space-lg);
+    border-bottom: none;
+  }
+
+  .digest-page-header-right {
+    align-self: stretch;
+  }
+
+  .digest-page-name {
+    font-size: 20px;
+  }
+
+  .digest-page-date {
+    margin-top: 0;
+  }
 }
 
 .digest-meta {
