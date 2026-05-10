@@ -313,10 +313,27 @@ a:hover {
        ends at left:378 of the 402-wide frame). */
     padding: 0 24px;
     border-bottom: 1px solid var(--color-border);
-    background: var(--color-bg-primary);
+    /* Glass surface: 75% bg-primary fill + 12px backdrop blur so
+       digest content scrolling underneath softens through the
+       chrome header. -webkit- prefix kept for older WebKit (iOS
+       Safari < 18). Solid bg falls back automatically when
+       backdrop-filter is unsupported because the rgba fill still
+       reads as a near-opaque dark surface. */
+    background: color-mix(in srgb, var(--color-bg-primary) 75%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
     position: sticky;
     top: 0;
     z-index: 10;
+  }
+
+  /* When the chrome header sits over the open mobile drawer, the
+     hamburger card behind it would normally be flat #070707 — the
+     glass overlay would tint it slightly. Force the hamburger fill
+     to the solid bg-primary so the X button stays crisp against
+     the blurred surface around it. */
+  .header-hamburger {
+    background: var(--color-bg-primary);
   }
 }
 
