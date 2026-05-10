@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  ArrowLeft,
   ChartNoAxesCombined,
   ChevronDown,
   ChevronUp,
@@ -580,10 +579,6 @@ export default function InsightsPage() {
             sibling pages share the same arrival feel. */}
         <div className="settings-header">
           <div className="settings-header-left">
-            <button type="button" className="settings-back-pill" onClick={goBack}>
-              <ArrowLeft size={10} strokeWidth={1} aria-hidden />
-              Back to Digest
-            </button>
             <h1 className="settings-title">Insights</h1>
           </div>
           <button

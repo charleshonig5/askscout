@@ -3,7 +3,7 @@
 import { Fragment, useState, useEffect, useCallback } from "react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CircleX, Trash2, ShieldCheck, ShieldX } from "lucide-react";
+import { CircleX, Trash2, ShieldCheck, ShieldX } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
 import { RepoSelector } from "@/components/RepoSelector";
 import { useBodyScrollLock } from "@/lib/useBodyScrollLock";
@@ -300,10 +300,6 @@ export default function SettingsPage() {
             Close button on the right, divider underneath. */}
         <div className="settings-header">
           <div className="settings-header-left">
-            <button type="button" className="settings-back-pill" onClick={goBack}>
-              <ArrowLeft size={10} strokeWidth={1} aria-hidden />
-              Back to Digest
-            </button>
             <h1 className="settings-title">Settings</h1>
           </div>
           <button
