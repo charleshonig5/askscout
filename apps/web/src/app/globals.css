@@ -7241,15 +7241,18 @@ a:hover {
   }
 
   /* Promote .settings-close-btn to a 40x40 icon-only chip that
-     mirrors the digest header buttons (10x14 pad on a 20x20 icon
-     reads as a 40x40 box; same 1px tertiary border + bg-secondary
-     fill + inset glow). Drop the "Back to Digest" text label. */
+     mirrors the chrome header hamburger (1px tertiary border +
+     bg-secondary fill + inset glow). 20×20 arrow centers via the
+     button's existing flex layout — zero padding so the icon
+     doesn't get squished by the desktop 10x14 pad it inherits.
+     The "Back to Digest" text label hides on mobile. */
   .settings-close-btn {
     order: 1;
     width: 40px;
     height: 40px;
-    padding: 10px 14px;
+    padding: 0;
     gap: 0;
+    justify-content: center;
     box-sizing: border-box;
     flex-shrink: 0;
   }
