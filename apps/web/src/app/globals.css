@@ -1166,12 +1166,13 @@ a:hover {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-lg);
-    padding: var(--space-lg);
-    /* Border-bottom comes from the base desktop rule (1px
-       --color-border). Mobile keeps it as the divider between the
-       page-header block and the digest body — same hairline pattern
-       the bottom-actions block uses to mark the boundary down to
-       the buttons. */
+    /* Horizontal inset via margin (not padding) so the desktop
+       border-bottom — which we keep as the divider between the
+       page-header and the digest body — sits within the 354px
+       content column instead of bleeding edge-to-edge. Same trick
+       .digest-bottom-actions uses for its top divider. */
+    margin: 0 var(--space-lg);
+    padding: var(--space-lg) 0;
   }
 
   .digest-page-header-right {
