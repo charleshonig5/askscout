@@ -7700,19 +7700,27 @@ a:hover {
     flex-direction: column;
     gap: 4px;
     padding: 14px 16px;
+    /* Undo the desktop rule's align-items: center, which would
+       horizontally center the stats wrapper to its content size
+       and produce the "centered stats" look the user flagged. */
+    align-items: stretch;
   }
 
   /* Stats wrapper becomes the mobile stats strip — flex row,
      nowrap, 14px gap between cells (same rhythm as
-     .sidebar-item-stats). Horizontal scroll keeps everything on
-     one line if the longest "Last active <date>" string pushes
-     past the card width; otherwise no scroll bar appears. */
+     .sidebar-item-stats). width 100% + min-width 0 lets the
+     wrapper take the full row width and lets overflow-x: auto
+     kick in when "Last active Apr 18, 2025" pushes content past
+     the card width, scrolling horizontally rather than wrapping
+     to a second line. */
   .insights-repos-stats {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: baseline;
     gap: 14px;
+    width: 100%;
+    min-width: 0;
     overflow-x: auto;
     /* Hide the scrollbar when it does appear — affordance is
        implicit; the row's content has clear right-edge clipping. */
@@ -7722,10 +7730,14 @@ a:hover {
     display: none;
   }
 
-  /* Each stat cell is inline-flex (label + value share a 4px
-     gap), nowrap so neither label nor value wraps mid-cell. */
+  /* Each stat cell is inline-flex with label + value on the same
+     line. The base desktop rule sets flex-direction: column to
+     stack label-above-value for the table; mobile must explicitly
+     flip back to row, otherwise inline-flex inherits column and
+     the cell renders as two stacked lines. */
   .insights-repos-cell {
     display: inline-flex;
+    flex-direction: row;
     align-items: baseline;
     gap: 4px;
     flex-shrink: 0;
