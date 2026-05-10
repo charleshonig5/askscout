@@ -8085,24 +8085,26 @@ a:hover {
 
 .toast-stack {
   position: fixed;
-  /* 20px from the top + right edges of the viewport. Far enough from
-     the corner that the stack never feels jammed against the screen
-     edge, close enough that it doesn't drift into content territory. */
-  top: 20px;
-  right: 20px;
+  /* Inset from the viewport corner using the existing spacing scale.
+     --space-lg (24px) matches the same gutter sidebars and modals
+     use against page edges, so toasts feel like a peer of those
+     surfaces rather than a separate UI layer with its own rhythm. */
+  top: var(--space-lg);
+  right: var(--space-lg);
   /* Above modals (.modal sits at z-index 100). 200 keeps toasts above
      any overlay the user might try to dismiss when the action that
      spawned the toast lives inside the modal itself. */
   z-index: 200;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-sm);
   /* pointer-events: none on the stack means clicks can pass through the
      gaps between toasts, so the stack never blocks UI underneath when
      it's empty. Each toast re-enables pointer-events for itself. */
   pointer-events: none;
   /* Cap at 360px wide so long error messages wrap inside the toast
-     instead of stretching across the screen. */
+     instead of stretching across the screen. No site-wide width
+     token exists for surfaces this small, so this stays a literal. */
   max-width: 360px;
   width: max-content;
 }
@@ -8111,20 +8113,22 @@ a:hover {
   /* Re-enable clicks on the actual toast — see .toast-stack note. */
   pointer-events: auto;
   display: grid;
-  /* icon | body | close */
+  /* icon | body | close. Both icon cells fixed-width; body stretches. */
   grid-template-columns: 16px 1fr 14px;
   align-items: start;
-  gap: 10px;
-  padding: 12px 14px;
+  gap: var(--space-sm);
+  padding: var(--space-md);
   background: var(--color-bg-elevated);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  /* Subtle elevation. Two shadows: one tight ambient + one wider drop
-     so the toast reads as a hovering surface against either light or
-     dark backgrounds without needing per-theme overrides. */
+  border-radius: var(--radius-md);
+  /* Mirrors the elevated-surface treatment used by .modal-close-btn
+     and other floating chrome on the site: --shadow-md for the drop
+     + an inset inner-glow so the surface reads as raised against
+     either theme. The glow token already adapts per theme, so we
+     don't need per-mode overrides. */
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.06),
-    0 8px 24px rgba(0, 0, 0, 0.12);
+    var(--shadow-md),
+    inset 0 0 20px 0 var(--color-inner-glow);
   font-family: var(--font-sans);
   text-align: left;
   cursor: pointer;
@@ -8135,9 +8139,6 @@ a:hover {
      a 4-second auto-dismiss flow where the user's eye has likely
      moved on by the time it disappears). */
   animation: toast-in 200ms ease-out both;
-  /* Remove the default <button> chrome so the toast looks like a card,
-     not an OS button. */
-  border-style: solid;
   /* Allow word-wrap inside the body without breaking the grid. */
   min-width: 0;
 }
@@ -8147,9 +8148,10 @@ a:hover {
      a glance without coloring the whole surface (which would clash
      with the dark-mode card treatment). */
   border-left: 3px solid var(--color-danger);
-  /* Adjust left padding so the body content stays at the same x-offset
-     as it would with a 1px left border. 14 - (3 - 1) = 12px. */
-  padding-left: 12px;
+  /* Pull the left padding in by 2px so the body content sits at the
+     same x-offset it would have with a flat 1px border. Keeps the
+     accent stripe from shifting the whole layout right. */
+  padding-left: calc(var(--space-md) - 2px);
 }
 
 .toast:hover {
@@ -8164,7 +8166,7 @@ a:hover {
   height: 16px;
   /* Push the icon down a touch to optically center with the title's
      x-height — the visual center of a 16px icon sits a couple pixels
-     above the geometric center of a 14px line of text. */
+     above the geometric center of a 12px/18 line of text. */
   margin-top: 1px;
   color: var(--color-danger);
 }
@@ -8172,23 +8174,27 @@ a:hover {
 .toast-body {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xs);
   min-width: 0;
 }
 
 .toast-title {
-  font-size: 13px;
+  /* 12/18 with weight 500 mirrors the site's small-emphasis pattern
+     (modal title rows, section headers in the digest). */
+  font-size: 12px;
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 18px;
   color: var(--color-text-primary);
   /* Allow wrapping for long titles. */
   overflow-wrap: anywhere;
 }
 
 .toast-desc {
+  /* 12/18 weight 300 matches .modal-subtitle and every other
+     supporting-copy block on the site. */
   font-size: 12px;
   font-weight: 300;
-  line-height: 1.45;
+  line-height: 18px;
   color: var(--color-text-secondary);
   overflow-wrap: anywhere;
 }
@@ -8211,7 +8217,7 @@ a:hover {
 
 @keyframes toast-in {
   from {
-    transform: translateX(12px);
+    transform: translateX(var(--space-md));
     opacity: 0;
   }
   to {
