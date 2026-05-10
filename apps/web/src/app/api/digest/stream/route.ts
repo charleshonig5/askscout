@@ -59,14 +59,26 @@ export async function POST(req: Request) {
   }
 
   // 3. Parse and validate input
-  let body: { owner?: string; repo?: string; mode?: string };
+  let body: { owner?: string; repo?: string; mode?: string; tzOffsetMinutes?: number };
   try {
-    body = (await req.json()) as { owner?: string; repo?: string; mode?: string };
+    body = (await req.json()) as {
+      owner?: string;
+      repo?: string;
+      mode?: string;
+      tzOffsetMinutes?: number;
+    };
   } catch {
     return Response.json({ error: "Invalid request body" }, { status: 400 });
   }
 
   const { owner, repo } = body;
+  // Fall back to UTC if the client didn't send a tz. saveDigest needs this
+  // to compute digest_date — the column that backs the one-per-day unique
+  // index — in the user's local calendar.
+  const tzOffsetMinutes =
+    typeof body.tzOffsetMinutes === "number" && Number.isFinite(body.tzOffsetMinutes)
+      ? body.tzOffsetMinutes
+      : 0;
 
   if (!owner || !repo) {
     return Response.json({ error: "Missing owner or repo" }, { status: 400 });
@@ -515,7 +527,7 @@ Produce the digest now. Be concise. No em dashes, no semicolons.`;
       digestSaved = true;
       const summaryIdx = fullText.indexOf("---SUMMARY---");
       const digestText = summaryIdx !== -1 ? fullText.slice(0, summaryIdx).trim() : fullText;
-      void saveDigest(userId, repoFullName, "digest", digestText, stats);
+      void saveDigest(userId, repoFullName, "digest", digestText, stats, tzOffsetMinutes);
     };
 
     const onStreamEnd = (fullText: string) => {

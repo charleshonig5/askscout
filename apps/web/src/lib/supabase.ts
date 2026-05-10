@@ -18,6 +18,22 @@ export interface DigestRecord {
   content: string;
   stats: Record<string, unknown> | null;
   created_at: string;
+  /** YYYY-MM-DD in the user's local tz when the digest was first saved.
+   *  Forms part of the UNIQUE (user_id, repo, mode, digest_date) index
+   *  that guarantees one digest per user/repo/mode/calendar-day. */
+  digest_date: string;
+  /** Auto-bumped by trigger on UPDATE — useful as an audit trail when a
+   *  digest is regenerated (which now upserts the same row). */
+  updated_at: string;
+}
+
+/** Compute the user's local calendar date as YYYY-MM-DD given a JS-style
+ *  timezone offset (minutes WEST of UTC, the value `Date.getTimezoneOffset`
+ *  returns — e.g. 420 for PDT, -60 for CET). Used by `saveDigest` to fill
+ *  the `digest_date` column that backs the one-per-day uniqueness index. */
+function localDateISO(nowMs: number, tzOffsetMinutes: number): string {
+  const localMs = nowMs - tzOffsetMinutes * 60 * 1000;
+  return new Date(localMs).toISOString().slice(0, 10);
 }
 
 // ============================================
@@ -250,17 +266,28 @@ export async function saveProjectSummary(
 // ============================================
 
 /** Save a completed digest to the database */
+/** Idempotent save: one row per (user_id, repo, mode, digest_date).
+ *  A regenerate of today's digest UPDATEs the existing row in place
+ *  rather than appending a duplicate, courtesy of the unique index
+ *  added in db/migrations/2026-05-10_digests_one_per_day.sql.
+ *  Pass the user's JS-style tz offset so digest_date reflects their
+ *  local calendar day, not UTC. */
 export async function saveDigest(
   userId: string,
   repo: string,
   mode: string,
   content: string,
   stats: Record<string, unknown> | null,
+  tzOffsetMinutes: number,
 ): Promise<void> {
   if (!supabase) return;
+  const digest_date = localDateISO(Date.now(), tzOffsetMinutes);
   const { error } = await supabase
     .from("digests")
-    .insert({ user_id: userId, repo, mode, content, stats });
+    .upsert(
+      { user_id: userId, repo, mode, content, stats, digest_date },
+      { onConflict: "user_id,repo,mode,digest_date" },
+    );
   if (error) console.error("[askscout] Failed to save digest:", error.message);
 }
 

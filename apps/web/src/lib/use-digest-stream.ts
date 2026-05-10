@@ -135,7 +135,15 @@ export function useDigestStream(): DigestStreamState {
           const res = await fetch("/api/digest/stream", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ owner, repo, mode }),
+            body: JSON.stringify({
+              owner,
+              repo,
+              mode,
+              // The server computes digest_date (the backing column for
+              // the one-per-day unique index) from this. JS-style offset:
+              // minutes WEST of UTC, e.g. 420 for PDT.
+              tzOffsetMinutes: new Date().getTimezoneOffset(),
+            }),
             signal: controller.signal,
           });
 

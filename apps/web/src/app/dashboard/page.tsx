@@ -546,7 +546,11 @@ export default function DashboardPage() {
       const record = historyRecords.find((h) => h.id === id);
       if (!record) return;
 
-      // If this entry is from today, go back to the live view
+      // The DB enforces one digest row per (user, repo, mode, day) via
+      // the unique index on digest_date, so there is exactly one "today"
+      // row to click. Clicking it returns the user to the live view —
+      // which is the correct semantics whether they were viewing a
+      // historical entry or already on today (no-op in that case).
       const entryDate = new Date(record.created_at).toDateString();
       const today = new Date().toDateString();
       if (entryDate === today) {
