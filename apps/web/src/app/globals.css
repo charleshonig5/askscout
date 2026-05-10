@@ -7312,10 +7312,11 @@ a:hover {
   .settings-section:has(.settings-section-head--with-action) > .settings-panel {
     order: 2;
   }
+  /* Hugs content, left-aligned at the start of the section's
+     content column — no full-bleed stretch. */
   .settings-clear-all-btn {
     order: 3;
-    align-self: stretch;
-    justify-content: center;
+    align-self: flex-start;
   }
 }
 
