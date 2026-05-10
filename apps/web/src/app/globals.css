@@ -8533,14 +8533,28 @@ a:hover {
    last.
    ========================================================================== */
 @media (max-width: 768px) {
-  /* Outer container becomes a 24px-inset single-column flow. Top
-     padding of 24px gives the first content card breathing room
-     below the page-header divider line; bottom padding stays 0 so
-     the last section's own margin-bottom carries the rhythm into
-     the stats column / bottom actions that follow. */
-  .digest-main,
-  .digest-stats-sidebar {
+  /* Outer container becomes a 24px-inset single-column flow. Only
+     .digest-main needs the 24px top padding (for breathing room
+     below the page-header divider line). The stats sidebar drops
+     its top padding so the gap from .digest-main's last section
+     to the stats column is driven entirely by that section's own
+     margin-bottom (34) — without this, a stale 24px sidebar
+     padding stacked with the parent flex gap and the section
+     margin to produce a 90px gap on mobile. */
+  .digest-main {
     padding: var(--space-lg) var(--space-lg) 0;
+  }
+  .digest-stats-sidebar {
+    padding: 0 var(--space-lg);
+  }
+
+  /* Drop the parent flex gap on mobile so each digest-section and
+     each layout-level sibling controls its own bottom margin. The
+     desktop 32px gap pairs with section margin-bottom 32 to
+     produce the right rhythm there; on mobile margin-bottom is
+     34 and the parent gap would double up. */
+  .digest-layout {
+    gap: 0;
   }
 
   /* Outer section gap = 34px per Figma. Desktop uses --space-xl (32);
@@ -8581,17 +8595,20 @@ a:hover {
      flex:1 stretch — the override below neutralises that and
      promotes the visual chrome to match the digest header buttons
      (16px Light label, subtle inset glow). */
-  .digest-bottom-actions {
+  /* Selector matches specificity of the desktop
+     .digest-layout > .digest-bottom-actions reset that lives
+     earlier in the cascade — without the parent combinator the
+     mobile margin loses the (0,1,1) vs (0,1,0) match-up. */
+  .digest-layout > .digest-bottom-actions {
     flex-direction: column;
     align-items: flex-start;
     gap: 14px;
-    /* 24px horizontal margin (not padding) so the divider line drawn
-       via border-top sits within the same 354px content width as
-       the narrative and stats columns above. Padding on the element
-       would have stretched the border across the full viewport.
-       Top margin stays 0; the parent .digest-layout flex gap (32px,
-       --space-xl) owns the distance from the stats column. */
-    margin: 0 var(--space-lg);
+    /* 34px top margin gives the canonical section-to-section gap
+       above the divider line (parent .digest-layout flex gap is 0
+       on mobile, so this margin alone carries it). 24px horizontal
+       margin keeps the divider line + buttons inside the 354px
+       inset column. */
+    margin: 34px var(--space-lg) 0;
     /* 24px above (line → first button) AND 24px below (last button →
        viewport edge) so the buttons breathe at the bottom of the
        scroll instead of sitting flush against the screen edge. */
