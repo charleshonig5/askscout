@@ -382,7 +382,7 @@ export function DigestEmail({
               <Img
                 src={`${WEB_URL}/logo-white.svg`}
                 alt="AskScout"
-                width="111"
+                width="112"
                 height="20"
                 style={{ display: "block", border: 0, outline: "none" }}
               />
