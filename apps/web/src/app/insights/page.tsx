@@ -357,19 +357,26 @@ function ReposBreakdown({ repoStats }: { repoStats: RepoStat[] }) {
               {repoDisplayName(r.repo)}
             </span>
           </span>
-          <span className="insights-repos-cell" data-col="digests">
-            <span className="insights-repos-cell-label">Digests</span>
-            <span className="insights-repos-cell-value">{r.digests}</span>
-          </span>
-          <span className="insights-repos-cell" data-col="current">
-            <span className="insights-repos-cell-label">Streak</span>
-            <span className="insights-repos-cell-value">
-              {r.currentStreak} {r.currentStreak === 1 ? "day" : "days"}
+          {/* Mobile groups the three stat cells into a single
+              scroll-on-overflow row below the repo name; desktop
+              ignores the wrapper (display: contents on >768) so the
+              4-column grid template still places each cell into its
+              own column. */}
+          <span className="insights-repos-stats">
+            <span className="insights-repos-cell" data-col="digests">
+              <span className="insights-repos-cell-label">Digests</span>
+              <span className="insights-repos-cell-value">{r.digests}</span>
             </span>
-          </span>
-          <span className="insights-repos-cell" data-col="last">
-            <span className="insights-repos-cell-label">Last active</span>
-            <span className="insights-repos-cell-value">{formatLastActive(r.lastActive)}</span>
+            <span className="insights-repos-cell" data-col="current">
+              <span className="insights-repos-cell-label">Streak</span>
+              <span className="insights-repos-cell-value">
+                {r.currentStreak} {r.currentStreak === 1 ? "day" : "days"}
+              </span>
+            </span>
+            <span className="insights-repos-cell" data-col="last">
+              <span className="insights-repos-cell-label">Last active</span>
+              <span className="insights-repos-cell-value">{formatLastActive(r.lastActive)}</span>
+            </span>
           </span>
         </div>
       ))}

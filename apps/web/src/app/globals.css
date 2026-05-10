@@ -7676,43 +7676,64 @@ a:hover {
   white-space: nowrap;
 }
 
+/* Desktop: the new .insights-repos-stats wrapper is transparent to
+   the 4-column grid template so each stat cell still places into
+   its own column (Digests / Streak / Last active). */
+.insights-repos-stats {
+  display: contents;
+}
+
 @media (max-width: 768px) {
   /* Compact mobile list per-repo: name heading on its own line,
-     then a stats row below using the same typography + spacing as
-     .sidebar-item-stats elsewhere on the site — 14px flex gap, no
-     bullet characters, 12px Work Sans Regular, primary color. */
+     then the three stats below on one row with labels visible.
+     The .insights-repos-stats wrapper switches from `display:
+     contents` to a real flex container so the stats stay on a
+     single line — overflow-x: auto handles the rare worst-case
+     where "Last active Apr 18, 2025" pushes the row past the
+     content width. */
   .insights-repos-header {
     display: none;
   }
 
-  /* Row becomes a wrapping flex container: repo cell forces a
-     full-width wrap (flex-basis: 100%) so the three stat cells
-     drop to the next line and share a single row separated by a
-     14px gap — same as .sidebar-item-stats. */
   .insights-repos-row {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: baseline;
-    row-gap: 4px;
-    column-gap: 14px;
+    flex-direction: column;
+    gap: 4px;
     padding: 14px 16px;
   }
 
-  /* Stats row uses flex/gap (not bullets) so cells separate via
-     whitespace alone, matching every other stats strip on the
-     site. The row itself is the row container; cells are inline-
-     flex like .sidebar-item-stat so label + value share a 4px gap. */
+  /* Stats wrapper becomes the mobile stats strip — flex row,
+     nowrap, 14px gap between cells (same rhythm as
+     .sidebar-item-stats). Horizontal scroll keeps everything on
+     one line if the longest "Last active <date>" string pushes
+     past the card width; otherwise no scroll bar appears. */
+  .insights-repos-stats {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: baseline;
+    gap: 14px;
+    overflow-x: auto;
+    /* Hide the scrollbar when it does appear — affordance is
+       implicit; the row's content has clear right-edge clipping. */
+    scrollbar-width: none;
+  }
+  .insights-repos-stats::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Each stat cell is inline-flex (label + value share a 4px
+     gap), nowrap so neither label nor value wraps mid-cell. */
   .insights-repos-cell {
     display: inline-flex;
     align-items: baseline;
     gap: 4px;
-    min-width: 0;
+    flex-shrink: 0;
+    white-space: nowrap;
   }
 
-  /* Repo name still anchors the card on its own line above the
-     stats row — full-width, heavier "title" treatment, no inline
-     label, ignores the flex/gap layout the stat cells use. */
+  /* Repo name anchors the card on its own line — full-width,
+     heavier "title" treatment, label hidden. */
   .insights-repos-cell[data-col="repo"] {
     display: block;
     width: 100%;
@@ -7727,11 +7748,10 @@ a:hover {
     font-weight: 500;
   }
 
-  /* Stat-cell label sits inline before the value — same 12 / 400
-     type as the value so the row reads as one continuous line.
-     Color drops to tertiary so the label fades behind the value
-     without disappearing, matching how desktop column headers
-     read as quieter than their data rows. */
+  /* Stat-cell labels stay inline before each value. 12 Work Sans
+     Regular tertiary so the label fades behind the value, matching
+     how desktop column headers read as quieter than the data
+     rows below them. */
   .insights-repos-cell:not([data-col="repo"]) .insights-repos-cell-label {
     display: inline;
     font-family: var(--font-sans);
@@ -7741,9 +7761,6 @@ a:hover {
     color: var(--color-text-tertiary);
   }
 
-  /* Stat cells share the site's standard 12 Work Sans Regular
-     primary look. 14px gap between cells comes from the parent
-     row's flex-wrap layout below. */
   .insights-repos-cell:not([data-col="repo"]) .insights-repos-cell-value {
     font-family: var(--font-sans);
     font-size: 12px;
