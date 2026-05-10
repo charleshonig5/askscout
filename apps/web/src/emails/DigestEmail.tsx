@@ -457,7 +457,7 @@ const FLUENT_EMOJI: Record<string, { folder: string; file: string }> = {
 };
 
 function fluentEmojiUrl(key: keyof typeof FLUENT_EMOJI) {
-  const a = FLUENT_EMOJI[key];
+  const a = FLUENT_EMOJI[key]!;
   return `${FLUENT_BASE}/${encodeURIComponent(a.folder)}/3D/${a.file}`;
 }
 
