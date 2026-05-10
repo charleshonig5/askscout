@@ -7518,26 +7518,19 @@ a:hover {
   }
 }
 
-/* Mobile activity calendar: cap the grid to the last 13 weeks
-   (~3 months) so it fits the card width without horizontal
-   scroll. The remaining 13 weeks expand to fill the width via
-   the existing flex: 1 on .insights-calendar-week, so cells get
-   meaningfully larger (~22px wide instead of the 5-8px squeeze
-   the full 53-week grid produces on mobile). Month labels drop
-   entirely — 13 weeks is short enough that month delineation
-   reads as noise more than signal. */
+/* Mobile activity calendar: keep the full 53-week + month-labels
+   layout exactly like desktop; just relax the 8px per-week
+   min-width so the cells shrink to fit the card width instead of
+   triggering horizontal scroll. Cells end up ~5-6px each — tight
+   but readable, matching GitHub's contribution graph proportions
+   at mobile widths. */
 @media (max-width: 768px) {
   .insights-calendar-panel {
-    /* No more horizontal overflow — the trimmed grid fits. */
     overflow-x: visible;
   }
 
-  .insights-calendar-months {
-    display: none;
-  }
-
-  .insights-calendar-week:not(:nth-last-child(-n+13)) {
-    display: none;
+  .insights-calendar-week {
+    min-width: 0;
   }
 }
 
