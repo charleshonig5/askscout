@@ -3,10 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  ArrowLeft,
   ChartNoAxesCombined,
   ChevronDown,
   ChevronUp,
-  CircleX,
   Forward,
 } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
@@ -585,10 +585,10 @@ export default function InsightsPage() {
             type="button"
             className="settings-close-btn"
             onClick={goBack}
-            aria-label="Close insights"
+            aria-label="Back to Digest"
           >
-            <CircleX size={20} strokeWidth={1} aria-hidden />
-            <span>Close</span>
+            <ArrowLeft size={20} strokeWidth={1} aria-hidden />
+            <span>Back to Digest</span>
           </button>
         </div>
         <hr className="settings-header-divider" />

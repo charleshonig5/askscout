@@ -3,7 +3,7 @@
 import { Fragment, useState, useEffect, useCallback } from "react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { CircleX, Trash2, ShieldCheck, ShieldX } from "lucide-react";
+import { ArrowLeft, CircleX, Trash2, ShieldCheck, ShieldX } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
 import { RepoSelector } from "@/components/RepoSelector";
 import { useBodyScrollLock } from "@/lib/useBodyScrollLock";
@@ -296,8 +296,12 @@ export default function SettingsPage() {
   return (
     <div className="settings-page">
       <div className="settings-card">
-        {/* Header strip — back pill + Settings title on the left,
-            Close button on the right, divider underneath. */}
+        {/* Header strip — Settings title on the left, Back-to-Digest
+            button on the right, divider underneath. Reuses the
+            .settings-close-btn styles so the affordance keeps the
+            exact same shape and position as the prior Close X — only
+            the label and icon changed (ArrowLeft + "Back to Digest")
+            so users know where they're going to land. */}
         <div className="settings-header">
           <div className="settings-header-left">
             <h1 className="settings-title">Settings</h1>
@@ -306,10 +310,10 @@ export default function SettingsPage() {
             type="button"
             className="settings-close-btn"
             onClick={goBack}
-            aria-label="Close settings"
+            aria-label="Back to Digest"
           >
-            <CircleX size={20} strokeWidth={1} aria-hidden />
-            <span>Close</span>
+            <ArrowLeft size={20} strokeWidth={1} aria-hidden />
+            <span>Back to Digest</span>
           </button>
         </div>
         <hr className="settings-header-divider" />
