@@ -7083,10 +7083,13 @@ a:hover {
   justify-content: flex-start;
 }
 
-/* Danger-tinted outlined button. Mirrors .modal-action-btn--danger
-   exactly (same border / padding / radius / inner glow) so the
-   gesture reads as a peer of the sign-out confirm's danger button.
-   Sized to its content; no flex:1 since it stands alone here. */
+/* Danger-tinted outlined button. Transparent fill so the button
+   sits flush on whichever surface contains it (page bg-primary or
+   the lifted bg-secondary card) — earlier explicit bg-secondary
+   fill read as a grey chip when placed on bg-primary. Hover dyes
+   the surface with a 12% danger tint for the same affordance the
+   sign-out confirm carries. Sized to its content; no flex:1 since
+   it stands alone here. */
 .settings-clear-all-btn {
   display: inline-flex;
   align-items: center;
@@ -7094,7 +7097,7 @@ a:hover {
   padding: 10px 14px;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-danger);
-  background: var(--color-bg-secondary);
+  background: transparent;
   color: var(--color-danger);
   font-family: var(--font-sans);
   font-size: 14px;
@@ -7106,7 +7109,7 @@ a:hover {
 }
 
 .settings-clear-all-btn:hover {
-  background: color-mix(in srgb, var(--color-danger) 12%, var(--color-bg-secondary));
+  background: color-mix(in srgb, var(--color-danger) 12%, transparent);
 }
 
 /* --- Privacy & Security ------------------------------------- */
