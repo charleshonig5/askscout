@@ -8478,7 +8478,10 @@ a:hover {
        Top margin stays 0; the parent .digest-layout flex gap (32px,
        --space-xl) owns the distance from the stats column. */
     margin: 0 var(--space-lg);
-    padding-top: 24px;
+    /* 24px above (line → first button) AND 24px below (last button →
+       viewport edge) so the buttons breathe at the bottom of the
+       scroll instead of sitting flush against the screen edge. */
+    padding: 24px 0;
     border-top: 1px solid var(--color-border);
   }
 
