@@ -1,11 +1,15 @@
 "use client";
 
-import { Menu, ChartPie, Settings2 } from "lucide-react";
+import { Menu, X, ChartPie, Settings2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Logo } from "./Logo";
 
 interface HeaderProps {
   onMenuToggle: () => void;
+  /** When the mobile drawer is open the hamburger flips to an X
+   *  glyph so the same 40×40 button doubles as a close affordance,
+   *  matching Figma node 287:3311. */
+  isOpen?: boolean;
 }
 
 /**
@@ -25,7 +29,7 @@ interface HeaderProps {
  * the page on mobile, where the sidebar carries its own copies of
  * the same controls plus repo picker + history list.
  */
-export function Header({ onMenuToggle }: HeaderProps) {
+export function Header({ onMenuToggle, isOpen = false }: HeaderProps) {
   const router = useRouter();
   return (
     <header className="header">
@@ -33,9 +37,14 @@ export function Header({ onMenuToggle }: HeaderProps) {
         type="button"
         className="header-hamburger"
         onClick={onMenuToggle}
-        aria-label="Open menu"
+        aria-label={isOpen ? "Close menu" : "Open menu"}
+        aria-expanded={isOpen}
       >
-        <Menu size={20} strokeWidth={1} aria-hidden />
+        {isOpen ? (
+          <X size={20} strokeWidth={1} aria-hidden />
+        ) : (
+          <Menu size={20} strokeWidth={1} aria-hidden />
+        )}
       </button>
       <div className="header-logo">
         <Logo height={21} />

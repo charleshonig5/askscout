@@ -752,7 +752,7 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <Header onMenuToggle={() => setSidebarOpen((v) => !v)} />
+      <Header isOpen={sidebarOpen} onMenuToggle={() => setSidebarOpen((v) => !v)} />
 
       <div className="app-layout">
         <Sidebar

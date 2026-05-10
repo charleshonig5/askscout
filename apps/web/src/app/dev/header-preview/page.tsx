@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   Copy,
   Download,
@@ -10,6 +11,12 @@ import {
   Sparkles,
   BookText,
   LayoutList,
+  HelpCircle,
+  ChevronDown,
+  SquareArrowUpRight,
+  LogOut,
+  Sun,
+  FileText,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Emoji } from "@/components/Emoji";
@@ -70,9 +77,124 @@ const SAMPLE_BULLET = {
 };
 
 export default function HeaderPreview() {
+  const [drawerOpen, setDrawerOpen] = useState(false);
   return (
     <div style={{ background: "var(--color-bg-primary)", minHeight: "100vh" }}>
-      <Header onMenuToggle={() => {}} />
+      <Header isOpen={drawerOpen} onMenuToggle={() => setDrawerOpen((v) => !v)} />
+
+      {/* Section 5: navigation drawer (Figma 287:3311). Statically
+          mounted — no slide animation in this preview — so we can
+          inspect the open layout independently of the dashboard's
+          auth-gated state. */}
+      {drawerOpen && (
+        <>
+          <div className="sidebar-overlay" onClick={() => setDrawerOpen(false)} />
+          <aside className="sidebar open">
+            <div className="sidebar-main">
+              <div className="sidebar-content">
+                <div className="sidebar-section sidebar-section--repo">
+                  <div className="sidebar-title">
+                    Repo
+                    <span className="sidebar-title-help">
+                      <HelpCircle size={16} strokeWidth={1} aria-hidden />
+                    </span>
+                  </div>
+                  <div className="repo-combobox">
+                    <button type="button" className="repo-combobox-trigger">
+                      <span>askscout</span>
+                      <ChevronDown
+                        className="repo-combobox-chevron"
+                        size={20}
+                        strokeWidth={1}
+                        aria-hidden
+                      />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="sidebar-section sidebar-section--history">
+                  <div className="sidebar-title">
+                    History
+                    <span className="sidebar-title-help">
+                      <HelpCircle size={16} strokeWidth={1} aria-hidden />
+                    </span>
+                  </div>
+                  <div className="sidebar-list">
+                    {[
+                      { id: "today", date: "Today", active: true },
+                      { id: "y", date: "Yesterday" },
+                      { id: "12", date: "April 12" },
+                      { id: "11", date: "April 11" },
+                      { id: "10", date: "April 10" },
+                      { id: "9", date: "April 9" },
+                      { id: "8", date: "April 8" },
+                    ].map((e) => (
+                      <button
+                        key={e.id}
+                        type="button"
+                        className={`sidebar-item${e.active ? " active" : ""}`}
+                      >
+                        <div className="sidebar-item-body">
+                          <span className="sidebar-item-date">{e.date}</span>
+                          <div className="sidebar-item-stats">
+                            <span className="sidebar-item-stat sidebar-item-stat--added">
+                              +425
+                            </span>
+                            <span className="sidebar-item-stat sidebar-item-stat--removed">
+                              -86
+                            </span>
+                            <span className="sidebar-item-stat">
+                              19
+                              <GitCommitHorizontal
+                                size={16}
+                                strokeWidth={1}
+                                className="commit-icon"
+                                aria-hidden
+                              />
+                            </span>
+                            <span className="sidebar-item-stat">
+                              8
+                              <FileText
+                                size={12}
+                                strokeWidth={1}
+                                className="file-icon"
+                                aria-hidden
+                              />
+                            </span>
+                          </div>
+                        </div>
+                        <span className="sidebar-item-open" aria-hidden>
+                          <SquareArrowUpRight size={20} strokeWidth={1} />
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="sidebar-bottom">
+              <div className="sidebar-profile-row">
+                <div className="sidebar-profile-identity">
+                  <div className="sidebar-profile-avatar sidebar-profile-avatar--placeholder" />
+                  <div className="sidebar-profile-text">
+                    <span className="sidebar-profile-name">UserName</span>
+                    <span className="sidebar-profile-provider">GitHub</span>
+                  </div>
+                </div>
+                <div className="sidebar-profile-actions">
+                  <button type="button" className="header-icon-btn" aria-label="Theme">
+                    <Sun size={20} strokeWidth={1} />
+                  </button>
+                  <button type="button" className="sidebar-signout-btn" aria-label="Sign out">
+                    <LogOut size={20} strokeWidth={1} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </>
+      )}
 
       <div className="digest-container">
         {/* Section 2: digest page header */}
