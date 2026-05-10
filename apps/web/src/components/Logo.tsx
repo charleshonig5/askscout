@@ -20,7 +20,7 @@
  * never distorts and there's no layout shift while the SVG loads.
  */
 
-const VIEWBOX_WIDTH = 1377;
+const VIEWBOX_WIDTH = 1352;
 const VIEWBOX_HEIGHT = 243;
 const ASPECT_RATIO = VIEWBOX_WIDTH / VIEWBOX_HEIGHT;
 
