@@ -330,10 +330,21 @@ a:hover {
   /* When the chrome header sits over the open mobile drawer, the
      hamburger card behind it would normally be flat #070707 — the
      glass overlay would tint it slightly. Force the hamburger fill
-     to the solid bg-primary so the X button stays crisp against
-     the blurred surface around it. */
+     to the solid bg-primary so the X / menu button stays crisp
+     against the surrounding surface. */
   .header-hamburger {
     background: var(--color-bg-primary);
+  }
+
+  /* Drawer-open state: the header switches from the bg-primary glass
+     surface to a solid bg-secondary fill so it reads as one continuous
+     surface with the drawer below (which is also bg-secondary). Glass
+     blur turns off because nothing's scrolling behind it in the drawer
+     view — the digest content is hidden under the drawer's overlay. */
+  .header--drawer-open {
+    background: var(--color-bg-secondary);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 }
 

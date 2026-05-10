@@ -32,7 +32,7 @@ interface HeaderProps {
 export function Header({ onMenuToggle, isOpen = false }: HeaderProps) {
   const router = useRouter();
   return (
-    <header className="header">
+    <header className={`header${isOpen ? " header--drawer-open" : ""}`}>
       <button
         type="button"
         className="header-hamburger"
