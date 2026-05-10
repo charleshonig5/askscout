@@ -7318,6 +7318,14 @@ a:hover {
     order: 3;
     align-self: flex-start;
   }
+
+  /* Privacy cards stack into a single column on mobile, so the
+     desktop 196px min-height (kept so the side-by-side grid pair
+     stayed even-height) becomes dead space below each card.
+     Reset to auto so the cards hug their content vertically. */
+  .settings-privacy-card {
+    min-height: auto;
+  }
 }
 
 /* ============================================================
