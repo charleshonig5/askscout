@@ -2081,33 +2081,6 @@ export function DigestView({
               />
             )}
 
-            {/* Action buttons at the bottom of the main column. Three
-                derivative artifacts you can generate from this digest:
-                AI Resume Prompt (for your AI coding tool), Standup (for
-                your team), Todo List (for yourself). AI Resume Prompt is
-                first because it's the most distinctive value prop. */}
-            {!isStreaming && (onResumeWithAI || onGenerateStandup || onGeneratePlan) && (
-              <div className="digest-bottom-actions">
-                {onResumeWithAI && (
-                  <button className="standup-btn" onClick={onResumeWithAI}>
-                    <Sparkles size={18} strokeWidth={1} aria-hidden />
-                    AI Resume Prompt
-                  </button>
-                )}
-                {onGenerateStandup && (
-                  <button className="standup-btn" onClick={onGenerateStandup}>
-                    <BookText size={18} strokeWidth={1} aria-hidden />
-                    Generate Standup
-                  </button>
-                )}
-                {onGeneratePlan && (
-                  <button className="standup-btn" onClick={onGeneratePlan}>
-                    <LayoutList size={18} strokeWidth={1} aria-hidden />
-                    Todo List
-                  </button>
-                )}
-              </div>
-            )}
           </div>
 
           {renderSidebar && (
@@ -2122,6 +2095,39 @@ export function DigestView({
               visibleSections={visibleSections}
               repoFullName={repoFullName}
             />
+          )}
+
+          {/* Bottom action buttons. Lives at the LAYOUT level (sibling of
+              .digest-main / .digest-stats-sidebar) so on mobile single-
+              column it falls below the stats column — matching Figma's
+              section 4 placement. On desktop two-col, the grid template
+              tucks it into the bottom of the left (main) column with the
+              sidebar spanning both rows on the right. Three derivative
+              artifacts: AI Resume Prompt (for your AI coding tool),
+              Standup (for your team), Todo List (for yourself). AI
+              Resume Prompt is first because it's the most distinctive
+              value prop. */}
+          {!isStreaming && (onResumeWithAI || onGenerateStandup || onGeneratePlan) && (
+            <div className="digest-bottom-actions">
+              {onResumeWithAI && (
+                <button className="standup-btn" onClick={onResumeWithAI}>
+                  <Sparkles size={18} strokeWidth={1} aria-hidden />
+                  AI Resume Prompt
+                </button>
+              )}
+              {onGenerateStandup && (
+                <button className="standup-btn" onClick={onGenerateStandup}>
+                  <BookText size={18} strokeWidth={1} aria-hidden />
+                  Generate Standup
+                </button>
+              )}
+              {onGeneratePlan && (
+                <button className="standup-btn" onClick={onGeneratePlan}>
+                  <LayoutList size={18} strokeWidth={1} aria-hidden />
+                  Todo List
+                </button>
+              )}
+            </div>
           )}
         </div>
       </div>

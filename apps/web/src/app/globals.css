@@ -1167,7 +1167,11 @@ a:hover {
     align-items: flex-start;
     gap: var(--space-lg);
     padding: var(--space-lg);
-    border-bottom: none;
+    /* Border-bottom comes from the base desktop rule (1px
+       --color-border). Mobile keeps it as the divider between the
+       page-header block and the digest body — same hairline pattern
+       the bottom-actions block uses to mark the boundary down to
+       the buttons. */
   }
 
   .digest-page-header-right {
@@ -8142,15 +8146,49 @@ a:hover {
        the sidebar. This way only the narrative compresses until we hit the
        1080px breakpoint, at which point the layout flips to single column. */
     grid-template-columns: minmax(0, 1fr) 460px;
+    /* Three grid items: .digest-main top-left, .digest-bottom-actions
+       below it (also left), and .digest-stats-sidebar spanning both
+       rows on the right so its border-left runs the full layout
+       height. Using template-areas keeps the placement explicit and
+       independent of source order — bottom-actions can move between
+       parents (mobile flow needs it last; desktop needs it tucked
+       under main) without losing its desktop slot. */
+    grid-template-areas:
+      "main sidebar"
+      "actions sidebar";
     gap: 0;
     align-items: stretch;
   }
 
-  /* Base .digest-main / .digest-stats-sidebar already carry 34px padding on
-     all sides; the only two-col-specific addition is the vertical divider. */
+  .digest-layout--two-col .digest-main {
+    grid-area: main;
+  }
+
   .digest-layout--two-col .digest-stats-sidebar {
+    grid-area: sidebar;
+    /* Base .digest-main / .digest-stats-sidebar already carry 34px
+       padding on all sides; the only two-col-specific addition is the
+       vertical divider. */
     border-left: 1px solid var(--color-border);
   }
+
+  .digest-layout--two-col .digest-bottom-actions {
+    grid-area: actions;
+    /* Main supplies its own 34px padding-bottom, which doubles as the
+       gap from the last narrative section to the buttons. Without this
+       reset the buttons would inherit the inside-main margin-top
+       (32px) on top of main's 34px padding, producing a 66px gap. */
+    margin-top: 0;
+  }
+}
+
+/* Single-column fallback (renderSidebar=false on desktop, OR <1080
+   viewport): bottom-actions sits below main as a flex sibling. Same
+   reset as the two-col grid so its margin-top doesn't double up with
+   main's 34px padding-bottom. The mobile @media block further down
+   re-introduces a 24px breathing room above the divider line. */
+.digest-layout > .digest-bottom-actions {
+  margin-top: 0;
 }
 
 /* Bottom-row variant of the shared action button: stretches to fill the
@@ -8337,13 +8375,14 @@ a:hover {
    last.
    ========================================================================== */
 @media (max-width: 768px) {
-  /* Outer container becomes a 24px-inset single-column flow. The page
-     header above already supplies the top inset, so .digest-main and
-     .digest-stats-sidebar drop their own vertical padding and only
-     carry the horizontal gutters. */
+  /* Outer container becomes a 24px-inset single-column flow. Top
+     padding of 24px gives the first content card breathing room
+     below the page-header divider line; bottom padding stays 0 so
+     the last section's own margin-bottom carries the rhythm into
+     the stats column / bottom actions that follow. */
   .digest-main,
   .digest-stats-sidebar {
-    padding: 0 var(--space-lg);
+    padding: var(--space-lg) var(--space-lg) 0;
   }
 
   /* Outer section gap = 34px per Figma. Desktop uses --space-xl (32);
@@ -8388,7 +8427,13 @@ a:hover {
     flex-direction: column;
     align-items: flex-start;
     gap: 14px;
-    margin-top: 24px;
+    /* 24px horizontal margin (not padding) so the divider line drawn
+       via border-top sits within the same 354px content width as
+       the narrative and stats columns above. Padding on the element
+       would have stretched the border across the full viewport.
+       Top margin stays 0; the parent .digest-layout flex gap (32px,
+       --space-xl) owns the distance from the stats column. */
+    margin: 0 var(--space-lg);
     padding-top: 24px;
     border-top: 1px solid var(--color-border);
   }

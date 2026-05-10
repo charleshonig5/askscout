@@ -189,22 +189,6 @@ export default function HeaderPreview() {
                 generated reliably in real runs.
               </p>
             </div>
-
-            {/* Section 4: bottom action buttons + divider line above. */}
-            <div className="digest-bottom-actions">
-              <button type="button" className="standup-btn">
-                <Sparkles size={18} strokeWidth={1} aria-hidden />
-                AI Resume Prompt
-              </button>
-              <button type="button" className="standup-btn">
-                <BookText size={18} strokeWidth={1} aria-hidden />
-                Generate Standup
-              </button>
-              <button type="button" className="standup-btn">
-                <LayoutList size={18} strokeWidth={1} aria-hidden />
-                Todo List
-              </button>
-            </div>
           </div>
 
           <aside className="digest-stats-sidebar">
@@ -249,6 +233,24 @@ export default function HeaderPreview() {
               </div>
             </div>
           </aside>
+
+          {/* Section 4: bottom action buttons + divider line above.
+              Sibling of .digest-main and .digest-stats-sidebar so on
+              mobile single-column it falls below the stats column. */}
+          <div className="digest-bottom-actions">
+            <button type="button" className="standup-btn">
+              <Sparkles size={18} strokeWidth={1} aria-hidden />
+              AI Resume Prompt
+            </button>
+            <button type="button" className="standup-btn">
+              <BookText size={18} strokeWidth={1} aria-hidden />
+              Generate Standup
+            </button>
+            <button type="button" className="standup-btn">
+              <LayoutList size={18} strokeWidth={1} aria-hidden />
+              Todo List
+            </button>
+          </div>
         </div>
       </div>
     </div>
