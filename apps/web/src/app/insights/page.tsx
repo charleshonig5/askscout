@@ -777,7 +777,17 @@ export default function InsightsPage() {
                 <Emoji name="calendar" size={20} />
                 <h2>Activity</h2>
               </div>
-              <p className="settings-section-desc">Your last 365 days with Scout.</p>
+              <p className="settings-section-desc">
+                {/* Desktop calendar renders the full 53-week year;
+                    mobile trims to the last 26 weeks (~6 months), so
+                    the label swaps via the CSS utility classes below. */}
+                <span className="insights-calendar-range-desktop">
+                  Your last 365 days with Scout.
+                </span>
+                <span className="insights-calendar-range-mobile">
+                  Your last 6 months with Scout.
+                </span>
+              </p>
             </header>
             {loaded ? (
               <div className="settings-panel insights-calendar-panel scroll-soft">

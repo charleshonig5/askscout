@@ -7518,12 +7518,21 @@ a:hover {
   }
 }
 
-/* Mobile activity calendar: keep the full 53-week + month-labels
-   layout exactly like desktop; just relax the 8px per-week
-   min-width so the cells shrink to fit the card width instead of
-   triggering horizontal scroll. Cells end up ~5-6px each — tight
-   but readable, matching GitHub's contribution graph proportions
-   at mobile widths. */
+/* Activity-section range label swap. ActivityCalendar trims to the
+   last 26 weeks on mobile, so the section description "Your last
+   365 days with Scout." becomes a lie. Render both spans and toggle
+   visibility per viewport. */
+.insights-calendar-range-desktop {
+  display: inline;
+}
+.insights-calendar-range-mobile {
+  display: none;
+}
+
+/* Mobile activity calendar: matches desktop's full layout exactly
+   (53-week format dropped to 26 weeks via JS in ActivityCalendar
+   so cells stay readable). Panel overflow goes back to visible
+   since the trimmed grid fits. */
 @media (max-width: 768px) {
   .insights-calendar-panel {
     overflow-x: visible;
@@ -7531,6 +7540,13 @@ a:hover {
 
   .insights-calendar-week {
     min-width: 0;
+  }
+
+  .insights-calendar-range-desktop {
+    display: none;
+  }
+  .insights-calendar-range-mobile {
+    display: inline;
   }
 }
 
