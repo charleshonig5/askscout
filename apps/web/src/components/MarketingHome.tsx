@@ -302,6 +302,119 @@ export default function MarketingHome() {
                   ))}
                 </div>
 
+                {/* Right column body — Statistics header + summary
+                    block + Most Active files + Codebase Health per
+                    Figma 244:2183. */}
+                <div className="home-hero-card-right">
+                  <span className="home-hero-card-section-title">
+                    <Emoji name="statistics" size={16} />
+                    Statistics
+                  </span>
+                  {/* Statistics summary (244:2188). */}
+                  <div className="home-hero-card-stats">
+                    <div className="home-hero-card-stats-lines">
+                      <span className="home-hero-card-stats-add">
+                        +425 lines
+                      </span>
+                      <span className="home-hero-card-stats-rem">
+                        -86 lines
+                      </span>
+                    </div>
+                    <div className="home-hero-card-stats-meta">
+                      <span className="home-hero-card-stats-metaitem">
+                        <GitCommitHorizontal size={16} strokeWidth={1.5} />
+                        19 commits
+                      </span>
+                      <span className="home-hero-card-stats-metaitem">
+                        <FileText size={12} strokeWidth={1.5} />
+                        8 Files
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Most Active files (244:2207). */}
+                  <div className="home-hero-card-block">
+                    <p className="home-hero-card-block-title">
+                      Most Active files
+                    </p>
+                    <ul className="home-hero-card-files">
+                      {[
+                        "components/OnboardingFlow.tsx",
+                        "api/billing/route.ts",
+                        "lib/stripe.ts",
+                      ].map((path, i) => (
+                        <li key={path} className="home-hero-card-file">
+                          <span className="home-hero-card-file-num">
+                            {i + 1})
+                          </span>
+                          <span className="home-hero-card-file-path">
+                            {path}
+                          </span>
+                          <span className="home-hero-card-file-link">
+                            <ExternalLink size={8} strokeWidth={1.5} />
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Codebase Health (244:2234) — Growth (Heavy / danger),
+                      Focus (Moderate / warning), Churn (Clean / success). */}
+                  <div className="home-hero-card-block">
+                    <p className="home-hero-card-block-title">
+                      Codebase Health
+                    </p>
+                    <div className="home-hero-card-health">
+                      {[
+                        {
+                          label: "Growth",
+                          desc: "Adding way more than removing",
+                          status: "Heavy",
+                          tone: "danger" as const,
+                          fill: 179,
+                        },
+                        {
+                          label: "Focus",
+                          desc: "Working on a few things",
+                          status: "Moderate",
+                          tone: "warning" as const,
+                          fill: 117,
+                        },
+                        {
+                          label: "Churn",
+                          desc: "No repeated edits",
+                          status: "Clean",
+                          tone: "success" as const,
+                          fill: 55,
+                        },
+                      ].map((card) => (
+                        <div
+                          key={card.label}
+                          className={`home-hero-card-health-card home-hero-card-health-card--${card.tone}`}
+                        >
+                          <div className="home-hero-card-health-text">
+                            <p className="home-hero-card-health-label">
+                              {card.label}
+                            </p>
+                            <p className="home-hero-card-health-desc">
+                              {card.desc}
+                            </p>
+                          </div>
+                          <span className="home-hero-card-health-pill">
+                            {card.status}
+                          </span>
+                          <div className="home-hero-card-health-bar">
+                            <div
+                              className="home-hero-card-health-fill"
+                              style={{ width: `${card.fill}px` }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
                 {/* Inner bottom fade (244:2264) — bg-primary gradient
                     over the bottom 87px of the card content area so
                     the long bullet list visually dissolves rather

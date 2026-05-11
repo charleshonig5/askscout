@@ -4447,6 +4447,213 @@ a:hover {
   font-weight: 300;
 }
 
+/* ---------- HERO GRAPHIC DIGEST CARD RIGHT COLUMN ---------- */
+/* Statistics header + summary + Most Active files + Codebase
+   Health per Figma 244:2183. Container at left:506/top:78/
+   width:219 inside the digest card. Stack gap 18 between blocks. */
+.home-hero-card-right {
+  position: absolute;
+  top: 78px;
+  left: 506px;
+  width: 219px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Stats summary (244:2188) — lines added/removed on top row,
+   commits + files icons below. Regular 10. */
+.home-hero-card-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.home-hero-card-stats-lines {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.home-hero-card-stats-add { color: var(--color-success); }
+.home-hero-card-stats-rem { color: var(--color-danger); }
+
+.home-hero-card-stats-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.home-hero-card-stats-metaitem {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--color-text-primary);
+}
+
+/* Sub-blocks (Most Active files, Codebase Health) — each has
+   a small medium-weight title + a contents stack. */
+.home-hero-card-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.home-hero-card-block-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 18px;
+  color: var(--color-text-primary);
+}
+
+.home-hero-card-files {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.home-hero-card-file {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 300;
+  line-height: 18px;
+  color: var(--color-text-primary);
+}
+
+.home-hero-card-file-num {
+  color: var(--color-text-tertiary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.home-hero-card-file-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text-primary);
+}
+
+/* Codebase Health (244:2234) — 3 cards, one per metric.
+   Bordered + bg-secondary + inner-glow with a status pill
+   top-right and a tinted progress bar at the bottom. Status
+   tones map to the canonical app tokens (danger/warning/
+   success) so light + dark resolve identically. */
+.home-hero-card-health {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.home-hero-card-health-card {
+  position: relative;
+  height: 68px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg-secondary);
+  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
+  overflow: hidden;
+}
+
+.home-hero-card-health-text {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-hero-card-health-label {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 18px;
+  color: var(--color-text-primary);
+}
+
+.home-hero-card-health-desc {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 300;
+  line-height: 18px;
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+}
+
+/* Status pill — tone class drives the text + tinted bg via
+   color-mix so the pill picks up the same hue as the bar fill. */
+.home-hero-card-health-pill {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 6px;
+  border-radius: 60px;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.home-hero-card-health-card--danger .home-hero-card-health-pill {
+  background: color-mix(in srgb, var(--color-danger) 10%, var(--color-bg-tertiary));
+  color: var(--color-danger);
+}
+.home-hero-card-health-card--warning .home-hero-card-health-pill {
+  background: color-mix(in srgb, var(--color-warning) 10%, var(--color-bg-tertiary));
+  color: var(--color-warning);
+}
+.home-hero-card-health-card--success .home-hero-card-health-pill {
+  background: color-mix(in srgb, var(--color-success) 10%, var(--color-bg-tertiary));
+  color: var(--color-success);
+}
+
+/* Progress bar — 4px tall track + colored fill. Track tints
+   match the pill's color so each card reads as a single visual
+   unit. */
+.home-hero-card-health-bar {
+  position: absolute;
+  bottom: 11px;
+  left: 7px;
+  width: 203px;
+  height: 4px;
+  border-radius: 60px;
+  background: color-mix(in srgb, currentColor 10%, var(--color-bg-tertiary));
+  overflow: hidden;
+}
+
+.home-hero-card-health-card--danger .home-hero-card-health-bar { color: var(--color-danger); }
+.home-hero-card-health-card--warning .home-hero-card-health-bar { color: var(--color-warning); }
+.home-hero-card-health-card--success .home-hero-card-health-bar { color: var(--color-success); }
+
+.home-hero-card-health-fill {
+  height: 100%;
+  border-radius: 60px;
+  background: currentColor;
+}
+
 /* Inner bottom fade — bg-primary gradient over the bottom 87px
    of the card content so the long bullet list dissolves rather
    than hitting a hard edge. Sits inside .home-hero-frame-card
