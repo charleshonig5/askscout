@@ -16,7 +16,6 @@ import FAQTabs from "@/components/FAQTabs";
 import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { FAQ_PLAIN } from "@/lib/faq-data";
-import { MOCK_STREAMING_TEXT } from "@/lib/mock-data";
 
 /* JSON-LD FAQPage schema generated from FAQ_PLAIN so the structured
    data stays in lockstep with the rendered tabbed FAQ. Google
@@ -108,18 +107,16 @@ export default function MarketingHome() {
           </div>
         </div>
 
-        {/* Demo card — non-interactive preview of a streaming digest
-            so first-time visitors immediately see what the product
-            output looks like. Uses MOCK_STREAMING_TEXT (the same
-            preview string the dashboard skeleton uses). */}
-        <div className="home-hero-demo" aria-hidden>
-          <div className="home-hero-demo-chrome">
-            <span className="home-hero-demo-dot" />
-            <span className="home-hero-demo-dot" />
-            <span className="home-hero-demo-dot" />
-            <span className="home-hero-demo-label">today&apos;s digest</span>
+        {/* Graphic frame — Figma 244:2060. Two nested bordered
+            rectangles (outer 976x584 on bg-primary, inner 948x556
+            on bg-secondary) plus a bottom fade overlay that
+            blends the frame into the page bg. Content (the digest
+            preview) will live inside the inner frame in a follow-up. */}
+        <div className="home-hero-graphic" aria-hidden>
+          <div className="home-hero-frame">
+            <div className="home-hero-frame-inner" />
           </div>
-          <pre className="home-hero-demo-body">{MOCK_STREAMING_TEXT}</pre>
+          <div className="home-hero-frame-fade" />
         </div>
       </section>
 
