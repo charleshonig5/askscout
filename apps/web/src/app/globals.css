@@ -1166,7 +1166,18 @@ a:hover {
   z-index: 20;
 }
 
-.digest-streak:hover .streak-tooltip,
+/* Show on hover (pointer devices only — :hover triggers on tap on
+   touch and would conflict with the tap-toggle path below) OR when
+   the JS-driven .tap-open class is present (touch + keyboard). */
+@media (hover: hover) {
+  .digest-streak:hover .streak-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity 0.12s ease,
+      visibility 0s linear 0s;
+  }
+}
 .digest-streak.tap-open .streak-tooltip {
   opacity: 1;
   visibility: visible;
@@ -1791,7 +1802,16 @@ a:hover {
   z-index: 20;
 }
 
-.timeline-bar:hover .timeline-tooltip,
+/* Hover gated to pointer devices; tap-toggle works on touch. */
+@media (hover: hover) {
+  .timeline-bar:hover .timeline-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity 0.12s ease,
+      visibility 0s linear 0s;
+  }
+}
 .timeline-bar.tap-open .timeline-tooltip {
   opacity: 1;
   visibility: visible;
@@ -2147,7 +2167,18 @@ a:hover {
   z-index: 30;
 }
 
-.top-file-commits--tooltip:hover .top-file-commits-tooltip {
+/* Pointer-device hover. Touch picks this up via .tap-open below
+   (added when the parent <span> gets useTapTooltip wired up). */
+@media (hover: hover) {
+  .top-file-commits--tooltip:hover .top-file-commits-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity 0.12s ease,
+      visibility 0s linear 0s;
+  }
+}
+.top-file-commits--tooltip.tap-open .top-file-commits-tooltip {
   opacity: 1;
   visibility: visible;
   transition:
@@ -2268,7 +2299,16 @@ a:hover {
   z-index: 20;
 }
 
-.health-card-level:hover .health-tooltip,
+/* Hover gated to pointer devices; tap-toggle works on touch. */
+@media (hover: hover) {
+  .health-card-level:hover .health-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity 0.12s ease,
+      visibility 0s linear 0s;
+  }
+}
 .health-card-level.tap-open .health-tooltip {
   opacity: 1;
   visibility: visible;
@@ -2606,7 +2646,18 @@ a:hover {
   z-index: 30;
 }
 
-.sidebar-title-help:hover .sidebar-title-tooltip {
+/* Pointer-device hover. Touch picks this up via .tap-open below
+   (added when the parent <span> gets useTapTooltip wired up). */
+@media (hover: hover) {
+  .sidebar-title-help:hover .sidebar-title-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity 0.12s ease,
+      visibility 0s linear 0s;
+  }
+}
+.sidebar-title-help.tap-open .sidebar-title-tooltip {
   opacity: 1;
   visibility: visible;
   transition:
@@ -2658,7 +2709,18 @@ a:hover {
   z-index: 30;
 }
 
-.sidebar-item-stat--tooltip:hover .sidebar-item-stat-tooltip {
+/* Pointer-device hover. Touch picks this up via .tap-open below
+   (added when the parent <span> gets useTapTooltip wired up). */
+@media (hover: hover) {
+  .sidebar-item-stat--tooltip:hover .sidebar-item-stat-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity 0.12s ease,
+      visibility 0s linear 0s;
+  }
+}
+.sidebar-item-stat--tooltip.tap-open .sidebar-item-stat-tooltip {
   opacity: 1;
   visibility: visible;
   transition:

@@ -19,6 +19,7 @@ import type { HistoryEntry } from "@/lib/mock-data";
 import { useCountUp } from "@/lib/use-count-up";
 import { useBodyScrollLock } from "@/lib/useBodyScrollLock";
 import { RepoSelector } from "./RepoSelector";
+import { TapTooltipSpan } from "./TapTooltipSpan";
 import { ThemeToggle } from "./ThemeToggle";
 import { Logo } from "./Logo";
 
@@ -156,15 +157,15 @@ export function Sidebar({
             <div className="sidebar-section sidebar-section--repo">
               <div className="sidebar-title">
                 Repo
-                <span
-                  className="sidebar-title-help"
-                  aria-label="Each repo has its own digest and history. Switch any time."
+                <TapTooltipSpan
+                  baseClassName="sidebar-title-help"
+                  ariaLabel="Each repo has its own digest and history. Switch any time."
                 >
                   <HelpCircle size={16} strokeWidth={1} aria-hidden />
                   <span className="sidebar-title-tooltip" role="tooltip">
                     Each repo has its own digest and history. Switch any time.
                   </span>
-                </span>
+                </TapTooltipSpan>
               </div>
               <RepoSelector
                 repos={repos}
@@ -177,15 +178,15 @@ export function Sidebar({
             <div className="sidebar-section sidebar-section--history">
               <div className="sidebar-title">
                 History
-                <span
-                  className="sidebar-title-help"
-                  aria-label="Past 30 days of digests. Click to revisit."
+                <TapTooltipSpan
+                  baseClassName="sidebar-title-help"
+                  ariaLabel="Past 30 days of digests. Click to revisit."
                 >
                   <HelpCircle size={16} strokeWidth={1} aria-hidden />
                   <span className="sidebar-title-tooltip" role="tooltip">
                     Past 30 days of digests. Click to revisit.
                   </span>
-                </span>
+                </TapTooltipSpan>
               </div>
 
               <div className="sidebar-list">
@@ -370,20 +371,33 @@ function SidebarItemStats({
     <div className="sidebar-item-stats">
       <span className="sidebar-item-stat sidebar-item-stat--added">+{addedAnim}</span>
       <span className="sidebar-item-stat sidebar-item-stat--removed">-{removedAnim}</span>
-      <span className="sidebar-item-stat sidebar-item-stat--tooltip">
+      {/* focusable={false} keeps the inner span out of the tab order
+          so we don't nest a tabbable element inside the parent
+          <button class="sidebar-item">. Click bubbling is stopped
+          inside the hook so tapping the icon doesn't trigger the
+          row's onSelect. */}
+      <TapTooltipSpan
+        baseClassName="sidebar-item-stat sidebar-item-stat--tooltip"
+        ariaLabel="Commits"
+        focusable={false}
+      >
         {commitsAnim}
         <GitCommitHorizontal size={16} strokeWidth={1} className="commit-icon" aria-hidden />
         <span className="sidebar-item-stat-tooltip" role="tooltip">
           Commits
         </span>
-      </span>
-      <span className="sidebar-item-stat sidebar-item-stat--tooltip">
+      </TapTooltipSpan>
+      <TapTooltipSpan
+        baseClassName="sidebar-item-stat sidebar-item-stat--tooltip"
+        ariaLabel="Files changed"
+        focusable={false}
+      >
         {filesAnim}
         <FileText size={12} strokeWidth={1} className="file-icon" aria-hidden />
         <span className="sidebar-item-stat-tooltip" role="tooltip">
           Files changed
         </span>
-      </span>
+      </TapTooltipSpan>
     </div>
   );
 }

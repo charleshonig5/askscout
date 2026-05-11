@@ -25,6 +25,7 @@ import {
 } from "@/components/PreGeneration";
 import { Emoji } from "@/components/Emoji";
 import { DigestOpener } from "@/components/DigestOpener";
+import { TapTooltipSpan } from "@/components/TapTooltipSpan";
 
 /**
  * Build the markdown that feeds both the clipboard Copy button and the
@@ -986,6 +987,16 @@ function WhenYouCoded({
     return () => document.removeEventListener("click", handler, true);
   }, [openBarKey]);
 
+  // Auto-dismiss the pinned bar after 4s so a tap-opened tooltip
+  // never feels stuck on mobile. Matches the useTapTooltip hook's
+  // AUTO_DISMISS_MS. The timer resets every time openBarKey changes
+  // (re-tap, new bar, manual close) thanks to the effect's deps.
+  useEffect(() => {
+    if (!openBarKey) return;
+    const id = window.setTimeout(() => setOpenBarKey(null), 4000);
+    return () => window.clearTimeout(id);
+  }, [openBarKey]);
+
   if (timeline.points.length === 0) return null;
 
   // Single commit edge case — startMs === endMs. Center the bar at 50%.
@@ -1591,13 +1602,16 @@ function TopFileStats({
     <div className="top-file-right">
       <span className="top-file-added">+{fmt(addedAnim)}</span>
       <span className="top-file-removed">-{fmt(removedAnim)}</span>
-      <span className="top-file-commits top-file-commits--tooltip">
+      <TapTooltipSpan
+        baseClassName="top-file-commits top-file-commits--tooltip"
+        ariaLabel="Commits"
+      >
         <GitCommitHorizontal size={16} strokeWidth={1} className="commit-icon" aria-hidden />
         {commitsAnim}
         <span className="top-file-commits-tooltip" role="tooltip">
           Commits
         </span>
-      </span>
+      </TapTooltipSpan>
     </div>
   );
 }
@@ -1778,6 +1792,16 @@ function CodebaseHealth({ health, animate = true }: { health: HealthData; animat
     };
     document.addEventListener("click", handler, true);
     return () => document.removeEventListener("click", handler, true);
+  }, [openCategory]);
+
+  // Auto-dismiss the pinned health-card tooltip after 4s so it
+  // doesn't feel stuck on mobile. Mirrors the useTapTooltip hook
+  // and the openBarKey timer in CodingTimelineChart — same 4s
+  // window, same reset-on-change semantics.
+  useEffect(() => {
+    if (!openCategory) return;
+    const id = window.setTimeout(() => setOpenCategory(null), 4000);
+    return () => window.clearTimeout(id);
   }, [openCategory]);
 
   const indicators = [
