@@ -3101,21 +3101,27 @@ a:hover {
 
   /* Sign-out confirm reads as a modal on the mobile drawer (spans
      full drawer width, vertical scroll behind it would feel wrong),
-     so the backdrop dims + blurs the rest of the drawer the same
-     way Clear All / Delete Account treat their page. Anchored to
-     the sidebar with fixed top: --header-height to leave the chrome
-     header above interactive (tap X to close the whole thing). */
+     so the backdrop dims + blurs the rest of the page the same way
+     Clear All / Delete Account treat their pages — full viewport
+     coverage including the chrome header above. z-index sits above
+     the chrome (.header is z-index 10) so the whole screen reads
+     as one dimmed surface; the confirm card itself sits above the
+     backdrop. */
   .sidebar-signout-backdrop {
     display: block;
     position: fixed;
-    left: 0;
-    right: 0;
-    top: var(--header-height);
-    bottom: 0;
+    inset: 0;
     background: var(--color-modal-backdrop);
     -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
-    z-index: 19;
+    z-index: 50;
+  }
+
+  /* Lift the confirm card above the full-viewport backdrop (which
+     now sits at z-index 50). Desktop keeps the original z-index
+     20 because the desktop popover doesn't render a backdrop. */
+  .sidebar-signout-confirm {
+    z-index: 51;
   }
 
   .sidebar-overlay {
