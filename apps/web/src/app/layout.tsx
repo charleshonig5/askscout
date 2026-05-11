@@ -21,7 +21,10 @@ const workSans = Work_Sans({
 // (some at 700) render natively rather than being synthesized.
 const pridi = Pridi({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  // 200 (ExtraLight) added for the hero title's mixed-weight
+  // treatment per Figma 244:2426: "Your morning" + "in 10 seconds"
+  // render at ExtraLight while "code briefing" sits at Regular.
+  weight: ["200", "400", "500", "600", "700"],
   variable: "--font-pridi",
   display: "swap",
 });

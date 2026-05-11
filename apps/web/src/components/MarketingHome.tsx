@@ -55,56 +55,56 @@ export default function MarketingHome() {
       <section className="home-hero">
         <HeroStars />
         <div className="home-hero-inner">
-          <p className="home-hero-eyebrow">The daily digest for vibe coders</p>
-          <h1 className="home-hero-title">
-            Your morning code briefing in 10 seconds.
-          </h1>
-          <p className="home-hero-subtitle">
-            AI wrote half your code this week. By Friday, half of that is a blur. AskScout reads
-            your repo and writes you a plain-English digest of what you actually shipped, what
-            changed, and where to pick back up.
-          </p>
+          <div className="home-hero-text-stack">
+            <div className="home-hero-headline">
+              {/* Trust chips sit ABOVE the title per Figma 244:2426.
+                  Two chips only (was three). "Open Source" is a link
+                  to the repo so security-conscious readers can verify
+                  the claims directly in code. */}
+              <div className="home-hero-chips">
+                <a
+                  href="https://github.com/charleshonig5/askscout"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="home-hero-chip home-hero-chip--link"
+                >
+                  Open Source
+                  <Forward size={10} strokeWidth={1.5} aria-hidden />
+                </a>
+                <span className="home-hero-chip">Read Only</span>
+              </div>
+              {/* Pridi title with mixed weights — "Your morning" and
+                  "in 10 seconds" render at ExtraLight (200), while
+                  "code briefing" stays at Regular (400) for emphasis.
+                  52px / 60 line-height per Figma. */}
+              <h1 className="home-hero-title">
+                <span className="home-hero-title-light">Your morning</span>{" "}
+                code briefing{" "}
+                <span className="home-hero-title-light">in 10 seconds</span>
+              </h1>
+            </div>
+            <p className="home-hero-subtitle">
+              A daily digest of your code in plain language so you can pick up exactly where
+              you left off.
+            </p>
+          </div>
           <div className="home-hero-cta">
-            <div className="home-cta-row">
-              {/* Primary CTA: web app sign-in. Orbital star traces
-                  the perimeter via offset-path, plays into the
-                  Scout brand metaphor without adding brand color. */}
-              <form
-                action={async () => {
-                  "use server";
-                  await signIn("github", { redirectTo: "/dashboard" });
-                }}
-              >
-                <button type="submit" className="home-cta home-cta--orbital">
-                  <span className="home-cta-label">Try AskScout free</span>
-                  <span className="home-cta-orbit" aria-hidden />
-                </button>
-              </form>
-              {/* Secondary CTA: install command chip. One click copies
-                  `npm install -g askscout` to the clipboard. Power
-                  users skip the sign-in flow entirely. */}
-              <InstallChip />
-            </div>
-            {/* Trust chips — three small pills sitting below the CTA row.
-                "Open source" is a link out to the repo so security-
-                conscious readers can verify the read-only / diffs-only
-                claims directly in code. The other two are static
-                badges. Free / no credit card lives on the CTA button
-                copy + the final CTA section, so it's not duplicated
-                here. */}
-            <div className="home-hero-chips">
-              <a
-                href="https://github.com/charleshonig5/askscout"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="home-hero-chip home-hero-chip--link"
-              >
-                Open source
-                <Forward size={10} strokeWidth={1.5} aria-hidden />
-              </a>
-              <span className="home-hero-chip">Read-only</span>
-              <span className="home-hero-chip">No full files</span>
-            </div>
+            {/* Primary CTA: web-app sign-in. Plain bordered button —
+                the previous orbital animation isn't part of the new
+                Figma direction. */}
+            <form
+              action={async () => {
+                "use server";
+                await signIn("github", { redirectTo: "/dashboard" });
+              }}
+            >
+              <button type="submit" className="home-cta">
+                Try AskScout Free
+              </button>
+            </form>
+            {/* Secondary CTA: install command chip. One click copies
+                `npm install -g askscout` to the clipboard. */}
+            <InstallChip />
           </div>
         </div>
 

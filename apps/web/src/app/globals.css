@@ -3435,6 +3435,31 @@ a:hover {
   max-width: 707px;
   /* 42px = gap from text-block bottom to graphic top. */
   margin-bottom: 42px;
+  /* Internal layout per Figma 244:2426: three nested flex columns.
+       outer  (this element)  — gap 44 — text stack → CTA row
+       text stack             — gap 24 — headline → subtitle
+       headline               — gap 14 — chips → title
+     The drop shadow softens the block against the starfield. */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 44px;
+  filter: drop-shadow(0 4px 2px rgba(0, 0, 0, 0.25));
+}
+
+.home-hero-text-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+}
+
+.home-hero-headline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
 }
 
 /* Twinkly starfield. Sits behind hero content (z-index 0) and the
@@ -3641,113 +3666,93 @@ a:hover {
   }
 }
 
-/* Eyebrow text — small uppercase label that introduces the title.
-   Used here as the brand tagline. The home-eyebrow class below
-   is the same treatment applied to all section eyebrows. */
-.home-hero-eyebrow {
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--color-text-secondary);
-  margin-bottom: 24px;
-}
-
+/* Hero title — Pridi 52 / 60 line-height per Figma 244:2443. The
+   default weight is Regular (400) for "code briefing" so it reads
+   as the emphasis word in the headline; the surrounding "Your
+   morning" and "in 10 seconds" spans flip to ExtraLight (200) via
+   .home-hero-title-light below. */
 .home-hero-title {
   font-family: var(--font-display);
-  /* 80px display anchors the hero with confidence — Raycast-tier
-     scale without overflowing on standard widescreen displays.
-     Pridi at this size + tight tracking carries the brand. */
-  font-size: 80px;
-  font-weight: 600;
-  letter-spacing: -0.035em;
-  line-height: 1.02;
+  font-size: 52px;
+  font-weight: 400;
+  line-height: 60px;
+  letter-spacing: 0;
   color: var(--color-text-primary);
-  margin-bottom: 24px;
+  text-align: center;
+  margin: 0;
+  /* 619px matches the title container in Figma 244:2442 — sets
+     the line break at "Your morning code" / "briefing in 10
+     seconds" exactly as the design specifies. */
+  max-width: 619px;
 }
 
-.home-hero-title em {
-  font-style: italic;
-  font-weight: 500;
+.home-hero-title-light {
+  font-weight: 200;
 }
 
+/* Subtitle — Work Sans Light 20 / 26 per Figma 244:2444. Body
+   color is primary (was secondary on the old hero), centered at
+   max 529px to match the Figma copy block width. */
 .home-hero-subtitle {
   font-family: var(--font-sans);
-  font-size: 17px;
+  font-size: 20px;
   font-weight: 300;
-  line-height: 1.55;
-  color: var(--color-text-secondary);
-  margin-bottom: 36px;
-  max-width: 580px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.home-hero-cta {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-
-.home-hero-meta {
-  font-size: 12px;
-  color: var(--color-text-tertiary);
+  line-height: 26px;
+  color: var(--color-text-primary);
+  text-align: center;
+  max-width: 529px;
   margin: 0;
 }
 
-/* Trust chips row in the hero — sits below the CTA pair and serves
-   as scan-able security signals (Open source / Read-only / No source
-   code). The Open source chip is a link to the repo; the other two
-   are static spans. All three share the same minimal pill recipe so
-   the row reads as a single visual unit. */
+/* CTA row — two buttons side by side per Figma 244:2445. 24px gap
+   between them; row sits below the text stack via the parent
+   .home-hero-inner's 44px outer gap. */
+.home-hero-cta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+}
+
+/* Trust chips row — sits ABOVE the title per Figma 244:2429.
+   Rectangular bordered chips (rounded 4) with transparent fill,
+   Work Sans Light 12 primary text. Two chips: "Open Source" links
+   to the repo with a Forward arrow; "Read Only" is a static span. */
 .home-hero-chips {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin: 4px 0 0;
+  align-items: flex-start;
+  gap: 14px;
 }
 
 .home-hero-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: var(--radius-full);
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
   border: 1px solid var(--color-border);
-  background: var(--color-bg-secondary);
+  background: transparent;
   font-family: var(--font-sans);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 300;
   line-height: 1;
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
   white-space: nowrap;
 }
 
 .home-hero-chip svg {
   flex-shrink: 0;
-  opacity: 0.7;
 }
 
 .home-hero-chip--link {
   text-decoration: none;
-  transition:
-    border-color 0.15s ease,
-    color 0.15s ease,
-    background 0.15s ease;
+  transition: background 0.15s ease;
 }
 
-.home-hero-chip--link:hover {
-  border-color: var(--color-border-hover);
-  color: var(--color-text-primary);
-  background: var(--color-bg-tertiary);
-}
-
-.home-hero-chip--link:hover svg {
-  opacity: 1;
+@media (hover: hover) {
+  .home-hero-chip--link:hover {
+    background: var(--color-bg-secondary);
+  }
 }
 
 /* ---------- ORBITAL CTA ---------- */
@@ -3756,31 +3761,35 @@ a:hover {
    brand metaphor (telescope / observation). Pure mono — the
    star is white in dark mode and black in light mode (it pulls
    --color-text-primary), so no new brand color is introduced. */
+/* Primary CTA — Figma 244:2446. Bordered button on bg-secondary
+   fill with an inset white glow; matches the silhouette of every
+   other primary action in the app. 54px tall, 24h/15v padding, 6
+   radius. Work Sans Light 16 label. */
 .home-cta {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 14px 28px;
+  height: 54px;
+  padding: 15px 24px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
   font-family: var(--font-sans);
-  font-size: 15px;
-  font-weight: 500;
-  border-radius: 8px;
-  background: var(--color-text-primary);
-  color: var(--color-bg-primary);
-  border: 1px solid var(--color-text-primary);
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--color-text-primary);
+  text-decoration: none;
   cursor: pointer;
-  transition:
-    transform 0.18s ease,
-    box-shadow 0.18s ease;
-  /* Margin / overflow lets the orbiting star travel just outside
-     the button's box without clipping. */
-  isolation: isolate;
+  transition: background 0.15s ease;
 }
 
-.home-cta:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 24px -8px var(--color-text-primary);
+@media (hover: hover) {
+  .home-cta:hover {
+    background: var(--color-bg-tertiary);
+  }
 }
 
 .home-cta-label {
@@ -3901,30 +3910,37 @@ a:hover {
    button. The "$" prompt prefix is rendered separately with a
    muted color so the actual command reads cleanly. The icon
    on the right (Copy / Check) is the affordance + feedback. */
+/* Secondary CTA — npm install chip per Figma 244:2448. Mirrors
+   the primary button's 54-tall / 6-radius / 24h-15v silhouette
+   so the two CTAs read as a pair, just with a darker bg-primary
+   fill so the chip looks like a terminal surface. 14px gap
+   between elements (prompt, command, copy icon). Work Sans Light
+   16; the "$" prompt drops to tertiary so the actual command
+   reads cleanly. */
 .home-cta-chip {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 13px;
-  font-weight: 400;
+  gap: 14px;
+  height: 54px;
+  padding: 15px 24px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-primary);
+  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1;
   color: var(--color-text-primary);
-  background: transparent;
-  border: 1px solid var(--color-border-hover);
-  border-radius: 8px;
   cursor: pointer;
   user-select: none;
-  transition:
-    background 0.15s ease,
-    border-color 0.15s ease,
-    transform 0.18s ease;
+  transition: background 0.15s ease;
 }
 
-.home-cta-chip:hover {
-  background: var(--color-bg-secondary);
-  border-color: var(--color-text-tertiary);
-  transform: translateY(-1px);
+@media (hover: hover) {
+  .home-cta-chip:hover {
+    background: var(--color-bg-secondary);
+  }
 }
 
 .home-cta-chip:focus-visible {
@@ -3939,13 +3955,10 @@ a:hover {
 .home-cta-chip-icon {
   display: inline-flex;
   align-items: center;
-  color: var(--color-text-secondary);
-  margin-left: 2px;
-  transition: color 0.15s ease;
-}
-
-.home-cta-chip:hover .home-cta-chip-icon {
+  width: 16px;
+  height: 16px;
   color: var(--color-text-primary);
+  transition: color 0.15s ease;
 }
 
 /* Copied state — icon flips to a checkmark in success green for
@@ -5405,7 +5418,7 @@ a:hover {
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 880px) {
   .home-hero-title {
-    font-size: 56px;
+    font-size: 52px;
   }
   .home-section-title {
     font-size: 40px;
