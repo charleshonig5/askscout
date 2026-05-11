@@ -13,6 +13,9 @@ import {
   appendDigestRun,
   getCommits,
   getDiffs,
+  getFileContextForHunks,
+  getParentSha,
+  getProjectFraming,
   getRepoName,
   readState,
   summarize,
@@ -173,6 +176,24 @@ export async function scan(options: ScanOptions): Promise<void> {
     const detectedStack = await detectStack(createLocalFilesReader(projectRoot)).catch(
       () => ({}),
     );
+
+    // Pull the same prompt-enrichment context the web app uses:
+    //   - file hunk context (parent SHA + ~15 lines around each hunk)
+    //   - project framing (README + one manifest from the working tree)
+    // Both wrapped in .catch so any failure (initial commit, missing
+    // README, malformed package.json) just drops that piece from the
+    // prompt without breaking the run. PR/issue context (web's #1) is
+    // intentionally skipped here — git doesn't store that data.
+    const oldest = commits[commits.length - 1];
+    const parentSha = oldest ? await getParentSha(projectRoot, oldest.hash).catch(() => null) : null;
+    const fileHunkContexts = parentSha
+      ? await getFileContextForHunks(projectRoot, parentSha, diffs).catch(() => [])
+      : [];
+    const projectFraming = await getProjectFraming(projectRoot).catch(() => ({
+      readme: null,
+      manifest: null,
+    }));
+
     const result = await summarize(
       commits,
       diffs,
@@ -183,6 +204,8 @@ export async function scan(options: ScanOptions): Promise<void> {
         model: config.model,
       },
       detectedStack,
+      fileHunkContexts,
+      projectFraming,
     );
 
     // 10. Stop spinner

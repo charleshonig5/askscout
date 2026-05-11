@@ -1,4 +1,13 @@
-export { getCommits, getDiffs, getRepoName } from "./git.js";
+export {
+  getCommits,
+  getDiffs,
+  getFileContextForHunks,
+  getParentSha,
+  getRepoName,
+} from "./git.js";
+export type { FileHunkContext } from "./git.js";
+export { getProjectFraming } from "./framing.js";
+export type { ProjectFraming } from "./framing.js";
 export {
   summarize,
   buildSystemPrompt,

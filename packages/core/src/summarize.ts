@@ -32,6 +32,8 @@ import type {
 } from "./types.js";
 import type { DetectedStack } from "./detect-stack.js";
 import { formatDetectedStackBlock } from "./detect-stack.js";
+import type { FileHunkContext } from "./git.js";
+import type { ProjectFraming } from "./framing.js";
 import {
   extractFlaggedCommits,
   extractTodosFromDiffs,
@@ -386,6 +388,8 @@ export function buildUserPrompt(
   diffs: GitDiff[],
   state: ProjectState | null,
   detectedStack?: DetectedStack,
+  fileHunkContexts?: FileHunkContext[],
+  projectFraming?: ProjectFraming | null,
 ): string {
   const context =
     state?.summary && state.summary.length > 0
@@ -419,8 +423,35 @@ Each has: label, level (Strong|Okay|Rough), score (0-10), and a brief detail str
     extractFlaggedCommits(commits),
   );
 
+  // Project framing — README + manifest read at the working tree.
+  // Gated empty when neither file was found so the prompt drops the
+  // section entirely (preserving structure on the no-data path).
+  const framingBlock =
+    projectFraming && (projectFraming.readme || projectFraming.manifest)
+      ? [
+          "## Project Framing",
+          "This is what the project IS — use it to read every diff in context. Reference it for accurate language (e.g., the actual framework name, the actual package name) instead of generic placeholders. Don't summarise this section; it's background only.",
+          ...(projectFraming.readme ? [`### README\n${projectFraming.readme}`] : []),
+          ...(projectFraming.manifest
+            ? [`### Manifest (${projectFraming.manifest.path})\n${projectFraming.manifest.content}`]
+            : []),
+        ].join("\n\n")
+      : "";
+
+  // Surrounding source-code context. Gated empty when no files were
+  // enriched so the section drops out entirely on the failure path.
+  const hunkContextBlock =
+    fileHunkContexts && fileHunkContexts.length > 0
+      ? [
+          "## Surrounding Source Context (parent SHA)",
+          "Each file below shows ~15 lines of source code around every changed hunk, taken from the file's state BEFORE the changes in this digest's window were applied. Use this together with the diffs above to read refactors, renames, and sparse hunks in context — the diff tells you WHAT lines changed, this tells you WHAT CODE surrounded them.",
+          ...fileHunkContexts.map((f) => f.block),
+        ].join("\n\n")
+      : "";
+
   return `Analyze the following git activity and produce a structured digest.
-${stackBlock ? `\n${stackBlock}` : ""}${signalsBlock ? `\n${signalsBlock}` : ""}
+${stackBlock ? `\n${stackBlock}` : ""}${signalsBlock ? `\n${signalsBlock}` : ""}${framingBlock ? `\n${framingBlock}` : ""}
+
 ## Previous Project Context
 ${context}
 
@@ -434,6 +465,7 @@ Use these diffs to understand WHAT was actually built, changed, or fixed. Don't 
 
 ${formatDiffsForPrompt(diffs)}
 ${churnList ? `\n## Churn (files edited 3+ times — these are your Still Shifting candidates)\n${churnList}` : ""}
+${hunkContextBlock ? `\n${hunkContextBlock}` : ""}
 
 ## Section Definitions
 - **shipped**: Things that went from not existing to working. New features, new pages, new endpoints. What can the user do now that they couldn't before?
@@ -586,9 +618,18 @@ export async function summarize(
   state: ProjectState | null,
   ai: AiConfig,
   detectedStack?: DetectedStack,
+  fileHunkContexts?: FileHunkContext[],
+  projectFraming?: ProjectFraming | null,
 ): Promise<SummarizeResult> {
   const systemPrompt = buildSystemPrompt();
-  const userPrompt = buildUserPrompt(commits, diffs, state, detectedStack);
+  const userPrompt = buildUserPrompt(
+    commits,
+    diffs,
+    state,
+    detectedStack,
+    fileHunkContexts,
+    projectFraming,
+  );
 
   const rawText =
     ai.provider === "anthropic"

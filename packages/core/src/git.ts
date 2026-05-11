@@ -185,3 +185,140 @@ export async function getDiffs(projectRoot: string, commits: GitCommit[]): Promi
 
   return diffs;
 }
+
+/* ============================================================
+   Surrounding source-code context for diff hunks (CLI port)
+   ------------------------------------------------------------
+   Mirrors apps/web/src/lib/github.ts's fetchFileContextForHunks
+   but uses local git instead of the GitHub Contents API:
+     - `git rev-parse <sha>^` for the parent SHA
+     - `git show <parentSha>:<path>` for the file at the parent
+   Same selection logic (multi-hunk files first, churn tiebreak)
+   and same caps as the web version so CLI digests stay in
+   lockstep with the web on quality.
+   ============================================================ */
+const HUNK_CONTEXT_LINES = 15;
+const MAX_FILES_FOR_CONTEXT = 8;
+const MAX_CONTEXT_PER_FILE_CHARS = 3000;
+const MAX_TOTAL_CONTEXT_CHARS = 24_000;
+
+export interface FileHunkContext {
+  file: string;
+  block: string;
+}
+
+/** Resolve a commit's first parent SHA, or null if it has none
+ *  (initial commit, transient git error). Callers treat null as
+ *  "skip the context-fetching feature for this run". */
+export async function getParentSha(
+  projectRoot: string,
+  sha: string,
+): Promise<string | null> {
+  try {
+    const stdout = await execGit(projectRoot, ["rev-parse", `${sha}^`]);
+    const trimmed = stdout.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  } catch {
+    return null;
+  }
+}
+
+function parseHunkMarkers(patch: string): Array<{ start: number; count: number }> {
+  const hunks: Array<{ start: number; count: number }> = [];
+  const re = /@@ -(\d+),?(\d*) \+/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(patch)) !== null) {
+    const start = Number(m[1] ?? "0");
+    const countStr = m[2];
+    const count = countStr && countStr.length > 0 ? Number(countStr) : 1;
+    if (Number.isFinite(start) && start > 0 && Number.isFinite(count)) {
+      hunks.push({ start, count });
+    }
+  }
+  return hunks;
+}
+
+function isAddedFilePatch(patch: string): boolean {
+  return /^@@ -0,0 \+/m.test(patch);
+}
+
+function isDeletedFilePatch(patch: string): boolean {
+  return /@@ -\d+,?\d* \+0,0 @@/m.test(patch);
+}
+
+async function showFileAtRef(
+  projectRoot: string,
+  ref: string,
+  filePath: string,
+): Promise<string | null> {
+  try {
+    return await execGit(projectRoot, ["show", `${ref}:${filePath}`]);
+  } catch {
+    // 128 exit code = path didn't exist at that ref (renames, new
+    // files born in this window, etc.). Treat as a skip.
+    return null;
+  }
+}
+
+/** Build prompt-ready context blocks for the top
+ *  MAX_FILES_FOR_CONTEXT diffs in the run. Selection prioritises
+ *  files with multiple non-adjacent hunks (where the diff is
+ *  hardest to read without context), then total churn as the
+ *  tiebreak. Returns an array of {file, block} entries already
+ *  capped to the global MAX_TOTAL_CONTEXT_CHARS budget. */
+export async function getFileContextForHunks(
+  projectRoot: string,
+  parentSha: string,
+  diffs: GitDiff[],
+): Promise<FileHunkContext[]> {
+  if (!parentSha || diffs.length === 0) return [];
+
+  const scored = diffs
+    .filter((d) => d.patch && !isAddedFilePatch(d.patch) && !isDeletedFilePatch(d.patch))
+    .map((d) => ({
+      diff: d,
+      hunks: parseHunkMarkers(d.patch),
+      totalChanges: d.additions + d.deletions,
+    }))
+    .filter((c) => c.hunks.length > 0)
+    .sort((a, b) => {
+      if (b.hunks.length !== a.hunks.length) return b.hunks.length - a.hunks.length;
+      return b.totalChanges - a.totalChanges;
+    })
+    .slice(0, MAX_FILES_FOR_CONTEXT);
+
+  if (scored.length === 0) return [];
+
+  const results: FileHunkContext[] = [];
+  let totalChars = 0;
+
+  for (const c of scored) {
+    const content = await showFileAtRef(projectRoot, parentSha, c.diff.file);
+    if (content === null) continue;
+    const lines = content.split("\n");
+    const hunkBlocks: string[] = [];
+    let perFileChars = 0;
+
+    for (const h of c.hunks) {
+      const startIdx = Math.max(0, h.start - 1 - HUNK_CONTEXT_LINES);
+      const endIdx = Math.min(lines.length, h.start - 1 + h.count + HUNK_CONTEXT_LINES);
+      const slice = lines.slice(startIdx, endIdx).join("\n");
+      const block = `Around line ${h.start} (parent file):\n${slice}`;
+      if (perFileChars + block.length + 2 > MAX_CONTEXT_PER_FILE_CHARS) {
+        hunkBlocks.push("... (further hunks omitted, per-file context budget reached)");
+        break;
+      }
+      hunkBlocks.push(block);
+      perFileChars += block.length + 2;
+    }
+
+    if (hunkBlocks.length === 0) continue;
+
+    const fileBlock = [`### ${c.diff.file}`, ...hunkBlocks].join("\n\n");
+    if (totalChars + fileBlock.length > MAX_TOTAL_CONTEXT_CHARS) break;
+    totalChars += fileBlock.length;
+    results.push({ file: c.diff.file, block: fileBlock });
+  }
+
+  return results;
+}
