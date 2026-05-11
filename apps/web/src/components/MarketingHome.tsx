@@ -217,7 +217,7 @@ export default function MarketingHome() {
                 <div className="home-hero-card-header">
                   <div className="home-hero-card-heading">
                     <div className="home-hero-card-titlerow">
-                      <p className="home-hero-card-title">Today&apos;s Digest</p>
+                      <p className="home-hero-card-title">Today’s Digest</p>
                       <div className="home-hero-card-chips">
                         <span className="home-hero-card-chip">
                           askscout

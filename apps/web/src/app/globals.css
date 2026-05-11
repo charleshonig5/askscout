@@ -4585,7 +4585,9 @@ a:hover {
 }
 
 .home-hero-card-health-label {
-  margin: 0;
+  /* Figma 244:2244 applies mb:-2px to tighten the label against
+     its description below — preserves the visual rhythm. */
+  margin: 0 0 -2px 0;
   font-family: var(--font-sans);
   font-size: 10px;
   font-weight: 500;
