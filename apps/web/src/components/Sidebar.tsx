@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -234,57 +235,68 @@ export function Sidebar({
             close button + modal-divider + modal-footer--split) so
             all three secondary modals read identical visually. */}
         <div className="sidebar-bottom" ref={footerRef}>
-          {signOutOpen && (
-            <div
-              className="sidebar-signout-backdrop"
-              aria-hidden
-              onClick={() => setSignOutOpen(false)}
-            />
-          )}
-          {signOutOpen && (
-            <div
-              className="sidebar-signout-confirm"
-              role="dialog"
-              aria-modal="false"
-              aria-labelledby="signout-title"
-            >
-              <div className="modal-top">
-                <div className="modal-identity">
-                  <h2 id="signout-title" className="modal-title">
-                    Sign out of Scout?
-                  </h2>
-                  <p className="modal-subtitle">
-                    You&apos;ll need to sign back in with GitHub to see new digests.
-                  </p>
+          {/* Sign-out backdrop + confirm both portal to document.body
+              so they escape the .sidebar.open transform's containing
+              block (otherwise `position: fixed` would be fixed
+              relative to the transformed sidebar, leaving the chrome
+              header un-dimmed and the centered confirm anchored to
+              the sidebar instead of the viewport). On desktop the
+              confirm CSS pins it back inside the sidebar via
+              data-anchor="sidebar". */}
+          {signOutOpen &&
+            typeof document !== "undefined" &&
+            createPortal(
+              <>
+                <div
+                  className="sidebar-signout-backdrop"
+                  aria-hidden
+                  onClick={() => setSignOutOpen(false)}
+                />
+                <div
+                  className="sidebar-signout-confirm"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="signout-title"
+                >
+                  <div className="modal-top">
+                    <div className="modal-identity">
+                      <h2 id="signout-title" className="modal-title">
+                        Sign out of Scout?
+                      </h2>
+                      <p className="modal-subtitle">
+                        You&apos;ll need to sign back in with GitHub to see new digests.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      className="modal-close-btn"
+                      onClick={() => setSignOutOpen(false)}
+                      aria-label="Close"
+                    >
+                      <CircleX size={20} strokeWidth={1} aria-hidden />
+                    </button>
+                  </div>
+                  <div className="modal-divider" aria-hidden />
+                  <div className="modal-footer modal-footer--split">
+                    <button
+                      type="button"
+                      className="modal-action-btn"
+                      onClick={() => setSignOutOpen(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="modal-action-btn modal-action-btn--danger"
+                      onClick={() => void signOut({ callbackUrl: "/" })}
+                    >
+                      Sign out
+                    </button>
+                  </div>
                 </div>
-                <button
-                  type="button"
-                  className="modal-close-btn"
-                  onClick={() => setSignOutOpen(false)}
-                  aria-label="Close"
-                >
-                  <CircleX size={20} strokeWidth={1} aria-hidden />
-                </button>
-              </div>
-              <div className="modal-divider" aria-hidden />
-              <div className="modal-footer modal-footer--split">
-                <button
-                  type="button"
-                  className="modal-action-btn"
-                  onClick={() => setSignOutOpen(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="modal-action-btn modal-action-btn--danger"
-                  onClick={() => void signOut({ callbackUrl: "/" })}
-                >
-                  Sign out
-                </button>
-              </div>
-            </div>
-          )}
+              </>,
+              document.body,
+            )}
 
           <div className="sidebar-profile-row">
             <div className="sidebar-profile-identity">

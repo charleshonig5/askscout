@@ -2962,37 +2962,42 @@ a:hover {
   opacity: 0.7;
 }
 
-/* Sign-out confirm — stays anchored above the profile row (NOT a
-   centered modal) so the gesture is local to where the trigger
-   lives. Visually identical to the centered .modal--confirm: same
-   surface, border, radius, inner-glow, and crucially the same
-   internal structure (modal-top + modal-divider + modal-footer--
-   split) so all three secondary modals (Sign out, Clear All
-   History, Delete Account) read as the same family. */
+/* Sign-out confirm — centered modal that portals to document.body.
+   Matches the other secondary confirms (Clear All History, Delete
+   Account) so all three sit in the same family: same fixed-center
+   position, same 420px max width, same surface / border / radius /
+   inner-glow, same internal structure (modal-top + modal-divider +
+   modal-footer--split). Portaling out of the sidebar is required
+   because the .sidebar.open transform creates a containing block
+   for fixed descendants; without the portal, position: fixed would
+   anchor to the transformed sidebar instead of the viewport. */
 .sidebar-signout-confirm {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: calc(100% + 8px);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 420px;
   background: var(--color-modal-surface);
   border: 1px solid var(--color-border);
   border-radius: 8px;
   box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
-  z-index: 20;
+  z-index: 101;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-/* Mobile-only backdrop behind the sign-out confirm. On desktop the
-   confirm is an inline popover anchored to the profile row and
-   doesn't need to dim the rest of the sidebar; on mobile the
-   confirm spans the full drawer width and reads more like a true
-   modal, so the backdrop matches the chrome the other secondary
-   confirms (Clear All, Delete Account) use. Hidden on desktop via
-   display: none — the rule below in @media flips it visible. */
+/* Full-viewport backdrop behind the sign-out confirm. Same dim +
+   5px blur the .modal-overlay rule uses for Clear All / Delete
+   Account so the three secondary confirms share the chrome. */
 .sidebar-signout-backdrop {
-  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--color-modal-backdrop);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  z-index: 100;
 }
 
 .sidebar-overlay {
@@ -3099,30 +3104,10 @@ a:hover {
     height: 24px;
   }
 
-  /* Sign-out confirm reads as a modal on the mobile drawer (spans
-     full drawer width, vertical scroll behind it would feel wrong),
-     so the backdrop dims + blurs the rest of the page the same way
-     Clear All / Delete Account treat their pages — full viewport
-     coverage including the chrome header above. z-index sits above
-     the chrome (.header is z-index 10) so the whole screen reads
-     as one dimmed surface; the confirm card itself sits above the
-     backdrop. */
-  .sidebar-signout-backdrop {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background: var(--color-modal-backdrop);
-    -webkit-backdrop-filter: blur(5px);
-    backdrop-filter: blur(5px);
-    z-index: 50;
-  }
-
-  /* Lift the confirm card above the full-viewport backdrop (which
-     now sits at z-index 50). Desktop keeps the original z-index
-     20 because the desktop popover doesn't render a backdrop. */
-  .sidebar-signout-confirm {
-    z-index: 51;
-  }
+  /* (Sign-out modal styles moved up to the base .sidebar-signout-*
+     rules — they're now identical for desktop + mobile after the
+     confirm got promoted from an anchored popover to a true
+     centered modal.) */
 
   .sidebar-overlay {
     display: block;
