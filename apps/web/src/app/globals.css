@@ -2984,6 +2984,17 @@ a:hover {
   overflow: hidden;
 }
 
+/* Mobile-only backdrop behind the sign-out confirm. On desktop the
+   confirm is an inline popover anchored to the profile row and
+   doesn't need to dim the rest of the sidebar; on mobile the
+   confirm spans the full drawer width and reads more like a true
+   modal, so the backdrop matches the chrome the other secondary
+   confirms (Clear All, Delete Account) use. Hidden on desktop via
+   display: none — the rule below in @media flips it visible. */
+.sidebar-signout-backdrop {
+  display: none;
+}
+
 .sidebar-overlay {
   display: none;
 }
@@ -3086,6 +3097,25 @@ a:hover {
   .sidebar-signout-btn svg {
     width: 24px;
     height: 24px;
+  }
+
+  /* Sign-out confirm reads as a modal on the mobile drawer (spans
+     full drawer width, vertical scroll behind it would feel wrong),
+     so the backdrop dims + blurs the rest of the drawer the same
+     way Clear All / Delete Account treat their page. Anchored to
+     the sidebar with fixed top: --header-height to leave the chrome
+     header above interactive (tap X to close the whole thing). */
+  .sidebar-signout-backdrop {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: var(--header-height);
+    bottom: 0;
+    background: var(--color-modal-backdrop);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    z-index: 19;
   }
 
   .sidebar-overlay {

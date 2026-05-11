@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import type { HistoryEntry } from "@/lib/mock-data";
 import { useCountUp } from "@/lib/use-count-up";
+import { useBodyScrollLock } from "@/lib/useBodyScrollLock";
 import { RepoSelector } from "./RepoSelector";
 import { ThemeToggle } from "./ThemeToggle";
 import { Logo } from "./Logo";
@@ -62,6 +63,14 @@ export function Sidebar({
   const router = useRouter();
   const [signOutOpen, setSignOutOpen] = useState(false);
   const footerRef = useRef<HTMLDivElement>(null);
+
+  // Body scroll lock + backdrop overlay are mobile-only ergonomics
+  // for the sign-out confirm. The hook itself is viewport-agnostic
+  // (does nothing visible on desktop because the drawer takes the
+  // full viewport on mobile and the lock prevents the history list
+  // behind the confirm from scrolling). CSS hides the backdrop on
+  // desktop so the inline anchored popover stays local.
+  useBodyScrollLock(signOutOpen);
 
   // Decide which entries are "fresh" — the digest just finished and landed
   // in history during this session, so it gets the slide-in + glow reveal.
@@ -225,6 +234,13 @@ export function Sidebar({
             close button + modal-divider + modal-footer--split) so
             all three secondary modals read identical visually. */}
         <div className="sidebar-bottom" ref={footerRef}>
+          {signOutOpen && (
+            <div
+              className="sidebar-signout-backdrop"
+              aria-hidden
+              onClick={() => setSignOutOpen(false)}
+            />
+          )}
           {signOutOpen && (
             <div
               className="sidebar-signout-confirm"
