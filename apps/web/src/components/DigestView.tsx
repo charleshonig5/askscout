@@ -1048,6 +1048,64 @@ function WhenYouCoded({
       rightPct: 100,
     });
   }
+
+  // Floor each day segment's visual width so a day with 30 minutes
+  // of activity doesn't render as an unreadable sliver. The natural
+  // proportional layout makes "Sun 12pm-10pm + Mon 8am" look like
+  // "10-hour bar | almost nothing", which clips the dayName label
+  // and hides the single commit. After this pass every day gets at
+  // least MIN_PCT of the track; donor segments (those above the
+  // floor) shrink proportionally from their excess so total stays
+  // at 100%.
+  //
+  // MIN_PCT scales with day count so it never overflows: pick 20%
+  // as the baseline, but cap at 90/N so all minimums combined leave
+  // at least 10% of headroom for the donor segments to live in.
+  // N=2  → 20% floor (e.g. 80/20 split worst case)
+  // N=3  → 20% floor (60/20/20)
+  // N=4  → 22.5% floor only if all four are below — typically 20%
+  // N=5+ → 90/N floor (18% / 15% / ...)
+  //
+  // startMs / endMs of each segment are NOT touched — only the
+  // visual leftPct / rightPct change. Bin time-allocation uses real
+  // time (segSpan = endMs - startMs) so a tiny day still gets its
+  // minimum 2-bin allocation; those bins now render across a
+  // readable visual width instead of being crushed into a sliver.
+  if (daySegments.length > 1) {
+    const N = daySegments.length;
+    const MIN_PCT = Math.min(20, 90 / N);
+    const widths = daySegments.map((s) => s.rightPct - s.leftPct);
+    const needsExpand = widths.map((w) => w < MIN_PCT);
+    const expansionNeeded = widths.reduce(
+      (sum, w, i) => sum + (needsExpand[i] ? MIN_PCT - w : 0),
+      0,
+    );
+    if (expansionNeeded > 0) {
+      const donorExcess = widths.reduce(
+        (sum, w, i) => sum + (!needsExpand[i] ? Math.max(0, w - MIN_PCT) : 0),
+        0,
+      );
+      // Skip the rebalance if donors don't have enough excess to
+      // give (every segment is already near the floor) — at that
+      // point the proportional layout is already close to equal-
+      // width and the rebalance would just churn percentages.
+      if (donorExcess >= expansionNeeded) {
+        const shrinkRatio = expansionNeeded / donorExcess;
+        const newWidths = widths.map((w, i) => {
+          if (needsExpand[i]) return MIN_PCT;
+          const excess = Math.max(0, w - MIN_PCT);
+          return w - excess * shrinkRatio;
+        });
+        let acc = 0;
+        daySegments.forEach((seg, i) => {
+          seg.leftPct = acc;
+          acc += newWidths[i] ?? 0;
+          seg.rightPct = acc;
+        });
+      }
+    }
+  }
+
   const crossesDay = daySegments.length > 1;
   const breakPercents = daySegments.slice(0, -1).map((s) => s.rightPct);
 
