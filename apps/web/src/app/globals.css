@@ -3341,14 +3341,14 @@ a:hover {
 .home-nav-links {
   display: flex;
   align-items: center;
-  /* 44px between links per Figma. 182px gap from the divider to
-     the first link mirrors the Figma's nav-links anchor point at
-     x=382.5 (calc(50% - 337.5px) on a 1440 frame). margin-right:
-     auto absorbs all remaining horizontal space so the right
-     cluster (theme toggle + Open App) lands flush against the
-     right padding edge regardless of viewport width. */
+  /* Consistent 44px rhythm across the whole nav: 44 from logo to
+     divider, 44 between every nav link, 44 from the divider to
+     the first link. margin-right: auto absorbs all remaining
+     horizontal space so the right cluster (theme toggle + Open
+     App) lands flush against the right padding edge at any
+     viewport width. */
   gap: 44px;
-  margin-left: 182px;
+  margin-left: 44px;
   margin-right: auto;
 }
 
