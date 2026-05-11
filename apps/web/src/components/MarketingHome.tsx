@@ -114,7 +114,9 @@ export default function MarketingHome() {
             preview) will live inside the inner frame in a follow-up. */}
         <div className="home-hero-graphic" aria-hidden>
           <div className="home-hero-frame">
-            <div className="home-hero-frame-inner" />
+            <div className="home-hero-frame-inner">
+              <div className="home-hero-frame-card" />
+            </div>
           </div>
           <div className="home-hero-frame-fade" />
         </div>
