@@ -7204,6 +7204,20 @@ a:hover {
   width: 100%;
 }
 
+/* Inline link to the /privacy route at the end of the privacy
+   footer. Underlined so the affordance reads as a link without
+   competing with the surrounding sentence; color inherits from
+   the parent paragraph so the link sits in the same primary
+   text tone. */
+.settings-privacy-footer-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.settings-privacy-footer-link:hover {
+  color: var(--color-text-secondary);
+}
+
 @media (max-width: 600px) {
   .settings-privacy-grid {
     grid-template-columns: 1fr;
