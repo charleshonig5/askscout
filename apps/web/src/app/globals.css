@@ -8527,9 +8527,18 @@ a:hover {
    viewport): bottom-actions sits below main as a flex sibling. Same
    reset as the two-col grid so its margin-top doesn't double up with
    main's 34px padding-bottom. The mobile @media block further down
-   re-introduces a 24px breathing room above the divider line. */
+   re-introduces a 24px breathing room above the divider line.
+
+   Padding restores the 34px left/right/bottom inset that bottom-
+   actions used to inherit by being inside .digest-main. Moving it
+   out for the mobile flow stripped that inheritance, so on desktop
+   the buttons were stretching edge-to-edge against the card. Top
+   padding stays 0 because main's own padding-bottom already
+   provides the gap above. Mobile overrides this via the @media
+   block below. */
 .digest-layout > .digest-bottom-actions {
   margin-top: 0;
+  padding: 0 34px 34px;
 }
 
 /* Bottom-row variant of the shared action button: stretches to fill the
