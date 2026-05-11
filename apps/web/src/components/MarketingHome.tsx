@@ -1,10 +1,15 @@
 import Link from "next/link";
 import {
   BookText,
+  ChevronDown,
   Code2,
   EyeOff,
+  FileText,
   Forward,
+  GitCommitHorizontal,
+  HelpCircle,
   LayoutList,
+  Settings2,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
@@ -21,6 +26,20 @@ import { FAQ_PLAIN } from "@/lib/faq-data";
    data stays in lockstep with the rendered tabbed FAQ. Google
    requires the answer text in schema to mirror what users see on
    the page. */
+/* Day rows shown in the hero graphic's sidebar — fake history
+   data sized to match Figma 244:2269. The first row ("Today")
+   is the active selection (highlighted with the bg-tertiary
+   pill). Order matches the design exactly. */
+const HERO_GRAPHIC_DAYS = [
+  { label: "Today", added: 425, removed: 86, commits: 19, files: 8 },
+  { label: "Yesterday", added: 312, removed: 174, commits: 14, files: 11 },
+  { label: "April 12", added: 94, removed: 23, commits: 4, files: 3 },
+  { label: "April 11", added: 156, removed: 67, commits: 7, files: 5 },
+  { label: "April 10", added: 389, removed: 210, commits: 16, files: 13 },
+  { label: "April 9", added: 218, removed: 55, commits: 11, files: 6 },
+  { label: "April 8", added: 147, removed: 38, commits: 8, files: 5 },
+];
+
 const FAQ_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -116,6 +135,54 @@ export default function MarketingHome() {
           <div className="home-hero-frame">
             <div className="home-hero-frame-inner">
               <div className="home-hero-frame-card" />
+
+              {/* Sidebar top bar — logo + utility icons (244:2413). */}
+              <div className="home-hero-side-top">
+                <div className="home-hero-side-logo">
+                  <span className="home-hero-side-logo-mark" />
+                  <span className="home-hero-side-logo-word">AskScout</span>
+                </div>
+                <div className="home-hero-side-utils">
+                  <HelpCircle size={14} strokeWidth={1.5} />
+                  <Settings2 size={14} strokeWidth={1.5} />
+                </div>
+              </div>
+
+              {/* Repo dropdown chip (244:2265). */}
+              <div className="home-hero-side-repo">
+                <span>askscout</span>
+                <ChevronDown size={14} strokeWidth={1.5} />
+              </div>
+
+              {/* Days list (244:2269) — first row is the active
+                  selection, rendered with a bg-tertiary highlight pill
+                  underneath the content stack. */}
+              <div className="home-hero-side-days">
+                <div className="home-hero-side-days-active" />
+                <div className="home-hero-side-days-list">
+                  {HERO_GRAPHIC_DAYS.map((day) => (
+                    <div key={day.label} className="home-hero-side-day">
+                      <p className="home-hero-side-day-label">{day.label}</p>
+                      <div className="home-hero-side-day-stats">
+                        <span className="home-hero-side-day-add">
+                          +{day.added}
+                        </span>
+                        <span className="home-hero-side-day-rem">
+                          -{day.removed}
+                        </span>
+                        <span className="home-hero-side-day-meta">
+                          {day.commits}
+                          <GitCommitHorizontal size={12} strokeWidth={1.5} />
+                        </span>
+                        <span className="home-hero-side-day-meta">
+                          {day.files}
+                          <FileText size={12} strokeWidth={1.5} />
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
           <div className="home-hero-frame-fade" />

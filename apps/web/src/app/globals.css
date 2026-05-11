@@ -4016,6 +4016,163 @@ a:hover {
   box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
 }
 
+/* ---------- HERO GRAPHIC SIDEBAR ---------- */
+/* Left rail inside the inner frame: logo + utility icons at top,
+   repo dropdown chip below, then a 7-row days list with the
+   first row (Today) highlighted. All positioned absolutely
+   inside .home-hero-frame-inner so the geometry matches Figma
+   exactly (left:13/top:13 etc.). Sizes are bespoke marketing
+   scale (12/10px text, 14/12px icons) per the user's
+   "condensed version with different font sizes" direction.
+   Colors are the canonical app tokens. */
+.home-hero-side-top {
+  position: absolute;
+  top: 13px;
+  left: 13px;
+  width: 166px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.home-hero-side-logo {
+  display: flex;
+  align-items: center;
+  gap: 7.447px;
+}
+
+.home-hero-side-logo-mark {
+  width: 13.298px;
+  height: 13.298px;
+  border-radius: 3.191px;
+  background: var(--color-text-primary);
+}
+
+.home-hero-side-logo-word {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 12.766px;
+  line-height: 1;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.home-hero-side-utils {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-primary);
+}
+
+.home-hero-side-utils svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Repo chip — Figma 244:2265: 166x30, bg-secondary fill,
+   border + inner-glow, label on left and chevron on right. */
+.home-hero-side-repo {
+  position: absolute;
+  top: 57px;
+  left: 13px;
+  width: 166px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 7px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg-secondary);
+  box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--color-text-primary);
+}
+
+.home-hero-side-repo svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Days list — Figma 244:2269. Absolute container at left:13/
+   top:111 with width 166. The active highlight pill (244:2271)
+   sits as an absolute layer behind the content stack (244:2272)
+   so the first row reads as the selected one without the
+   content layout needing to know about it. */
+.home-hero-side-days {
+  position: absolute;
+  top: 111px;
+  left: 13px;
+  width: 166px;
+}
+
+.home-hero-side-days-active {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 166px;
+  height: 50px;
+  border-radius: 6px;
+  background: var(--color-bg-tertiary);
+  box-shadow: inset 0 8px 20px 0 var(--color-inner-glow);
+  pointer-events: none;
+}
+
+.home-hero-side-days-list {
+  position: relative;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.home-hero-side-day {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.home-hero-side-day-label {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--color-text-primary);
+}
+
+.home-hero-side-day-stats {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.home-hero-side-day-add {
+  color: var(--color-success);
+}
+
+.home-hero-side-day-rem {
+  color: var(--color-danger);
+}
+
+.home-hero-side-day-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-text-primary);
+}
+
+.home-hero-side-day-meta svg {
+  flex-shrink: 0;
+}
+
 /* Digest card — third nested rectangle per Figma 244:2062.
    740x528 on bg-primary with the same border + inner-glow
    recipe, but radius 14 (vs 6 on the outer two) so the card
