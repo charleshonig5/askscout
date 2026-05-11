@@ -548,9 +548,9 @@ export default function SettingsPage() {
               </div>
             </div>
             <p className="settings-privacy-footer">
-              No raw code is stored. Scout never writes to your repository.{" "}
+              No raw code is stored. Scout never writes to your repository. Read the full{" "}
               <a className="settings-privacy-footer-link" href="/privacy">
-                Read the full privacy policy
+                privacy policy
               </a>
               .
             </p>
