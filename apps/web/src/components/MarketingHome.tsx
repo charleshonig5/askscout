@@ -3,12 +3,16 @@ import {
   BookText,
   ChevronDown,
   Code2,
+  Copy,
+  Download,
+  ExternalLink,
   EyeOff,
   FileText,
   Forward,
   GitCommitHorizontal,
   HelpCircle,
   LayoutList,
+  Mail,
   Settings2,
   ShieldCheck,
   Sparkles,
@@ -134,7 +138,44 @@ export default function MarketingHome() {
         <div className="home-hero-graphic" aria-hidden>
           <div className="home-hero-frame">
             <div className="home-hero-frame-inner">
-              <div className="home-hero-frame-card" />
+              <div className="home-hero-frame-card">
+                {/* Header row (244:2065) — title + identity chips +
+                    date on the left; action buttons on the right. */}
+                <div className="home-hero-card-header">
+                  <div className="home-hero-card-heading">
+                    <div className="home-hero-card-titlerow">
+                      <p className="home-hero-card-title">Today&apos;s Digest</p>
+                      <div className="home-hero-card-chips">
+                        <span className="home-hero-card-chip">
+                          askscout
+                          <ExternalLink size={8} strokeWidth={1.5} />
+                        </span>
+                        <span className="home-hero-card-chip">
+                          <Emoji name="streak" size={12} />
+                          7 Day Streak
+                        </span>
+                      </div>
+                    </div>
+                    <p className="home-hero-card-date">
+                      Thursday, April 16, 2026
+                    </p>
+                  </div>
+                  <div className="home-hero-card-actions">
+                    <span className="home-hero-card-action">
+                      <Copy size={12} strokeWidth={1.5} />
+                      Copy
+                    </span>
+                    <span className="home-hero-card-action">
+                      <Download size={12} strokeWidth={1.5} />
+                      Download
+                    </span>
+                    <span className="home-hero-card-action">
+                      <Mail size={12} strokeWidth={1.5} />
+                      Email
+                    </span>
+                  </div>
+                </div>
+              </div>
 
               {/* Sidebar top bar — logo + utility icons (244:2413). */}
               <div className="home-hero-side-top">

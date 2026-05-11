@@ -4193,6 +4193,112 @@ a:hover {
   overflow: hidden;
 }
 
+/* ---------- HERO GRAPHIC DIGEST CARD HEADER ---------- */
+/* Title cluster on the left (title + identity chips + date) and
+   the action button row on the right. Sits at left:13/top:13
+   inside the digest card, width 712 (744 - 13*2). Figma 244:2065. */
+.home-hero-card-header {
+  position: absolute;
+  top: 13px;
+  left: 13px;
+  width: 712px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.home-hero-card-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.home-hero-card-titlerow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.home-hero-card-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.home-hero-card-chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Pill chips in the header — bg-tertiary fill, fully rounded
+   (radius 90), 6/2 padding, inset inner-glow, Work Sans Light 10.
+   Used for both the repo tag and the streak counter. */
+.home-hero-card-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 90px;
+  background: var(--color-bg-tertiary);
+  box-shadow: inset 0 8px 20px 0 var(--color-inner-glow);
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.home-hero-card-chip svg {
+  flex-shrink: 0;
+}
+
+.home-hero-card-date {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--color-text-primary);
+}
+
+.home-hero-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Action buttons (Copy / Download / Email) — Figma 244:2080+.
+   Bordered chips on bg-secondary with inset inner-glow, icon
+   left of label, gap 6. The whole stack matches the app's
+   primary-button silhouette at a smaller scale. */
+.home-hero-card-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg-secondary);
+  box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.home-hero-card-action svg {
+  flex-shrink: 0;
+}
+
 /* Bottom fade — 225px tall gradient overlay sitting on top of
    the frame's lower region. Fades from bg-primary (bottom) to
    transparent (top) so the frame's content (digest preview)
