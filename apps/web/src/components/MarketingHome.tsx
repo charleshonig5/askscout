@@ -114,7 +114,7 @@ export default function MarketingHome() {
                 <Forward size={10} strokeWidth={1.5} aria-hidden />
               </a>
               <span className="home-hero-chip">Read-only</span>
-              <span className="home-hero-chip">No source code</span>
+              <span className="home-hero-chip">No full files</span>
             </div>
           </div>
         </div>
@@ -460,8 +460,9 @@ export default function MarketingHome() {
               </span>
               <h3 className="home-trust-title">We don&apos;t see your code.</h3>
               <p className="home-trust-body">
-                Scout only looks at what changed in your repo. Not your full codebase, your
-                secrets, or your config.
+                Scout reads what changed in your repo and just enough surrounding context to
+                interpret each change. Never your full files, your secrets, or your build
+                artifacts.
               </p>
             </article>
             <article className="home-trust-card">
