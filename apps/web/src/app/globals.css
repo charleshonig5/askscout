@@ -3439,12 +3439,15 @@ a:hover {
        outer  (this element)  — gap 44 — text stack → CTA row
        text stack             — gap 24 — headline → subtitle
        headline               — gap 14 — chips → title
-     The drop shadow softens the block against the starfield. */
+     No outer drop-shadow on this block: the app's depth pattern
+     is border + inset inner-glow on each surface (see .home-cta
+     and .home-cta-chip below), not an outer filter on a parent
+     container. Keeping marketing on the same pattern prevents
+     light/dark drift between the marketing site and the app. */
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 44px;
-  filter: drop-shadow(0 4px 2px rgba(0, 0, 0, 0.25));
 }
 
 .home-hero-text-stack {
