@@ -351,6 +351,205 @@ export async function fetchIssuesByNumber(
   return results.flatMap((r) => (r.status === "fulfilled" ? [r.value] : []));
 }
 
+/* ============================================================
+   Surrounding source-code context for diff hunks
+   ------------------------------------------------------------
+   Pure diffs are often opaque without the surrounding function:
+   3 lines of context around `+`/`-` is enough for tight edits
+   but breaks down on refactors, renames, and sparse hunks
+   inside large files. This module pulls ~15 lines of context
+   around each hunk from the file at the digest's starting SHA
+   (the parent of the oldest commit in the window) and packages
+   it into a prompt-ready block.
+
+   Selection: files with multiple non-adjacent hunks are
+   prioritised over high-churn-but-tight-hunk files. A diff
+   with 5 scattered hunks needs context way more than a 100-
+   line single-hunk addition. After that primary sort, total
+   churn (additions + deletions) breaks ties.
+
+   Edge cases handled inline:
+     - Newly-added files: patch starts with @@ -0,0 +X,Y @@,
+       no parent content to fetch — skip.
+     - Deleted files: patch ends with +0,0, post-change context
+       is meaningless — skip.
+     - Renames: Contents API 404s at the current path, the
+       Promise.allSettled wrapper drops it gracefully.
+   ============================================================ */
+const MAX_FILES_FOR_CONTEXT = 8;
+const HUNK_CONTEXT_LINES = 15;
+const MAX_CONTEXT_PER_FILE_CHARS = 3000;
+const MAX_TOTAL_CONTEXT_CHARS = 24_000;
+
+export interface FileHunkContext {
+  /** Path of the file in the post-change tree. */
+  file: string;
+  /** Formatted, prompt-ready block — file header + each hunk's
+   *  context slice. Already truncated to the per-file budget. */
+  block: string;
+}
+
+/** Resolve the parent SHA of a given commit. Returns null on any
+ *  failure (initial commit, transient API error, etc.) — callers
+ *  treat null as "skip the context-fetching feature for this run". */
+export async function fetchParentSha(
+  token: string,
+  owner: string,
+  repo: string,
+  sha: string,
+): Promise<string | null> {
+  try {
+    const res = await githubFetch(`/repos/${owner}/${repo}/commits/${sha}`, token);
+    const data = (await res.json()) as { parents?: Array<{ sha: string }> };
+    return data.parents?.[0]?.sha ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Parse `@@ -X,Y +A,B @@` hunk markers from a unified-diff patch.
+ *  Returns one entry per hunk with the BEFORE side's line range
+ *  (since we slice from the parent file). */
+function parseHunkMarkers(patch: string): Array<{ start: number; count: number }> {
+  const hunks: Array<{ start: number; count: number }> = [];
+  const re = /@@ -(\d+),?(\d*) \+/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(patch)) !== null) {
+    const start = parseInt(m[1] ?? "0", 10);
+    const countStr = m[2];
+    const count = countStr && countStr.length > 0 ? parseInt(countStr, 10) : 1;
+    if (Number.isFinite(start) && start > 0 && Number.isFinite(count)) {
+      hunks.push({ start, count });
+    }
+  }
+  return hunks;
+}
+
+/** Heuristic for "this patch describes a fully-added file" — the
+ *  unified-diff signature is `@@ -0,0 +X,Y @@`. Treat as ineligible
+ *  for context fetching because there's no parent file to slice. */
+function isAddedFilePatch(patch: string): boolean {
+  return /^@@ -0,0 \+/m.test(patch);
+}
+
+/** Heuristic for "this patch describes a fully-deleted file" — the
+ *  signature is `@@ -X,Y +0,0 @@`. No useful post-change context to
+ *  show either, so skip. */
+function isDeletedFilePatch(patch: string): boolean {
+  return /@@ -\d+,?\d* \+0,0 @@/m.test(patch);
+}
+
+/** Fetch a file's content at a specific ref, base64-decoded. Returns
+ *  null on any failure (404 for renames, network errors, files too
+ *  large for the Contents API's inline-content cap). */
+async function fetchFileContentAtRef(
+  token: string,
+  owner: string,
+  repo: string,
+  filePath: string,
+  ref: string,
+): Promise<string | null> {
+  try {
+    const res = await fetch(
+      `${GITHUB_API}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${filePath}?ref=${encodeURIComponent(ref)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+        signal: AbortSignal.timeout(GITHUB_CONTENTS_TIMEOUT_MS),
+      },
+    );
+    if (!res.ok) return null;
+    const body = (await res.json()) as { content?: string; encoding?: string };
+    if (!body.content || body.encoding !== "base64") return null;
+    // Buffer is available in Node + Edge runtimes (Next 15).
+    return Buffer.from(body.content, "base64").toString("utf-8");
+  } catch {
+    return null;
+  }
+}
+
+/** Build prompt-ready context blocks for the top MAX_FILES_FOR_CONTEXT
+ *  diffs in the run. Caller passes the diffs we already fetched plus
+ *  the resolved parent SHA (oldest commit's parent). Result is an
+ *  array of {file, block} entries already capped to the global
+ *  MAX_TOTAL_CONTEXT_CHARS budget. */
+export async function fetchFileContextForHunks(
+  token: string,
+  owner: string,
+  repo: string,
+  parentSha: string,
+  diffs: GitDiff[],
+): Promise<FileHunkContext[]> {
+  if (!parentSha || diffs.length === 0) return [];
+
+  // Score and filter candidates. Multi-hunk files first (where the
+  // diff is hardest to read without context), then churn for ties.
+  const scored = diffs
+    .filter((d) => d.patch && !isAddedFilePatch(d.patch) && !isDeletedFilePatch(d.patch))
+    .map((d) => ({
+      diff: d,
+      hunks: parseHunkMarkers(d.patch),
+      totalChanges: d.additions + d.deletions,
+    }))
+    .filter((c) => c.hunks.length > 0)
+    .sort((a, b) => {
+      if (b.hunks.length !== a.hunks.length) return b.hunks.length - a.hunks.length;
+      return b.totalChanges - a.totalChanges;
+    })
+    .slice(0, MAX_FILES_FOR_CONTEXT);
+
+  if (scored.length === 0) return [];
+
+  // Fetch all candidate parent files in parallel; renames + 404s
+  // drop silently via Promise.allSettled.
+  const fetches = await Promise.allSettled(
+    scored.map(async (c) => {
+      const content = await fetchFileContentAtRef(token, owner, repo, c.diff.file, parentSha);
+      return content ? { ...c, content } : null;
+    }),
+  );
+
+  const results: FileHunkContext[] = [];
+  let totalChars = 0;
+
+  for (const r of fetches) {
+    if (r.status !== "fulfilled" || r.value === null) continue;
+    const { diff, hunks, content } = r.value;
+    const lines = content.split("\n");
+
+    const hunkBlocks: string[] = [];
+    let perFileChars = 0;
+
+    for (const h of hunks) {
+      const startIdx = Math.max(0, h.start - 1 - HUNK_CONTEXT_LINES);
+      const endIdx = Math.min(lines.length, h.start - 1 + h.count + HUNK_CONTEXT_LINES);
+      const slice = lines.slice(startIdx, endIdx).join("\n");
+      const block = `Around line ${h.start} (parent file):\n${slice}`;
+      if (perFileChars + block.length + 2 > MAX_CONTEXT_PER_FILE_CHARS) {
+        hunkBlocks.push("... (further hunks omitted, per-file context budget reached)");
+        break;
+      }
+      hunkBlocks.push(block);
+      perFileChars += block.length + 2;
+    }
+
+    if (hunkBlocks.length === 0) continue;
+
+    const fileBlock = [`### ${diff.file}`, ...hunkBlocks].join("\n\n");
+    if (totalChars + fileBlock.length > MAX_TOTAL_CONTEXT_CHARS) {
+      // Global cap hit — stop adding more files.
+      break;
+    }
+    totalChars += fileBlock.length;
+    results.push({ file: diff.file, block: fileBlock });
+  }
+
+  return results;
+}
+
 /**
  * GitHub Contents API reader for stack detection in the web app.
  *

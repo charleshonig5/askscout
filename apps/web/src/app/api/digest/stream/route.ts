@@ -15,8 +15,11 @@ import {
   extractIssueReferences,
   fetchCommits,
   fetchDiffs,
+  fetchFileContextForHunks,
   fetchIssuesByNumber,
+  fetchParentSha,
   fetchPullRequestsForCommits,
+  type FileHunkContext,
   type IssueContext,
   type PullRequestContext,
 } from "@/lib/github";
@@ -193,6 +196,36 @@ export async function POST(req: Request) {
       }
     } catch (err) {
       console.error("[digest] PR/issue context fetch failed:", err);
+    }
+
+    // Surrounding source-code context for diff hunks. Pulls ~15 lines
+    // of code around each changed hunk from the parent file at the
+    // digest's starting SHA so the LLM can read refactors / renames /
+    // sparse-hunk diffs with full context. Wrapped in its own try/
+    // catch so any GitHub failure leaves the prompt structurally
+    // unchanged (the section drops out entirely on empty results).
+    let fileHunkContexts: FileHunkContext[] = [];
+    try {
+      const oldestCommit = commits[commits.length - 1];
+      if (oldestCommit) {
+        const parentSha = await fetchParentSha(
+          session.accessToken,
+          owner,
+          repo,
+          oldestCommit.hash,
+        );
+        if (parentSha) {
+          fileHunkContexts = await fetchFileContextForHunks(
+            session.accessToken,
+            owner,
+            repo,
+            parentSha,
+            diffs,
+          );
+        }
+      }
+    } catch (err) {
+      console.error("[digest] file-hunk context fetch failed:", err);
     }
 
     // 5. Compute stats from commits (more reliable than diffs which can fail)
@@ -534,6 +567,18 @@ export async function POST(req: Request) {
       extractFlaggedCommits(commits),
     );
 
+    // Build the surrounding source-code context block. Empty string
+    // if no files were enriched (initial-commit run, all-added/all-
+    // deleted change set, or Contents API failures) — section drops
+    // entirely in that case.
+    const fileContextBlock = fileHunkContexts.length
+      ? [
+          "## Surrounding Source Context (parent SHA)",
+          "Each file below shows ~15 lines of source code around every changed hunk, taken from the file's state BEFORE the changes in this digest's window were applied. Use this together with the diffs above to read refactors, renames, and sparse hunks in context — the diff tells you WHAT lines changed, this tells you WHAT CODE surrounded them.",
+          ...fileHunkContexts.map((f) => f.block),
+        ].join("\n\n")
+      : "";
+
     // Build the PR + linked-issue block. Empty string if neither
     // fetch returned anything (most direct-to-main / private-fork
     // repos), in which case the whole section drops from the prompt.
@@ -583,6 +628,7 @@ Use these diffs to understand WHAT was actually built, changed, or fixed. Don't 
 
 ${fileSummary}
 ${churnList ? `\n## Churn (files edited 3+ times — these are your Still Shifting candidates)\n${churnList}` : ""}
+${fileContextBlock ? `\n${fileContextBlock}` : ""}
 ${prContextBlock ? `\n${prContextBlock}` : ""}
 
 Produce the digest now. Be concise. No em dashes, no semicolons.`;

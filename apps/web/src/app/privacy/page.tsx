@@ -115,8 +115,16 @@ export default function PrivacyPage() {
               the 10 most recent pull requests and 10 referenced issues per run.
             </li>
             <li>
-              File paths are sent. Full source files, environment variables, secrets, and build
-              artifacts are not
+              For up to the 8 most-changed files in each digest, ~15 lines of surrounding source
+              code around every changed hunk are sent so the LLM can read refactors, renames, and
+              sparse edits in context. The content is pulled at the digest&apos;s starting commit
+              (the parent of the oldest commit in the window). Each file&apos;s context is capped
+              at ~3,000 characters and the total across all files is capped at ~24,000 characters
+              per run.
+            </li>
+            <li>
+              File paths are sent. Full source files outside the changed regions, environment
+              variables, secrets, and build artifacts are not.
             </li>
           </ul>
           <p className="public-text">

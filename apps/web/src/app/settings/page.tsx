@@ -82,6 +82,7 @@ const PRIVACY_READS = [
   "Diff patches (the specific lines you added or removed)",
   "File names and paths",
   "Pull request titles, descriptions, and linked issue bodies",
+  "~15 lines of surrounding source code around each changed hunk (up to 8 files per digest)",
 ];
 
 const PRIVACY_NEVER = [
