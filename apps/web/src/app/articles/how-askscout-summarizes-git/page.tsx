@@ -24,7 +24,7 @@ export const metadata = {
 const FAQ_PLAIN: { q: string; a: string }[] = [
   {
     q: "How does AskScout read my git history?",
-    a: "On the web app, AskScout pulls commits and diffs through the GitHub API after you grant read access. On the CLI, it shells out to git in your local repo to fetch the same data. Either way, only commit messages, diffs, and file paths are read. Source files outside of diffs are never opened.",
+    a: "On the web app, AskScout pulls commits and diffs through the GitHub API after you grant read access. On the CLI, it shells out to git in your local repo to fetch the same data. The web app also reads pull request descriptions, linked issue bodies, ~15 lines of source code around each changed hunk (capped at 8 files per digest), and the repo's README plus one package manifest like package.json — these ground the digest in the project's actual intent and context. Lock files, node_modules, environment variables, secrets, and build artifacts are never read.",
   },
   {
     q: "What LLM does AskScout use?",
@@ -118,11 +118,23 @@ export default function HowAskScoutSummarizesGitPage() {
             fetches commits since your last run by default.
           </p>
           <p className="public-text">
-            What gets read: commit messages, timestamps, authors, file paths, and the actual
-            diff patches (the lines added and removed in each commit). What does not get read:
-            full source files, environment variables, secrets, build artifacts, untracked
-            files. A diff only contains the lines that changed in a commit, not the whole
-            codebase.
+            What gets read on the web app: commit messages, timestamps, authors, file paths,
+            and the actual diff patches (the lines added and removed in each commit). Pull
+            request titles and descriptions, plus the titles and bodies of any GitHub issues
+            those PRs reference, so the digest can ground itself in the stated intent behind
+            each change. For up to the 8 most-changed files, ~15 lines of surrounding source
+            code around each changed hunk so refactors and sparse edits can be read in
+            context. The repository&apos;s README and a single project manifest (one of{" "}
+            <code className="inline-code">package.json</code>,{" "}
+            <code className="inline-code">pyproject.toml</code>,{" "}
+            <code className="inline-code">Cargo.toml</code>,{" "}
+            <code className="inline-code">go.mod</code>,{" "}
+            <code className="inline-code">composer.json</code>, or{" "}
+            <code className="inline-code">Gemfile</code>), so the model can frame every diff
+            against the actual project. What does not get read: full source files outside
+            the changed regions, environment variables, secrets, lock files, build
+            artifacts, and untracked files. The CLI reads the same data minus the
+            PR/issue context — git itself doesn&apos;t store that.
           </p>
         </section>
 
