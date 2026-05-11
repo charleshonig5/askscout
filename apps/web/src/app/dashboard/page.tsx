@@ -557,12 +557,24 @@ export default function DashboardPage() {
         setActiveHistoryId(null);
         setViewingHistoryContent(null);
         setViewingHistoryStats(null);
+        // Snap to the top of the live view so the user doesn't land
+        // mid-scroll on whatever section they were reading.
+        if (typeof window !== "undefined") {
+          window.scrollTo({ top: 0, behavior: "instant" });
+        }
         return;
       }
 
       setActiveHistoryId(id);
       setViewingHistoryContent(record.content);
       setViewingHistoryStats(record.stats);
+      // Snap the scroll to the top of the newly-selected digest. Without
+      // this the user lands at whatever scroll offset they had in the
+      // previous digest, which reads as "the click didn't do anything"
+      // when the new digest's hero section is offscreen above.
+      if (typeof window !== "undefined") {
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }
     },
     [historyRecords],
   );
@@ -579,6 +591,12 @@ export default function DashboardPage() {
     setViewingHistoryContent(null);
     setViewingHistoryStats(null);
     setShowLatestFromQuietDay(false);
+    // Snap to the top of the live view so the user lands at the
+    // digest's hero card, not wherever they were scrolled into the
+    // historical view they just exited.
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
   }, []);
 
   const isViewingHistory = viewingHistoryContent !== null;
