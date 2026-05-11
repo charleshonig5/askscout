@@ -3066,6 +3066,24 @@ a:hover {
     display: none;
   }
 
+  /* Theme toggle + sign-out icons in the drawer's profile row
+     bump to 24x24 on mobile so they match the chrome header's
+     Insights + Settings icon size (which also went 20 -> 24 for
+     tap-target comfort). Desktop sidebar keeps the 20x20 size
+     because the desktop sidebar runs at a smaller chrome scale.
+     The CSS targets the rendered SVG directly since the lucide
+     icons' size= prop is set in JSX (20). */
+  .sidebar-profile-actions .header-icon-btn,
+  .sidebar-signout-btn {
+    width: 24px;
+    height: 24px;
+  }
+  .sidebar-profile-actions .header-icon-btn svg,
+  .sidebar-signout-btn svg {
+    width: 24px;
+    height: 24px;
+  }
+
   .sidebar-overlay {
     display: block;
     position: fixed;
