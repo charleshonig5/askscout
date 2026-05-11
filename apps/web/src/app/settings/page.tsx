@@ -83,12 +83,13 @@ const PRIVACY_READS = [
   "File names and paths",
   "Pull request titles, descriptions, and linked issue bodies",
   "~15 lines of surrounding source code around each changed hunk (up to 8 files per digest)",
+  "Project metadata files (README and a single package manifest like package.json)",
 ];
 
 const PRIVACY_NEVER = [
   "Full source files (only diff patches, never entire files)",
   "Environment variables, secrets, and API keys",
-  "Dependencies, node_modules, and build artifacts",
+  "Lock files (package-lock.json, pnpm-lock.yaml, etc.), node_modules, and build artifacts",
 ];
 
 export default function SettingsPage() {

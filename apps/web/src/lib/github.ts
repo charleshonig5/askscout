@@ -550,6 +550,145 @@ export async function fetchFileContextForHunks(
   return results;
 }
 
+/* ============================================================
+   Project framing: README + manifest
+   ------------------------------------------------------------
+   Lightweight repo-level context that tells the LLM what the
+   project IS before it reads the diffs. Without this, the model
+   has to infer "this is a Next.js Supabase app called AskScout
+   that summarises git history" from filenames; with it, every
+   diff is read against an explicit framing and the digest gets
+   sharper language ("Next.js App Router routes" vs "the web
+   thing"). Equally important: the digest no longer needs to
+   announce what kind of project it is, freeing up tokens for
+   the actual story.
+
+   File priority is most-common first; we stop after the first
+   hit per category so a Node repo with both a README.md and a
+   stray Cargo.toml fragment doesn't double-pay. Lock files,
+   node_modules, and build artifacts are explicitly NOT read —
+   this stays consistent with the /privacy disclosure.
+   ============================================================ */
+const MAX_README_CHARS = 3000;
+const MAX_MANIFEST_CHARS = 2000;
+const README_CANDIDATES = ["README.md", "readme.md", "README", "Readme.md"] as const;
+const MANIFEST_CANDIDATES = [
+  "package.json",
+  "pyproject.toml",
+  "Cargo.toml",
+  "go.mod",
+  "composer.json",
+  "Gemfile",
+] as const;
+
+export interface ProjectFraming {
+  readme: string | null;
+  manifest: { path: string; content: string } | null;
+}
+
+/** Truncate a README at a sentence boundary near `max` if possible.
+ *  Falls back to a hard cut if no boundary is found in the tail.
+ *  Adds the standard truncation marker so the model knows it isn't
+ *  reading the whole file. */
+function truncateReadme(content: string, max: number): string {
+  if (content.length <= max) return content;
+  const head = content.slice(0, max);
+  const lastBoundary = Math.max(
+    head.lastIndexOf("\n\n"),
+    head.lastIndexOf(". "),
+    head.lastIndexOf(".\n"),
+  );
+  if (lastBoundary > max * 0.6) {
+    return head.slice(0, lastBoundary + 1) + "\n... (truncated)";
+  }
+  return head + "\n... (truncated)";
+}
+
+/** Filter package.json down to the fields that frame the project
+ *  for the LLM. Strips lock data, repo URL, keywords, author, and
+ *  any other metadata that adds tokens without context value. */
+function filterPackageJson(raw: string): string {
+  try {
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    const keep = [
+      "name",
+      "description",
+      "version",
+      "scripts",
+      "dependencies",
+      "devDependencies",
+      "peerDependencies",
+    ];
+    const filtered: Record<string, unknown> = {};
+    for (const k of keep) {
+      if (parsed[k] !== undefined) filtered[k] = parsed[k];
+    }
+    return JSON.stringify(filtered, null, 2);
+  } catch {
+    // Malformed JSON — pass raw through, the LLM can still read it.
+    return raw;
+  }
+}
+
+/** Fetch README + project manifest at the repo's default branch.
+ *  Both lookups are graceful: any 404 or transient error just drops
+ *  that piece from the return value. Caller can ship a partial
+ *  framing block (README only, manifest only, or empty). */
+export async function fetchProjectFraming(
+  token: string,
+  owner: string,
+  repo: string,
+): Promise<ProjectFraming> {
+  // Race each candidate in parallel for each category; first hit
+  // wins. Promise.allSettled wraps every call so any 404 / network
+  // error just contributes a `null` to the race.
+  const readmePromises = README_CANDIDATES.map((path) =>
+    fetchFileContentAtRef(token, owner, repo, path, "HEAD").then((c) =>
+      c ? { path, content: c } : null,
+    ),
+  );
+  const manifestPromises = MANIFEST_CANDIDATES.map((path) =>
+    fetchFileContentAtRef(token, owner, repo, path, "HEAD").then((c) =>
+      c ? { path, content: c } : null,
+    ),
+  );
+
+  const [readmeResults, manifestResults] = await Promise.all([
+    Promise.allSettled(readmePromises),
+    Promise.allSettled(manifestPromises),
+  ]);
+
+  // Pick the first candidate in priority order that succeeded.
+  let readme: string | null = null;
+  for (let i = 0; i < README_CANDIDATES.length; i++) {
+    const r = readmeResults[i];
+    if (r && r.status === "fulfilled" && r.value) {
+      readme = truncateReadme(r.value.content, MAX_README_CHARS);
+      break;
+    }
+  }
+
+  let manifest: ProjectFraming["manifest"] = null;
+  for (let i = 0; i < MANIFEST_CANDIDATES.length; i++) {
+    const r = manifestResults[i];
+    if (r && r.status === "fulfilled" && r.value) {
+      const path = r.value.path;
+      const raw = r.value.content;
+      const filtered = path === "package.json" ? filterPackageJson(raw) : raw;
+      manifest = {
+        path,
+        content:
+          filtered.length > MAX_MANIFEST_CHARS
+            ? filtered.slice(0, MAX_MANIFEST_CHARS) + "\n... (truncated)"
+            : filtered,
+      };
+      break;
+    }
+  }
+
+  return { readme, manifest };
+}
+
 /**
  * GitHub Contents API reader for stack detection in the web app.
  *

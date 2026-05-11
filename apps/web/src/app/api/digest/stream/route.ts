@@ -18,9 +18,11 @@ import {
   fetchFileContextForHunks,
   fetchIssuesByNumber,
   fetchParentSha,
+  fetchProjectFraming,
   fetchPullRequestsForCommits,
   type FileHunkContext,
   type IssueContext,
+  type ProjectFraming,
   type PullRequestContext,
 } from "@/lib/github";
 import { checkDigestRateLimit } from "@/lib/rate-limit";
@@ -226,6 +228,20 @@ export async function POST(req: Request) {
       }
     } catch (err) {
       console.error("[digest] file-hunk context fetch failed:", err);
+    }
+
+    // Project framing: README + manifest at the repo's default
+    // branch. Gives the LLM a baseline of WHAT the project is so
+    // every diff is read against an explicit framing instead of
+    // inferred from filenames alone. Wrapped in try/catch so any
+    // Contents API failure drops the section without breaking the
+    // run; both internal lookups are already gracefully Promise.
+    // allSettled inside fetchProjectFraming.
+    let projectFraming: ProjectFraming = { readme: null, manifest: null };
+    try {
+      projectFraming = await fetchProjectFraming(session.accessToken, owner, repo);
+    } catch (err) {
+      console.error("[digest] project framing fetch failed:", err);
     }
 
     // 5. Compute stats from commits (more reliable than diffs which can fail)
@@ -567,6 +583,27 @@ export async function POST(req: Request) {
       extractFlaggedCommits(commits),
     );
 
+    // Build the project framing block. Empty string when neither
+    // README nor manifest was found, in which case the section
+    // drops from the prompt entirely (preserving byte-identical
+    // structure to the current digest in the failure path).
+    const projectFramingBlock = (() => {
+      if (!projectFraming.readme && !projectFraming.manifest) return "";
+      const parts: string[] = [
+        "## Project Framing",
+        "This is what the project IS — use it to read every diff in context. Reference it for accurate language (e.g., the actual framework name, the actual package name) instead of generic placeholders. Don't summarise this section; it's background only.",
+      ];
+      if (projectFraming.readme) {
+        parts.push(`### README\n${projectFraming.readme}`);
+      }
+      if (projectFraming.manifest) {
+        parts.push(
+          `### Manifest (${projectFraming.manifest.path})\n${projectFraming.manifest.content}`,
+        );
+      }
+      return parts.join("\n\n");
+    })();
+
     // Build the surrounding source-code context block. Empty string
     // if no files were enriched (initial-commit run, all-added/all-
     // deleted change set, or Contents API failures) — section drops
@@ -611,7 +648,8 @@ export async function POST(req: Request) {
     })();
 
     const userPrompt = `Analyze the following git activity.
-${detectedStackBlock ? `\n${detectedStackBlock}` : ""}${headsUpSignalsBlock ? `\n${headsUpSignalsBlock}` : ""}
+${detectedStackBlock ? `\n${detectedStackBlock}` : ""}${headsUpSignalsBlock ? `\n${headsUpSignalsBlock}` : ""}${projectFramingBlock ? `\n${projectFramingBlock}` : ""}
+
 ## Previous Project Context
 ${previousContext}
 

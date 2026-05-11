@@ -123,6 +123,23 @@ export default function PrivacyPage() {
               per run.
             </li>
             <li>
+              Project metadata files (README, plus a single package manifest like{" "}
+              <code className="inline-code">package.json</code>,{" "}
+              <code className="inline-code">pyproject.toml</code>,{" "}
+              <code className="inline-code">Cargo.toml</code>,{" "}
+              <code className="inline-code">go.mod</code>,{" "}
+              <code className="inline-code">composer.json</code>, or{" "}
+              <code className="inline-code">Gemfile</code>) are read at the repository&apos;s
+              default branch so the digest can frame each change in the right project context.
+              README content is truncated to ~3,000 characters and manifest content to ~2,000
+              characters; <code className="inline-code">package.json</code> is filtered to
+              name, description, version, scripts, and dependency lists before being sent.
+              Lock files (<code className="inline-code">package-lock.json</code>,{" "}
+              <code className="inline-code">pnpm-lock.yaml</code>, etc.),{" "}
+              <code className="inline-code">node_modules</code>, and build artifacts are
+              never read.
+            </li>
+            <li>
               File paths are sent. Full source files outside the changed regions, environment
               variables, secrets, and build artifacts are not.
             </li>
