@@ -108,6 +108,13 @@ export default function PrivacyPage() {
               a global ~16,000-character cap per run with the largest patches trimmed first
             </li>
             <li>
+              Pull request titles and descriptions, plus the titles and bodies of any GitHub
+              issues those pull requests reference (via <code className="inline-code">#N</code>),
+              are sent to the LLM so the digest can ground itself in the stated intent behind
+              each change. Each body is truncated to ~1,500 characters and the list is capped at
+              the 10 most recent pull requests and 10 referenced issues per run.
+            </li>
+            <li>
               File paths are sent. Full source files, environment variables, secrets, and build
               artifacts are not
             </li>

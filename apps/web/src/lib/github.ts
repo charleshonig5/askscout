@@ -209,6 +209,148 @@ export async function fetchDiffs(
   return { diffs, filesAdded, filesRemoved };
 }
 
+/* ============================================================
+   Pull-request + linked-issue context
+   ------------------------------------------------------------
+   Enriches the digest prompt with the "why" that raw commits and
+   diffs don't carry. For each commit in the window we look up its
+   associated PR via /commits/{sha}/pulls; for each PR body we
+   extract `#N` issue references and fetch those issues. Every
+   request is wrapped in Promise.allSettled so a single 404 or
+   transient API failure never breaks the digest run — callers get
+   whatever subset succeeded.
+
+   Token budget: PR bodies and issue bodies are each truncated
+   individually (1500 chars), and the PR list is capped at 10
+   most-recent unique PRs touched by the commits. With those caps,
+   worst-case added prompt size is ~30 KB — negligible for the
+   gpt-5.4-nano context window.
+   ============================================================ */
+const MAX_PRS = 10;
+const MAX_ISSUE_REFS = 10;
+const MAX_PR_BODY_CHARS = 1500;
+const MAX_ISSUE_BODY_CHARS = 1500;
+
+export interface PullRequestContext {
+  number: number;
+  title: string;
+  body: string;
+  author: string | null;
+  mergedAt: string | null;
+}
+
+export interface IssueContext {
+  number: number;
+  title: string;
+  body: string;
+}
+
+function truncateForPrompt(text: string, max: number): string {
+  if (text.length <= max) return text;
+  return text.slice(0, max) + "\n... (truncated)";
+}
+
+/** Resolve a list of commit SHAs to the unique PRs that contain them.
+ *  Uses GitHub's /repos/{owner}/{repo}/commits/{sha}/pulls endpoint;
+ *  any commit not associated with a PR is silently skipped. Returns
+ *  the most-recently-merged-or-updated MAX_PRS PRs to keep prompt
+ *  budget bounded on large windows. */
+export async function fetchPullRequestsForCommits(
+  token: string,
+  owner: string,
+  repo: string,
+  shas: string[],
+): Promise<PullRequestContext[]> {
+  if (shas.length === 0) return [];
+
+  // Look up PR associations per commit. Cap the per-commit lookups
+  // so a 100-commit window doesn't burn 100 API calls — most digest
+  // windows have many commits per PR, so 30 SHAs reaches >95% of PRs.
+  const prNumbers = new Set<number>();
+  const lookupResults = await Promise.allSettled(
+    shas.slice(0, 30).map(async (sha) => {
+      const res = await githubFetch(`/repos/${owner}/${repo}/commits/${sha}/pulls`, token);
+      const prs = (await res.json()) as Array<{ number: number }>;
+      return prs.map((p) => p.number);
+    }),
+  );
+  for (const r of lookupResults) {
+    if (r.status === "fulfilled") {
+      for (const n of r.value) prNumbers.add(n);
+    }
+  }
+
+  const limited = Array.from(prNumbers).slice(-MAX_PRS);
+  const prResults = await Promise.allSettled(
+    limited.map(async (num) => {
+      const res = await githubFetch(`/repos/${owner}/${repo}/pulls/${num}`, token);
+      const pr = (await res.json()) as {
+        number: number;
+        title: string;
+        body: string | null;
+        user: { login: string } | null;
+        merged_at: string | null;
+      };
+      return {
+        number: pr.number,
+        title: pr.title,
+        body: truncateForPrompt(pr.body ?? "", MAX_PR_BODY_CHARS),
+        author: pr.user?.login ?? null,
+        mergedAt: pr.merged_at,
+      } satisfies PullRequestContext;
+    }),
+  );
+
+  return prResults.flatMap((r) => (r.status === "fulfilled" ? [r.value] : []));
+}
+
+/** Extract `#N` issue references from a body of text (commit msg,
+ *  PR description, etc.). Conservative regex requires the `#` to
+ *  be at start-of-string or preceded by whitespace / open paren, so
+ *  we don't grab anchor fragments inside URLs or markdown headings. */
+export function extractIssueReferences(text: string): number[] {
+  const nums = new Set<number>();
+  for (const match of text.matchAll(/(?:^|[\s(])#(\d+)\b/g)) {
+    const raw = match[1];
+    if (!raw) continue;
+    const n = parseInt(raw, 10);
+    if (Number.isFinite(n) && n > 0) nums.add(n);
+  }
+  return Array.from(nums);
+}
+
+/** Fetch issue titles + bodies by number. Capped at MAX_ISSUE_REFS
+ *  and each body truncated to MAX_ISSUE_BODY_CHARS. Skips any number
+ *  that 404s (could be a PR — GitHub's API will redirect, but we
+ *  only need the body content so either is fine — or it could be a
+ *  stale reference, in which case we just drop it). */
+export async function fetchIssuesByNumber(
+  token: string,
+  owner: string,
+  repo: string,
+  numbers: number[],
+): Promise<IssueContext[]> {
+  if (numbers.length === 0) return [];
+  const limited = numbers.slice(0, MAX_ISSUE_REFS);
+  const results = await Promise.allSettled(
+    limited.map(async (num) => {
+      const res = await githubFetch(`/repos/${owner}/${repo}/issues/${num}`, token);
+      const issue = (await res.json()) as {
+        number: number;
+        title: string;
+        body: string | null;
+      };
+      return {
+        number: issue.number,
+        title: issue.title,
+        body: truncateForPrompt(issue.body ?? "", MAX_ISSUE_BODY_CHARS),
+      } satisfies IssueContext;
+    }),
+  );
+
+  return results.flatMap((r) => (r.status === "fulfilled" ? [r.value] : []));
+}
+
 /**
  * GitHub Contents API reader for stack detection in the web app.
  *

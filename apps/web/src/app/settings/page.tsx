@@ -81,6 +81,7 @@ const PRIVACY_READS = [
   "Commit messages and metadata",
   "Diff patches (the specific lines you added or removed)",
   "File names and paths",
+  "Pull request titles, descriptions, and linked issue bodies",
 ];
 
 const PRIVACY_NEVER = [

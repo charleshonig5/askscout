@@ -10,7 +10,16 @@
  * CLI and web AI paths relate.
  */
 import { auth, getUserId } from "@/auth";
-import { createGitHubFilesReader, fetchCommits, fetchDiffs } from "@/lib/github";
+import {
+  createGitHubFilesReader,
+  extractIssueReferences,
+  fetchCommits,
+  fetchDiffs,
+  fetchIssuesByNumber,
+  fetchPullRequestsForCommits,
+  type IssueContext,
+  type PullRequestContext,
+} from "@/lib/github";
 import { checkDigestRateLimit } from "@/lib/rate-limit";
 import {
   saveDigest,
@@ -148,6 +157,43 @@ export async function POST(req: Request) {
       filesAdded,
       filesRemoved: filesDeleted,
     } = await fetchDiffs(session.accessToken, owner, repo, commits);
+
+    // Pull-request + linked-issue context. Enriches the prompt with
+    // PR descriptions and the bodies of any `#N` issues those PRs
+    // reference — captures the "why" behind each change in a way
+    // raw commits + diffs can't. Both fetches are wrapped in their
+    // own try/catch so a transient GitHub failure can't break the
+    // digest run; we fall back to an empty array and the prompt
+    // omits the PR/Issue section entirely.
+    let pullRequests: PullRequestContext[] = [];
+    let linkedIssues: IssueContext[] = [];
+    try {
+      pullRequests = await fetchPullRequestsForCommits(
+        session.accessToken,
+        owner,
+        repo,
+        commits.map((c) => c.hash),
+      );
+      const issueRefs = new Set<number>();
+      for (const pr of pullRequests) {
+        for (const n of extractIssueReferences(pr.body)) issueRefs.add(n);
+      }
+      // Also scan commit messages for `#N` refs — direct-to-main
+      // commits often reference issues without a PR.
+      for (const c of commits) {
+        for (const n of extractIssueReferences(c.message)) issueRefs.add(n);
+      }
+      if (issueRefs.size > 0) {
+        linkedIssues = await fetchIssuesByNumber(
+          session.accessToken,
+          owner,
+          repo,
+          Array.from(issueRefs),
+        );
+      }
+    } catch (err) {
+      console.error("[digest] PR/issue context fetch failed:", err);
+    }
 
     // 5. Compute stats from commits (more reliable than diffs which can fail)
     const allFiles = new Set(commits.flatMap((c) => c.filesChanged));
@@ -488,6 +534,37 @@ export async function POST(req: Request) {
       extractFlaggedCommits(commits),
     );
 
+    // Build the PR + linked-issue block. Empty string if neither
+    // fetch returned anything (most direct-to-main / private-fork
+    // repos), in which case the whole section drops from the prompt.
+    const prContextBlock = (() => {
+      if (pullRequests.length === 0 && linkedIssues.length === 0) return "";
+      const prSection = pullRequests.length
+        ? pullRequests
+            .map(
+              (p) =>
+                `### PR #${p.number}: ${p.title}\n${p.body || "(no description)"}`,
+            )
+            .join("\n\n")
+        : "";
+      const issueSection = linkedIssues.length
+        ? linkedIssues
+            .map(
+              (i) =>
+                `### Issue #${i.number}: ${i.title}\n${i.body || "(no description)"}`,
+            )
+            .join("\n\n")
+        : "";
+      return [
+        "## Pull Requests & Linked Issues",
+        "These are the PR descriptions and linked issue bodies behind the commits above. Use them to ground your interpretation of WHY each change happened — the commits tell you WHAT, these tell you WHY. Prefer this framing over inferring intent from the diffs alone.",
+        prSection,
+        issueSection,
+      ]
+        .filter(Boolean)
+        .join("\n\n");
+    })();
+
     const userPrompt = `Analyze the following git activity.
 ${detectedStackBlock ? `\n${detectedStackBlock}` : ""}${headsUpSignalsBlock ? `\n${headsUpSignalsBlock}` : ""}
 ## Previous Project Context
@@ -506,6 +583,7 @@ Use these diffs to understand WHAT was actually built, changed, or fixed. Don't 
 
 ${fileSummary}
 ${churnList ? `\n## Churn (files edited 3+ times — these are your Still Shifting candidates)\n${churnList}` : ""}
+${prContextBlock ? `\n${prContextBlock}` : ""}
 
 Produce the digest now. Be concise. No em dashes, no semicolons.`;
 
