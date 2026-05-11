@@ -4084,7 +4084,6 @@ a:hover {
   border: 1px solid var(--color-border);
   border-radius: 6px;
   background: var(--color-bg-secondary);
-  box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
   font-family: var(--font-sans);
   font-size: 12px;
   font-weight: 500;
@@ -4189,7 +4188,6 @@ a:hover {
   border: 1px solid var(--color-border);
   border-radius: 14px;
   background: var(--color-bg-primary);
-  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
   overflow: hidden;
 }
 
@@ -4441,6 +4439,10 @@ a:hover {
 
 .home-hero-card-bullet-title {
   font-weight: 500;
+  /* Figma 244:2121 applies text-transform: capitalize to the
+     title span so "cancel from one click" renders as "Cancel
+     From One Click". Mirroring that here. */
+  text-transform: capitalize;
 }
 
 .home-hero-card-bullet-body {
@@ -4635,7 +4637,7 @@ a:hover {
    unit. */
 .home-hero-card-health-bar {
   position: absolute;
-  bottom: 11px;
+  bottom: 15px;
   left: 7px;
   width: 203px;
   height: 4px;

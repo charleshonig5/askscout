@@ -458,7 +458,7 @@ export default function MarketingHome() {
                         </span>
                         <span className="home-hero-side-day-meta">
                           {day.commits}
-                          <GitCommitHorizontal size={12} strokeWidth={1.5} />
+                          <GitCommitHorizontal size={16} strokeWidth={1.5} />
                         </span>
                         <span className="home-hero-side-day-meta">
                           {day.files}
