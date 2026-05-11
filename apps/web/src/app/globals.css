@@ -3245,15 +3245,28 @@ a:hover {
  * second wrapper element in the JSX. On viewports < 1264px the
  * 32px floor takes over, giving nav content sensible inset
  * spacing on small screens. */
+/* Marketing nav — Figma node 244:2962. Logo on the far left,
+   vertical 1px divider after it, nav links, flex-grow spacer,
+   theme toggle + Open App on the far right. Sticky with a glass
+   surface so page content scrolling underneath softens through
+   the nav. Mirrors the mobile chrome .header glass treatment so
+   the two surfaces feel like the same product. */
 .home-nav {
   position: sticky;
   top: 0;
   z-index: 50;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 14px max(32px, calc((100% - 1200px) / 2));
-  background: var(--color-modal-surface);
+  height: 77px;
+  /* Figma insets: 44px from the left edge to the logo, 50px from
+     the right edge to the Open App button. */
+  padding: 0 50px 0 44px;
+  /* Glass: 75% bg-primary fill + 12px backdrop blur. Matches the
+     mobile chrome .header exactly so the marketing site and the
+     in-app chrome share one shared surface treatment. The fill
+     stays opaque enough that text stays legible even when the
+     content behind has a busy background. */
+  background: color-mix(in srgb, var(--color-bg-primary) 75%, transparent);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--color-border);
@@ -3307,21 +3320,93 @@ a:hover {
   width: auto;
 }
 
+/* Vertical 1px line that sits between the logo and the nav-links
+   cluster. Figma shows it at x=200 against a 1440 frame — about
+   156px from the logo's right edge. We use a 32px margin-left so
+   the divider follows the logo naturally at any viewport width
+   while staying close to the Figma rhythm. Height matches the
+   77px nav. */
+.home-nav-divider {
+  width: 1px;
+  height: 77px;
+  /* Figma node 244:2971 places this divider at x=200 against a
+     1440 frame. With the logo's natural ~112px width starting at
+     x=44, a 44px gap after the logo lands the divider on the
+     intended grid mark. */
+  margin-left: 44px;
+  background: var(--color-border);
+  flex-shrink: 0;
+}
+
 .home-nav-links {
   display: flex;
   align-items: center;
-  gap: 24px;
+  /* 44px between links per Figma. 182px gap from the divider to
+     the first link mirrors the Figma's nav-links anchor point at
+     x=382.5 (calc(50% - 337.5px) on a 1440 frame). margin-right:
+     auto absorbs all remaining horizontal space so the right
+     cluster (theme toggle + Open App) lands flush against the
+     right padding edge regardless of viewport width. */
+  gap: 44px;
+  margin-left: 182px;
+  margin-right: auto;
 }
 
-.home-nav-links a {
-  font-size: 13px;
-  color: var(--color-text-secondary);
+.home-nav-link {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--color-text-tertiary);
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
-.home-nav-links a:hover {
+@media (hover: hover) {
+  .home-nav-link:hover {
+    color: var(--color-text-primary);
+  }
+}
+
+.home-nav-link.is-active {
   color: var(--color-text-primary);
+}
+
+/* Right cluster: theme toggle + Open App button. The nav-links
+   cluster's own margin-right:auto already pushes this group to
+   the right edge; no margin needed here. 34px gap per Figma. */
+.home-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+}
+
+/* Open App CTA — same chip silhouette as the digest header
+   Copy/Download/Email buttons (10/14 padding, 8px radius, 1px
+   tertiary-grey border, bg-primary fill, subtle inner glow). 12px
+   Light label so the chrome reads consistent with the nav links
+   to its left. */
+.home-nav-open-app {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-primary);
+  box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+@media (hover: hover) {
+  .home-nav-open-app:hover {
+    background: var(--color-bg-secondary);
+  }
 }
 
 /* ---------- HERO ---------- */

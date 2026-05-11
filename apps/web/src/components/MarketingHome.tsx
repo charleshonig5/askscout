@@ -9,15 +9,14 @@ import {
   Sparkles,
 } from "lucide-react";
 import { signIn } from "@/auth";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { InstallChip } from "@/components/InstallChip";
 import { HeroStars } from "@/components/HeroStars";
 import { Emoji } from "@/components/Emoji";
 import FAQTabs from "@/components/FAQTabs";
+import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { FAQ_PLAIN } from "@/lib/faq-data";
 import { MOCK_STREAMING_TEXT } from "@/lib/mock-data";
-import { Logo } from "@/components/Logo";
 
 /* JSON-LD FAQPage schema generated from FAQ_PLAIN so the structured
    data stays in lockstep with the rendered tabbed FAQ. Google
@@ -46,17 +45,7 @@ export default function MarketingHome() {
           Sticky-ish behavior is handled by the page scroll, not the
           element — keeps it lightweight and avoids overlap with the
           hero. =========================================================== */}
-      <nav className="home-nav" aria-label="Site">
-        <Link href="/home" className="home-nav-logo">
-          <Logo height={20} />
-        </Link>
-        <div className="home-nav-links">
-          <Link href="/articles">Articles</Link>
-          <Link href="/docs">Docs</Link>
-          <Link href="/privacy">Privacy</Link>
-          <ThemeToggle />
-        </div>
-      </nav>
+      <MarketingNav />
 
       {/* ===========================================================
           HERO — the first 100vh of the page. Wordmark, tagline, the

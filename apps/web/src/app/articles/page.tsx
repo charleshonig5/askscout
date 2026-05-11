@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleControls } from "@/components/ArticleControls";
 import { ARTICLES } from "@/lib/articles-data";
-import { Logo } from "@/components/Logo";
 
 export const metadata = {
   title: "Articles | AskScout",
@@ -29,17 +28,7 @@ function formatDate(iso: string): string {
 export default function ArticlesIndexPage() {
   return (
     <main className="page">
-      <nav className="home-nav" aria-label="Site">
-        <Link href="/home" className="home-nav-logo">
-          <Logo height={20} />
-        </Link>
-        <div className="home-nav-links">
-          <Link href="/articles">Articles</Link>
-          <Link href="/docs">Docs</Link>
-          <Link href="/privacy">Privacy</Link>
-          <ThemeToggle />
-        </div>
-      </nav>
+      <MarketingNav />
 
       {/* Hero header — same eyebrow + display-font H1 treatment as the
           home page's section titles, just smaller (64px) since this

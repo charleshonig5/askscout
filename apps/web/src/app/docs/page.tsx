@@ -1,11 +1,10 @@
 import Link from "next/link";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { MarketingNav } from "@/components/MarketingNav";
 import { InstallChip } from "@/components/InstallChip";
 import { CommandChip } from "@/components/CommandChip";
 import DocsFAQ from "@/components/DocsFAQ";
 import { SiteFooter } from "@/components/SiteFooter";
 import { DOCS_FAQ_PLAIN } from "@/lib/docs-faq-data";
-import { Logo } from "@/components/Logo";
 
 export const metadata = {
   title: "Docs | AskScout",
@@ -30,17 +29,7 @@ export default function DocsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
       />
-      <nav className="home-nav" aria-label="Site">
-        <Link href="/home" className="home-nav-logo">
-          <Logo height={20} />
-        </Link>
-        <div className="home-nav-links">
-          <Link href="/articles">Articles</Link>
-          <Link href="/docs">Docs</Link>
-          <Link href="/privacy">Privacy</Link>
-          <ThemeToggle />
-        </div>
-      </nav>
+      <MarketingNav />
 
       <header className="page-header">
         <div className="page-header-inner">

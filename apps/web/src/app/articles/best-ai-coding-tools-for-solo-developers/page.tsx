@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
-import { Logo } from "@/components/Logo";
 
 export const metadata = {
   title: "Best AI Coding Tools for Solo Developers | AskScout",
@@ -57,17 +56,7 @@ export default function BestAICodingToolsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
       />
-      <nav className="home-nav" aria-label="Site">
-        <Link href="/home" className="home-nav-logo">
-          <Logo height={20} />
-        </Link>
-        <div className="home-nav-links">
-          <Link href="/articles">Articles</Link>
-          <Link href="/docs">Docs</Link>
-          <Link href="/privacy">Privacy</Link>
-          <ThemeToggle />
-        </div>
-      </nav>
+      <MarketingNav />
 
       <article className="page-body page-body--reading article">
         <Link href="/articles" className="article-back-link">
