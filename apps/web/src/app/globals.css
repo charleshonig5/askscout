@@ -1877,7 +1877,11 @@ a:hover {
 }
 
 .timeline-segment-times--single {
-  justify-content: center;
+  /* Left-align (not centered) so the single time label stacks
+     directly above the dayName label below it. Centered reads as
+     two unrelated chips on narrow segments; left-aligned shows
+     them as one column anchored to the segment's leading edge. */
+  justify-content: flex-start;
 }
 
 .timeline-day-name {
@@ -1892,6 +1896,13 @@ a:hover {
   font-size: 12px;
   line-height: normal;
   color: var(--color-text-tertiary);
+  /* "Mon, May 11" must stay on a single line even when its segment
+     hits the rebalanced minimum width — otherwise the label wraps
+     to "Mon, May" / "11" and the two day-axis labels read uneven.
+     overflow visible (default) so a label that's slightly wider
+     than its segment overhangs into the gutter rather than getting
+     clipped at the segment edge. */
+  white-space: nowrap;
 }
 
 /* ============================================

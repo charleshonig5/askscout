@@ -1058,12 +1058,14 @@ function WhenYouCoded({
   // floor) shrink proportionally from their excess so total stays
   // at 100%.
   //
-  // MIN_PCT scales with day count so it never overflows: pick 20%
-  // as the baseline, but cap at 90/N so all minimums combined leave
-  // at least 10% of headroom for the donor segments to live in.
-  // N=2  → 20% floor (e.g. 80/20 split worst case)
-  // N=3  → 20% floor (60/20/20)
-  // N=4  → 22.5% floor only if all four are below — typically 20%
+  // MIN_PCT scales with day count so it never overflows: pick 25%
+  // as the baseline (enough to fit "Mon, May 11" + breathing room
+  // at the typical stats column widths on desktop ~390px and mobile
+  // ~300px), and cap at 90/N so all minimums combined leave at
+  // least 10% headroom for donor segments to live in.
+  // N=2  → 25% floor (worst case 75/25 split)
+  // N=3  → 25% floor (e.g. 50/25/25)
+  // N=4  → 22.5% floor (90/4 = 22.5 < 25)
   // N=5+ → 90/N floor (18% / 15% / ...)
   //
   // startMs / endMs of each segment are NOT touched — only the
@@ -1073,7 +1075,7 @@ function WhenYouCoded({
   // readable visual width instead of being crushed into a sliver.
   if (daySegments.length > 1) {
     const N = daySegments.length;
-    const MIN_PCT = Math.min(20, 90 / N);
+    const MIN_PCT = Math.min(25, 90 / N);
     const widths = daySegments.map((s) => s.rightPct - s.leftPct);
     const needsExpand = widths.map((w) => w < MIN_PCT);
     const expansionNeeded = widths.reduce(
