@@ -4299,6 +4299,172 @@ a:hover {
   flex-shrink: 0;
 }
 
+/* Dividers — horizontal under the header (top:64) and vertical
+   between the columns (left:492). Both at --color-border so they
+   match the rest of the frame's stroke. */
+.home-hero-card-divider {
+  position: absolute;
+  background: var(--color-border);
+  pointer-events: none;
+}
+
+.home-hero-card-divider--h {
+  top: 64px;
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+
+.home-hero-card-divider--v {
+  top: 64px;
+  left: 492px;
+  width: 1px;
+  height: 465px;
+}
+
+/* ---------- HERO GRAPHIC DIGEST CARD LEFT COLUMN ---------- */
+/* 4 digest sections (Shipped/Changed/Still Shifting/Left Off) per
+   Figma 244:2099. Container at left:13/top:78/width:465 inside
+   the digest card. Sections stack with 18px gap. Each section:
+   header row (emoji + label + count pill, optional badge at
+   right) then a bullet list. Sizes are the bespoke marketing
+   scale (10/12 px) per the user direction; tokens are the same
+   as the app. */
+.home-hero-card-left {
+  position: absolute;
+  top: 78px;
+  left: 13px;
+  width: 465px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.home-hero-card-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.home-hero-card-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.home-hero-card-section-headinner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.home-hero-card-section-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.home-hero-card-section-count {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 60px;
+  background: var(--color-bg-tertiary);
+  box-shadow: inset 0 8px 20px 0 var(--color-inner-glow);
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+/* Trailing badge on Shipped ("Share") and Left Off ("Resume
+   Prompt") — bordered chip with no fill, padding 6/4, radius 4,
+   text 8px Work Sans Light with a tiny trailing icon. */
+.home-hero-card-section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 6px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-family: var(--font-sans);
+  font-size: 8px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.home-hero-card-bullets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.home-hero-card-bullet {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.home-hero-card-bullet-mark {
+  /* The chevron marker sits flush with the first line of text.
+     20px tall column matches the Figma marker's 16x20 bounding
+     box, with the chevron itself vertically centered in that
+     column so multi-line bodies still align cleanly. */
+  flex-shrink: 0;
+  width: 16px;
+  height: 20px;
+  padding: 5px 3px;
+  color: var(--color-text-primary);
+}
+
+.home-hero-card-bullet p {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  line-height: 16px;
+  color: var(--color-text-primary);
+}
+
+.home-hero-card-bullet-title {
+  font-weight: 500;
+}
+
+.home-hero-card-bullet-body {
+  font-weight: 300;
+}
+
+/* Inner bottom fade — bg-primary gradient over the bottom 87px
+   of the card content so the long bullet list dissolves rather
+   than hitting a hard edge. Sits inside .home-hero-frame-card
+   (overflow:hidden) so it rounds with the card. */
+.home-hero-card-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 87px;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    var(--color-bg-primary) 0%,
+    transparent 100%
+  );
+}
+
 /* Bottom fade — 225px tall gradient overlay sitting on top of
    the frame's lower region. Fades from bg-primary (bottom) to
    transparent (top) so the frame's content (digest preview)

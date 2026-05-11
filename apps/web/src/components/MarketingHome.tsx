@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   BookText,
   ChevronDown,
+  ChevronRight,
   Code2,
   Copy,
   Download,
@@ -34,6 +35,72 @@ import { FAQ_PLAIN } from "@/lib/faq-data";
    data sized to match Figma 244:2269. The first row ("Today")
    is the active selection (highlighted with the bg-tertiary
    pill). Order matches the design exactly. */
+/* Bullet sections inside the digest card — fake content sized
+   to match Figma 244:2099. Each section has an emoji marker,
+   a label, an item count, and 2 bullet items. Shipped and
+   Left Off carry a trailing action badge ("Share" / "Resume
+   Prompt"). Order matches the design. */
+const HERO_GRAPHIC_SECTIONS = [
+  {
+    emoji: "shipped" as const,
+    label: "Shipped",
+    badge: { kind: "share" as const, label: "Share" },
+    items: [
+      {
+        title: "Cancel from one click",
+        body: "Subscribers can cancel without three confirmation screens. One click and a free-text reason box if they want to leave feedback.",
+      },
+      {
+        title: "Onboarding finally feels finished",
+        body: "First-time users get a three-step setup with a progress bar. If they bail mid-flow, the next visit picks up where they left off.",
+      },
+    ],
+  },
+  {
+    emoji: "changed" as const,
+    label: "Changed",
+    items: [
+      {
+        title: "Search is way faster",
+        body: "User search used to chug for half a second on big orgs. Same query runs in under twenty milliseconds now.",
+      },
+      {
+        title: "Sign-out works across tabs",
+        body: "Sign out in one tab and every other tab knows immediately. No more stale-session weirdness across windows.",
+      },
+    ],
+  },
+  {
+    emoji: "unstable" as const,
+    label: "Still Shifting",
+    items: [
+      {
+        title: "The notification badge",
+        body: "Touched five days running. Every fix introduces a new flicker on websocket reconnect. Worth pausing tomorrow to figure out why.",
+      },
+      {
+        title: "Sidebar on Safari",
+        body: "Fourth pass at the collapse animation this week. Every fix works in Chrome and breaks Safari. Might be time to write the Safari path separately.",
+      },
+    ],
+  },
+  {
+    emoji: "leftOff" as const,
+    label: "Left Off",
+    badge: { kind: "resume" as const, label: "Resume Prompt" },
+    items: [
+      {
+        title: "The team invite email",
+        body: "Template renders fine, but the org name shows up as null on some test cases. Next is figuring out why the lookup returns nothing.",
+      },
+      {
+        title: "The CI test hang",
+        body: "The suite hangs on every third or fourth pull request with no obvious pattern. Database and auth fixtures ruled out. Next is bisecting the cause.",
+      },
+    ],
+  },
+];
+
 const HERO_GRAPHIC_DAYS = [
   { label: "Today", added: 425, removed: 86, commits: 19, files: 8 },
   { label: "Yesterday", added: 312, removed: 174, commits: 14, files: 11 },
@@ -139,6 +206,12 @@ export default function MarketingHome() {
           <div className="home-hero-frame">
             <div className="home-hero-frame-inner">
               <div className="home-hero-frame-card">
+                {/* Horizontal divider under the header row (244:2064)
+                    and vertical divider between the two body columns
+                    (244:2063). Both at #252525 (border token). */}
+                <div className="home-hero-card-divider home-hero-card-divider--h" />
+                <div className="home-hero-card-divider home-hero-card-divider--v" />
+
                 {/* Header row (244:2065) — title + identity chips +
                     date on the left; action buttons on the right. */}
                 <div className="home-hero-card-header">
@@ -175,6 +248,65 @@ export default function MarketingHome() {
                     </span>
                   </div>
                 </div>
+
+                {/* Left column body — 4 digest sections per Figma
+                    244:2099 (Shipped/Changed/Still Shifting/Left Off). */}
+                <div className="home-hero-card-left">
+                  {HERO_GRAPHIC_SECTIONS.map((section) => (
+                    <div key={section.label} className="home-hero-card-section">
+                      <div className="home-hero-card-section-head">
+                        <div className="home-hero-card-section-headinner">
+                          <span className="home-hero-card-section-title">
+                            <Emoji name={section.emoji} size={16} />
+                            {section.label}
+                          </span>
+                          <span className="home-hero-card-section-count">
+                            {section.items.length} items
+                          </span>
+                        </div>
+                        {section.badge ? (
+                          <span className="home-hero-card-section-badge">
+                            {section.badge.label}
+                            {section.badge.kind === "share" ? (
+                              <Forward size={8} strokeWidth={1.5} />
+                            ) : (
+                              <Sparkles size={8} strokeWidth={1.5} />
+                            )}
+                          </span>
+                        ) : null}
+                      </div>
+                      <ul className="home-hero-card-bullets">
+                        {section.items.map((item) => (
+                          <li
+                            key={item.title}
+                            className="home-hero-card-bullet"
+                          >
+                            <ChevronRight
+                              size={10}
+                              strokeWidth={1.5}
+                              className="home-hero-card-bullet-mark"
+                            />
+                            <p>
+                              <span className="home-hero-card-bullet-title">
+                                {item.title}
+                              </span>{" "}
+                              -{" "}
+                              <span className="home-hero-card-bullet-body">
+                                {item.body}
+                              </span>
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Inner bottom fade (244:2264) — bg-primary gradient
+                    over the bottom 87px of the card content area so
+                    the long bullet list visually dissolves rather
+                    than hitting a hard edge. */}
+                <div className="home-hero-card-fade" />
               </div>
 
               {/* Sidebar top bar — logo + utility icons (244:2413). */}
