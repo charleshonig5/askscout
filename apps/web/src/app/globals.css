@@ -3985,6 +3985,11 @@ a:hover {
   width: 976px;
   height: 584px;
   margin: 0 auto;
+  /* Reset the text-align: center that .home-hero sets for the
+     text block above — inside the graphic, every text element
+     (day labels, bullets, file paths, stats) is left-aligned per
+     Figma. Without this reset everything inherits center. */
+  text-align: left;
 }
 
 /* Outer 976x584 — bg-primary fill, 1px border, 6px radius,
