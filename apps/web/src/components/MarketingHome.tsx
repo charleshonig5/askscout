@@ -36,14 +36,14 @@ import { FAQ_PLAIN } from "@/lib/faq-data";
    pill). Order matches the design exactly. */
 /* Bullet sections inside the digest card — fake content sized
    to match Figma 244:2099. Each section has an emoji marker,
-   a label, an item count, and 2 bullet items. Shipped and
-   Left Off carry a trailing action badge ("Share" / "Resume
-   Prompt"). Order matches the design. */
+   a label, an item count, and 2 bullet items. Order matches
+   the design. (Figma's "Share" and "Resume Prompt" badges
+   were intentionally dropped — the marketing graphic is a
+   simplified illustration, not the real product UI.) */
 const HERO_GRAPHIC_SECTIONS = [
   {
     emoji: "shipped" as const,
     label: "Shipped",
-    badge: { kind: "share" as const, label: "Share" },
     items: [
       {
         title: "Cancel from one click",
@@ -86,7 +86,6 @@ const HERO_GRAPHIC_SECTIONS = [
   {
     emoji: "leftOff" as const,
     label: "Left Off",
-    badge: { kind: "resume" as const, label: "Resume Prompt" },
     items: [
       {
         title: "The team invite email",
@@ -262,25 +261,13 @@ export default function MarketingHome() {
                   {HERO_GRAPHIC_SECTIONS.map((section) => (
                     <div key={section.label} className="home-hero-card-section">
                       <div className="home-hero-card-section-head">
-                        <div className="home-hero-card-section-headinner">
-                          <span className="home-hero-card-section-title">
-                            <Emoji name={section.emoji} size={16} />
-                            {section.label}
-                          </span>
-                          <span className="home-hero-card-section-count">
-                            {section.items.length} items
-                          </span>
-                        </div>
-                        {section.badge ? (
-                          <span className="home-hero-card-section-badge">
-                            {section.badge.label}
-                            {section.badge.kind === "share" ? (
-                              <Forward size={8} strokeWidth={1} />
-                            ) : (
-                              <Sparkles size={8} strokeWidth={1} />
-                            )}
-                          </span>
-                        ) : null}
+                        <span className="home-hero-card-section-title">
+                          <Emoji name={section.emoji} size={16} />
+                          {section.label}
+                        </span>
+                        <span className="home-hero-card-section-count">
+                          {section.items.length} items
+                        </span>
                       </div>
                       <ul className="home-hero-card-bullets">
                         {section.items.map((item) => (
