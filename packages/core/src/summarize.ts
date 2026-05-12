@@ -239,9 +239,12 @@ BAD Key Takeaways examples:
 "You should focus on finishing the checkout flow. It looks close."
 Why they're bad: Motivational, generic, vague, no reference to specific work from the digest, no point of view, no warmth that's actually earned.
 
+What counts as "work" (read this before Section definitions):
+The test for whether something belongs in the digest is "did the product gain, lose, or change a capability today?" \u2014 NOT "is there visible UI." A new user-facing page counts. A new API endpoint counts. A new way the system reasons, perceives, or responds also counts (e.g. the digest reads new context; the summarizer considers new signals; the scheduler retries on failure; the parser handles a new format). Under-the-hood changes that affect what the product produces or how it behaves are first-class \u2014 they earned a commit, they earn a bullet. The translation rule below (no file names, no function names) does NOT mean invisible work is excluded; it means describe what the product can now DO, not how the code does it.
+
 Section definitions (do NOT include these in the output, they are instructions for you):
-- Shipped = things that went from not existing to working. New features, new pages, new endpoints.
-- Changed = things that already existed but got modified. Redesigns, refactors, config changes.
+- Shipped = capabilities the product gained today, visible or under the hood. New features, new pages, new endpoints, new automated behaviors, new perceptual abilities (the system now sees / reads / considers something it didn't before).
+- Changed = capabilities that already existed but got modified. Redesigns, refactors, config changes, behavior tweaks, accuracy or grounding improvements to existing logic.
 - Still Shifting = areas reworked 3+ times. Use the Churn data to identify these. Describe as FEATURES ("the checkout flow"), NEVER file names. Observational, not alarming.
 - Left Off = everything in progress when the session ended. Include ALL of them, not just one.
 - Field Notes = OPTIONAL editorial observation about the broader pattern your work fits into. Names a concept (italicized), cites external prior art, ends on a tradeoff. Never project-specific next-steps. Skip entirely on days with no clear theme.
@@ -251,7 +254,8 @@ Rules:
 - Output ONLY the emoji + section name as the header (e.g. "\ud83d\ude80 Shipped"), nothing else on that line.
 - Max 7 bullets per section.
 - Every bullet in Shipped, Changed, Still Shifting, and Left Off MUST follow this exact format: "Title - body". The title is 2-5 plain-language words. Then a single space, a hyphen, a single space (" - "). Then 1-2 full sentences of context. NEVER write a bullet without the "Title - " prefix. A bullet that starts with body text and no title is a format failure. This rule has zero exceptions.
-- NEVER use file names, function names, or code paths anywhere in the digest. Translate everything to features and behaviors.
+- NEVER use file names, function names, or code paths anywhere in the digest. Translate everything to features and behaviors. For under-the-hood work, translate by describing the new capability or behavior the product gained, e.g. "the digest now reads pull request descriptions to ground its summaries", "search now falls back to fuzzy matches when the exact query fails", "the cleanup job now skips weekends." If you find yourself wanting to write "added X function" or "refactored Y module", restate it as what the product can now DO.
+- Do NOT skip a commit just because it touched internal plumbing rather than UI. Tooling, prompt, parser, scheduler, and pipeline changes that affect output or behavior belong in Shipped or Changed. Visibility is not the test; capability change is.
 - Left Off must always have at least 1 item and should list everything in progress.
 - Field Notes is OPTIONAL. Omit the entire section, including the "\ud83e\udded Field Notes" header, when no specific pattern can be taught. Writing nothing is correct behavior on scattered or quiet days.
 - Key Takeaways is 2-3 sentences. Must always be included. Must reference something specific from the digest above.
