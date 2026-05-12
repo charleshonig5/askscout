@@ -20,6 +20,7 @@ import { signIn } from "@/auth";
 import { InstallChip } from "@/components/InstallChip";
 import { Emoji } from "@/components/Emoji";
 import { HeroBgVideo } from "@/components/HeroBgVideo";
+import { HeroGraphicMotion } from "@/components/HeroGraphicMotion";
 import { Logo } from "@/components/Logo";
 import FAQTabs from "@/components/FAQTabs";
 import { MarketingNav } from "@/components/MarketingNav";
@@ -208,6 +209,7 @@ export default function MarketingHome() {
             on bg-secondary) plus a bottom fade overlay that
             blends the frame into the page bg. Content (the digest
             preview) will live inside the inner frame in a follow-up. */}
+        <HeroGraphicMotion>
         <div className="home-hero-graphic" aria-hidden>
           <div className="home-hero-frame">
             <div className="home-hero-frame-inner">
@@ -465,6 +467,7 @@ export default function MarketingHome() {
             </div>
           </div>
         </div>
+        </HeroGraphicMotion>
       </section>
 
       {/* ===========================================================
