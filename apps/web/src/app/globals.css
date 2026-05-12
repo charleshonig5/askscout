@@ -5362,16 +5362,6 @@ a:hover {
   border-top: 1px solid var(--color-border);
 }
 
-/* The first home-section sits right after the hero. The hero's
-   bottom-fade gradient already creates a soft empty zone below
-   the graphic, so 104px on top of that reads as too airy.
-   Tightening the first section's top padding to 48px lets the
-   fade do its job; the divider lands closer to where the fade
-   bottoms out into bg-primary. Eyeball value — adjust to taste. */
-.home-hero + .home-section {
-  padding-top: 48px;
-}
-
 .home-section--quiet {
   background: var(--color-bg-secondary);
   /* Keep the bottom border for the inverted-strip treatment;
