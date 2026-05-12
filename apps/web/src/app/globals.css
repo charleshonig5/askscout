@@ -4422,16 +4422,29 @@ a:hover {
   gap: 4px;
 }
 
+/* Bullet marker — matches the actual digest's marker exactly
+   (see .digest-item-bullet at globals.css:1454). 16x20 frame
+   with a centered 4x4 dot in --color-text-secondary, so the
+   marketing graphic's bullets read as the same "round dot"
+   used in the live product. */
 .home-hero-card-bullet-mark {
-  /* The chevron marker sits flush with the first line of text.
-     20px tall column matches the Figma marker's 16x20 bounding
-     box, with the chevron itself vertically centered in that
-     column so multi-line bodies still align cleanly. */
   flex-shrink: 0;
+  display: block;
+  position: relative;
   width: 16px;
   height: 20px;
-  padding: 5px 3px;
-  color: var(--color-text-primary);
+}
+
+.home-hero-card-bullet-mark::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-text-secondary);
+  transform: translate(-50%, -50%);
 }
 
 .home-hero-card-bullet p {

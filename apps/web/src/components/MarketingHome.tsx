@@ -1,22 +1,21 @@
 import Link from "next/link";
 import {
   BookText,
+  ChartPie,
   ChevronDown,
-  ChevronRight,
   Code2,
   Copy,
   Download,
-  ExternalLink,
   EyeOff,
   FileText,
   Forward,
   GitCommitHorizontal,
-  HelpCircle,
   LayoutList,
-  Mail,
+  Send,
   Settings2,
   ShieldCheck,
   Sparkles,
+  SquareArrowUpRight,
 } from "lucide-react";
 import { signIn } from "@/auth";
 import { InstallChip } from "@/components/InstallChip";
@@ -221,7 +220,7 @@ export default function MarketingHome() {
                       <div className="home-hero-card-chips">
                         <span className="home-hero-card-chip">
                           askscout
-                          <ExternalLink size={8} strokeWidth={1.5} />
+                          <SquareArrowUpRight size={8} strokeWidth={1} />
                         </span>
                         <span className="home-hero-card-chip">
                           <Emoji name="streak" size={12} />
@@ -235,15 +234,15 @@ export default function MarketingHome() {
                   </div>
                   <div className="home-hero-card-actions">
                     <span className="home-hero-card-action">
-                      <Copy size={12} strokeWidth={1.5} />
+                      <Copy size={12} strokeWidth={1} />
                       Copy
                     </span>
                     <span className="home-hero-card-action">
-                      <Download size={12} strokeWidth={1.5} />
+                      <Download size={12} strokeWidth={1} />
                       Download
                     </span>
                     <span className="home-hero-card-action">
-                      <Mail size={12} strokeWidth={1.5} />
+                      <Send size={12} strokeWidth={1} />
                       Email
                     </span>
                   </div>
@@ -268,9 +267,9 @@ export default function MarketingHome() {
                           <span className="home-hero-card-section-badge">
                             {section.badge.label}
                             {section.badge.kind === "share" ? (
-                              <Forward size={8} strokeWidth={1.5} />
+                              <Forward size={8} strokeWidth={1} />
                             ) : (
-                              <Sparkles size={8} strokeWidth={1.5} />
+                              <Sparkles size={8} strokeWidth={1} />
                             )}
                           </span>
                         ) : null}
@@ -281,10 +280,9 @@ export default function MarketingHome() {
                             key={item.title}
                             className="home-hero-card-bullet"
                           >
-                            <ChevronRight
-                              size={10}
-                              strokeWidth={1.5}
+                            <span
                               className="home-hero-card-bullet-mark"
+                              aria-hidden
                             />
                             <p>
                               <span className="home-hero-card-bullet-title">
@@ -322,11 +320,11 @@ export default function MarketingHome() {
                     </div>
                     <div className="home-hero-card-stats-meta">
                       <span className="home-hero-card-stats-metaitem">
-                        <GitCommitHorizontal size={16} strokeWidth={1.5} />
+                        <GitCommitHorizontal size={16} strokeWidth={1} />
                         19 commits
                       </span>
                       <span className="home-hero-card-stats-metaitem">
-                        <FileText size={12} strokeWidth={1.5} />
+                        <FileText size={12} strokeWidth={1} />
                         8 Files
                       </span>
                     </div>
@@ -351,7 +349,7 @@ export default function MarketingHome() {
                             {path}
                           </span>
                           <span className="home-hero-card-file-link">
-                            <ExternalLink size={8} strokeWidth={1.5} />
+                            <SquareArrowUpRight size={8} strokeWidth={1} />
                           </span>
                         </li>
                       ))}
@@ -429,15 +427,15 @@ export default function MarketingHome() {
                   <span className="home-hero-side-logo-word">AskScout</span>
                 </div>
                 <div className="home-hero-side-utils">
-                  <HelpCircle size={14} strokeWidth={1.5} />
-                  <Settings2 size={14} strokeWidth={1.5} />
+                  <ChartPie size={14} strokeWidth={1} />
+                  <Settings2 size={14} strokeWidth={1} />
                 </div>
               </div>
 
               {/* Repo dropdown chip (244:2265). */}
               <div className="home-hero-side-repo">
                 <span>askscout</span>
-                <ChevronDown size={14} strokeWidth={1.5} />
+                <ChevronDown size={14} strokeWidth={1} />
               </div>
 
               {/* Days list (244:2269) — first row is the active
@@ -458,11 +456,11 @@ export default function MarketingHome() {
                         </span>
                         <span className="home-hero-side-day-meta">
                           {day.commits}
-                          <GitCommitHorizontal size={16} strokeWidth={1.5} />
+                          <GitCommitHorizontal size={16} strokeWidth={1} />
                         </span>
                         <span className="home-hero-side-day-meta">
                           {day.files}
-                          <FileText size={12} strokeWidth={1.5} />
+                          <FileText size={12} strokeWidth={1} />
                         </span>
                       </div>
                     </div>
