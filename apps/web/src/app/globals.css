@@ -241,11 +241,13 @@ body {
   font-size: 14px;
   line-height: 1.6;
   color: var(--color-text-primary);
-  /* Page background is bg-primary (#070707 dark / #ffffff light)
-     so the marketing hero's bottom-fade lands on the same color
-     it transitions to. The dashboard/settings cards still sit on
-     bg-primary too — body and content panel are the same tone now. */
-  background: var(--color-bg-primary);
+  /* Body is the outer "chrome" tone (bg-secondary). The dashboard's
+     digest card surface sits on top in bg-primary, which reads as
+     the darker focal area against this chrome. The marketing main
+     element (.home) paints bg-primary across its whole height, so
+     the hero's bottom-fade still lands on bg-primary inside the
+     marketing pages — body bg is only visible on dashboard/app pages. */
+  background: var(--color-bg-secondary);
   min-height: 100vh;
 }
 
