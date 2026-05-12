@@ -3444,13 +3444,36 @@ a:hover {
   max-width: none;
   object-fit: cover;
   opacity: 0.4;
-  filter: blur(3px);
+  filter: blur(3.3px);
   pointer-events: none;
   z-index: 0;
 }
 
-/* Everything inside the hero needs to sit above the bg video. */
-.home-hero > *:not(.home-hero-bg) {
+/* Bottom-fade overlay — Figma 244:2453. A 225px gradient at the
+   bottom of the hero, 976px wide and centered (same column as
+   the graphic), fading from bg-primary at the bottom to
+   transparent at the top with the solid stop at 23.695%. Sits
+   ABOVE the video bg but BEHIND the graphic so the video
+   dissolves into the page bg before it reaches the section below. */
+.home-hero-bg-fade {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 976px;
+  max-width: 100%;
+  height: 225px;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    var(--color-bg-primary) 23.695%,
+    transparent 100%
+  );
+  z-index: 0;
+}
+
+/* Everything inside the hero needs to sit above the bg layers. */
+.home-hero > *:not(.home-hero-bg):not(.home-hero-bg-fade) {
   position: relative;
   z-index: 1;
 }

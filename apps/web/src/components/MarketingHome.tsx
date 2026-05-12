@@ -19,6 +19,7 @@ import {
 import { signIn } from "@/auth";
 import { InstallChip } from "@/components/InstallChip";
 import { Emoji } from "@/components/Emoji";
+import { HeroBgVideo } from "@/components/HeroBgVideo";
 import { Logo } from "@/components/Logo";
 import FAQTabs from "@/components/FAQTabs";
 import { MarketingNav } from "@/components/MarketingNav";
@@ -141,18 +142,10 @@ export default function MarketingHome() {
           centers on the page's content axis. =========================================================== */}
       <section className="home-hero">
         {/* Background — silent looping starfield video per Figma
-            244:2059. Sits behind every hero element; pointer-events
-            disabled so CTAs above stay clickable. */}
-        <video
-          className="home-hero-bg"
-          src="/hero-starfield.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          aria-hidden
-        />
+            244:2059, plus the bottom-fade gradient (244:2453) that
+            blends the video into the page bg as you scroll down. */}
+        <HeroBgVideo />
+        <div className="home-hero-bg-fade" aria-hidden />
         <div className="home-hero-inner">
           <div className="home-hero-text-stack">
             <div className="home-hero-headline">
