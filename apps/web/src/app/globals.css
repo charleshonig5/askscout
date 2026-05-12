@@ -5112,9 +5112,33 @@ a:hover {
    otherwise the inset box-shadow stacks visibly on top of the
    pill and reads as a block inside a block. By animating the
    pill, the colored swell looks like one continuous element. */
+/* Graphic-specific glow keyframe — the dashboard's
+   sidebar-item-fresh-glow peaks at 40% and fades, so the glow
+   barely outlasts the count-up. For the marketing graphic we
+   want the glow to HOLD bright for the full count-up duration
+   then drop off right as the numbers land. Quick 12% ramp-up,
+   flat through 85%, quick fade-out by 100%. */
+@keyframes hgm-today-glow {
+  0% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  12%,
+  85% {
+    box-shadow:
+      inset 0 8px 32px 0
+        color-mix(in srgb, var(--color-success) 35%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--color-success) 40%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+/* Duration matches .home-hero-card-count-up's 900ms so glow
+   and ticker finish on the same beat. */
 [data-graphic-phase="stats"] .home-hero-side-days-active,
 [data-graphic-phase="done"] .home-hero-side-days-active {
-  animation: sidebar-item-fresh-glow 1100ms ease-out forwards;
+  animation: hgm-today-glow 900ms ease-out forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
