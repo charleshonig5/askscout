@@ -3449,12 +3449,22 @@ a:hover {
   z-index: 0;
 }
 
+/* Everything inside the hero needs to sit above the bg video.
+   The bottom-fade overlay (next rule) then layers on top of
+   everything to dissolve the graphic's bottom edge into bg-primary. */
+.home-hero > *:not(.home-hero-bg):not(.home-hero-bg-fade) {
+  position: relative;
+  z-index: 1;
+}
+
 /* Bottom-fade overlay — Figma 244:2453. A 225px gradient at the
    bottom of the hero, 976px wide and centered (same column as
    the graphic), fading from bg-primary at the bottom to
-   transparent at the top with the solid stop at 23.695%. Sits
-   ABOVE the video bg but BEHIND the graphic so the video
-   dissolves into the page bg before it reaches the section below. */
+   transparent at the top with the solid stop at 23.695%. Layered
+   ABOVE the graphic (z-index: 2) and pointer-events: none so the
+   graphic's bottom edge dissolves into bg-primary the same way
+   Figma renders it — the fade masks both the starfield video AND
+   the graphic's hard border in a single pass. */
 .home-hero-bg-fade {
   position: absolute;
   bottom: 0;
@@ -3469,13 +3479,7 @@ a:hover {
     var(--color-bg-primary) 23.695%,
     transparent 100%
   );
-  z-index: 0;
-}
-
-/* Everything inside the hero needs to sit above the bg layers. */
-.home-hero > *:not(.home-hero-bg):not(.home-hero-bg-fade) {
-  position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .home-hero-inner {
