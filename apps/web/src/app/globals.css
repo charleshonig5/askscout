@@ -3535,8 +3535,15 @@ a:hover {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 976px;
-  max-width: 100%;
+  /* Full viewport width so the bg-primary fade covers the entire
+     hero bottom edge-to-edge. Figma specced 976px but at that
+     width the area to the left and right of the fade column
+     showed faint starfield video bleed-through at the hero's
+     bottom (the video's mask softens to transparent at the
+     bottom but isn't a hard cutoff, so traces show through
+     where the fade doesn't paint over them). 100vw kills the
+     bleed without changing the fade's vertical shape. */
+  width: 100vw;
   /* Shrunk from Figma's 225 to 150 so the outer fade overlaps
      less of the digest content. Pairs with .home-hero-card-fade
      also shrunk (87 → 40) — together they expose more readable
