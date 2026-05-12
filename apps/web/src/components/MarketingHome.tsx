@@ -15,7 +15,6 @@ import {
   Settings2,
   ShieldCheck,
   Sparkles,
-  SquareArrowUpRight,
 } from "lucide-react";
 import { signIn } from "@/auth";
 import { InstallChip } from "@/components/InstallChip";
@@ -221,7 +220,7 @@ export default function MarketingHome() {
                       <div className="home-hero-card-chips">
                         <span className="home-hero-card-chip">
                           askscout
-                          <SquareArrowUpRight size={8} strokeWidth={1} />
+                          <Forward size={8} strokeWidth={1} />
                         </span>
                         <span className="home-hero-card-chip">
                           <Emoji name="streak" size={12} />
@@ -350,7 +349,7 @@ export default function MarketingHome() {
                             {path}
                           </span>
                           <span className="home-hero-card-file-link">
-                            <SquareArrowUpRight size={8} strokeWidth={1} />
+                            <Forward size={8} strokeWidth={1} />
                           </span>
                         </li>
                       ))}
