@@ -288,8 +288,8 @@ export default function MarketingHome() {
                             only when the wrapper's data-graphic-phase
                             equals this section's key. */}
                         <span className="home-hero-card-live" aria-hidden>
-                          <span className="home-hero-card-live-dot" />
                           Live
+                          <span className="home-hero-card-live-dot" />
                         </span>
                       </div>
                       <ul className="home-hero-card-bullets">
@@ -357,8 +357,8 @@ export default function MarketingHome() {
                     <Emoji name="statistics" size={16} />
                     Statistics
                     <span className="home-hero-card-live" aria-hidden>
-                      <span className="home-hero-card-live-dot" />
                       Live
+                      <span className="home-hero-card-live-dot" />
                     </span>
                   </span>
                   {/* Statistics summary (244:2188). Numbers animate
