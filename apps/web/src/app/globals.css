@@ -3432,8 +3432,13 @@ a:hover {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  /* 88px top = nav→text gap; 7px bottom = graphic→hero-bottom gap. */
-  padding: 88px 32px 7px;
+  /* 88px top = nav→text gap. 104px bottom = graphic→divider gap,
+     matching the 104px rhythm every section divider uses. The
+     hero's bg-fade gradient still anchors to the hero bottom
+     but now sits in the empty zone below the graphic, so it
+     blends the graphic's bottom into bg-primary before the
+     divider ever shows up. */
+  padding: 88px 32px 104px;
   max-width: 1100px;
   margin: 0 auto;
 }
