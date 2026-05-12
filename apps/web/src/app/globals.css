@@ -3466,10 +3466,33 @@ a:hover {
   );
 }
 
-/* Everything inside the hero needs to sit above the bg video.
-   The bottom-fade overlay (next rule) then layers on top of
-   everything to dissolve the graphic's bottom edge into bg-primary. */
-.home-hero > *:not(.home-hero-bg):not(.home-hero-bg-fade) {
+/* Darken overlay — bg-primary at 60% sitting directly on top of
+   the video. The raw Pexels clip is too bright at 40% opacity
+   alone; this 60% scrim of bg-primary knocks it down so the
+   starfield reads as atmospheric haze instead of a competing
+   visual layer. pointer-events: none so it doesn't intercept
+   clicks. Sits at z-index 1 alongside content but is rendered
+   FIRST in the DOM so painter order keeps it below the content. */
+.home-hero-bg-darken {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  /* Match the video's viewport-wide bleed (the hero itself is
+     capped at max-width: 1100px so inset: 0 would leave the
+     video's edges undarkened on a 1440 viewport). */
+  width: 100vw;
+  background: color-mix(in srgb, var(--color-bg-primary) 60%, transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Everything inside the hero needs to sit above the bg video +
+   darken overlay. The bottom-fade overlay (next rule) then
+   layers on top of everything to dissolve the graphic's bottom
+   edge into bg-primary. */
+.home-hero > *:not(.home-hero-bg):not(.home-hero-bg-darken):not(.home-hero-bg-fade) {
   position: relative;
   z-index: 1;
 }

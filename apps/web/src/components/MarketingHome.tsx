@@ -145,6 +145,10 @@ export default function MarketingHome() {
             244:2059, plus the bottom-fade gradient (244:2453) that
             blends the video into the page bg as you scroll down. */}
         <HeroBgVideo />
+        {/* Darken overlay — bg-primary at 60% sitting on top of
+            the video so the starfield reads as atmospheric haze
+            rather than competing with the hero content. */}
+        <div className="home-hero-bg-darken" aria-hidden />
         <div className="home-hero-bg-fade" aria-hidden />
         <div className="home-hero-inner">
           <div className="home-hero-text-stack">
