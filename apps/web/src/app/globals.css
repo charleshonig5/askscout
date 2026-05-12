@@ -3543,10 +3543,17 @@ a:hover {
      digest rows before the gradient kicks in. */
   height: 150px;
   pointer-events: none;
+  /* IMPORTANT: fade to "bg-primary with alpha 0", NOT to the
+     CSS `transparent` keyword. `transparent` is rgba(0,0,0,0)
+     — fully transparent BLACK — so the gradient interpolates
+     through colors DARKER than bg-primary, and composited over
+     a bg-primary page that reads as a darker streak just above
+     where the fade ends. Using rgb(from ...) keeps the gradient
+     in the same hue as bg-primary throughout, alpha-only fade. */
   background: linear-gradient(
     to top,
     var(--color-bg-primary) 23.695%,
-    transparent 100%
+    rgb(from var(--color-bg-primary) r g b / 0) 100%
   );
   z-index: 2;
 }
@@ -4791,10 +4798,14 @@ a:hover {
      readable inside the card before the gradient kicks in. */
   height: 40px;
   pointer-events: none;
+  /* Same "fade to bg-primary with alpha 0" pattern as the outer
+     bg-fade — avoids the dark-streak artifact you get when a
+     gradient interpolates from bg-primary toward CSS's
+     `transparent` (which is fully-transparent BLACK). */
   background: linear-gradient(
     to top,
     var(--color-bg-primary) 0%,
-    transparent 100%
+    rgb(from var(--color-bg-primary) r g b / 0) 100%
   );
 }
 
