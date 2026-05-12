@@ -5103,23 +5103,23 @@ a:hover {
 }
 
 /* Today row in the sidebar — when the digest finishes generating
-   (phase reaches "stats"), the row's numbers count up from 0 to
-   their targets AND the row briefly swells with a success-tinted
-   glow, then settles. Mirrors the dashboard's
-   .sidebar-item--fresh treatment that fires after a run completes.
-   Position: relative so the glow shadow renders on the row, not
-   the days-list container. */
-[data-today] {
-  position: relative;
-  border-radius: 6px;
-}
-
-[data-graphic-phase="stats"] [data-today] {
+   (phase reaches "stats"), the numbers count up from 0 → target
+   AND the highlight pill briefly swells with a success-tinted
+   glow then settles back to its bg-tertiary base. Mirrors the
+   dashboard's .sidebar-item--fresh treatment.
+   The glow paints on .home-hero-side-days-active (the actual
+   highlight pill behind the Today row), NOT on the row itself —
+   otherwise the inset box-shadow stacks visibly on top of the
+   pill and reads as a block inside a block. By animating the
+   pill, the colored swell looks like one continuous element. */
+[data-graphic-phase="stats"] .home-hero-graphic-motion .home-hero-side-days-active,
+[data-graphic-phase="done"] .home-hero-graphic-motion .home-hero-side-days-active {
   animation: sidebar-item-fresh-glow 1100ms ease-out forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-graphic-phase="stats"] [data-today] {
+  [data-graphic-phase="stats"] .home-hero-graphic-motion .home-hero-side-days-active,
+  [data-graphic-phase="done"] .home-hero-graphic-motion .home-hero-side-days-active {
     animation: none;
   }
 }
