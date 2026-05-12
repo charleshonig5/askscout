@@ -3546,13 +3546,16 @@ a:hover {
   /* IMPORTANT: fade to "bg-primary with alpha 0", NOT to the
      CSS `transparent` keyword. `transparent` is rgba(0,0,0,0)
      — fully transparent BLACK — so the gradient interpolates
-     through colors DARKER than bg-primary, and composited over
-     a bg-primary page that reads as a darker streak just above
-     where the fade ends. Using rgb(from ...) keeps the gradient
-     in the same hue as bg-primary throughout, alpha-only fade. */
+     through colors DARKER than bg-primary.
+     Also using `in oklab` for the interpolation color space:
+     sRGB interpolation of near-black colors at varying alpha
+     produces visible mid-band darkening because the gamma
+     curve isn't perceptually uniform down there. OKLab is
+     perceptually uniform, so the alpha ramp reads smooth all
+     the way down. */
   background: linear-gradient(
-    to top,
-    var(--color-bg-primary) 23.695%,
+    in oklab to top,
+    var(--color-bg-primary) 50%,
     rgb(from var(--color-bg-primary) r g b / 0) 100%
   );
   z-index: 2;
