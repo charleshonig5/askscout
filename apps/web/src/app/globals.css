@@ -4289,7 +4289,13 @@ a:hover {
    inside the digest card, width 712 (744 - 13*2). Figma 244:2065. */
 .home-hero-card-header {
   position: absolute;
-  top: 13px;
+  /* Centered vertically in the 64px band between card top and the
+     horizontal divider (heading content is 30px, so 17 above +
+     30 + 17 below = 64). Figma's exact 13px assumed the natural
+     leading-normal line-heights for Pridi/Work Sans gave a 37px
+     content height; with our line-height: 1 the content is 30px
+     and needs the extra 4px below to read centered. */
+  top: 17px;
   left: 13px;
   width: 712px;
   display: flex;
