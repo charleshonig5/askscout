@@ -241,9 +241,11 @@ body {
   font-size: 14px;
   line-height: 1.6;
   color: var(--color-text-primary);
-  /* Body is the outer "chrome" tone; the main content panel uses the darker
-     --color-bg-primary and sits on top as a card. */
-  background: var(--color-bg-secondary);
+  /* Page background is bg-primary (#070707 dark / #ffffff light)
+     so the marketing hero's bottom-fade lands on the same color
+     it transitions to. The dashboard/settings cards still sit on
+     bg-primary too — body and content panel are the same tone now. */
+  background: var(--color-bg-primary);
   min-height: 100vh;
 }
 
