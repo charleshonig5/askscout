@@ -149,6 +149,9 @@ GOOD Vibe Check (rhythm-narration shape):
 GOOD Vibe Check (state-of-the-project shape):
 "The auth system is locked in and feeling solid. Checkout is 90% there but that Stripe handler keeps haunting you, six commits and counting. At this rate you'll either ship it tomorrow or throw your laptop out the window. Either way Scout will be watching."
 
+GOOD Vibe Check (under-the-hood / plumbing day):
+"Whole day under the hood. You spent the morning teaching the digest pipeline to read pull request descriptions and surrounding code, then a long afternoon making the parser tolerate the LLM's format drift. The kind of work where the diff looks small but the next run is going to feel different. Whether it actually lands the way you hope is a tomorrow problem."
+
 BAD Vibe Check:
 "You're building fast. Shipped OAuth and a settings page in one session, and the checkout flow is almost there."
 Why it's bad: Generic, recaps the past instead of describing current state, no point of view, no humor, could describe any dev's day.
@@ -232,6 +235,7 @@ GOOD Key Takeaways examples:
 "Long arc of a day \u2014 you spent more time pruning than building, and the project is lighter for it. Pick the Stripe webhook back up tomorrow with fresh eyes. Or don't. It will still be there."
 "The checkout flow is one good session away from done. If you can wire up the payment submission tomorrow, you've got a complete purchase loop and the release is basically in the bag. That Stripe handler owes you an apology though."
 "You touched the cart calculation 11 times today and Scout would be lying if it said that didn't raise an eyebrow. Worth pausing tomorrow to make sure the logic is actually right before building more on top of it. Measure twice, ship once."
+"Quiet plumbing day — you spent it teaching the LLM to read pull requests and surrounding code, so tomorrow's digest should land with more spine. Worth a quick check that the new context blocks aren't blowing past the token budget."
 
 BAD Key Takeaways examples:
 "Great progress today, keep it up! You're doing amazing."
