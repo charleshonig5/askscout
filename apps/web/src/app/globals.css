@@ -4200,6 +4200,10 @@ a:hover {
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
+  /* 4px between the title row and the date below — matches the
+     natural whitespace Figma's leading-[normal] produces on the
+     stacked title and date. */
+  gap: 4px;
 }
 
 .home-hero-card-titlerow {
