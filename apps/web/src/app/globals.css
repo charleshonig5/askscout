@@ -3428,6 +3428,33 @@ a:hover {
   margin: 0 auto;
 }
 
+/* Hero background video — Figma 244:2059. 1920x1080 starfield/
+   nebula photo asset (Pexels 9686493) sitting behind every hero
+   element with a 3px blur and 40% opacity, so it reads as
+   atmospheric haze rather than a literal video. Centered
+   horizontally and pinned to the hero's top. pointer-events:
+   none so CTAs above stay interactive; aria-hidden in markup. */
+.home-hero-bg {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1920px;
+  height: 1080px;
+  max-width: none;
+  object-fit: cover;
+  opacity: 0.4;
+  filter: blur(3px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Everything inside the hero needs to sit above the bg video. */
+.home-hero > *:not(.home-hero-bg) {
+  position: relative;
+  z-index: 1;
+}
+
 .home-hero-inner {
   position: relative;
   z-index: 1;

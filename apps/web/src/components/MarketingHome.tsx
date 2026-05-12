@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 import { signIn } from "@/auth";
 import { InstallChip } from "@/components/InstallChip";
-import { HeroStars } from "@/components/HeroStars";
 import { Emoji } from "@/components/Emoji";
 import { Logo } from "@/components/Logo";
 import FAQTabs from "@/components/FAQTabs";
@@ -141,7 +140,19 @@ export default function MarketingHome() {
           streaming digest demo card sitting beneath. Everything
           centers on the page's content axis. =========================================================== */}
       <section className="home-hero">
-        <HeroStars />
+        {/* Background — silent looping starfield video per Figma
+            244:2059. Sits behind every hero element; pointer-events
+            disabled so CTAs above stay clickable. */}
+        <video
+          className="home-hero-bg"
+          src="/hero-starfield.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          aria-hidden
+        />
         <div className="home-hero-inner">
           <div className="home-hero-text-stack">
             <div className="home-hero-headline">
