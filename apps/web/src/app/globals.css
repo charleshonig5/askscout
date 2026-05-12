@@ -3426,12 +3426,8 @@ a:hover {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  /* 60px top = nav→text gap (tightened from 88 so the composition
-     reads more deliberate). 32px bottom = graphic→hero-bottom
-     gap (lifted from 7 so the graphic sits above the fade's
-     solid stop and more of the digest is visible before the
-     gradient kicks in). */
-  padding: 60px 32px 32px;
+  /* 88px top = nav→text gap; 7px bottom = graphic→hero-bottom gap. */
+  padding: 88px 32px 7px;
   max-width: 1100px;
   margin: 0 auto;
 }
@@ -3520,7 +3516,12 @@ a:hover {
   transform: translateX(-50%);
   width: 976px;
   max-width: 100%;
-  height: 225px;
+  /* Shrunk from Figma's 225px to 150px so the fade overlaps
+     less of the digest graphic — exposes the Left Off section
+     and the full Codebase Health stack instead of dissolving
+     them. Same gradient shape (23.695% solid stop → transparent
+     at top), same blend into the page bg, just a tighter band. */
+  height: 150px;
   pointer-events: none;
   background: linear-gradient(
     to top,
@@ -3535,10 +3536,8 @@ a:hover {
   z-index: 1;
   /* 707px = text+button block width per Figma. */
   max-width: 707px;
-  /* 24px = gap from text-block bottom to graphic top
-     (tightened from 42 so the hero composition reads more
-     deliberate). */
-  margin-bottom: 24px;
+  /* 42px = gap from text-block bottom to graphic top. */
+  margin-bottom: 42px;
   /* Internal layout per Figma 244:2426: three nested flex columns.
        outer  (this element)  — gap 44 — text stack → CTA row
        text stack             — gap 24 — headline → subtitle
