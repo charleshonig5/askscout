@@ -5937,31 +5937,37 @@ a:hover {
   gap: 34px;
 }
 
-/* Each card — 471x334, border, radius 8, bg-primary, inset glow. */
+/* Each card — 471x334, radius 8, bg-primary, inset glow.
+   Border drawn via inset box-shadow (not CSS border) so absolute
+   children sit at Figma-exact coordinates without 1px border-box
+   offset. */
 .home-features-card {
   position: relative;
   width: 471px;
   height: 334px;
-  border: 1px solid var(--color-border);
   border-radius: 8px;
   background: var(--color-bg-primary);
-  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    inset 0 0 40px 0 var(--color-inner-glow);
   overflow: hidden;
 }
 
-/* Inner mock area — 422x212 at top:22 left:23, bg-secondary
-   surface with the same border + glow recipe as the digest
-   card frames in the hero graphic. */
+/* Inner mock area — 422x212 at top:23 left:24 (Figma exact),
+   bg-secondary surface. Border via inset box-shadow so the
+   recap/history/toggles/resume children at top:13 left:13 land
+   at the Figma-exact 13px offset from the mock's outer edge. */
 .home-features-mock {
   position: absolute;
-  top: 22px;
-  left: 23px;
+  top: 23px;
+  left: 24px;
   width: 422px;
   height: 212px;
-  border: 1px solid var(--color-border);
   border-radius: 8px;
   background: var(--color-bg-secondary);
-  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    inset 0 0 40px 0 var(--color-inner-glow);
   overflow: hidden;
 }
 
@@ -5971,8 +5977,8 @@ a:hover {
    no dark-streak artifact. */
 .home-features-fade {
   position: absolute;
-  bottom: 86px;
-  left: 23px;
+  bottom: 87px;
+  left: 24px;
   width: 423px;
   height: 118px;
   pointer-events: none;
@@ -5986,8 +5992,8 @@ a:hover {
 /* Copy — title + body — sits at top:246 left:23. */
 .home-features-copy {
   position: absolute;
-  top: 246px;
-  left: 23px;
+  top: 247px;
+  left: 24px;
   width: 423px;
   display: flex;
   flex-direction: column;
@@ -6109,17 +6115,22 @@ a:hover {
   font-weight: 300;
 }
 
-/* ---------- CARD 2: Built-in History mock ---------- */
+/* ---------- CARD 2: Built-in History mock ----------
+   Layout per Figma 244:2746: the days column is at left:13
+   top:13 (166 wide). The detail panel is its OWN bordered
+   rectangle, positioned absolute at left:193 top:13 width:422,
+   deliberately overflowing the mock's right edge — the mock's
+   overflow:hidden clips it, producing the "truncated preview"
+   visual the design wants. */
 .home-features-history {
   position: absolute;
-  top: 13px;
-  left: 13px;
-  display: flex;
-  gap: 14px;
+  inset: 0;
 }
 
 .home-features-history-side {
-  position: relative;
+  position: absolute;
+  top: 13px;
+  left: 13px;
   width: 166px;
 }
 
@@ -6188,12 +6199,24 @@ a:hover {
 }
 
 .home-features-history-detail {
-  /* 422 - 13 (left) - 166 (side) - 14 (gap) - 13 (right) ≈ 216 */
-  width: 216px;
+  /* Figma 244:2891: own bordered rectangle at left:193 top:13
+     width:422. Overflows the 422-wide mock by ~193px — the mock's
+     overflow:hidden clips it. Border via inset box-shadow so the
+     inner 13px padding lands at the Figma-exact offset. */
+  position: absolute;
+  top: 13px;
+  left: 193px;
+  width: 422px;
+  height: 212px;
+  border-radius: 8px;
+  background: var(--color-bg-primary);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    inset 0 0 40px 0 var(--color-inner-glow);
+  padding: 13px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding-top: 4px;
 }
 
 .home-features-history-skel {
@@ -6204,11 +6227,16 @@ a:hover {
 }
 .home-features-history-skel--card {
   height: 90px;
-  width: 100% !important;
-  margin-top: 28px;
+  width: 323px !important;
+  margin-top: 42px;
 }
 
-/* ---------- CARD 3: Customized to your Needs mock ---------- */
+/* ---------- CARD 3: Customized to your Needs mock ----------
+   Layout per Figma 244:2905: three toggle rows with dividers
+   between them, all as siblings of the same flex column with
+   gap 14. Each row is 36px tall (label + desc on top of each
+   other, label-row 18 + desc-row 18). Descriptions use
+   white-space: nowrap so they don't wrap and inflate the row. */
 .home-features-toggles {
   position: absolute;
   top: 13px;
@@ -6219,28 +6247,22 @@ a:hover {
   gap: 14px;
 }
 
-.home-features-toggle-row {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
 .home-features-toggle-divider {
   height: 1px;
   background: var(--color-border);
 }
 
-.home-features-toggle-row-inner {
+.home-features-toggle-row {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 14px;
+  height: 36px;
 }
 
 .home-features-toggle-text {
   display: flex;
   flex-direction: column;
-  width: 156px;
 }
 
 .home-features-toggle-label {
@@ -6250,6 +6272,7 @@ a:hover {
   font-size: 12px;
   line-height: 18px;
   color: var(--color-text-primary);
+  white-space: nowrap;
 }
 
 .home-features-toggle-desc {
@@ -6259,6 +6282,7 @@ a:hover {
   font-size: 12px;
   line-height: 18px;
   color: var(--color-text-primary);
+  white-space: nowrap;
 }
 
 .home-features-toggle {
@@ -6319,18 +6343,19 @@ a:hover {
 }
 
 .home-features-resume-sub {
-  margin: 4px 0 0;
+  margin: 0;
   font-family: var(--font-sans);
   font-weight: 300;
   font-size: 10px;
   line-height: 1.4;
   color: var(--color-text-primary);
+  white-space: nowrap;
 }
 
 .home-features-resume-close {
   position: absolute;
   top: 13px;
-  right: 13px;
+  right: 15px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -6366,6 +6391,10 @@ a:hover {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.home-features-resume-block--keyfiles {
+  width: 246px;
 }
 
 .home-features-resume-heading {

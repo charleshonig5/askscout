@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import Link from "next/link";
 import {
   BookText,
@@ -793,10 +794,24 @@ export default function MarketingHome() {
                       ))}
                     </ul>
                   </div>
+                  {/* Detail panel — separate bordered rectangle that
+                      starts at left:193 with width:422, deliberately
+                      extending past the mock's right edge per Figma
+                      244:2891. The mock's overflow:hidden clips it,
+                      producing the truncated preview look. */}
                   <div className="home-features-history-detail">
-                    <span className="home-features-history-skel" style={{ width: "100%" }} />
-                    <span className="home-features-history-skel" style={{ width: "50%" }} />
-                    <span className="home-features-history-skel" style={{ width: "67%" }} />
+                    <span
+                      className="home-features-history-skel"
+                      style={{ width: "323px" }}
+                    />
+                    <span
+                      className="home-features-history-skel"
+                      style={{ width: "161px" }}
+                    />
+                    <span
+                      className="home-features-history-skel"
+                      style={{ width: "215px" }}
+                    />
                     <span className="home-features-history-skel home-features-history-skel--card" />
                   </div>
                 </div>
@@ -833,11 +848,11 @@ export default function MarketingHome() {
                       on: false,
                     },
                   ].map((row, i) => (
-                    <div key={row.label} className="home-features-toggle-row">
+                    <Fragment key={row.label}>
                       {i > 0 ? (
                         <div className="home-features-toggle-divider" />
                       ) : null}
-                      <div className="home-features-toggle-row-inner">
+                      <div className="home-features-toggle-row">
                         <div className="home-features-toggle-text">
                           <p className="home-features-toggle-label">
                             {row.label}
@@ -852,7 +867,7 @@ export default function MarketingHome() {
                           <span className="home-features-toggle-thumb" />
                         </span>
                       </div>
-                    </div>
+                    </Fragment>
                   ))}
                 </div>
               </div>
@@ -900,7 +915,7 @@ export default function MarketingHome() {
                         multiple days near midnight boundaries.
                       </p>
                     </div>
-                    <div className="home-features-resume-block">
+                    <div className="home-features-resume-block home-features-resume-block--keyfiles">
                       <p className="home-features-resume-heading">Key Files</p>
                       {[
                         "apps/web/src/app/globals.css",
