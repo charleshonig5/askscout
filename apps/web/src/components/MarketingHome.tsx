@@ -562,27 +562,91 @@ export default function MarketingHome() {
               <div className="home-hero-side-days">
                 <div className="home-hero-side-days-active" />
                 <div className="home-hero-side-days-list">
-                  {HERO_GRAPHIC_DAYS.map((day) => (
-                    <div key={day.label} className="home-hero-side-day">
-                      <p className="home-hero-side-day-label">{day.label}</p>
-                      <div className="home-hero-side-day-stats">
-                        <span className="home-hero-side-day-add">
-                          +{day.added}
-                        </span>
-                        <span className="home-hero-side-day-rem">
-                          -{day.removed}
-                        </span>
-                        <span className="home-hero-side-day-meta">
-                          {day.commits}
-                          <GitCommitHorizontal size={16} strokeWidth={1} />
-                        </span>
-                        <span className="home-hero-side-day-meta">
-                          {day.files}
-                          <FileText size={12} strokeWidth={1} />
-                        </span>
+                  {HERO_GRAPHIC_DAYS.map((day, i) => {
+                    // Today's row gets count-up animations on its
+                    // numbers (start at 0 → animate to target during
+                    // the stats phase) plus a brief success-tinted
+                    // glow on completion — mirroring the dashboard's
+                    // .sidebar-item--fresh treatment when a digest
+                    // run finishes. Historical days render plain
+                    // static numbers.
+                    const isToday = i === 0;
+                    return (
+                      <div
+                        key={day.label}
+                        className="home-hero-side-day"
+                        {...(isToday ? { "data-today": "" } : {})}
+                      >
+                        <p className="home-hero-side-day-label">{day.label}</p>
+                        <div className="home-hero-side-day-stats">
+                          <span className="home-hero-side-day-add">
+                            {isToday ? (
+                              <>
+                                +
+                                <span
+                                  className="home-hero-card-count-up"
+                                  style={
+                                    {
+                                      "--count-target": day.added,
+                                    } as React.CSSProperties
+                                  }
+                                />
+                              </>
+                            ) : (
+                              `+${day.added}`
+                            )}
+                          </span>
+                          <span className="home-hero-side-day-rem">
+                            {isToday ? (
+                              <>
+                                -
+                                <span
+                                  className="home-hero-card-count-up"
+                                  style={
+                                    {
+                                      "--count-target": day.removed,
+                                    } as React.CSSProperties
+                                  }
+                                />
+                              </>
+                            ) : (
+                              `-${day.removed}`
+                            )}
+                          </span>
+                          <span className="home-hero-side-day-meta">
+                            {isToday ? (
+                              <span
+                                className="home-hero-card-count-up"
+                                style={
+                                  {
+                                    "--count-target": day.commits,
+                                  } as React.CSSProperties
+                                }
+                              />
+                            ) : (
+                              day.commits
+                            )}
+                            <GitCommitHorizontal size={16} strokeWidth={1} />
+                          </span>
+                          <span className="home-hero-side-day-meta">
+                            {isToday ? (
+                              <span
+                                className="home-hero-card-count-up"
+                                style={
+                                  {
+                                    "--count-target": day.files,
+                                  } as React.CSSProperties
+                                }
+                              />
+                            ) : (
+                              day.files
+                            )}
+                            <FileText size={12} strokeWidth={1} />
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>

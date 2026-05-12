@@ -5099,6 +5099,28 @@ a:hover {
   width: var(--fill-target);
 }
 
+/* Today row in the sidebar — when the digest finishes generating
+   (phase reaches "stats"), the row's numbers count up from 0 to
+   their targets AND the row briefly swells with a success-tinted
+   glow, then settles. Mirrors the dashboard's
+   .sidebar-item--fresh treatment that fires after a run completes.
+   Position: relative so the glow shadow renders on the row, not
+   the days-list container. */
+[data-today] {
+  position: relative;
+  border-radius: 6px;
+}
+
+[data-graphic-phase="stats"] [data-today] {
+  animation: sidebar-item-fresh-glow 1100ms ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-graphic-phase="stats"] [data-today] {
+    animation: none;
+  }
+}
+
 /* LiveBadge on Statistics during the stats phase. */
 [data-graphic-phase="stats"] [data-section="statistics"] .home-hero-card-live {
   display: inline-flex;
