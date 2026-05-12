@@ -4099,6 +4099,8 @@ a:hover {
 .home-hero-side-repo svg {
   width: 14px;
   height: 14px;
+  /* Tertiary grey to match .repo-combobox-chevron in the app. */
+  color: var(--color-text-tertiary);
 }
 
 /* Days list — Figma 244:2269. Absolute container at left:13/
@@ -4173,8 +4175,13 @@ a:hover {
   color: var(--color-text-primary);
 }
 
+/* Commit + file glyphs render in secondary grey everywhere
+   they appear in the app (.commit-icon / .file-icon). Same
+   here so the marketing graphic doesn't put louder icons next
+   to the same numbers. */
 .home-hero-side-day-meta svg {
   flex-shrink: 0;
+  color: var(--color-text-secondary);
 }
 
 /* Digest card — third nested rectangle per Figma 244:2062.
@@ -4517,6 +4524,14 @@ a:hover {
   font-weight: 400;
   line-height: 1;
   color: var(--color-text-primary);
+}
+
+/* Same commit/file-icon secondary-grey treatment as the
+   sidebar day rows — keeps the stat glyphs uniform across the
+   graphic and matches .commit-icon / .file-icon in the app. */
+.home-hero-card-stats-metaitem svg {
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
 }
 
 /* Sub-blocks (Most Active files, Codebase Health) — each has
