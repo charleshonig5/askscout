@@ -5885,6 +5885,537 @@ a:hover {
   }
 }
 
+/* ============================================
+   FEATURES — Figma 244:2697
+   Four product cards in a 2x2 grid. Each card has a mini
+   product mock at the top, a bottom fade, and a title +
+   description in the bottom region.
+   ============================================ */
+.home-features {
+  /* The 104px section padding from .home-section already
+     spaces the divider above + below. No extra padding here. */
+}
+
+.home-features-inner {
+  /* 471 * 2 + 34 gap = 976. Same content width as the hero
+     graphic so columns align visually across sections. */
+  max-width: 976px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 54px;
+}
+
+.home-features-header {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 802px;
+}
+
+.home-features-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 1.15;
+  color: var(--color-text-primary);
+}
+
+.home-features-subtitle {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 20px;
+  line-height: 1.3;
+  color: var(--color-text-primary);
+}
+
+.home-features-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 34px;
+}
+
+/* Each card — 471x334, border, radius 8, bg-primary, inset glow. */
+.home-features-card {
+  position: relative;
+  width: 471px;
+  height: 334px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-primary);
+  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
+  overflow: hidden;
+}
+
+/* Inner mock area — 422x212 at top:22 left:23, bg-secondary
+   surface with the same border + glow recipe as the digest
+   card frames in the hero graphic. */
+.home-features-mock {
+  position: absolute;
+  top: 22px;
+  left: 23px;
+  width: 422px;
+  height: 212px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-secondary);
+  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
+  overflow: hidden;
+}
+
+/* Bottom fade — 118 tall at bottom:86, dissolves the mock's
+   content into bg-primary so the copy below reads cleanly.
+   Same OKLab + bg-primary-alpha-0 recipe as the hero fade so
+   no dark-streak artifact. */
+.home-features-fade {
+  position: absolute;
+  bottom: 86px;
+  left: 23px;
+  width: 423px;
+  height: 118px;
+  pointer-events: none;
+  background: linear-gradient(
+    in oklab to top,
+    var(--color-bg-primary) 23.695%,
+    rgb(from var(--color-bg-primary) r g b / 0) 100%
+  );
+}
+
+/* Copy — title + body — sits at top:246 left:23. */
+.home-features-copy {
+  position: absolute;
+  top: 246px;
+  left: 23px;
+  width: 423px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--color-text-primary);
+}
+
+.home-features-copy h3 {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.home-features-copy p {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+/* ---------- CARD 1: Your Daily Recap mock ---------- */
+.home-features-recap {
+  position: absolute;
+  top: 13px;
+  left: 13px;
+  width: 394px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.home-features-recap-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.home-features-recap-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.home-features-recap-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--color-text-primary);
+}
+
+.home-features-recap-count {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 60px;
+  background: var(--color-bg-tertiary);
+  box-shadow: inset 0 8px 20px 0 var(--color-inner-glow);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 10px;
+  line-height: 1;
+  color: var(--color-text-primary);
+}
+
+.home-features-recap-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.home-features-recap-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.home-features-recap-dot {
+  flex-shrink: 0;
+  width: 16px;
+  height: 20px;
+  position: relative;
+}
+.home-features-recap-dot::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-text-secondary);
+  transform: translate(-50%, -50%);
+}
+
+.home-features-recap-item p {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  line-height: 16px;
+  color: var(--color-text-primary);
+}
+
+.home-features-recap-item-title {
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.home-features-recap-item-body {
+  font-weight: 300;
+}
+
+/* ---------- CARD 2: Built-in History mock ---------- */
+.home-features-history {
+  position: absolute;
+  top: 13px;
+  left: 13px;
+  display: flex;
+  gap: 14px;
+}
+
+.home-features-history-side {
+  position: relative;
+  width: 166px;
+}
+
+.home-features-history-active {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 166px;
+  height: 50px;
+  border-radius: 6px;
+  background: var(--color-bg-tertiary);
+  box-shadow: inset 0 8px 20px 0 var(--color-inner-glow);
+}
+
+.home-features-history-days {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.home-features-history-day {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.home-features-history-label {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--color-text-primary);
+}
+
+.home-features-history-stats {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.home-features-history-add {
+  color: var(--color-success);
+}
+.home-features-history-rem {
+  color: var(--color-danger);
+}
+
+.home-features-history-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-text-primary);
+}
+.home-features-history-meta svg {
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.home-features-history-detail {
+  /* 422 - 13 (left) - 166 (side) - 14 (gap) - 13 (right) ≈ 216 */
+  width: 216px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.home-features-history-skel {
+  display: block;
+  height: 10px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--color-bg-tertiary) 40%, transparent);
+}
+.home-features-history-skel--card {
+  height: 90px;
+  width: 100% !important;
+  margin-top: 28px;
+}
+
+/* ---------- CARD 3: Customized to your Needs mock ---------- */
+.home-features-toggles {
+  position: absolute;
+  top: 13px;
+  left: 13px;
+  width: 394px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.home-features-toggle-row {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.home-features-toggle-divider {
+  height: 1px;
+  background: var(--color-border);
+}
+
+.home-features-toggle-row-inner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.home-features-toggle-text {
+  display: flex;
+  flex-direction: column;
+  width: 156px;
+}
+
+.home-features-toggle-label {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-text-primary);
+}
+
+.home-features-toggle-desc {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-text-primary);
+}
+
+.home-features-toggle {
+  display: inline-block;
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 100px;
+  background: #ffffff;
+  box-shadow: inset 0 0 14px 0 rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+}
+
+.home-features-toggle--on {
+  background: var(--color-success);
+}
+
+.home-features-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 100px;
+  background: var(--color-bg-secondary);
+  box-shadow:
+    0 2px 4px 0 rgba(39, 39, 39, 0.14),
+    inset 0 0 10px 0 var(--color-inner-glow);
+}
+
+.home-features-toggle--on .home-features-toggle-thumb {
+  left: 22px;
+}
+
+/* ---------- CARD 4: Resume Prompt mock ---------- */
+.home-features-resume {
+  position: absolute;
+  inset: 0;
+}
+
+.home-features-resume-head {
+  position: absolute;
+  top: 13px;
+  left: 13px;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-features-resume-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+
+.home-features-resume-sub {
+  margin: 4px 0 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--color-text-primary);
+}
+
+.home-features-resume-close {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-secondary);
+  box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
+  color: var(--color-text-primary);
+}
+
+.home-features-resume-divider {
+  position: absolute;
+  top: 64px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.home-features-resume-body {
+  position: absolute;
+  top: 78px;
+  left: 13px;
+  width: 397px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.home-features-resume-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.home-features-resume-heading {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 16px;
+  color: var(--color-text-primary);
+}
+
+.home-features-resume-text {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 10px;
+  line-height: 16px;
+  color: var(--color-text-primary);
+}
+
+.home-features-resume-file {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 10px;
+  line-height: 16px;
+  color: var(--color-text-primary);
+}
+
+.home-features-resume-bullet {
+  display: inline-block;
+  position: relative;
+  flex-shrink: 0;
+  width: 16px;
+  height: 20px;
+}
+.home-features-resume-bullet::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-text-secondary);
+  transform: translate(-50%, -50%);
+}
+
 .home-bento {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

@@ -15,6 +15,7 @@ import {
   Settings2,
   ShieldCheck,
   Sparkles,
+  X,
 } from "lucide-react";
 import { signIn } from "@/auth";
 import { InstallChip } from "@/components/InstallChip";
@@ -656,19 +657,280 @@ export default function MarketingHome() {
       </section>
 
       {/* ===========================================================
-          BENTO — features showcase. Eight tiles in a 4-column grid.
-          The "Daily digest" tile spans two columns and acts as the
-          hero of the bento; the four medium tiles fill the second
-          row; "Multi-output" is a slim full-width strip at the
-          bottom. Each tile has a tiny visual mock, not just text,
-          so the section reads as a product surface rather than a
-          paragraph wall.
+          FEATURES — 4-card grid per Figma 244:2697. Each card holds
+          a mini product mock (top) + headline + body (bottom). The
+          mocks show real product surfaces (recap, history, settings
+          toggles, resume prompt) at marketing scale.
           =========================================================== */}
-      <section className="home-section">
-        <div className="home-section-inner">
-          <p className="home-eyebrow">What you get</p>
-          <h2 className="home-section-title">A daily read on your code, in plain English.</h2>
-          <div className="home-bento">
+      <section className="home-section home-features">
+        <div className="home-features-inner">
+          <div className="home-features-header">
+            <h2 className="home-features-title">
+              A Daily Read on your Code in Plain Language
+            </h2>
+            <p className="home-features-subtitle">
+              A simple, structured interface for understanding your own repo.
+            </p>
+          </div>
+          <div className="home-features-grid">
+            {/* 1. YOUR DAILY RECAP — mini digest sections showing
+                Shipped + Changed bullets at marketing scale. */}
+            <div className="home-features-card">
+              <div className="home-features-mock" aria-hidden>
+                <div className="home-features-recap">
+                  {[
+                    {
+                      emoji: "shipped" as const,
+                      label: "Shipped",
+                      items: [
+                        {
+                          title: "Cancel from one click",
+                          body: "Subscribers can cancel without three confirmation screens. One click and a free-text reason box if they want to leave feedback.",
+                        },
+                        {
+                          title: "Onboarding finally feels finished",
+                          body: "First-time users get a three-step setup with a progress bar. If they bail, the next visit picks up where they left off.",
+                        },
+                      ],
+                    },
+                    {
+                      emoji: "changed" as const,
+                      label: "Changed",
+                      items: [
+                        {
+                          title: "Search is way faster",
+                          body: "User search used to chug for half a second on big orgs. Same query runs in under twenty milliseconds now.",
+                        },
+                        {
+                          title: "Sign-out works across tabs",
+                          body: "Sign out in one tab and every other tab knows immediately. No more stale-session weirdness across windows.",
+                        },
+                      ],
+                    },
+                  ].map((section) => (
+                    <div key={section.label} className="home-features-recap-section">
+                      <div className="home-features-recap-head">
+                        <span className="home-features-recap-title">
+                          <Emoji name={section.emoji} size={16} />
+                          {section.label}
+                        </span>
+                        <span className="home-features-recap-count">
+                          {section.items.length} items
+                        </span>
+                      </div>
+                      <ul className="home-features-recap-items">
+                        {section.items.map((item) => (
+                          <li key={item.title} className="home-features-recap-item">
+                            <span
+                              className="home-features-recap-dot"
+                              aria-hidden
+                            />
+                            <p>
+                              <span className="home-features-recap-item-title">
+                                {item.title}
+                              </span>
+                              {" - "}
+                              <span className="home-features-recap-item-body">
+                                {item.body}
+                              </span>
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="home-features-fade" aria-hidden />
+              <div className="home-features-copy">
+                <h3>Your Daily Recap</h3>
+                <p>
+                  A plain language, easily digestible read on where your
+                  codebase stands. What you shipped, changed, where you
+                  left off, and more.
+                </p>
+              </div>
+            </div>
+
+            {/* 2. BUILT-IN HISTORY — sidebar days list on the left,
+                stat skeletons on the right. */}
+            <div className="home-features-card">
+              <div className="home-features-mock" aria-hidden>
+                <div className="home-features-history">
+                  <div className="home-features-history-side">
+                    <span className="home-features-history-active" />
+                    <ul className="home-features-history-days">
+                      {[
+                        { label: "Today", added: 425, removed: 86, commits: 19, files: 8 },
+                        { label: "Yesterday", added: 312, removed: 174, commits: 14, files: 11 },
+                        { label: "April 12", added: 94, removed: 23, commits: 4, files: 3 },
+                        { label: "April 11", added: 156, removed: 67, commits: 7, files: 5 },
+                        { label: "April 10", added: 389, removed: 210, commits: 16, files: 13 },
+                        { label: "April 9", added: 218, removed: 55, commits: 11, files: 6 },
+                        { label: "April 8", added: 147, removed: 38, commits: 8, files: 5 },
+                      ].map((day) => (
+                        <li key={day.label} className="home-features-history-day">
+                          <p className="home-features-history-label">
+                            {day.label}
+                          </p>
+                          <div className="home-features-history-stats">
+                            <span className="home-features-history-add">
+                              +{day.added}
+                            </span>
+                            <span className="home-features-history-rem">
+                              -{day.removed}
+                            </span>
+                            <span className="home-features-history-meta">
+                              {day.commits}
+                              <GitCommitHorizontal size={16} strokeWidth={1} />
+                            </span>
+                            <span className="home-features-history-meta">
+                              {day.files}
+                              <FileText size={12} strokeWidth={1} />
+                            </span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="home-features-history-detail">
+                    <span className="home-features-history-skel" style={{ width: "100%" }} />
+                    <span className="home-features-history-skel" style={{ width: "50%" }} />
+                    <span className="home-features-history-skel" style={{ width: "67%" }} />
+                    <span className="home-features-history-skel home-features-history-skel--card" />
+                  </div>
+                </div>
+              </div>
+              <div className="home-features-fade" aria-hidden />
+              <div className="home-features-copy">
+                <h3>Built-in History</h3>
+                <p>
+                  Every digest in every repo is saved for future
+                  reference. Your full history is always available.
+                </p>
+              </div>
+            </div>
+
+            {/* 3. CUSTOMIZED TO YOUR NEEDS — 3 settings rows with
+                toggle switches in mixed on/off states. */}
+            <div className="home-features-card">
+              <div className="home-features-mock" aria-hidden>
+                <div className="home-features-toggles">
+                  {[
+                    {
+                      label: "Most Active Files",
+                      desc: "The files you touched most in a session",
+                      on: true,
+                    },
+                    {
+                      label: "Codebase Health",
+                      desc: "Growth, focus, and churn indicators",
+                      on: true,
+                    },
+                    {
+                      label: "Coding Timeline",
+                      desc: "Timeline of your commits across the day",
+                      on: false,
+                    },
+                  ].map((row, i) => (
+                    <div key={row.label} className="home-features-toggle-row">
+                      {i > 0 ? (
+                        <div className="home-features-toggle-divider" />
+                      ) : null}
+                      <div className="home-features-toggle-row-inner">
+                        <div className="home-features-toggle-text">
+                          <p className="home-features-toggle-label">
+                            {row.label}
+                          </p>
+                          <p className="home-features-toggle-desc">
+                            {row.desc}
+                          </p>
+                        </div>
+                        <span
+                          className={`home-features-toggle${row.on ? " home-features-toggle--on" : ""}`}
+                        >
+                          <span className="home-features-toggle-thumb" />
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="home-features-fade" aria-hidden />
+              <div className="home-features-copy">
+                <h3>Customized to your Needs</h3>
+                <p>
+                  Toggle every section on or off. Pin a default repo.
+                  Clear history per repo or all at once anytime.
+                </p>
+              </div>
+            </div>
+
+            {/* 4. PICK UP WHERE YOU LEFT OFF — Resume Prompt UI with
+                sparkles header, close X, Current Focus, Key Files. */}
+            <div className="home-features-card">
+              <div className="home-features-mock" aria-hidden>
+                <div className="home-features-resume">
+                  <div className="home-features-resume-head">
+                    <span className="home-features-resume-title">
+                      <Emoji name="resume" size={16} />
+                      Resume Prompt
+                    </span>
+                    <p className="home-features-resume-sub">
+                      Paste this into your AI coding tool to pick up where
+                      you left off.
+                    </p>
+                  </div>
+                  <span className="home-features-resume-close">
+                    <X size={16} strokeWidth={1} />
+                  </span>
+                  <div className="home-features-resume-divider" />
+                  <div className="home-features-resume-body">
+                    <div className="home-features-resume-block">
+                      <p className="home-features-resume-heading">
+                        Current Focus
+                      </p>
+                      <p className="home-features-resume-text">
+                        Next work should focus on stability of streaming
+                        behavior under network timing like client aborts
+                        mid response, ensuring consistent visibility of
+                        parsed bullets only from true bullet prefixed
+                        lines. Remaining risk area includes correct DST
+                        safe calendar stepping when timelines span
+                        multiple days near midnight boundaries.
+                      </p>
+                    </div>
+                    <div className="home-features-resume-block">
+                      <p className="home-features-resume-heading">Key Files</p>
+                      {[
+                        "apps/web/src/app/globals.css",
+                        "apps/web/src/app/settings/page.tsx",
+                        "apps/web/src/components/DigestView.tsx",
+                      ].map((path) => (
+                        <div key={path} className="home-features-resume-file">
+                          <span
+                            className="home-features-resume-bullet"
+                            aria-hidden
+                          />
+                          <span>{path}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="home-features-fade" aria-hidden />
+              <div className="home-features-copy">
+                <h3>Pick up where you left off</h3>
+                <p>
+                  Paste the resume prompt into your AI coding tool. Lets
+                  you pick up your project on a new session without you
+                  explaining it.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="home-bento" style={{ display: "none" }}>
             {/* 1. THE READ — your daily recap. Mock shows a streamed
                 digest section + a couple of fake bullets so readers
                 see the product's actual output shape on first scan. */}
