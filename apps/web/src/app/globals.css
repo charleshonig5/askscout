@@ -3442,7 +3442,12 @@ a:hover {
   position: absolute;
   top: 0;
   left: 50%;
-  transform: translateX(-50%);
+  /* translate3d (vs plain translateX) + will-change: transform
+     promotes the video to its own GPU compositing layer so the
+     browser doesn't re-rasterize it alongside the rest of the
+     hero on every frame. Smooths playback noticeably. */
+  transform: translate3d(-50%, 0, 0);
+  will-change: transform;
   width: 1920px;
   height: 1080px;
   max-width: none;

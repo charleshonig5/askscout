@@ -16,7 +16,7 @@ export function HeroBgVideo() {
 
   useEffect(() => {
     const v = ref.current;
-    if (v) v.playbackRate = 0.8;
+    if (v) v.playbackRate = 0.65;
   }, []);
 
   return (
