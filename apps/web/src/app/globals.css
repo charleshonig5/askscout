@@ -3432,15 +3432,20 @@ a:hover {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  /* 88px top = nav→text gap. 104px bottom = graphic→divider gap,
-     matching the 104px rhythm every section divider uses. The
-     hero's bg-fade gradient still anchors to the hero bottom
-     but now sits in the empty zone below the graphic, so it
-     blends the graphic's bottom into bg-primary before the
-     divider ever shows up. */
-  padding: 88px 32px 104px;
+  /* 88px top = nav→text gap; 7px bottom = graphic→hero-bottom
+     gap. The hero's bg-fade is anchored to hero-bottom and
+     needs to overlap the graphic's bottom in order to mask
+     its 1px frame border into bg-primary. Don't bump this; it
+     breaks the fade-over-frame masking. Use margin-bottom to
+     create breathing room before the next section's divider. */
+  padding: 88px 32px 7px;
   max-width: 1100px;
-  margin: 0 auto;
+  /* 104px gap between hero box and the first section's divider.
+     Lives OUTSIDE the hero so the fade stays where it was;
+     the gap is just bg-primary page bleed. Combined with the
+     existing horizontal-center auto so the shorthand doesn't
+     wipe the bottom margin. */
+  margin: 0 auto 104px;
 }
 
 /* Hero background video — Figma 244:2059. 1920x1080 starfield/
