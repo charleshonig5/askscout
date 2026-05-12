@@ -314,17 +314,33 @@ export default function MarketingHome() {
                           </li>
                         ))}
                       </ul>
-                      {/* Skeleton placeholder — same vertical footprint
-                          as the bullet list so the section's height
-                          doesn't shift when content lands. Hidden by
-                          default, shown only when this section is
-                          pending per the phase machine. */}
+                      {/* Skeleton placeholder — 4 shimmer rows per
+                          section with varied widths (100/84/67/94),
+                          mirroring NARRATIVE_LINE_WIDTHS in the
+                          live product's PreGeneration.tsx so the
+                          skeleton reads like 2 wrapped-bullet rows
+                          of natural prose. Hidden by default, shown
+                          only when this section is pending. */}
                       <div
                         className="home-hero-card-bullets-skel"
                         aria-hidden
                       >
-                        <span className="home-hero-card-skel home-hero-card-skel--bullet-row" />
-                        <span className="home-hero-card-skel home-hero-card-skel--bullet-row" />
+                        <span
+                          className="home-hero-card-skel home-hero-card-skel--bullet-row"
+                          style={{ width: "100%" }}
+                        />
+                        <span
+                          className="home-hero-card-skel home-hero-card-skel--bullet-row"
+                          style={{ width: "84%" }}
+                        />
+                        <span
+                          className="home-hero-card-skel home-hero-card-skel--bullet-row"
+                          style={{ width: "67%" }}
+                        />
+                        <span
+                          className="home-hero-card-skel home-hero-card-skel--bullet-row"
+                          style={{ width: "94%" }}
+                        />
                       </div>
                     </div>
                   ))}
@@ -436,11 +452,11 @@ export default function MarketingHome() {
                     <div className="home-hero-card-files-skel" aria-hidden>
                       <span
                         className="home-hero-card-skel home-hero-card-skel--file-row"
-                        style={{ width: "90%" }}
+                        style={{ width: "92%" }}
                       />
                       <span
                         className="home-hero-card-skel home-hero-card-skel--file-row"
-                        style={{ width: "70%" }}
+                        style={{ width: "78%" }}
                       />
                       <span
                         className="home-hero-card-skel home-hero-card-skel--file-row"

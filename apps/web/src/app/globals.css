@@ -4889,8 +4889,11 @@ a:hover {
 }
 
 .home-hero-card-skel--bullet-row {
-  height: 32px;
-  width: 100%;
+  /* Same 10px height the actual product uses for its
+     pregen-skeleton-line. Widths come from the inline style in
+     JSX (100/84/67/94 mirror NARRATIVE_LINE_WIDTHS from
+     PreGeneration.tsx). */
+  height: 10px;
 }
 
 /* SKELETON PHASE — every section pending. Hide all bullet lists,
@@ -5256,7 +5259,9 @@ a:hover {
   height: 10px;
 }
 .home-hero-card-skel--file-row {
-  height: 14px;
+  /* Same 10px height as the bullet + stats rows — consistent
+     across every skeleton block except the health cards. */
+  height: 10px;
 }
 .home-hero-card-skel--health-card {
   height: 68px;
