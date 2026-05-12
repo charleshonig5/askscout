@@ -5093,21 +5093,21 @@ a:hover {
    below flips it on only during phase="opener". */
 .home-hero-card-opener {
   position: absolute;
-  /* Centered in the digest card content area, vertically aligned
-     to roughly where the first bullet section would start once
-     skeletons reveal — so the eye lands in the same place. */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  /* Top-left, right under the divider — same coordinates as the
+     left column's first section. The eye lands here, then the
+     skeletons (and later the real bullets) reveal in the same
+     spot. Matches the dashboard's .digest-opener placement. */
+  top: 78px;
+  left: 13px;
   display: none;
   align-items: baseline;
   gap: 3px;
   /* Same recipe as the dashboard's .digest-opener — Work Sans
      italic, secondary text — just smaller to fit the graphic's
-     content scale (14 vs the dashboard's 16). */
+     content scale (12 vs the dashboard's 16). */
   font-family: var(--font-sans);
   font-style: italic;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.4;
   color: var(--color-text-secondary);
   white-space: nowrap;
@@ -5122,13 +5122,25 @@ a:hover {
   animation: hgm-opener-in 240ms ease-out both;
 }
 
+/* Opener phase: the header (Today's Digest + chips + date +
+   buttons) and the divider line stay visible. Only the COLUMN
+   CONTENT (left bullet sections + right stats blocks) is
+   hidden, since the opener line sits in their place. This
+   mirrors the dashboard's pre-stream UX — the header is
+   already known the moment the card mounts, so it doesn't
+   disappear and reappear. */
+[data-graphic-phase="opener"] .home-hero-card-left,
+[data-graphic-phase="opener"] .home-hero-card-right {
+  opacity: 0;
+}
+
 /* Caret — 1px wide, height matching the line, with the same
    blink keyframes the dashboard's digest-opener-cursor uses
    in spirit (steady on / off). */
 .home-hero-card-opener-caret {
   display: inline-block;
   width: 1px;
-  height: 14px;
+  height: 12px;
   background: var(--color-text-secondary);
   animation: hgm-opener-caret 0.9s steps(2, end) infinite;
 }
@@ -5136,11 +5148,11 @@ a:hover {
 @keyframes hgm-opener-in {
   from {
     opacity: 0;
-    transform: translate(-50%, calc(-50% + 4px));
+    transform: translateY(2px);
   }
   to {
     opacity: 1;
-    transform: translate(-50%, -50%);
+    transform: translateY(0);
   }
 }
 
@@ -5155,20 +5167,10 @@ a:hover {
   }
 }
 
-/* During the opener phase, hide the digest card's "regular"
-   chrome (header, sidebar, columns, etc. that live inside the
-   card) — the typed line is the only thing on stage. The
-   horizontal + vertical dividers also fade. */
-[data-graphic-phase="opener"] .home-hero-card-header,
-[data-graphic-phase="opener"] .home-hero-card-divider,
-[data-graphic-phase="opener"] .home-hero-card-left,
-[data-graphic-phase="opener"] .home-hero-card-right {
-  opacity: 0;
-}
-
-/* When phase advances to skeleton, fade the card chrome back in. */
-[data-graphic-phase="skeleton"] .home-hero-card-header,
-[data-graphic-phase="skeleton"] .home-hero-card-divider,
+/* When phase advances from opener to skeleton, fade the column
+   content back in over 320ms so the transition from typed line
+   to skeleton placeholders reads as a soft hand-off. Only the
+   columns animate; header + divider were always visible. */
 [data-graphic-phase="skeleton"] .home-hero-card-left,
 [data-graphic-phase="skeleton"] .home-hero-card-right {
   animation: hgm-chrome-in 320ms ease-out both;
@@ -5195,17 +5197,27 @@ a:hover {
   display: none;
 }
 
-/* Pre-stats phases: hide real right-column blocks, show skel. */
+/* Pre-stats phases: hide the REAL content inside each right-
+   column block but keep the block container + its title
+   visible. The skel siblings (sized to mirror the structure
+   that will replace them) render below each title. The block
+   titles staying visible is what makes the skeleton actually
+   feel like a preview of what's coming. */
 [data-graphic-phase="skeleton"] .home-hero-card-stats,
 [data-graphic-phase="shipped"] .home-hero-card-stats,
 [data-graphic-phase="changed"] .home-hero-card-stats,
 [data-graphic-phase="stillShifting"] .home-hero-card-stats,
 [data-graphic-phase="leftOff"] .home-hero-card-stats,
-[data-graphic-phase="skeleton"] [data-section="statistics"] .home-hero-card-block,
-[data-graphic-phase="shipped"] [data-section="statistics"] .home-hero-card-block,
-[data-graphic-phase="changed"] [data-section="statistics"] .home-hero-card-block,
-[data-graphic-phase="stillShifting"] [data-section="statistics"] .home-hero-card-block,
-[data-graphic-phase="leftOff"] [data-section="statistics"] .home-hero-card-block {
+[data-graphic-phase="skeleton"] [data-section="statistics"] .home-hero-card-files,
+[data-graphic-phase="shipped"] [data-section="statistics"] .home-hero-card-files,
+[data-graphic-phase="changed"] [data-section="statistics"] .home-hero-card-files,
+[data-graphic-phase="stillShifting"] [data-section="statistics"] .home-hero-card-files,
+[data-graphic-phase="leftOff"] [data-section="statistics"] .home-hero-card-files,
+[data-graphic-phase="skeleton"] [data-section="statistics"] .home-hero-card-health,
+[data-graphic-phase="shipped"] [data-section="statistics"] .home-hero-card-health,
+[data-graphic-phase="changed"] [data-section="statistics"] .home-hero-card-health,
+[data-graphic-phase="stillShifting"] [data-section="statistics"] .home-hero-card-health,
+[data-graphic-phase="leftOff"] [data-section="statistics"] .home-hero-card-health {
   display: none;
 }
 
