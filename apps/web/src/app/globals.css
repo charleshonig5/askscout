@@ -4977,6 +4977,103 @@ a:hover {
   }
 }
 
+/* ---------- HERO GRAPHIC MOTION: right column ----------
+   Statistics, Most Active Files, and Codebase Health all live
+   in .home-hero-card-right which carries data-section="statistics".
+   - Stat numbers count up from 0 → target via @property + counter()
+   - Health bar fills slide from 0 → target via CSS transitions
+   - LiveBadge moves onto Statistics during the "stats" phase
+   All animations driven purely by [data-graphic-phase] on the
+   wrapper. */
+
+/* Registered integer custom property — needed for the @keyframes
+   to interpolate counter values smoothly. Without @property,
+   keyframes treat custom property changes as discrete jumps. */
+@property --count-num {
+  syntax: "<integer>";
+  initial-value: 0;
+  inherits: false;
+}
+
+/* Count-up cell — replaces a static number in the JSX. Default
+   state (no phase / "done"): --count-num matches --count-target
+   so the rendered counter is the final number. SSR + no-JS users
+   see the target value. */
+.home-hero-card-count-up {
+  display: inline;
+  --count-target: 0;
+  --count-num: var(--count-target);
+  counter-reset: countNum var(--count-num);
+}
+
+.home-hero-card-count-up::after {
+  content: counter(countNum);
+}
+
+/* Pre-stats phases: pin the counter to 0 so the numbers read as
+   "not yet computed" before the LiveBadge reaches Statistics. */
+[data-graphic-phase="skeleton"] .home-hero-card-count-up,
+[data-graphic-phase="shipped"] .home-hero-card-count-up,
+[data-graphic-phase="changed"] .home-hero-card-count-up,
+[data-graphic-phase="stillShifting"] .home-hero-card-count-up,
+[data-graphic-phase="leftOff"] .home-hero-card-count-up {
+  --count-num: 0;
+}
+
+/* Stats phase: animate --count-num from 0 to --count-target.
+   ease-out so the ticker decelerates as it lands on the final
+   value — matches the feel of the dashboard's useCountUp hook. */
+@keyframes hgm-count-up {
+  from {
+    --count-num: 0;
+  }
+  to {
+    --count-num: var(--count-target);
+  }
+}
+
+[data-graphic-phase="stats"] .home-hero-card-count-up {
+  animation: hgm-count-up 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Codebase Health bar fills — default state (no phase / "done"):
+   width = --fill-target (the final pixel value passed from JSX).
+   Pre-stats phases: pin to 0 so the bars read as empty. Stats /
+   done: ride the transition from 0 → target. */
+.home-hero-card-health-fill {
+  width: var(--fill-target);
+}
+
+[data-graphic-phase="skeleton"] .home-hero-card-health-fill,
+[data-graphic-phase="shipped"] .home-hero-card-health-fill,
+[data-graphic-phase="changed"] .home-hero-card-health-fill,
+[data-graphic-phase="stillShifting"] .home-hero-card-health-fill,
+[data-graphic-phase="leftOff"] .home-hero-card-health-fill {
+  width: 0;
+}
+
+[data-graphic-phase="stats"] .home-hero-card-health-fill,
+[data-graphic-phase="done"] .home-hero-card-health-fill {
+  width: var(--fill-target);
+  transition: width 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* LiveBadge on Statistics during the stats phase. */
+[data-graphic-phase="stats"] [data-section="statistics"] .home-hero-card-live {
+  display: inline-flex;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-hero-card-count-up {
+    animation: none !important;
+    --count-num: var(--count-target);
+  }
+  .home-hero-card-health-fill {
+    transition: none !important;
+    width: var(--fill-target) !important;
+  }
+}
+
 /* ---------- SHARED SECTION SCAFFOLDING ---------- */
 .home-section {
   padding: 96px 32px;

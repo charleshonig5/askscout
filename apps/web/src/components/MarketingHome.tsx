@@ -327,29 +327,64 @@ export default function MarketingHome() {
                 {/* Right column body — Statistics header + summary
                     block + Most Active files + Codebase Health per
                     Figma 244:2183. */}
-                <div className="home-hero-card-right">
+                <div
+                  className="home-hero-card-right"
+                  data-section="statistics"
+                >
                   <span className="home-hero-card-section-title">
                     <Emoji name="statistics" size={16} />
                     Statistics
+                    <span className="home-hero-card-live" aria-hidden>
+                      <span className="home-hero-card-live-dot" />
+                      Live
+                    </span>
                   </span>
-                  {/* Statistics summary (244:2188). */}
+                  {/* Statistics summary (244:2188). Numbers animate
+                      up from 0 to target via --count-target +
+                      @property --count-num during the "stats" phase. */}
                   <div className="home-hero-card-stats">
                     <div className="home-hero-card-stats-lines">
                       <span className="home-hero-card-stats-add">
-                        +425 lines
+                        +
+                        <span
+                          className="home-hero-card-count-up"
+                          style={
+                            { "--count-target": 425 } as React.CSSProperties
+                          }
+                        />
+                        {" "}lines
                       </span>
                       <span className="home-hero-card-stats-rem">
-                        -86 lines
+                        -
+                        <span
+                          className="home-hero-card-count-up"
+                          style={
+                            { "--count-target": 86 } as React.CSSProperties
+                          }
+                        />
+                        {" "}lines
                       </span>
                     </div>
                     <div className="home-hero-card-stats-meta">
                       <span className="home-hero-card-stats-metaitem">
                         <GitCommitHorizontal size={16} strokeWidth={1} />
-                        19 commits
+                        <span
+                          className="home-hero-card-count-up"
+                          style={
+                            { "--count-target": 19 } as React.CSSProperties
+                          }
+                        />
+                        {" "}commits
                       </span>
                       <span className="home-hero-card-stats-metaitem">
                         <FileText size={12} strokeWidth={1} />
-                        8 Files
+                        <span
+                          className="home-hero-card-count-up"
+                          style={
+                            { "--count-target": 8 } as React.CSSProperties
+                          }
+                        />
+                        {" "}Files
                       </span>
                     </div>
                   </div>
@@ -428,7 +463,11 @@ export default function MarketingHome() {
                           <div className="home-hero-card-health-bar">
                             <div
                               className="home-hero-card-health-fill"
-                              style={{ width: `${card.fill}px` }}
+                              style={
+                                {
+                                  "--fill-target": `${card.fill}px`,
+                                } as React.CSSProperties
+                              }
                             />
                           </div>
                         </div>
