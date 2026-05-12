@@ -473,11 +473,15 @@ ${hunkContextBlock ? `\n${hunkContextBlock}` : ""}
 - **unstable**: Areas reworked 3+ times. Use the Churn data above. Describe as features, NEVER file names. Explain what keeps changing and why it hasn't settled. Include changeCount.
 - **leftOff**: Everything in progress when the session ended. Include ALL of them. Be concrete about what works vs what doesn't and what the next step is.
 - **vibeCheck**: 3-4 casual PRESENT-TENSE sentences about where the project stands RIGHT NOW. Not a recap. Have a point of view. Notice what they're avoiding or circling. Sneak in one genuinely witty observation.
-- **fieldNotes**: OPTIONAL editorial observation. STRING containing TWO parts separated by a single newline ("\\n"):
+- **fieldNotes**: OPTIONAL editorial observation. If you emit content,
+  it MUST be a STRING containing EXACTLY TWO parts separated by ONE
+  newline character ("\\n"). Both parts are REQUIRED — never emit
+  body without subtitle, never emit subtitle without body. If you
+  can't produce both, return "" (empty string) instead.
   PART 1 (subtitle, FIRST line): a short headline naming the concept thesis. Aphoristic ("The model is most useful when you give it less to invent") OR concept-first ("Vocabulary debt is the smallest tax with the biggest interest rate"). Max ~12 words.
   PART 2 (body, REMAINING content): 3-4 sentences max, single paragraph. Plain prose, no inline emphasis. Cite at least one external comparison (another tool, prior art, named pattern in the field). End on a tradeoff, principle, or insight worth keeping.
   ABSOLUTELY FORBIDDEN: asterisks (*) of any kind, bullets, dashes, em dashes, semicolons, project next-steps (those belong in keyTakeaways), "you should..." framing.
-  WRITE EMPTY STRING ("") ON SCATTERED OR QUIET DAYS, OR WHEN ONLY GENERIC ADVICE IS POSSIBLE. Empty string means the renderer omits the section entirely. Writing nothing is correct behavior; writing something generic is not.
+  WRITE EMPTY STRING ("") ON SCATTERED OR QUIET DAYS, OR WHEN ONLY GENERIC ADVICE IS POSSIBLE. Empty string means the renderer omits the section entirely. Writing nothing is correct behavior; writing something generic is not. A subtitle-less paragraph is a BUG and gets repaired client-side; don't rely on that path.
   GOOD fieldNotes example: "The model is most useful when you give it less to invent\\nToday's pattern was grounding: feeding the LLM detected facts instead of letting it guess, the way Cursor does with codebase RAG and Perplexity with web citations. The tradeoff worth knowing is that the more facts you inject, the less voice the output has. Stack detection is a free win because facts have no voice anyway, but Heads Up signals are riskier because they bleed into Scout's tone."
   BAD fieldNotes example (overlaps with keyTakeaways, do NOT do this): "You added grounding logic today\\nRun the same prompt three times against today's diffs to verify outputs stay consistent. Cursor does this kind of thing too."
 - **keyTakeaways**: 2-3 sentences. Scout's honest sign-off on YOUR project. Start with the sharpest observation about what actually happened. Then a nudge about the next meaningful move. End with a moment of warmth or wit. NO motivational filler, NO "keep it up" energy. If you find yourself naming a broader pattern with external comparisons, that content belongs in fieldNotes, not here.

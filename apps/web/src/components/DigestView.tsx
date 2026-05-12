@@ -675,13 +675,23 @@ function StreamingDigest({
           let body = "";
           if (splitIdx === -1) {
             // Single line of content. While streaming this is the
-            // subtitle still arriving; once streaming completes with no
-            // newline, fall back to rendering as body so the user sees
-            // something readable instead of one oversized bold line.
+            // subtitle still arriving. Once streaming completes
+            // with no newline, the LLM violated the two-part
+            // contract — recover by splitting on the first
+            // sentence boundary so the reader still gets a
+            // headline + body presentation instead of an orphan
+            // paragraph. Falls back to subtitle-only if the
+            // content is one sentence.
             if (showCursor) {
               subtitle = cleaned;
             } else {
-              body = cleaned;
+              const sentenceMatch = cleaned.match(/^(.+?[.!?])\s+(\S.+)$/s);
+              if (sentenceMatch) {
+                subtitle = sentenceMatch[1].trim();
+                body = sentenceMatch[2].trim();
+              } else {
+                subtitle = cleaned;
+              }
             }
           } else {
             subtitle = cleaned.slice(0, splitIdx).trim();
