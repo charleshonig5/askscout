@@ -477,7 +477,6 @@ export default function MarketingHome() {
               </div>
             </div>
           </div>
-          <div className="home-hero-frame-fade" />
         </div>
       </section>
 

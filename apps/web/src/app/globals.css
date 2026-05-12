@@ -4795,28 +4795,6 @@ a:hover {
   );
 }
 
-/* Bottom fade — 225px tall gradient overlay sitting on top of
-   the frame's lower region. Fades from bg-primary (bottom) to
-   transparent (top) so the frame's content (digest preview)
-   appears to bleed into the page. The from-23.695% stop matches
-   Figma's gradient ramp exactly; pointer-events: none so the
-   overlay doesn't catch clicks on whatever content sits below it. */
-.home-hero-frame-fade {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 225px;
-  pointer-events: none;
-  background: linear-gradient(
-    to top,
-    var(--color-bg-primary) 23.695%,
-    transparent 100%
-  );
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
-}
-
 /* ---------- SHARED SECTION SCAFFOLDING ---------- */
 .home-section {
   padding: 96px 32px;
