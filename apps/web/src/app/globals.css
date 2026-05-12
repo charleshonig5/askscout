@@ -4782,6 +4782,82 @@ a:hover {
   );
 }
 
+/* ---------- HERO GRAPHIC MOTION ----------
+   Marketing-scoped animation primitives for the hero digest
+   graphic's streaming reenactment. Aliases the live product's
+   shimmer + pulse keyframes so the two surfaces share visual
+   language without the marketing graphic touching dashboard
+   classes (.live-badge / .pregen-skeleton-line live on the
+   real product and stay untouched here).
+
+   The .home-hero-graphic-motion wrapper carries data-graphic-
+   phase = "skeleton" | "shipped" | "changed" | "stillShifting"
+   | "leftOff" | "stats" | "done". Future steps drive content
+   visibility off that attribute. */
+
+/* Shimmer placeholder cell — applied to bullet rows, stat
+   numbers, file paths, and health-card content while waiting
+   for that section's phase. Same gradient recipe + pregen-
+   shimmer + pregen-line-breathe keyframes the dashboard uses
+   for its skeletons. */
+.home-hero-card-skel {
+  display: inline-block;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--color-skeleton-base) 0%,
+    var(--color-skeleton-shimmer) 50%,
+    var(--color-skeleton-base) 100%
+  );
+  background-size: 200% 100%;
+  transform-origin: left center;
+  animation:
+    pregen-shimmer 1.8s linear infinite,
+    pregen-line-breathe 4.5s ease-in-out infinite;
+  /* The default cell is invisible until phase-aware rules apply
+     it. Sizing comes from per-use selectors. */
+}
+
+/* Live-badge pill — marketing-scoped equivalent of the
+   dashboard's .live-badge. Same green border + dot + repo-
+   badge-pulse animation so the streaming signal reads as one
+   product across both surfaces. Sized down to match the
+   marketing graphic's 10px header rhythm. */
+.home-hero-card-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  border: 1px solid var(--color-success);
+  background: transparent;
+  color: var(--color-success);
+  font-family: var(--font-sans);
+  font-size: 8px;
+  font-weight: 300;
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.home-hero-card-live-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-success);
+  box-shadow: 0 0 4px 0 color-mix(in srgb, var(--color-success) 45%, transparent);
+  animation: repo-badge-pulse 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-hero-card-skel {
+    animation: none;
+  }
+  .home-hero-card-live-dot {
+    animation: none;
+  }
+}
+
 /* ---------- SHARED SECTION SCAFFOLDING ---------- */
 .home-section {
   padding: 96px 32px;
