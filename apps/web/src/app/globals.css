@@ -5350,14 +5350,32 @@ a:hover {
 }
 
 /* ---------- SHARED SECTION SCAFFOLDING ---------- */
+/* Section rhythm — every home-section carries a full-bleed
+   1px top border (the section divider). Padding is 104px above
+   and 104px below the content so the divider sits with equal
+   breathing room on both sides per Figma 244:2057. The border
+   extends the full viewport width because <section> is a block
+   element and there is no max-width on it. */
 .home-section {
-  padding: 96px 32px;
+  padding: 104px 32px;
   position: relative;
+  border-top: 1px solid var(--color-border);
+}
+
+/* The first home-section sits right after the hero. The hero's
+   bottom-fade gradient already creates a soft empty zone below
+   the graphic, so 104px on top of that reads as too airy.
+   Tightening the first section's top padding to 48px lets the
+   fade do its job; the divider lands closer to where the fade
+   bottoms out into bg-primary. Eyeball value — adjust to taste. */
+.home-hero + .home-section {
+  padding-top: 48px;
 }
 
 .home-section--quiet {
   background: var(--color-bg-secondary);
-  border-top: 1px solid var(--color-border);
+  /* Keep the bottom border for the inverted-strip treatment;
+     top border already comes from .home-section above. */
   border-bottom: 1px solid var(--color-border);
 }
 
