@@ -3516,11 +3516,10 @@ a:hover {
   transform: translateX(-50%);
   width: 976px;
   max-width: 100%;
-  /* Shrunk from Figma's 225px to 150px so the fade overlaps
-     less of the digest graphic — exposes the Left Off section
-     and the full Codebase Health stack instead of dissolving
-     them. Same gradient shape (23.695% solid stop → transparent
-     at top), same blend into the page bg, just a tighter band. */
+  /* Shrunk from Figma's 225 to 150 so the outer fade overlaps
+     less of the digest content. Pairs with .home-hero-card-fade
+     also shrunk (87 → 40) — together they expose more readable
+     digest rows before the gradient kicks in. */
   height: 150px;
   pointer-events: none;
   background: linear-gradient(
@@ -4785,7 +4784,9 @@ a:hover {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 87px;
+  /* Shrunk from Figma's 87px to 40px so more digest rows stay
+     readable inside the card before the gradient kicks in. */
+  height: 40px;
   pointer-events: none;
   background: linear-gradient(
     to top,
