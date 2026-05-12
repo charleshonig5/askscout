@@ -43,6 +43,7 @@ import { FAQ_PLAIN } from "@/lib/faq-data";
    simplified illustration, not the real product UI.) */
 const HERO_GRAPHIC_SECTIONS = [
   {
+    key: "shipped" as const,
     emoji: "shipped" as const,
     label: "Shipped",
     items: [
@@ -57,6 +58,7 @@ const HERO_GRAPHIC_SECTIONS = [
     ],
   },
   {
+    key: "changed" as const,
     emoji: "changed" as const,
     label: "Changed",
     items: [
@@ -71,6 +73,7 @@ const HERO_GRAPHIC_SECTIONS = [
     ],
   },
   {
+    key: "stillShifting" as const,
     emoji: "unstable" as const,
     label: "Still Shifting",
     items: [
@@ -85,6 +88,7 @@ const HERO_GRAPHIC_SECTIONS = [
     ],
   },
   {
+    key: "leftOff" as const,
     emoji: "leftOff" as const,
     label: "Left Off",
     items: [
@@ -261,7 +265,11 @@ export default function MarketingHome() {
                     244:2099 (Shipped/Changed/Still Shifting/Left Off). */}
                 <div className="home-hero-card-left">
                   {HERO_GRAPHIC_SECTIONS.map((section) => (
-                    <div key={section.label} className="home-hero-card-section">
+                    <div
+                      key={section.key}
+                      className="home-hero-card-section"
+                      data-section={section.key}
+                    >
                       <div className="home-hero-card-section-head">
                         <span className="home-hero-card-section-title">
                           <Emoji name={section.emoji} size={16} />
@@ -269,6 +277,13 @@ export default function MarketingHome() {
                         </span>
                         <span className="home-hero-card-section-count">
                           {section.items.length} items
+                        </span>
+                        {/* LiveBadge — CSS-hidden by default, shown
+                            only when the wrapper's data-graphic-phase
+                            equals this section's key. */}
+                        <span className="home-hero-card-live" aria-hidden>
+                          <span className="home-hero-card-live-dot" />
+                          Live
                         </span>
                       </div>
                       <ul className="home-hero-card-bullets">
@@ -293,6 +308,18 @@ export default function MarketingHome() {
                           </li>
                         ))}
                       </ul>
+                      {/* Skeleton placeholder — same vertical footprint
+                          as the bullet list so the section's height
+                          doesn't shift when content lands. Hidden by
+                          default, shown only when this section is
+                          pending per the phase machine. */}
+                      <div
+                        className="home-hero-card-bullets-skel"
+                        aria-hidden
+                      >
+                        <span className="home-hero-card-skel home-hero-card-skel--bullet-row" />
+                        <span className="home-hero-card-skel home-hero-card-skel--bullet-row" />
+                      </div>
                     </div>
                   ))}
                 </div>

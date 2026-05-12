@@ -4858,6 +4858,125 @@ a:hover {
   }
 }
 
+/* ---------- HERO GRAPHIC MOTION: state visibility ----------
+   Default state (no JS, no phase set, or phase="done"): bullets
+   visible, skeleton placeholder hidden, live badge hidden. The
+   phase-aware rules below only ADD intermediate states; they
+   never break the default rendering for SSR / no-JS / reduced-
+   motion users. */
+.home-hero-card-live {
+  display: none;
+}
+.home-hero-card-bullets-skel {
+  display: none;
+}
+
+/* Skeleton bullet rows — sized to fill roughly the same vertical
+   space as a 2-line bullet (~32px tall) so the layout doesn't
+   shift when content swaps in. Visibility flipped on by the
+   phase-aware rules below. */
+.home-hero-card-bullets-skel {
+  flex-direction: column;
+  gap: 4px;
+  /* match .home-hero-card-bullets's natural gap so skel <-> real
+     swap doesn't change section height. */
+}
+
+.home-hero-card-skel--bullet-row {
+  height: 32px;
+  width: 100%;
+}
+
+/* SKELETON PHASE — every section pending. Hide all bullet lists,
+   show all skeletons, no live badge anywhere. */
+[data-graphic-phase="skeleton"] .home-hero-card-bullets {
+  display: none;
+}
+[data-graphic-phase="skeleton"] .home-hero-card-bullets-skel {
+  display: flex;
+}
+
+/* SHIPPED PHASE — Shipped is live; Changed / Still Shifting /
+   Left Off still pending. */
+[data-graphic-phase="shipped"] [data-section="shipped"] .home-hero-card-live {
+  display: inline-flex;
+}
+[data-graphic-phase="shipped"] [data-section="changed"] .home-hero-card-bullets,
+[data-graphic-phase="shipped"] [data-section="stillShifting"] .home-hero-card-bullets,
+[data-graphic-phase="shipped"] [data-section="leftOff"] .home-hero-card-bullets {
+  display: none;
+}
+[data-graphic-phase="shipped"] [data-section="changed"] .home-hero-card-bullets-skel,
+[data-graphic-phase="shipped"] [data-section="stillShifting"] .home-hero-card-bullets-skel,
+[data-graphic-phase="shipped"] [data-section="leftOff"] .home-hero-card-bullets-skel {
+  display: flex;
+}
+
+/* CHANGED PHASE — Shipped ready, Changed live, last two pending. */
+[data-graphic-phase="changed"] [data-section="changed"] .home-hero-card-live {
+  display: inline-flex;
+}
+[data-graphic-phase="changed"] [data-section="stillShifting"] .home-hero-card-bullets,
+[data-graphic-phase="changed"] [data-section="leftOff"] .home-hero-card-bullets {
+  display: none;
+}
+[data-graphic-phase="changed"] [data-section="stillShifting"] .home-hero-card-bullets-skel,
+[data-graphic-phase="changed"] [data-section="leftOff"] .home-hero-card-bullets-skel {
+  display: flex;
+}
+
+/* STILL SHIFTING PHASE — first two ready, Still Shifting live,
+   Left Off pending. */
+[data-graphic-phase="stillShifting"] [data-section="stillShifting"] .home-hero-card-live {
+  display: inline-flex;
+}
+[data-graphic-phase="stillShifting"] [data-section="leftOff"] .home-hero-card-bullets {
+  display: none;
+}
+[data-graphic-phase="stillShifting"] [data-section="leftOff"] .home-hero-card-bullets-skel {
+  display: flex;
+}
+
+/* LEFT OFF PHASE — first three ready, Left Off live. */
+[data-graphic-phase="leftOff"] [data-section="leftOff"] .home-hero-card-live {
+  display: inline-flex;
+}
+
+/* (stats + done phases use the default: bullets visible, no
+   skeleton, no live badge anywhere — already the defaults.) */
+
+/* Bullet fade-in on the section that just became live. Quick
+   stagger so the two bullets feel typed in rather than popping
+   in together. */
+@keyframes hgm-bullet-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+[data-graphic-phase="shipped"] [data-section="shipped"] .home-hero-card-bullet,
+[data-graphic-phase="changed"] [data-section="changed"] .home-hero-card-bullet,
+[data-graphic-phase="stillShifting"] [data-section="stillShifting"] .home-hero-card-bullet,
+[data-graphic-phase="leftOff"] [data-section="leftOff"] .home-hero-card-bullet {
+  animation: hgm-bullet-in 280ms ease-out both;
+}
+[data-graphic-phase="shipped"] [data-section="shipped"] .home-hero-card-bullet:nth-child(2),
+[data-graphic-phase="changed"] [data-section="changed"] .home-hero-card-bullet:nth-child(2),
+[data-graphic-phase="stillShifting"] [data-section="stillShifting"] .home-hero-card-bullet:nth-child(2),
+[data-graphic-phase="leftOff"] [data-section="leftOff"] .home-hero-card-bullet:nth-child(2) {
+  animation-delay: 120ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-hero-card-bullet {
+    animation: none !important;
+  }
+}
+
 /* ---------- SHARED SECTION SCAFFOLDING ---------- */
 .home-section {
   padding: 96px 32px;
