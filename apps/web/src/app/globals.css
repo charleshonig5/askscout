@@ -5074,6 +5074,177 @@ a:hover {
   }
 }
 
+/* ---------- HERO GRAPHIC MOTION: opener ----------
+   Pre-stream typed line — marketing equivalent of <DigestOpener />.
+   "Scanning the horizon for commits…" types out in italic Pridi
+   with a blinking caret during the "opener" phase, then fades
+   to nothing as the skeleton phase reveals the placeholder
+   shimmer rows. Same editorial voice as the dashboard's opener
+   but sized for the graphic's tighter content scale.
+
+   Default (no phase / "done"): the opener element is hidden,
+   so SSR + no-JS users see the static graphic. The CSS rule
+   below flips it on only during phase="opener". */
+.home-hero-card-opener {
+  position: absolute;
+  /* Centered in the digest card content area, vertically aligned
+     to roughly where the first bullet section would start once
+     skeletons reveal — so the eye lands in the same place. */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  align-items: baseline;
+  gap: 3px;
+  /* Same recipe as the dashboard's .digest-opener — Work Sans
+     italic, secondary text — just smaller to fit the graphic's
+     content scale (14 vs the dashboard's 16). */
+  font-family: var(--font-sans);
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 3;
+}
+
+[data-graphic-phase="opener"] .home-hero-card-opener {
+  display: inline-flex;
+  /* Quick fade-in on mount of the opener phase so the line
+     doesn't pop. */
+  animation: hgm-opener-in 240ms ease-out both;
+}
+
+/* Caret — 1px wide, height matching the line, with the same
+   blink keyframes the dashboard's digest-opener-cursor uses
+   in spirit (steady on / off). */
+.home-hero-card-opener-caret {
+  display: inline-block;
+  width: 1px;
+  height: 14px;
+  background: var(--color-text-secondary);
+  animation: hgm-opener-caret 0.9s steps(2, end) infinite;
+}
+
+@keyframes hgm-opener-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 4px));
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes hgm-opener-caret {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* During the opener phase, hide the digest card's "regular"
+   chrome (header, sidebar, columns, etc. that live inside the
+   card) — the typed line is the only thing on stage. The
+   horizontal + vertical dividers also fade. */
+[data-graphic-phase="opener"] .home-hero-card-header,
+[data-graphic-phase="opener"] .home-hero-card-divider,
+[data-graphic-phase="opener"] .home-hero-card-left,
+[data-graphic-phase="opener"] .home-hero-card-right {
+  opacity: 0;
+}
+
+/* When phase advances to skeleton, fade the card chrome back in. */
+[data-graphic-phase="skeleton"] .home-hero-card-header,
+[data-graphic-phase="skeleton"] .home-hero-card-divider,
+[data-graphic-phase="skeleton"] .home-hero-card-left,
+[data-graphic-phase="skeleton"] .home-hero-card-right {
+  animation: hgm-chrome-in 320ms ease-out both;
+}
+
+@keyframes hgm-chrome-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------- HERO GRAPHIC MOTION: right column skeleton ----------
+   During opener + skeleton + left-column phases, the stats
+   summary, files list, and health cards all show shimmer
+   placeholders instead of real content. The "Statistics" header
+   stays visible; only the BODY below it skeletons. Real content
+   reveals at the "stats" phase. */
+.home-hero-card-stats-skel,
+.home-hero-card-files-skel,
+.home-hero-card-health-skel {
+  display: none;
+}
+
+/* Pre-stats phases: hide real right-column blocks, show skel. */
+[data-graphic-phase="skeleton"] .home-hero-card-stats,
+[data-graphic-phase="shipped"] .home-hero-card-stats,
+[data-graphic-phase="changed"] .home-hero-card-stats,
+[data-graphic-phase="stillShifting"] .home-hero-card-stats,
+[data-graphic-phase="leftOff"] .home-hero-card-stats,
+[data-graphic-phase="skeleton"] [data-section="statistics"] .home-hero-card-block,
+[data-graphic-phase="shipped"] [data-section="statistics"] .home-hero-card-block,
+[data-graphic-phase="changed"] [data-section="statistics"] .home-hero-card-block,
+[data-graphic-phase="stillShifting"] [data-section="statistics"] .home-hero-card-block,
+[data-graphic-phase="leftOff"] [data-section="statistics"] .home-hero-card-block {
+  display: none;
+}
+
+[data-graphic-phase="skeleton"] .home-hero-card-stats-skel,
+[data-graphic-phase="shipped"] .home-hero-card-stats-skel,
+[data-graphic-phase="changed"] .home-hero-card-stats-skel,
+[data-graphic-phase="stillShifting"] .home-hero-card-stats-skel,
+[data-graphic-phase="leftOff"] .home-hero-card-stats-skel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+[data-graphic-phase="skeleton"] .home-hero-card-files-skel,
+[data-graphic-phase="shipped"] .home-hero-card-files-skel,
+[data-graphic-phase="changed"] .home-hero-card-files-skel,
+[data-graphic-phase="stillShifting"] .home-hero-card-files-skel,
+[data-graphic-phase="leftOff"] .home-hero-card-files-skel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+[data-graphic-phase="skeleton"] .home-hero-card-health-skel,
+[data-graphic-phase="shipped"] .home-hero-card-health-skel,
+[data-graphic-phase="changed"] .home-hero-card-health-skel,
+[data-graphic-phase="stillShifting"] .home-hero-card-health-skel,
+[data-graphic-phase="leftOff"] .home-hero-card-health-skel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Skel row sizes — match the natural height of what they replace. */
+.home-hero-card-skel--stats-row {
+  height: 10px;
+}
+.home-hero-card-skel--file-row {
+  height: 14px;
+}
+.home-hero-card-skel--health-card {
+  height: 68px;
+  border-radius: 6px;
+}
+
 /* ---------- SHARED SECTION SCAFFOLDING ---------- */
 .home-section {
   padding: 96px 32px;

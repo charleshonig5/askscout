@@ -20,6 +20,7 @@ import { signIn } from "@/auth";
 import { InstallChip } from "@/components/InstallChip";
 import { Emoji } from "@/components/Emoji";
 import { HeroBgVideo } from "@/components/HeroBgVideo";
+import { HeroCardOpener } from "@/components/HeroCardOpener";
 import { HeroGraphicMotion } from "@/components/HeroGraphicMotion";
 import { Logo } from "@/components/Logo";
 import FAQTabs from "@/components/FAQTabs";
@@ -218,6 +219,11 @@ export default function MarketingHome() {
           <div className="home-hero-frame">
             <div className="home-hero-frame-inner">
               <div className="home-hero-frame-card">
+                {/* Pre-stream typed line — "Scanning the horizon for
+                    commits…" types itself out during the "opener"
+                    phase, then fades out as skeletons reveal. */}
+                <HeroCardOpener />
+
                 {/* Horizontal divider under the header row (244:2064)
                     and vertical divider between the two body columns
                     (244:2063). Both at #252525 (border token). */}
@@ -388,8 +394,22 @@ export default function MarketingHome() {
                       </span>
                     </div>
                   </div>
+                  {/* Stats summary skeleton — shows during pre-stats
+                      phases in place of the real stats. */}
+                  <div className="home-hero-card-stats-skel" aria-hidden>
+                    <span
+                      className="home-hero-card-skel home-hero-card-skel--stats-row"
+                      style={{ width: "75%" }}
+                    />
+                    <span
+                      className="home-hero-card-skel home-hero-card-skel--stats-row"
+                      style={{ width: "60%" }}
+                    />
+                  </div>
 
-                  {/* Most Active files (244:2207). */}
+                  {/* Most Active files (244:2207). Wrapped in a
+                      fragment so the skel sibling can live in the
+                      column's flex stack at the same level. */}
                   <div className="home-hero-card-block">
                     <p className="home-hero-card-block-title">
                       Most Active files
@@ -413,6 +433,20 @@ export default function MarketingHome() {
                         </li>
                       ))}
                     </ul>
+                    <div className="home-hero-card-files-skel" aria-hidden>
+                      <span
+                        className="home-hero-card-skel home-hero-card-skel--file-row"
+                        style={{ width: "90%" }}
+                      />
+                      <span
+                        className="home-hero-card-skel home-hero-card-skel--file-row"
+                        style={{ width: "70%" }}
+                      />
+                      <span
+                        className="home-hero-card-skel home-hero-card-skel--file-row"
+                        style={{ width: "60%" }}
+                      />
+                    </div>
                   </div>
 
                   {/* Codebase Health (244:2234) — Growth (Heavy / danger),
@@ -472,6 +506,11 @@ export default function MarketingHome() {
                           </div>
                         </div>
                       ))}
+                    </div>
+                    <div className="home-hero-card-health-skel" aria-hidden>
+                      <span className="home-hero-card-skel home-hero-card-skel--health-card" />
+                      <span className="home-hero-card-skel home-hero-card-skel--health-card" />
+                      <span className="home-hero-card-skel home-hero-card-skel--health-card" />
                     </div>
                   </div>
                 </div>

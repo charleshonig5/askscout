@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 
 /**
  * Animation orchestrator for the marketing hero's digest graphic.
@@ -29,6 +29,7 @@ import { useEffect, useRef, useState } from "react";
  */
 
 export type GraphicPhase =
+  | "opener"
   | "skeleton"
   | "shipped"
   | "changed"
@@ -36,6 +37,15 @@ export type GraphicPhase =
   | "leftOff"
   | "stats"
   | "done";
+
+/**
+ * Context for descendants (e.g. <HeroCardOpener />) that need to
+ * react to the current phase. The wrapper renders phase into a
+ * data attribute for CSS, AND into this context for JS-driven
+ * children that need to know when to start their own internal
+ * animations (typed-out lines, etc.).
+ */
+export const GraphicPhaseContext = createContext<GraphicPhase>("done");
 
 interface Props {
   children: React.ReactNode;
@@ -49,52 +59,52 @@ export function HeroGraphicMotion({ children }: Props) {
   // graphic is in the viewport.
   const [phase, setPhase] = useState<GraphicPhase>("done");
   const ref = useRef<HTMLDivElement | null>(null);
-  const hasPlayedRef = useRef(false);
 
   useEffect(() => {
-    if (hasPlayedRef.current) return;
-
     // Reduced-motion users: stay on "done" forever. No reset to
     // skeleton, no timeline. They get the static graphic.
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    if (prefersReducedMotion) {
-      hasPlayedRef.current = true;
-      return;
-    }
+    if (prefersReducedMotion) return;
 
     const el = ref.current;
     if (!el) return;
 
+    let timers: ReturnType<typeof setTimeout>[] = [];
+
     const startTimeline = () => {
-      if (hasPlayedRef.current) return;
-      hasPlayedRef.current = true;
-      // Phase 0 — skeleton state visible. The setTimeout chain
-      // below advances through the choreography. Timing is tight
-      // and snappy per spec: ~3.5-4.5s total run.
-      setPhase("skeleton");
-      const t: NodeJS.Timeout[] = [];
-      t.push(setTimeout(() => setPhase("shipped"), 500));
-      t.push(setTimeout(() => setPhase("changed"), 1100));
-      t.push(setTimeout(() => setPhase("stillShifting"), 1700));
-      t.push(setTimeout(() => setPhase("leftOff"), 2300));
-      t.push(setTimeout(() => setPhase("stats"), 2900));
-      t.push(setTimeout(() => setPhase("done"), 3800));
-      // Cleanup if the component unmounts mid-timeline.
-      return () => t.forEach((id) => clearTimeout(id));
+      // Phase 0 — "opener": "Scanning the horizon for commits…"
+      // types itself out (HeroCardOpener subscribes to context
+      // and runs the type-out itself). Then "skeleton" reveals
+      // the placeholder shimmer rows, and the LiveBadge marches
+      // through the left column → lands on Statistics → done.
+      // Total run ~6.3s, paced to feel deliberate rather than
+      // hurried — the opener moment matters for brand voice.
+      //
+      // Strict mode runs this effect twice in dev — that's fine:
+      // the second run cancels and re-schedules with the same
+      // setPhase calls. Idempotent.
+      setPhase("opener");
+      timers = [
+        setTimeout(() => setPhase("skeleton"), 2400),
+        setTimeout(() => setPhase("shipped"), 2900),
+        setTimeout(() => setPhase("changed"), 3500),
+        setTimeout(() => setPhase("stillShifting"), 4100),
+        setTimeout(() => setPhase("leftOff"), 4700),
+        setTimeout(() => setPhase("stats"), 5300),
+        setTimeout(() => setPhase("done"), 6300),
+      ];
     };
 
     // Only start the timeline once the graphic actually intersects
     // the viewport. For the hero this is essentially instant, but
     // the guard covers background tabs, slow loads, and any future
     // case where the graphic isn't above the fold.
-    let cleanup: (() => void) | undefined;
     const observer = new IntersectionObserver(
       (entries) => {
-        const entry = entries[0];
-        if (entry?.isIntersecting) {
-          cleanup = startTimeline();
+        if (entries[0]?.isIntersecting) {
+          startTimeline();
           observer.disconnect();
         }
       },
@@ -104,13 +114,19 @@ export function HeroGraphicMotion({ children }: Props) {
 
     return () => {
       observer.disconnect();
-      cleanup?.();
+      timers.forEach((id) => clearTimeout(id));
     };
   }, []);
 
   return (
-    <div ref={ref} data-graphic-phase={phase} className="home-hero-graphic-motion">
-      {children}
-    </div>
+    <GraphicPhaseContext.Provider value={phase}>
+      <div
+        ref={ref}
+        data-graphic-phase={phase}
+        className="home-hero-graphic-motion"
+      >
+        {children}
+      </div>
+    </GraphicPhaseContext.Provider>
   );
 }
