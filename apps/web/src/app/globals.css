@@ -3447,6 +3447,23 @@ a:hover {
   filter: blur(3.3px);
   pointer-events: none;
   z-index: 0;
+  /* Fade the video itself to transparent before the bg-primary
+     overlay kicks in, so the starfield naturally dissolves into
+     the page instead of getting stamped out by the overlay.
+     Stops mirror .home-hero-bg-fade's 23.695% solid mark — the
+     two layers reach full transparent / full bg-primary at the
+     same vertical position, which is what makes the blend read
+     as one continuous fade. */
+  -webkit-mask-image: linear-gradient(
+    to top,
+    transparent 0%,
+    black 23.695%
+  );
+  mask-image: linear-gradient(
+    to top,
+    transparent 0%,
+    black 23.695%
+  );
 }
 
 /* Everything inside the hero needs to sit above the bg video.
