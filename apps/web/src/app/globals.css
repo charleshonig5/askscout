@@ -5046,9 +5046,16 @@ a:hover {
 }
 
 /* Codebase Health bar fills — default state (no phase / "done"):
-   width = --fill-target (the final pixel value passed from JSX).
-   Pre-stats phases: pin to 0 so the bars read as empty. Stats /
-   done: ride the transition from 0 → target. */
+   width = --fill-target (the final pixel value from JSX).
+   Pre-stats phases: pin to 0 so the bars read as empty.
+   Stats phase: keyframe animation slides each bar from 0 →
+   --fill-target. Using @keyframes instead of a transition
+   because the real health cards swap from display:none →
+   visible at the same moment the width rule changes — browsers
+   sometimes skip transitions on the same frame an element
+   becomes rendered, but they always run keyframe animations.
+   Matches the live product's <HealthBar /> recipe (DigestView.tsx
+   :1741) — same ease-out curve + roughly the same 800ms slide. */
 .home-hero-card-health-fill {
   width: var(--fill-target);
 }
@@ -5061,10 +5068,35 @@ a:hover {
   width: 0;
 }
 
-[data-graphic-phase="stats"] .home-hero-card-health-fill,
+@keyframes hgm-bar-fill {
+  from {
+    width: 0;
+  }
+  to {
+    width: var(--fill-target);
+  }
+}
+
+[data-graphic-phase="stats"] .home-hero-card-health-fill {
+  animation: hgm-bar-fill 800ms ease-out forwards;
+}
+
+/* Staggered slide-in — each card's bar starts a beat after the
+   previous one. Reads as a wave moving down the column, same
+   as how the live product's <HealthBar /> animations naturally
+   stagger by render order. */
+[data-graphic-phase="stats"] .home-hero-card-health-card:nth-child(1) .home-hero-card-health-fill {
+  animation-delay: 120ms;
+}
+[data-graphic-phase="stats"] .home-hero-card-health-card:nth-child(2) .home-hero-card-health-fill {
+  animation-delay: 280ms;
+}
+[data-graphic-phase="stats"] .home-hero-card-health-card:nth-child(3) .home-hero-card-health-fill {
+  animation-delay: 440ms;
+}
+
 [data-graphic-phase="done"] .home-hero-card-health-fill {
   width: var(--fill-target);
-  transition: width 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* LiveBadge on Statistics during the stats phase. */
