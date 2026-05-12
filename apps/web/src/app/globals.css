@@ -3233,6 +3233,12 @@ a:hover {
   color: var(--color-text-primary);
   /* Override the monorepo-wide max-width so the home has its own
      hero container rules. Each section sets its own inner width. */
+  /* Clip horizontal overflow from the hero's 1920x1080 bg video
+     and the 100vw darken scrim — both intentionally bleed past
+     the .home-hero's 1100px max-width to fill the viewport, but
+     they were also creating a horizontal scroll on the document
+     because nothing was clipping their right edge. */
+  overflow-x: hidden;
 }
 
 /* ---------- NAV ---------- */
