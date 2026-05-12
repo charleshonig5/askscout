@@ -5020,7 +5020,10 @@ a:hover {
 }
 
 /* Pre-stats phases: pin the counter to 0 so the numbers read as
-   "not yet computed" before the LiveBadge reaches Statistics. */
+   "not yet computed" from the very first moment the graphic
+   enters the viewport — including the opener phase, before the
+   skeletons reveal. */
+[data-graphic-phase="opener"] .home-hero-card-count-up,
 [data-graphic-phase="skeleton"] .home-hero-card-count-up,
 [data-graphic-phase="shipped"] .home-hero-card-count-up,
 [data-graphic-phase="changed"] .home-hero-card-count-up,
