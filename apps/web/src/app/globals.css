@@ -4040,28 +4040,6 @@ a:hover {
   justify-content: space-between;
 }
 
-.home-hero-side-logo {
-  display: flex;
-  align-items: center;
-  gap: 7.447px;
-}
-
-.home-hero-side-logo-mark {
-  width: 13.298px;
-  height: 13.298px;
-  border-radius: 3.191px;
-  background: var(--color-text-primary);
-}
-
-.home-hero-side-logo-word {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 12.766px;
-  line-height: 1;
-  color: var(--color-text-primary);
-  white-space: nowrap;
-}
-
 .home-hero-side-utils {
   display: flex;
   align-items: center;

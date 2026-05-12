@@ -21,6 +21,7 @@ import { signIn } from "@/auth";
 import { InstallChip } from "@/components/InstallChip";
 import { HeroStars } from "@/components/HeroStars";
 import { Emoji } from "@/components/Emoji";
+import { Logo } from "@/components/Logo";
 import FAQTabs from "@/components/FAQTabs";
 import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -420,12 +421,12 @@ export default function MarketingHome() {
                 <div className="home-hero-card-fade" />
               </div>
 
-              {/* Sidebar top bar — logo + utility icons (244:2413). */}
+              {/* Sidebar top bar — logo + utility icons (244:2413).
+                  Uses the real <Logo /> SVG component (same one
+                  Sidebar.tsx renders at height 18) at a smaller
+                  height to match the graphic's scale. */}
               <div className="home-hero-side-top">
-                <div className="home-hero-side-logo">
-                  <span className="home-hero-side-logo-mark" />
-                  <span className="home-hero-side-logo-word">AskScout</span>
-                </div>
+                <Logo height={14} />
                 <div className="home-hero-side-utils">
                   <ChartPie size={14} strokeWidth={1} />
                   <Settings2 size={14} strokeWidth={1} />
