@@ -686,9 +686,11 @@ function StreamingDigest({
               subtitle = cleaned;
             } else {
               const sentenceMatch = cleaned.match(/^(.+?[.!?])\s+(\S.+)$/s);
-              if (sentenceMatch) {
-                subtitle = sentenceMatch[1].trim();
-                body = sentenceMatch[2].trim();
+              const head = sentenceMatch?.[1];
+              const tail = sentenceMatch?.[2];
+              if (head && tail) {
+                subtitle = head.trim();
+                body = tail.trim();
               } else {
                 subtitle = cleaned;
               }
