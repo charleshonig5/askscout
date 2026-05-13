@@ -6602,7 +6602,7 @@ a:hover {
 }
 
 .home-features-motion[data-features-phase="playing"] .home-features-recap-item {
-  animation: features-fade-up 400ms ease-out forwards;
+  animation: features-fade-up 400ms ease-out both;
 }
 
 /* Hand-enumerated stagger across the 4 bullet rows
@@ -6628,7 +6628,15 @@ a:hover {
   animation-delay: 240ms;
 }
 
+/* Explicit `from` so the animation overrides the computed
+   opacity / transform of the moment phase flips to playing.
+   Without this the animation runs from current (1) → 1 and
+   shows no motion. */
 @keyframes features-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
   to {
     opacity: 1;
     transform: translateY(0);
@@ -6671,32 +6679,69 @@ a:hover {
   animation: hgm-today-glow 900ms ease-out forwards;
 }
 
-/* ---- CARD 3: toggle thumbs slide off → on ---- */
+/* ---- CARD 3: three toggles each flip in sequence ----
+   Each toggle starts in the OPPOSITE of its Figma final
+   state and flips once to land where the design rests.
+   - Most Active Files: OFF → ON       (delay 0)
+   - Codebase Health:   OFF → ON       (delay 200ms)
+   - Coding Timeline:   ON → OFF       (delay 400ms)
+   The two ON toggles share the `--on` modifier; the OFF
+   one is targeted via `:not(.home-features-toggle--on)`
+   scoped to this card's toggles container. */
 
-/* Idle: drag the ON toggles back to the OFF visual state
-   so the play state has somewhere to animate FROM. */
+/* Idle — flip the visual state of every toggle to its
+   opposite so the "from" of each animation lines up with
+   the resting state of "playing." */
 .home-features-motion[data-features-phase="idle"]
+  .home-features-toggles
   .home-features-toggle--on {
   background: #ffffff;
 }
 .home-features-motion[data-features-phase="idle"]
+  .home-features-toggles
   .home-features-toggle--on
   .home-features-toggle-thumb {
   left: 2px;
 }
+.home-features-motion[data-features-phase="idle"]
+  .home-features-toggles
+  .home-features-toggle:not(.home-features-toggle--on) {
+  background: var(--color-success);
+}
+.home-features-motion[data-features-phase="idle"]
+  .home-features-toggles
+  .home-features-toggle:not(.home-features-toggle--on)
+  .home-features-toggle-thumb {
+  left: 22px;
+}
 
+/* Playing — animate each into its Figma state. */
 .home-features-motion[data-features-phase="playing"]
+  .home-features-toggles
   .home-features-toggle--on {
-  animation: features-toggle-bg 250ms ease-out forwards;
+  animation: features-toggle-bg-on 250ms ease-out both;
 }
 .home-features-motion[data-features-phase="playing"]
+  .home-features-toggles
   .home-features-toggle--on
   .home-features-toggle-thumb {
-  animation: features-toggle-slide 250ms ease-out forwards;
+  animation: features-toggle-slide-on 250ms ease-out both;
+}
+
+.home-features-motion[data-features-phase="playing"]
+  .home-features-toggles
+  .home-features-toggle:not(.home-features-toggle--on) {
+  animation: features-toggle-bg-off 250ms ease-out 400ms both;
+}
+.home-features-motion[data-features-phase="playing"]
+  .home-features-toggles
+  .home-features-toggle:not(.home-features-toggle--on)
+  .home-features-toggle-thumb {
+  animation: features-toggle-slide-off 250ms ease-out 400ms both;
 }
 
 /* Stagger the 2nd ON toggle (the 3rd direct child of
-   .home-features-toggles — row-divider-row pattern means
+   .home-features-toggles — row/divider/row pattern means
    the 2nd toggle row sits at :nth-child(3)). */
 .home-features-motion[data-features-phase="playing"]
   .home-features-toggles
@@ -6707,10 +6752,10 @@ a:hover {
   > :nth-child(3)
   .home-features-toggle--on
   .home-features-toggle-thumb {
-  animation-delay: 150ms;
+  animation-delay: 200ms;
 }
 
-@keyframes features-toggle-bg {
+@keyframes features-toggle-bg-on {
   from {
     background: #ffffff;
   }
@@ -6719,12 +6764,30 @@ a:hover {
   }
 }
 
-@keyframes features-toggle-slide {
+@keyframes features-toggle-slide-on {
   from {
     left: 2px;
   }
   to {
     left: 22px;
+  }
+}
+
+@keyframes features-toggle-bg-off {
+  from {
+    background: var(--color-success);
+  }
+  to {
+    background: #ffffff;
+  }
+}
+
+@keyframes features-toggle-slide-off {
+  from {
+    left: 22px;
+  }
+  to {
+    left: 2px;
   }
 }
 
