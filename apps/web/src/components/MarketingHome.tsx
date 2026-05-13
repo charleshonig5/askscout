@@ -1365,47 +1365,6 @@ export default function MarketingHome() {
         </div>
       </section>
 
-      {/* ===========================================================
-          ARTICLES — preview strip pointing readers to the writing.
-          One feature card today (The Hidden Cost of Vibe Coding)
-          since that's the lead piece; the layout is built as a row
-          that scales to two or three cards once more pieces ship.
-          The all-articles link sits at the section head so readers
-          can jump straight to the index. The FAQ section follows in
-          the
-          next step.
-          =========================================================== */}
-      <section className="home-section">
-        <div className="home-section-inner">
-          <div className="home-articles-head">
-            <div>
-              <p className="home-eyebrow">Writing</p>
-              <h2 className="home-section-title">More from Scout.</h2>
-            </div>
-            <Link href="/articles" className="home-articles-link">
-              All articles
-              <Forward size={10} strokeWidth={1.5} aria-hidden />
-            </Link>
-          </div>
-          <div className="home-articles-row">
-            <Link
-              href="/articles/the-hidden-cost-of-vibe-coding"
-              className="home-article-card"
-            >
-              <span className="home-article-card-tag">Article</span>
-              <h3 className="home-article-card-title">The Hidden Cost of Vibe Coding</h3>
-              <p className="home-article-card-excerpt">
-                AI coding tools sped us up. They also made it harder to remember what we built.
-                Why the next big workflow problem is digesting your own code.
-              </p>
-              <span className="home-article-card-meta">
-                Read time: 4 min
-                <Forward size={10} strokeWidth={1.5} aria-hidden />
-              </span>
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* ===========================================================
           FAQ — accordion built with native <details>/<summary> so
