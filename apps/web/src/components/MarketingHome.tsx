@@ -18,7 +18,6 @@ import {
   Settings2,
   ShieldCheck,
   Sparkles,
-  X,
 } from "lucide-react";
 import { signIn } from "@/auth";
 import { InstallChip } from "@/components/InstallChip";
