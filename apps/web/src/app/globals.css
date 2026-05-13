@@ -7847,135 +7847,103 @@ a:hover {
 }
 
 /* ---------- FOOTER ---------- */
+/* ============================================
+   FOOTER — Figma 244:2647
+   Brand block (logo + copyright) on the left, 3
+   nav columns on the right with a 144px gutter
+   between them. Each column has a white heading,
+   24px gap to the sub-list, and 14px between
+   list items. All link text is 12px Work Sans
+   Light in secondary gray (#616161).
+   ============================================ */
 .home-footer {
   border-top: 1px solid var(--color-border);
-  padding: 56px 32px 24px;
-  background: var(--color-bg-secondary);
+  padding: 104px 32px;
 }
 
 .home-footer-inner {
-  max-width: 1200px;
+  max-width: 976px;
   margin: 0 auto;
   display: flex;
-  flex-direction: column;
-  gap: 56px;
-}
-
-.home-footer-top {
-  display: grid;
-  grid-template-columns: 1fr 2.4fr;
-  gap: 48px;
+  align-items: flex-start;
+  gap: 144px;
 }
 
 .home-footer-brand {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  align-items: flex-start;
+  gap: 24px;
+  flex-shrink: 0;
 }
 
 .home-footer-logo {
-  font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  display: inline-flex;
   color: var(--color-text-primary);
+  text-decoration: none;
 }
 
-.home-footer-tagline {
-  font-size: 13px;
-  color: var(--color-text-secondary);
+.home-footer-copy {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 1.2;
+  color: #616161;
+  white-space: nowrap;
 }
 
 .home-footer-cols {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
+  display: flex;
+  align-items: flex-start;
+  gap: 104px;
 }
 
 .home-footer-col {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 24px;
 }
 
 .home-footer-col-title {
+  margin: 0;
   font-family: var(--font-sans);
-  font-size: 11px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--color-text-tertiary);
-  margin-bottom: 4px;
-}
-
-.home-footer-col a {
-  font-size: 14px;
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-
-.home-footer-col a:hover {
-  color: var(--color-text-primary);
-}
-
-/* Giant wordmark band — full-width display-font lockup that visually
-   anchors the footer the way Letta's marquee mark does. We don't
-   marquee since the brand reads cleaner static. */
-.home-footer-wordmark {
-  /* Display treatment for the giant footer logo lockup. Same fluid
-     scaling the old text wordmark used (clamp 72→220px), now driven
-     into the <Logo> by the .brand-logo--fluid wrapper which makes
-     the inner <img> height: 100% and width: auto so the lockup
-     scales without distorting its 5.59:1 aspect ratio. */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: clamp(72px, 18vw, 220px);
-  padding: 8px 0 0;
-  border-top: 1px solid var(--color-border);
-  user-select: none;
-  overflow: hidden;
-}
-
-.home-footer-bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  padding-top: 20px;
-  border-top: 1px solid var(--color-border);
-}
-
-.home-footer-bottom-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.home-footer-bottom-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.home-footer-social {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-
-.home-footer-social:hover {
-  color: var(--color-text-primary);
-}
-
-.home-footer-copy {
+  font-weight: 300;
   font-size: 12px;
-  color: var(--color-text-tertiary);
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.home-footer-col-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.home-footer-col-list li {
+  margin: 0;
+}
+
+.home-footer-col-list a {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 1.2;
+  color: #616161;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.home-footer-col-list a:hover {
+  color: var(--color-text-primary);
 }
 
 /* ---------- RESPONSIVE ---------- */
@@ -7996,13 +7964,13 @@ a:hover {
   .home-split {
     grid-template-columns: 1fr;
   }
-  .home-footer-top {
-    grid-template-columns: 1fr;
-    gap: 32px;
+  .home-footer-inner {
+    flex-direction: column;
+    gap: 48px;
   }
   .home-footer-cols {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 48px;
+    flex-wrap: wrap;
   }
 }
 
@@ -8024,7 +7992,8 @@ a:hover {
     font-size: 36px;
   }
   .home-footer-cols {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    gap: 32px;
   }
 }
 

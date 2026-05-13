@@ -1,74 +1,79 @@
 import Link from "next/link";
-import { Code2 } from "lucide-react";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { Logo } from "@/components/Logo";
 
 /**
- * Shared footer used on every public page (homepage, articles, docs,
- * privacy). Three rows: brand block + nav columns, giant wordmark,
- * socials + theme toggle + copyright. Mirrors the layout pattern
- * Letta and Vercel use; tokens are AskScout's own monochrome system.
+ * Site footer per Figma 244:2647. Two-block layout: the brand
+ * (askscout logo + copyright) on the left, and three nav columns
+ * (Product / Navigation / Articles) on the right with the same
+ * 24px column-internal gap and a 144px brand→nav gutter.
+ *
+ * Used on every public marketing surface (home, articles, docs,
+ * privacy) so the chrome stays consistent. Theme toggle lives in
+ * the top nav, not the footer — Figma drops it from this layout.
  */
 export function SiteFooter() {
   return (
     <footer className="home-footer">
       <div className="home-footer-inner">
-        <div className="home-footer-top">
-          <div className="home-footer-brand">
-            <span className="home-footer-logo">
-              <Logo height={22} />
-            </span>
-            <span className="home-footer-tagline">The daily digest for vibe coders.</span>
-          </div>
-          <div className="home-footer-cols">
-            <div className="home-footer-col">
-              <span className="home-footer-col-title">Product</span>
-              <Link href="/dashboard">Dashboard</Link>
-              <Link href="/docs">CLI</Link>
-            </div>
-            <div className="home-footer-col">
-              <span className="home-footer-col-title">Writing</span>
-              <Link href="/articles">Articles</Link>
-              <Link href="/articles/the-hidden-cost-of-vibe-coding">
-                The Hidden Cost of Vibe Coding
-              </Link>
-            </div>
-            <div className="home-footer-col">
-              <span className="home-footer-col-title">Open source</span>
-              <a
-                href="https://github.com/charleshonig5/askscout"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                GitHub
-              </a>
-              <Link href="/privacy">Privacy</Link>
-            </div>
-          </div>
+        <div className="home-footer-brand">
+          <Link href="/" className="home-footer-logo" aria-label="AskScout home">
+            <Logo height={20} />
+          </Link>
+          <p className="home-footer-copy">© 2026 AskScout</p>
         </div>
-
-        <div className="home-footer-wordmark" aria-hidden>
-          <Logo className="brand-logo--fluid" height={120} alt="" />
-        </div>
-
-        <div className="home-footer-bottom">
-          <div className="home-footer-bottom-left">
-            <a
-              href="https://github.com/charleshonig5/askscout"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="home-footer-social"
-            >
-              <Code2 size={14} strokeWidth={1.5} aria-hidden />
-              GitHub
-            </a>
-            <a href="mailto:charleshonigdesign@gmail.com" className="home-footer-social">
-              Email
-            </a>
+        <div className="home-footer-cols">
+          <div className="home-footer-col">
+            <p className="home-footer-col-title">Product</p>
+            <ul className="home-footer-col-list">
+              <li>
+                <Link href="/dashboard">Web App</Link>
+              </li>
+              <li>
+                <Link href="/docs">CLI</Link>
+              </li>
+            </ul>
           </div>
-          <div className="home-footer-bottom-right">
-            <span className="home-footer-copy">© 2026 AskScout</span>
-            <ThemeToggle />
+          <div className="home-footer-col">
+            <p className="home-footer-col-title">Navigation</p>
+            <ul className="home-footer-col-list">
+              <li>
+                <Link href="/">Home</Link>
+              </li>
+              <li>
+                <Link href="/articles">Articles</Link>
+              </li>
+              <li>
+                <Link href="/docs">Docs</Link>
+              </li>
+              <li>
+                <Link href="/privacy">Privacy</Link>
+              </li>
+            </ul>
+          </div>
+          <div className="home-footer-col">
+            <p className="home-footer-col-title">Articles</p>
+            <ul className="home-footer-col-list">
+              <li>
+                <Link href="/articles/the-hidden-cost-of-vibe-coding">
+                  The Hidden Cost of Vibe Coding
+                </Link>
+              </li>
+              <li>
+                <Link href="/articles/best-ways-to-track-what-you-shipped">
+                  Best Ways to Track What You Shipped
+                </Link>
+              </li>
+              <li>
+                <Link href="/articles/how-askscout-summarizes-git">
+                  How AskScout Summarizes Git
+                </Link>
+              </li>
+              <li>
+                <Link href="/articles/why-askscout-is-open-source">
+                  Why AskScout Is Open Source
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
