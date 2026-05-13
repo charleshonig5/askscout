@@ -1,7 +1,6 @@
 import { Fragment } from "react";
 import Link from "next/link";
 import {
-  ArrowUpRight,
   BookText,
   ChartPie,
   ChevronDown,
@@ -1183,7 +1182,7 @@ export default function MarketingHome() {
                   <div className="home-runlocal-badges">
                     <Link href="/docs" className="home-runlocal-badge">
                       <span>Open Source</span>
-                      <ArrowUpRight size={10} strokeWidth={1.5} />
+                      <Forward size={10} strokeWidth={1.5} aria-hidden />
                     </Link>
                     <span className="home-runlocal-badge">
                       <span>Fully Local</span>
