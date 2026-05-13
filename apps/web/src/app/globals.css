@@ -6674,19 +6674,28 @@ a:hover {
 }
 
 /* ---------- Right column: 519 wide, 382 tall ----------
-   Inner card is 471x334 at (24, 24). Card overflows by 14px
-   right padding on its content frame; the fade rectangle
-   at y=204 covers the visible bottom region. */
+   Per Figma 244:2513 the right column is its OWN bordered
+   card (bg-primary + inset glow + 1px border + radius 6),
+   and the terminal card 244:2514 is a NESTED card inside
+   it at top:23 left:23, 471×334. This nested-card pattern
+   is what gives the section its "terminal sits on a holder
+   card" treatment. */
 .home-runlocal-right {
   position: relative;
   width: 519px;
   height: 382px;
+  border-radius: 6px;
+  background: var(--color-bg-primary);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    inset 0 0 40px 0 var(--color-inner-glow);
+  overflow: hidden;
 }
 
 .home-runlocal-card {
   position: absolute;
-  top: 24px;
-  left: 24px;
+  top: 23px;
+  left: 23px;
   width: 471px;
   height: 334px;
   border-radius: 8px;
