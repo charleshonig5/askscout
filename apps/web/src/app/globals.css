@@ -5905,7 +5905,7 @@ a:hover {
   justify-content: center;
   width: 28px;
   height: 28px;
-  color: var(--color-text-primary);
+  color: var(--color-text-secondary);
 }
 
 .home-trust-card-text {

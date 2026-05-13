@@ -6,7 +6,7 @@ import {
   ChartPie,
   ChevronDown,
   Copy,
-  Package,
+  PackageOpen,
   SearchX,
   SquareArrowUpRight,
   Download,
@@ -1338,7 +1338,7 @@ export default function MarketingHome() {
                 bodyWidth: 268,
               },
               {
-                icon: <Package size={28} strokeWidth={1.25} aria-hidden />,
+                icon: <PackageOpen size={28} strokeWidth={1.25} aria-hidden />,
                 title: "Fully Open Source",
                 body: "Every line of AskScout is public on GitHub. Free to read, fork, or build on.",
                 bodyWidth: 244,
