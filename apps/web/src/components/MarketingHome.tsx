@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 import Link from "next/link";
 import {
+  ArrowUpRight,
   BookText,
   ChartPie,
   ChevronDown,
@@ -1161,75 +1162,133 @@ export default function MarketingHome() {
       </section>
 
       {/* ===========================================================
-          PREFER LOCAL — CLI section. By the time the reader reaches
-          this point the bento grid has covered the web-app surface,
-          so this section exists for users who want it local. Single
-          tile, BYOK framing. =========================================================== */}
-      <section className="home-section">
-        <div className="home-section-inner home-section-inner--narrow home-section-inner--align-left">
-          <p className="home-eyebrow">Want it local?</p>
-          <h2 className="home-section-title">Run it locally.</h2>
-          <p className="home-section-prose-narrow">
-            Same product, as a CLI on your machine. Bring your own LLM key. Always stays fully
-            local.
-          </p>
-          <div className="home-terminal" role="img" aria-label="AskScout running in a terminal">
-            <div className="home-terminal-chrome">
-              <span className="home-terminal-dot home-terminal-dot--red" />
-              <span className="home-terminal-dot home-terminal-dot--yellow" />
-              <span className="home-terminal-dot home-terminal-dot--green" />
-              <span className="home-terminal-title">askscout</span>
+          RUN IT LOCALLY — Figma 344:2. Two-column layout: left
+          column has Open Source + Fully Local pills, "Run it
+          Locally" title, body copy, npm install pill, and a
+          Documentation link. Right column is a macOS-style
+          terminal mock showing the CLI digest output, with a
+          bottom fade dissolving into the section background.
+          =========================================================== */}
+      <section className="home-section home-runlocal">
+        <div className="home-runlocal-inner">
+          <div className="home-runlocal-left">
+            <div className="home-runlocal-mainblock">
+              <div className="home-runlocal-headblock">
+                <div className="home-runlocal-headgroup">
+                  <div className="home-runlocal-badges">
+                    <Link href="/docs" className="home-runlocal-badge">
+                      <span>Open Source</span>
+                      <ArrowUpRight size={10} strokeWidth={1.5} />
+                    </Link>
+                    <span className="home-runlocal-badge">
+                      <span>Fully Local</span>
+                    </span>
+                  </div>
+                  <h2 className="home-runlocal-title">Run it Locally</h2>
+                </div>
+                <p className="home-runlocal-body">
+                  Same product, as a CLI on your machine. Bring your own
+                  LLM key. Always stays fully local.
+                </p>
+              </div>
+              <button type="button" className="home-runlocal-install">
+                <span className="home-runlocal-install-text">
+                  <span className="home-runlocal-install-prompt">$</span>
+                  {"  "}npm install -g askscout
+                </span>
+                <Copy size={16} strokeWidth={1} aria-hidden />
+              </button>
             </div>
-            <pre className="home-terminal-body">
-              <span className="home-terminal-prompt">$</span> askscout
-              {"\n\n"}
-              <span className="home-terminal-heading">
-                🔍 Scout scanned acme-app
-              </span>
-              {"\n"}
-              <span className="home-terminal-dim">
-                {"   "}12 commits · 23 files · today
-              </span>
-              {"\n\n"}
-              <span className="home-terminal-heading">💬 Vibe Check</span>
-              {"\n"}
-              Cancel flow shipped, onboarding v2 polished.{"\n"}
-              The billing pipeline finally hangs together.
-              {"\n\n"}
-              <span className="home-terminal-dim">
-                {"   "}+1,284 lines · -612 lines · 12 commits · 23 files
-              </span>
-              {"\n\n"}
-              <span className="home-terminal-heading">🚀 Shipped  3</span>
-              {"\n"}
-              {"  "}• Stripe cancel webhook handles renewals and bounces{"\n"}
-              {"  "}• Onboarding v2 with progress bar and resume drafts{"\n"}
-              {"  "}• Verification emails retry on transient SMTP failures
-              {"\n\n"}
-              <span className="home-terminal-heading">🔧 Changed  2</span>
-              {"\n"}
-              {"  "}• Search uses a composite index now, queries under 20ms{"\n"}
-              {"  "}• Sign-out syncs across browser tabs via BroadcastChannel
-              {"\n\n"}
-              <span className="home-terminal-heading">📍 Left Off  1</span>
-              {"\n"}
-              {"  "}• Invitation email template shows null for some org names
-              {"\n\n"}
-              <span className="home-terminal-heading">🔑 Key Takeaways</span>
-              {"\n"}
-              Billing is in shape. Next move is fixing the org-name lookup{"\n"}
-              before the team-invite email goes live.
-              {"\n\n"}
-              <span className="home-terminal-prompt">$</span>{" "}
-              <span className="home-terminal-cursor" aria-hidden>
-                █
-              </span>
-            </pre>
-          </div>
-          <div className="home-cli-cta">
-            <Link href="/docs" className="home-cta home-cta--inline">
-              Read the CLI docs →
+            <Link href="/docs" className="home-runlocal-doclink">
+              <span>Documentation</span>
+              <ArrowUpRight size={16} strokeWidth={1.5} />
             </Link>
+          </div>
+
+          <div className="home-runlocal-right" aria-hidden>
+            <div className="home-runlocal-card">
+              <div className="home-runlocal-dots">
+                <span className="home-runlocal-dot home-runlocal-dot--red" />
+                <span className="home-runlocal-dot home-runlocal-dot--yellow" />
+                <span className="home-runlocal-dot home-runlocal-dot--green" />
+              </div>
+              <div className="home-runlocal-card-divider" />
+              <div className="home-runlocal-stream">
+                <div className="home-runlocal-stream-head">
+                  <p className="home-runlocal-stream-prompt">$ askscout</p>
+                  <p className="home-runlocal-stream-stats">
+                    +425 · -86 · 19 commits · 8 files
+                  </p>
+                </div>
+                {[
+                  {
+                    emoji: "shipped" as const,
+                    label: "Shipped",
+                    items: [
+                      {
+                        title: "Cancel from one click",
+                        body: "Subscribers can cancel without three confirmation screens. One click and a free-text reason box if they want to leave feedback.",
+                      },
+                      {
+                        title: "Onboarding finally feels finished",
+                        body: "First-time users get a three-step setup with a progress bar. If they bail mid-flow, the next visit picks up where they left off.",
+                      },
+                    ],
+                  },
+                  {
+                    emoji: "changed" as const,
+                    label: "Changed",
+                    items: [
+                      {
+                        title: "Search is way faster",
+                        body: "User search used to chug for half a second on big orgs. Same query runs in under twenty milliseconds now.",
+                      },
+                      {
+                        title: "Sign-out works across tabs",
+                        body: "Sign out in one tab and every other tab knows immediately. No more stale-session weirdness across windows.",
+                      },
+                    ],
+                  },
+                  {
+                    emoji: "unstable" as const,
+                    label: "Still Shifting",
+                    items: [
+                      {
+                        title: "The notification badge",
+                        body: "Touched five days running. Every fix introduces a new flicker on websocket reconnect. Worth pausing tomorrow to figure out why.",
+                      },
+                      {
+                        title: "Sidebar on Safari",
+                        body: "Fourth pass at the collapse animation this week. Every fix works in Chrome and breaks Safari. Might be time to write the Safari path separately.",
+                      },
+                    ],
+                  },
+                ].map((section) => (
+                  <div key={section.label} className="home-runlocal-stream-section">
+                    <div className="home-runlocal-stream-heading">
+                      <Emoji name={section.emoji} size={14} />
+                      <span>{section.label}</span>
+                    </div>
+                    <ul className="home-runlocal-stream-items">
+                      {section.items.map((item) => (
+                        <li key={item.title} className="home-runlocal-stream-item">
+                          <span
+                            className="home-runlocal-stream-bullet"
+                            aria-hidden
+                          />
+                          <p>
+                            {item.title}
+                            {" - "}
+                            <span>{item.body}</span>
+                          </p>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="home-runlocal-fade" />
           </div>
         </div>
       </section>

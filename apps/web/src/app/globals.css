@@ -6445,6 +6445,333 @@ a:hover {
   transform: translate(-50%, -50%);
 }
 
+/* ============================================
+   RUN IT LOCALLY — Figma 344:2
+   Two-column section: left has badges + title + body +
+   install pill + docs link; right has a macOS-style
+   terminal mock with traffic lights and a bottom fade.
+   ============================================ */
+.home-runlocal-inner {
+  max-width: 976px;
+  margin: 0 auto;
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* ---------- Left column: 433 wide, 306 tall ---------- */
+.home-runlocal-left {
+  width: 433px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding-top: 43px;
+}
+
+.home-runlocal-mainblock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 44px;
+}
+
+.home-runlocal-headblock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.home-runlocal-headgroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.home-runlocal-badges {
+  display: flex;
+  gap: 14px;
+}
+
+.home-runlocal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.home-runlocal-badge:hover {
+  background: var(--color-bg-secondary);
+}
+
+.home-runlocal-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 1.15;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.home-runlocal-body {
+  margin: 0;
+  width: 370px;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 20px;
+  line-height: 26px;
+  color: var(--color-text-primary);
+}
+
+.home-runlocal-install {
+  appearance: none;
+  border: 0;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  height: 54px;
+  padding: 15px 24px;
+  border-radius: 6px;
+  background: var(--color-bg-primary);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    inset 0 0 40px 0 var(--color-inner-glow);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font: inherit;
+}
+
+.home-runlocal-install-text {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.2;
+  white-space: pre;
+}
+
+.home-runlocal-install-prompt {
+  color: #616161;
+}
+
+.home-runlocal-doclink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.home-runlocal-doclink:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Right column: 519 wide, 382 tall ----------
+   Inner card is 471x334 at (24, 24). Card overflows by 14px
+   right padding on its content frame; the fade rectangle
+   at y=204 covers the visible bottom region. */
+.home-runlocal-right {
+  position: relative;
+  width: 519px;
+  height: 382px;
+}
+
+.home-runlocal-card {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  width: 471px;
+  height: 334px;
+  border-radius: 8px;
+  background: var(--color-bg-secondary);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    inset 0 0 40px 0 var(--color-inner-glow);
+  overflow: hidden;
+}
+
+.home-runlocal-dots {
+  position: absolute;
+  top: 13px;
+  left: 13px;
+  display: flex;
+  gap: 8px;
+}
+
+.home-runlocal-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.home-runlocal-dot--red {
+  background: #ff5f57;
+}
+.home-runlocal-dot--yellow {
+  background: #febc2e;
+}
+.home-runlocal-dot--green {
+  background: #28c840;
+}
+
+.home-runlocal-card-divider {
+  position: absolute;
+  top: 35px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.home-runlocal-stream {
+  position: absolute;
+  top: 49px;
+  left: 13px;
+  width: 443px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: var(--color-text-primary);
+}
+
+.home-runlocal-stream-head {
+  position: relative;
+  height: 38px;
+  width: 147px;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.home-runlocal-stream-prompt {
+  margin: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+}
+
+.home-runlocal-stream-stats {
+  margin: 0;
+  position: absolute;
+  top: 26px;
+  left: 0;
+  white-space: pre;
+}
+
+.home-runlocal-stream-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.home-runlocal-stream-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 10px;
+  line-height: 1;
+  color: var(--color-text-primary);
+}
+
+.home-runlocal-stream-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.home-runlocal-stream-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.home-runlocal-stream-bullet {
+  position: relative;
+  flex-shrink: 0;
+  width: 15px;
+  height: 19px;
+}
+
+.home-runlocal-stream-bullet::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 6px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--color-text-secondary);
+}
+
+.home-runlocal-stream-item p {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 10px;
+  line-height: 16px;
+  color: var(--color-text-primary);
+}
+
+/* Bottom fade — Rectangle 18 at section-relative (457, 204)
+   width 519 height 178. In right-column local coords that's
+   left:0 top:204 width:519 height:178. Same OKLab + alpha-0
+   gradient recipe as the features fade. */
+.home-runlocal-fade {
+  position: absolute;
+  top: 204px;
+  left: 0;
+  width: 519px;
+  height: 178px;
+  pointer-events: none;
+  background: linear-gradient(
+    in oklab to top,
+    var(--color-bg-primary) 23.695%,
+    rgb(from var(--color-bg-primary) r g b / 0) 100%
+  );
+}
+
+@media (max-width: 1000px) {
+  .home-runlocal-inner {
+    flex-direction: column;
+    align-items: center;
+  }
+  .home-runlocal-left {
+    width: 100%;
+    max-width: 471px;
+    padding-top: 0;
+  }
+  .home-runlocal-right {
+    width: 100%;
+    max-width: 519px;
+  }
+}
+
 .home-bento {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
