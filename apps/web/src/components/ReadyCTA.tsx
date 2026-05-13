@@ -1,4 +1,4 @@
-import { ArrowUpRight } from "lucide-react";
+import { Forward } from "lucide-react";
 import { signIn } from "@/auth";
 import { ReadyCTAInstall } from "@/components/ReadyCTAInstall";
 
@@ -29,7 +29,7 @@ export function ReadyCTA() {
             className="home-readycta-badge"
           >
             <span>Open Source</span>
-            <ArrowUpRight size={10} strokeWidth={1.5} aria-hidden />
+            <Forward size={10} strokeWidth={1.5} aria-hidden />
           </a>
           <span className="home-readycta-badge">
             <span>Read Only</span>
