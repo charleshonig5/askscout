@@ -5,12 +5,11 @@ import { Check, Copy } from "lucide-react";
 
 /**
  * Copy-on-click install pill for the reusable Ready CTA section
- * (Figma 244:2673). Same clipboard pattern as <InstallChip /> but
- * styled with the Ready CTA's larger 54-tall pill geometry — 16px
- * text, gap-[14] between text and icon, layered bg-primary surface.
- *
- * The icon flips from Copy → Check for ~1.5s after a successful
- * copy so the click has clear feedback.
+ * (Figma 244:2673). Same interaction recipe as <InstallChip /> in
+ * the hero so the two CTAs read as a pair: icon at size 14 (Copy
+ * strokeWidth 1.5 / Check strokeWidth 2), and on successful copy
+ * we add an .is-copied class that flips the icon color to
+ * --color-success for ~1.5s of feedback before reverting.
  */
 export function ReadyCTAInstall() {
   const [copied, setCopied] = useState(false);
@@ -31,7 +30,7 @@ export function ReadyCTAInstall() {
   return (
     <button
       type="button"
-      className="home-readycta-install"
+      className={`home-readycta-install${copied ? " is-copied" : ""}`}
       onClick={handleClick}
       aria-label="Copy install command to clipboard"
     >
@@ -39,11 +38,13 @@ export function ReadyCTAInstall() {
         <span className="home-readycta-install-prompt">$</span>
         {"  "}npm install -g askscout
       </span>
-      {copied ? (
-        <Check size={16} strokeWidth={2} aria-hidden />
-      ) : (
-        <Copy size={16} strokeWidth={1} aria-hidden />
-      )}
+      <span className="home-readycta-install-icon" aria-hidden>
+        {copied ? (
+          <Check size={14} strokeWidth={2} />
+        ) : (
+          <Copy size={14} strokeWidth={1.5} />
+        )}
+      </span>
     </button>
   );
 }

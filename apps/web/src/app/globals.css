@@ -7687,11 +7687,20 @@ a:hover {
   line-height: 1.2;
   color: var(--color-text-primary);
   cursor: pointer;
+  user-select: none;
   white-space: nowrap;
+  transition: background 0.15s ease;
 }
 
-.home-readycta-btn:hover {
-  background: var(--color-bg-tertiary);
+@media (hover: hover) {
+  .home-readycta-btn:hover {
+    background: var(--color-bg-tertiary);
+  }
+}
+
+.home-readycta-btn:focus-visible {
+  outline: 2px solid var(--color-text-primary);
+  outline-offset: 2px;
 }
 
 .home-readycta-install {
@@ -7711,11 +7720,37 @@ a:hover {
     inset 0 0 40px 0 var(--color-inner-glow);
   color: var(--color-text-primary);
   cursor: pointer;
+  user-select: none;
   font-family: var(--font-sans);
+  transition: background 0.15s ease;
 }
 
-.home-readycta-install:hover {
-  background: var(--color-bg-secondary);
+@media (hover: hover) {
+  .home-readycta-install:hover {
+    background: var(--color-bg-secondary);
+  }
+}
+
+.home-readycta-install:focus-visible {
+  outline: 2px solid var(--color-text-primary);
+  outline-offset: 2px;
+}
+
+/* Icon wrapper — same recipe as .home-cta-chip-icon in the hero
+   so the copy / check flip animates the same way. .is-copied
+   modifier on the button bubbles down here to flash success
+   green for the brief feedback window. */
+.home-readycta-install-icon {
+  display: inline-flex;
+  align-items: center;
+  width: 14px;
+  height: 14px;
+  color: var(--color-text-primary);
+  transition: color 0.15s ease;
+}
+
+.home-readycta-install.is-copied .home-readycta-install-icon {
+  color: var(--color-success);
 }
 
 .home-readycta-install-text {
