@@ -24,7 +24,6 @@ import { InstallChip } from "@/components/InstallChip";
 import { ReadyCTA } from "@/components/ReadyCTA";
 import { FeaturesMotion } from "@/components/FeaturesMotion";
 import { FeaturesResumeBody } from "@/components/FeaturesResumeBody";
-import { FeaturesResumeKeyFiles } from "@/components/FeaturesResumeKeyFiles";
 import { Emoji } from "@/components/Emoji";
 import { HeroBgVideo } from "@/components/HeroBgVideo";
 import { HeroCardOpener } from "@/components/HeroCardOpener";
@@ -963,10 +962,6 @@ export default function MarketingHome() {
                         Current Focus
                       </p>
                       <FeaturesResumeBody />
-                    </div>
-                    <div className="home-features-resume-block home-features-resume-block--keyfiles">
-                      <p className="home-features-resume-heading">Key Files</p>
-                      <FeaturesResumeKeyFiles />
                     </div>
                   </div>
                 </div>
