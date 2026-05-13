@@ -7,6 +7,8 @@ import {
   ChevronDown,
   Code2,
   Copy,
+  Package,
+  SearchX,
   Download,
   EyeOff,
   FileText,
@@ -1300,56 +1302,66 @@ export default function MarketingHome() {
           with verifiable specifics grounded in the actual repo
           (github.ts read endpoints, MIT license across all
           packages, chmod 600 on CLI key file). =========================================================== */}
-      <section className="home-section home-section--quiet">
-        <div className="home-section-inner">
-          <p className="home-eyebrow">Trust</p>
-          <h2 className="home-section-title">Private. Secure. Open.</h2>
-          <p className="home-section-prose-narrow">
-            You stay in control of your code, your keys, and your data.{" "}
-            <Link href="/privacy" className="home-prose-link">
-              Read the full privacy policy →
+      {/* ===========================================================
+          PRIVATE / SECURE / OPEN SOURCE — Figma 344:3. Header
+          row with the section title on the left and a Privacy
+          Policy button on the right. Three trust cards below,
+          each with a 28px icon, a 20px title, and a 12px body.
+          Each card has a bottom fade that dissolves the lower
+          portion into the section background.
+          =========================================================== */}
+      <section className="home-section home-trust">
+        <div className="home-trust-inner">
+          <div className="home-trust-header">
+            <div className="home-trust-headtext">
+              <h2 className="home-trust-title">Private. Secure. Open Source.</h2>
+              <p className="home-trust-subtitle">
+                You stay in control of your code and your data.
+              </p>
+            </div>
+            <Link href="/privacy" className="home-trust-policy">
+              Privacy Policy
             </Link>
-          </p>
+          </div>
           <div className="home-trust-grid">
-            <article className="home-trust-card">
-              <span className="home-trust-icon" aria-hidden>
-                <EyeOff size={20} strokeWidth={1.5} />
-              </span>
-              <h3 className="home-trust-title">We don&apos;t see your code.</h3>
-              <p className="home-trust-body">
-                Scout reads what changed in your repo and just enough surrounding context to
-                interpret each change. Never your full files, your secrets, or your build
-                artifacts.
-              </p>
-            </article>
-            <article className="home-trust-card">
-              <span className="home-trust-icon" aria-hidden>
-                <ShieldCheck size={20} strokeWidth={1.5} />
-              </span>
-              <h3 className="home-trust-title">Your data stays safe.</h3>
-              <p className="home-trust-body">
-                Your keys stay private on your machine. Scout can never write to your repo. No
-                tracking, ever.
-              </p>
-            </article>
-            <article className="home-trust-card">
-              <span className="home-trust-icon" aria-hidden>
-                <Code2 size={20} strokeWidth={1.5} />
-              </span>
-              <h3 className="home-trust-title">Nothing is hidden.</h3>
-              <p className="home-trust-body">
-                Every line of Scout is public on GitHub. Free to read, fork, or build on.
-              </p>
-              <a
-                href="https://github.com/charleshonig5/askscout"
-                target="_blank"
-                rel="noreferrer"
-                className="home-trust-link"
-              >
-                View on GitHub
-                <Forward size={10} strokeWidth={1.5} aria-hidden />
-              </a>
-            </article>
+            {[
+              {
+                icon: <SearchX size={28} strokeWidth={1.25} aria-hidden />,
+                title: "We Don’t Read your Code",
+                body: "AskScout only looks at what ‘s changed in your repo. Never your full codebase or your config.",
+                bodyWidth: 259,
+              },
+              {
+                icon: <ShieldCheck size={28} strokeWidth={1.25} aria-hidden />,
+                title: "Your Data Stays Safe",
+                body: "AskScout can never write to your repo. No tracking, ever. Your keys stay private on your machine.",
+                bodyWidth: 268,
+              },
+              {
+                icon: <Package size={28} strokeWidth={1.25} aria-hidden />,
+                title: "Fully Open Source",
+                body: "Every line of AskScout is public on GitHub. Free to read, fork, or build on.",
+                bodyWidth: 244,
+              },
+            ].map((card) => (
+              <article key={card.title} className="home-trust-card">
+                <div className="home-trust-card-inner">
+                  <span className="home-trust-card-icon" aria-hidden>
+                    {card.icon}
+                  </span>
+                  <div className="home-trust-card-text">
+                    <h3 className="home-trust-card-title">{card.title}</h3>
+                    <p
+                      className="home-trust-card-body"
+                      style={{ width: `${card.bodyWidth}px` }}
+                    >
+                      {card.body}
+                    </p>
+                  </div>
+                </div>
+                <div className="home-trust-card-fade" aria-hidden />
+              </article>
+            ))}
           </div>
         </div>
       </section>

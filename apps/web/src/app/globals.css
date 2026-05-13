@@ -5798,90 +5798,179 @@ a:hover {
    Tiles share a glass treatment (matches .home-step /
    .home-split-tile so the page reads as one design system).
    ============================================================ */
-/* TRUST GRID — three pillar cards. Same glass treatment as bento
-   so the page reads as one design system, but compact (single
-   row of equal-width cards on desktop, collapses below). */
-.home-trust-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-top: 36px;
-}
-
-.home-trust-card {
+/* ============================================
+   TRUST — Figma 344:3
+   Header row (title + subtitle on the left, Privacy
+   Policy button on the right) over a 3-card grid.
+   Each card is 303x193 with a 28px icon, 20px title,
+   12px body, and a bottom fade that dissolves the
+   lower 93px into the section background.
+   ============================================ */
+.home-trust-inner {
+  max-width: 976px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 24px;
-  border-radius: 12px;
-  border: 1px solid var(--color-border-hover);
-  background: var(--color-modal-surface);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
+  gap: 54px;
 }
 
-.home-trust-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 9px;
-  border: 1px solid var(--color-border);
-  background: var(--color-bg-secondary);
-  color: var(--color-text-primary);
-  margin-bottom: 4px;
+.home-trust-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+}
+
+.home-trust-headtext {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 478px;
 }
 
 .home-trust-title {
+  margin: 0;
   font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  margin: 0;
+  font-weight: 400;
+  font-size: 36px;
+  /* Figma renders this title at 56px box height (Pridi's serif
+     metrics inflate "normal" leading to ~1.55). Match exactly so
+     the header bottom aligns with Figma's y=93 mark. */
+  line-height: 56px;
   color: var(--color-text-primary);
+  white-space: nowrap;
 }
 
-.home-trust-body {
-  font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 1.55;
-  color: var(--color-text-secondary);
+.home-trust-subtitle {
   margin: 0;
-  flex-grow: 1;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 20px;
+  line-height: 1.15;
+  color: var(--color-text-primary);
+  white-space: nowrap;
 }
 
-.home-trust-link {
+.home-trust-policy {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  height: 54px;
+  padding: 15px 24px;
+  border-radius: 6px;
+  background: var(--color-bg-primary);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    inset 0 0 40px 0 var(--color-inner-glow);
   font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 500;
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.2;
   color: var(--color-text-primary);
   text-decoration: none;
-  margin-top: 4px;
+  white-space: nowrap;
 }
 
-.home-trust-link:hover {
-  opacity: 0.7;
+.home-trust-grid {
+  display: flex;
+  gap: 34px;
 }
 
-.home-trust-code {
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 12px;
-  padding: 1px 6px;
-  border-radius: 4px;
-  border: 1px solid var(--color-border);
+.home-trust-card {
+  position: relative;
+  width: 303px;
+  height: 193px;
+  border-radius: 8px;
   background: var(--color-bg-secondary);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    inset 0 0 40px 0 var(--color-inner-glow);
+  overflow: hidden;
+}
+
+.home-trust-card-inner {
+  position: absolute;
+  top: 23px;
+  left: 23px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.home-trust-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
   color: var(--color-text-primary);
 }
 
-@media (max-width: 880px) {
+.home-trust-card-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.home-trust-card-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.15;
+  color: var(--color-text-primary);
+}
+
+.home-trust-card-body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-primary);
+}
+
+/* Card bottom fade. Per Figma 244:2596 the fade rect is a
+   SIBLING of the cards at section bottom — 93 tall with its
+   bottom edge 22px BELOW the card's bottom edge. So within
+   the card (overflow:hidden) we see only the top 71px of the
+   gradient: a pure transition from transparent (at y=122 of
+   the card) to just-barely-solid (at the card's bottom edge).
+   The solid 22px lower band sits outside the card and gets
+   clipped, leaving a clean fade-out without a visible solid
+   strip at the card's lower edge. */
+.home-trust-card-fade {
+  position: absolute;
+  bottom: -22px;
+  left: 0;
+  width: 100%;
+  height: 93px;
+  pointer-events: none;
+  background: linear-gradient(
+    in oklab to top,
+    var(--color-bg-primary) 23.695%,
+    rgb(from var(--color-bg-primary) r g b / 0) 100%
+  );
+}
+
+@media (max-width: 1000px) {
+  .home-trust-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .home-trust-title {
+    white-space: normal;
+  }
   .home-trust-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
+    flex-direction: column;
+    align-items: center;
+  }
+  .home-trust-card {
+    width: 100%;
+    max-width: 303px;
   }
 }
 
