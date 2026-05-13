@@ -5905,7 +5905,7 @@ a:hover {
   justify-content: center;
   width: 28px;
   height: 28px;
-  color: var(--color-text-secondary);
+  color: var(--color-text-tertiary);
 }
 
 .home-trust-card-text {
@@ -6670,10 +6670,11 @@ a:hover {
 }
 
 /* The bracketed-arrow icon next to "Documentation" sits in
-   secondary gray per Figma — it's the visual cue, not the
-   label, so it stays quieter than the text. */
+   the #616161 muted gray (= --color-text-tertiary in dark
+   mode) per Figma — same shade used for every quieter icon
+   in the marketing comp. */
 .home-runlocal-doclink svg {
-  color: var(--color-text-secondary);
+  color: var(--color-text-tertiary);
 }
 
 .home-runlocal-doclink:hover {
@@ -7759,7 +7760,10 @@ a:hover {
 
 .home-faq-chevron {
   flex-shrink: 0;
-  color: var(--color-text-secondary);
+  /* #616161 (= --color-text-tertiary in dark mode) — same muted
+     gray used elsewhere in the Figma comp for dimmed UI. Open
+     state animates up to text-primary white. */
+  color: var(--color-text-tertiary);
   transition: transform 0.2s ease, color 0.2s ease;
 }
 
