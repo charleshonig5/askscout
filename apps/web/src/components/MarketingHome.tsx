@@ -1203,7 +1203,7 @@ export default function MarketingHome() {
             </div>
             <Link href="/docs" className="home-runlocal-doclink">
               <span>Documentation</span>
-              <SquareArrowUpRight size={12} strokeWidth={1.5} aria-hidden />
+              <SquareArrowUpRight size={16} strokeWidth={1.5} aria-hidden />
             </Link>
           </div>
 
