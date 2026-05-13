@@ -6441,10 +6441,24 @@ a:hover {
   inset: 0;
 }
 
-.home-features-resume-head {
+/* The header row spans the full width above the divider
+   (top:0 → top:64 = the divider position) and uses
+   align-items: center + justify-between so the head stack
+   and the close X both vertically center inside this 64px
+   zone with equal top/bottom padding by definition. */
+.home-features-resume-headrow {
   position: absolute;
-  top: 13px;
+  top: 0;
   left: 13px;
+  right: 13px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.home-features-resume-head {
   display: flex;
   flex-direction: column;
 }
@@ -6471,12 +6485,10 @@ a:hover {
 }
 
 .home-features-resume-close {
-  position: absolute;
-  top: 13px;
-  right: 15px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   width: 32px;
   height: 32px;
   border: 1px solid var(--color-border);

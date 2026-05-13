@@ -5,6 +5,7 @@ import {
   BookText,
   ChartPie,
   ChevronDown,
+  CircleX,
   Copy,
   PackageOpen,
   SearchX,
@@ -889,19 +890,21 @@ export default function MarketingHome() {
             <div className="home-features-card">
               <div className="home-features-mock" aria-hidden>
                 <div className="home-features-resume">
-                  <div className="home-features-resume-head">
-                    <span className="home-features-resume-title">
-                      <Emoji name="resume" size={16} />
-                      Resume Prompt
+                  <div className="home-features-resume-headrow">
+                    <div className="home-features-resume-head">
+                      <span className="home-features-resume-title">
+                        <Emoji name="resume" size={16} />
+                        Resume Prompt
+                      </span>
+                      <p className="home-features-resume-sub">
+                        Paste this into your AI coding tool to pick up where
+                        you left off.
+                      </p>
+                    </div>
+                    <span className="home-features-resume-close">
+                      <CircleX size={16} strokeWidth={1} />
                     </span>
-                    <p className="home-features-resume-sub">
-                      Paste this into your AI coding tool to pick up where
-                      you left off.
-                    </p>
                   </div>
-                  <span className="home-features-resume-close">
-                    <X size={16} strokeWidth={1} />
-                  </span>
                   <div className="home-features-resume-divider" />
                   <div className="home-features-resume-body">
                     <div className="home-features-resume-block">
