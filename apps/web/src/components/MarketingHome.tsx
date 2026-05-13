@@ -8,7 +8,7 @@ import {
   Copy,
   Package,
   SearchX,
-  SquareArrowOutUpRight,
+  SquareArrowUpRight,
   Download,
   FileText,
   Forward,
@@ -1203,7 +1203,7 @@ export default function MarketingHome() {
             </div>
             <Link href="/docs" className="home-runlocal-doclink">
               <span>Documentation</span>
-              <SquareArrowOutUpRight size={16} strokeWidth={1.5} />
+              <SquareArrowUpRight size={12} strokeWidth={1.5} aria-hidden />
             </Link>
           </div>
 

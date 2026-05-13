@@ -6669,8 +6669,19 @@ a:hover {
   text-decoration: none;
 }
 
+/* The bracketed-arrow icon next to "Documentation" sits in
+   secondary gray per Figma — it's the visual cue, not the
+   label, so it stays quieter than the text. */
+.home-runlocal-doclink svg {
+  color: var(--color-text-secondary);
+}
+
 .home-runlocal-doclink:hover {
   text-decoration: underline;
+}
+
+.home-runlocal-doclink:hover svg {
+  color: var(--color-text-primary);
 }
 
 /* ---------- Right column: 519 wide, 382 tall ----------
