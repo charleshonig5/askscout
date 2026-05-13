@@ -7544,6 +7544,156 @@ a:hover {
   display: none;
 }
 
+/* ============================================
+   READY CTA — Figma 244:2673
+   Reusable end-of-page section: Open Source +
+   Read Only badges over a row that pairs a mixed
+   Pridi ExtraLight/Regular headline with two
+   action buttons (Try Free + npm install).
+   ============================================ */
+.home-readycta-inner {
+  max-width: 976px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.home-readycta-badges {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.home-readycta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.home-readycta-badge:hover {
+  background: var(--color-bg-secondary);
+}
+
+.home-readycta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 24px;
+}
+
+.home-readycta-headline {
+  margin: 0;
+  width: 342px;
+  font-family: var(--font-display);
+  font-size: 52px;
+  line-height: 60px;
+  color: var(--color-text-primary);
+}
+
+.home-readycta-headline-thin {
+  font-weight: 200;
+}
+
+.home-readycta-headline-bold {
+  font-weight: 400;
+}
+
+.home-readycta-actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.home-readycta-btn {
+  appearance: none;
+  border: 0;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 54px;
+  padding: 15px 24px;
+  border-radius: 6px;
+  background: var(--color-bg-secondary);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    inset 0 0 40px 0 var(--color-inner-glow);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.home-readycta-btn:hover {
+  background: var(--color-bg-tertiary);
+}
+
+.home-readycta-install {
+  appearance: none;
+  border: 0;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  height: 54px;
+  padding: 15px 24px;
+  border-radius: 6px;
+  background: var(--color-bg-primary);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    inset 0 0 40px 0 var(--color-inner-glow);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+
+.home-readycta-install:hover {
+  background: var(--color-bg-secondary);
+}
+
+.home-readycta-install-text {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.2;
+  white-space: pre;
+}
+
+.home-readycta-install-prompt {
+  color: #616161;
+}
+
+@media (max-width: 1000px) {
+  .home-readycta-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 32px;
+  }
+  .home-readycta-headline {
+    width: 100%;
+  }
+  .home-readycta-actions {
+    flex-wrap: wrap;
+  }
+}
+
 .home-faq-divider {
   width: 928px;
   height: 1px;

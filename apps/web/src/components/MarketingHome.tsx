@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { signIn } from "@/auth";
 import { InstallChip } from "@/components/InstallChip";
+import { ReadyCTA } from "@/components/ReadyCTA";
 import { Emoji } from "@/components/Emoji";
 import { HeroBgVideo } from "@/components/HeroBgVideo";
 import { HeroCardOpener } from "@/components/HeroCardOpener";
@@ -1427,33 +1428,11 @@ export default function MarketingHome() {
       </section>
 
       {/* ===========================================================
-          FINAL CTA — the second-and-last sign-in button on the
-          page. Same orbital star treatment so it reads as
-          consistent with the hero. =========================================================== */}
-      <section className="home-section home-section--cta">
-        <div className="home-section-inner">
-          <h2 className="home-section-title home-section-title--cta">
-            Get your first digest now.
-          </h2>
-          <div className="home-final-cta">
-            <div className="home-cta-row">
-              <form
-                action={async () => {
-                  "use server";
-                  await signIn("github", { redirectTo: "/dashboard" });
-                }}
-              >
-                <button type="submit" className="home-cta home-cta--orbital">
-                  <span className="home-cta-label">Try AskScout free</span>
-                  <span className="home-cta-orbit" aria-hidden />
-                </button>
-              </form>
-              <InstallChip />
-            </div>
-            <p className="home-hero-meta">Free. No credit card. No tracking.</p>
-          </div>
-        </div>
-      </section>
+          FINAL CTA — reusable end-of-page CTA per Figma 244:2673.
+          Lives in <ReadyCTA /> so other marketing pages can drop
+          it in right before the footer with one line.
+          =========================================================== */}
+      <ReadyCTA />
 
       {/* Footer — extracted to SiteFooter so every public page renders
           the same brand block, wordmark, socials, and theme toggle. */}
