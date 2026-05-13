@@ -7537,6 +7537,13 @@ a:hover {
   overflow: hidden;
 }
 
+/* Non-active tab panels stay in the DOM (so AI search crawlers
+   read all 15 Q&As without executing JS) but are removed from
+   layout via display:none + hidden attribute. */
+.home-faq-card--hidden {
+  display: none;
+}
+
 .home-faq-divider {
   width: 928px;
   height: 1px;
@@ -7582,12 +7589,13 @@ a:hover {
 
 .home-faq-chevron {
   flex-shrink: 0;
-  color: var(--color-text-primary);
-  transition: transform 0.2s ease;
+  color: var(--color-text-secondary);
+  transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .home-faq-item[open] .home-faq-chevron {
   transform: rotate(180deg);
+  color: var(--color-text-primary);
 }
 
 .home-faq-answer {

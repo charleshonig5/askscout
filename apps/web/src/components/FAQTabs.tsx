@@ -242,7 +242,6 @@ const TABS: FAQTab[] = [
 
 export default function FAQTabs() {
   const [active, setActive] = useState(TABS[0]!.id);
-  const activeTab = TABS.find((t) => t.id === active) ?? TABS[0]!;
 
   return (
     <div className="home-faq-section">
@@ -269,30 +268,42 @@ export default function FAQTabs() {
           ))}
         </div>
       </div>
-      <div
-        className="home-faq-card"
-        role="tabpanel"
-        id={`faq-panel-${activeTab.id}`}
-        aria-labelledby={`faq-tab-${activeTab.id}`}
-      >
-        {activeTab.items.map((item, i) => (
-          <Fragment key={`${activeTab.id}-${i}`}>
-            {i > 0 ? <div className="home-faq-divider" aria-hidden /> : null}
-            <details className="home-faq-item">
-              <summary className="home-faq-question">
-                <span>{item.q}</span>
-                <ChevronDown
-                  size={28}
-                  strokeWidth={1.25}
-                  className="home-faq-chevron"
-                  aria-hidden
-                />
-              </summary>
-              <div className="home-faq-answer">{item.a}</div>
-            </details>
-          </Fragment>
-        ))}
-      </div>
+      {/* Render every tab's panel into the initial HTML — only the
+          active one is visible (others get display:none via the
+          hidden modifier). Trade-off: a few extra hidden DOM nodes
+          in exchange for AI search bots / LLM crawlers seeing all
+          15 Q&As without needing to execute JS to switch tabs. The
+          FAQPage JSON-LD already covers the schema side; this
+          covers the plain-DOM side. */}
+      {TABS.map((tab) => (
+        <div
+          key={tab.id}
+          className={`home-faq-card${tab.id === active ? "" : " home-faq-card--hidden"}`}
+          role="tabpanel"
+          id={`faq-panel-${tab.id}`}
+          aria-labelledby={`faq-tab-${tab.id}`}
+          aria-hidden={tab.id !== active}
+          hidden={tab.id !== active ? true : undefined}
+        >
+          {tab.items.map((item, i) => (
+            <Fragment key={`${tab.id}-${i}`}>
+              {i > 0 ? <div className="home-faq-divider" aria-hidden /> : null}
+              <details className="home-faq-item">
+                <summary className="home-faq-question">
+                  <span>{item.q}</span>
+                  <ChevronDown
+                    size={28}
+                    strokeWidth={1.25}
+                    className="home-faq-chevron"
+                    aria-hidden
+                  />
+                </summary>
+                <div className="home-faq-answer">{item.a}</div>
+              </details>
+            </Fragment>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
