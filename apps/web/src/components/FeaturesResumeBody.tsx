@@ -22,7 +22,7 @@ import { FeaturesPhaseContext } from "@/components/FeaturesMotion";
 const BODY =
   "Next work should focus on stability of streaming behavior under network timing like client aborts mid response, ensuring consistent visibility of parsed bullets only from true bullet prefixed lines. Remaining risk area includes correct DST safe calendar stepping when timelines span multiple days near midnight boundaries.";
 
-const PER_CHAR_MS = 11;
+const PER_CHAR_MS = 8;
 
 export function FeaturesResumeBody() {
   const phase = useContext(FeaturesPhaseContext);

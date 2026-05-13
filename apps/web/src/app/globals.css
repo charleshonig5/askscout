@@ -6602,11 +6602,13 @@ a:hover {
 }
 
 .home-features-motion[data-features-phase="playing"] .home-features-recap-item {
-  animation: features-fade-up 400ms ease-out both;
+  animation: features-fade-up 500ms ease-out both;
 }
 
 /* Hand-enumerated stagger across the 4 bullet rows
-   (2 sections × 2 items each). */
+   (2 sections × 2 items each). 100ms between each item,
+   500ms per fade — both 25% longer than the prior 400/80
+   pair so the cascade lands a beat slower. */
 .home-features-motion[data-features-phase="playing"]
   .home-features-recap-section:nth-of-type(1)
   .home-features-recap-item:nth-of-type(1) {
@@ -6615,17 +6617,17 @@ a:hover {
 .home-features-motion[data-features-phase="playing"]
   .home-features-recap-section:nth-of-type(1)
   .home-features-recap-item:nth-of-type(2) {
-  animation-delay: 80ms;
+  animation-delay: 100ms;
 }
 .home-features-motion[data-features-phase="playing"]
   .home-features-recap-section:nth-of-type(2)
   .home-features-recap-item:nth-of-type(1) {
-  animation-delay: 160ms;
+  animation-delay: 200ms;
 }
 .home-features-motion[data-features-phase="playing"]
   .home-features-recap-section:nth-of-type(2)
   .home-features-recap-item:nth-of-type(2) {
-  animation-delay: 240ms;
+  animation-delay: 300ms;
 }
 
 /* Explicit `from` so the animation overrides the computed
@@ -6715,29 +6717,34 @@ a:hover {
   left: 22px;
 }
 
-/* Playing — animate each into its Figma state. */
+/* Playing — animate each into its Figma state, sequentially
+   with a small breathing-room gap between each flip:
+     T1 (Most Active):    100ms delay  → 100–350ms
+     T2 (Codebase):       450ms delay  → 450–700ms   (100ms gap)
+     T3 (Coding Timeline):800ms delay  → 800–1050ms  (100ms gap)
+   Each toggle fully settles before the next begins. */
 .home-features-motion[data-features-phase="playing"]
   .home-features-toggles
   .home-features-toggle--on {
-  animation: features-toggle-bg-on 250ms ease-out both;
+  animation: features-toggle-bg-on 250ms ease-out 100ms both;
 }
 .home-features-motion[data-features-phase="playing"]
   .home-features-toggles
   .home-features-toggle--on
   .home-features-toggle-thumb {
-  animation: features-toggle-slide-on 250ms ease-out both;
+  animation: features-toggle-slide-on 250ms ease-out 100ms both;
 }
 
 .home-features-motion[data-features-phase="playing"]
   .home-features-toggles
   .home-features-toggle:not(.home-features-toggle--on) {
-  animation: features-toggle-bg-off 250ms ease-out 400ms both;
+  animation: features-toggle-bg-off 250ms ease-out 800ms both;
 }
 .home-features-motion[data-features-phase="playing"]
   .home-features-toggles
   .home-features-toggle:not(.home-features-toggle--on)
   .home-features-toggle-thumb {
-  animation: features-toggle-slide-off 250ms ease-out 400ms both;
+  animation: features-toggle-slide-off 250ms ease-out 800ms both;
 }
 
 /* Stagger the 2nd ON toggle (the 3rd direct child of
@@ -6752,7 +6759,7 @@ a:hover {
   > :nth-child(3)
   .home-features-toggle--on
   .home-features-toggle-thumb {
-  animation-delay: 200ms;
+  animation-delay: 450ms;
 }
 
 @keyframes features-toggle-bg-on {
