@@ -24,6 +24,7 @@ import { InstallChip } from "@/components/InstallChip";
 import { ReadyCTA } from "@/components/ReadyCTA";
 import { FeaturesMotion } from "@/components/FeaturesMotion";
 import { FeaturesResumeBody } from "@/components/FeaturesResumeBody";
+import { FeaturesResumeKeyFiles } from "@/components/FeaturesResumeKeyFiles";
 import { Emoji } from "@/components/Emoji";
 import { HeroBgVideo } from "@/components/HeroBgVideo";
 import { HeroCardOpener } from "@/components/HeroCardOpener";
@@ -965,19 +966,7 @@ export default function MarketingHome() {
                     </div>
                     <div className="home-features-resume-block home-features-resume-block--keyfiles">
                       <p className="home-features-resume-heading">Key Files</p>
-                      {[
-                        "apps/web/src/app/globals.css",
-                        "apps/web/src/app/settings/page.tsx",
-                        "apps/web/src/components/DigestView.tsx",
-                      ].map((path) => (
-                        <div key={path} className="home-features-resume-file">
-                          <span
-                            className="home-features-resume-bullet"
-                            aria-hidden
-                          />
-                          <span>{path}</span>
-                        </div>
-                      ))}
+                      <FeaturesResumeKeyFiles />
                     </div>
                   </div>
                 </div>
