@@ -22,6 +22,8 @@ import {
 import { signIn } from "@/auth";
 import { InstallChip } from "@/components/InstallChip";
 import { ReadyCTA } from "@/components/ReadyCTA";
+import { FeaturesMotion } from "@/components/FeaturesMotion";
+import { FeaturesResumeBody } from "@/components/FeaturesResumeBody";
 import { Emoji } from "@/components/Emoji";
 import { HeroBgVideo } from "@/components/HeroBgVideo";
 import { HeroCardOpener } from "@/components/HeroCardOpener";
@@ -675,6 +677,7 @@ export default function MarketingHome() {
               A simple, structured interface for understanding your own repo.
             </p>
           </div>
+          <FeaturesMotion>
           <div className="home-features-grid">
             {/* 1. YOUR DAILY RECAP — mini digest sections showing
                 Shipped + Changed bullets at marketing scale. */}
@@ -771,29 +774,78 @@ export default function MarketingHome() {
                         { label: "April 10", added: 389, removed: 210, commits: 16, files: 13 },
                         { label: "April 9", added: 218, removed: 55, commits: 11, files: 6 },
                         { label: "April 8", added: 147, removed: 38, commits: 8, files: 5 },
-                      ].map((day) => (
-                        <li key={day.label} className="home-features-history-day">
-                          <p className="home-features-history-label">
-                            {day.label}
-                          </p>
-                          <div className="home-features-history-stats">
-                            <span className="home-features-history-add">
-                              +{day.added}
-                            </span>
-                            <span className="home-features-history-rem">
-                              -{day.removed}
-                            </span>
-                            <span className="home-features-history-meta">
-                              {day.commits}
-                              <GitCommitHorizontal size={16} strokeWidth={1} />
-                            </span>
-                            <span className="home-features-history-meta">
-                              {day.files}
-                              <FileText size={12} strokeWidth={1} />
-                            </span>
-                          </div>
-                        </li>
-                      ))}
+                      ].map((day) => {
+                        const isToday = day.label === "Today";
+                        return (
+                          <li key={day.label} className="home-features-history-day">
+                            <p className="home-features-history-label">
+                              {day.label}
+                            </p>
+                            <div className="home-features-history-stats">
+                              <span className="home-features-history-add">
+                                +
+                                {isToday ? (
+                                  <span
+                                    className="home-features-history-count"
+                                    style={
+                                      {
+                                        "--count-target": day.added,
+                                      } as React.CSSProperties
+                                    }
+                                  />
+                                ) : (
+                                  day.added
+                                )}
+                              </span>
+                              <span className="home-features-history-rem">
+                                -
+                                {isToday ? (
+                                  <span
+                                    className="home-features-history-count"
+                                    style={
+                                      {
+                                        "--count-target": day.removed,
+                                      } as React.CSSProperties
+                                    }
+                                  />
+                                ) : (
+                                  day.removed
+                                )}
+                              </span>
+                              <span className="home-features-history-meta">
+                                {isToday ? (
+                                  <span
+                                    className="home-features-history-count"
+                                    style={
+                                      {
+                                        "--count-target": day.commits,
+                                      } as React.CSSProperties
+                                    }
+                                  />
+                                ) : (
+                                  day.commits
+                                )}
+                                <GitCommitHorizontal size={16} strokeWidth={1} />
+                              </span>
+                              <span className="home-features-history-meta">
+                                {isToday ? (
+                                  <span
+                                    className="home-features-history-count"
+                                    style={
+                                      {
+                                        "--count-target": day.files,
+                                      } as React.CSSProperties
+                                    }
+                                  />
+                                ) : (
+                                  day.files
+                                )}
+                                <FileText size={12} strokeWidth={1} />
+                              </span>
+                            </div>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                   {/* Detail panel — separate bordered rectangle that
@@ -909,15 +961,7 @@ export default function MarketingHome() {
                       <p className="home-features-resume-heading">
                         Current Focus
                       </p>
-                      <p className="home-features-resume-text">
-                        Next work should focus on stability of streaming
-                        behavior under network timing like client aborts
-                        mid response, ensuring consistent visibility of
-                        parsed bullets only from true bullet prefixed
-                        lines. Remaining risk area includes correct DST
-                        safe calendar stepping when timelines span
-                        multiple days near midnight boundaries.
-                      </p>
+                      <FeaturesResumeBody />
                     </div>
                     <div className="home-features-resume-block home-features-resume-block--keyfiles">
                       <p className="home-features-resume-heading">Key Files</p>
@@ -949,6 +993,7 @@ export default function MarketingHome() {
               </div>
             </div>
           </div>
+          </FeaturesMotion>
           <div className="home-bento" style={{ display: "none" }}>
             {/* 1. THE READ — your daily recap. Mock shows a streamed
                 digest section + a couple of fake bullets so readers

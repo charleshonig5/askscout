@@ -6576,6 +6576,170 @@ a:hover {
 }
 
 /* ============================================
+   FEATURES MOTION — scroll-triggered cascade
+   ============================================
+   Fires once when the 4-card grid scrolls into view.
+   All 4 cards animate in unison (each with its own
+   internal timing). Default state is "done" so SSR /
+   no-JS / prefers-reduced-motion users see the static
+   final version. The wrapper paints data-features-phase
+   onto a parent so these rules only target the cascade
+   when explicitly playing.
+   ============================================ */
+
+/* Wrapper is a transparent block — gives IntersectionObserver
+   a real layout box to observe without affecting the grid
+   inside (which is already flex). display:contents would zero
+   out the bounding box and the observer would never fire. */
+.home-features-motion {
+  display: block;
+}
+
+/* ---- CARD 1: bullets fade up in cascade ---- */
+.home-features-motion[data-features-phase="idle"] .home-features-recap-item {
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+.home-features-motion[data-features-phase="playing"] .home-features-recap-item {
+  animation: features-fade-up 400ms ease-out forwards;
+}
+
+/* Hand-enumerated stagger across the 4 bullet rows
+   (2 sections × 2 items each). */
+.home-features-motion[data-features-phase="playing"]
+  .home-features-recap-section:nth-of-type(1)
+  .home-features-recap-item:nth-of-type(1) {
+  animation-delay: 0ms;
+}
+.home-features-motion[data-features-phase="playing"]
+  .home-features-recap-section:nth-of-type(1)
+  .home-features-recap-item:nth-of-type(2) {
+  animation-delay: 80ms;
+}
+.home-features-motion[data-features-phase="playing"]
+  .home-features-recap-section:nth-of-type(2)
+  .home-features-recap-item:nth-of-type(1) {
+  animation-delay: 160ms;
+}
+.home-features-motion[data-features-phase="playing"]
+  .home-features-recap-section:nth-of-type(2)
+  .home-features-recap-item:nth-of-type(2) {
+  animation-delay: 240ms;
+}
+
+@keyframes features-fade-up {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---- CARD 2: Today numbers count up + active pill glow ----
+   Reuses the same @property --count-num + hgm-today-glow
+   keyframes the hero graphic uses for the digest opener so
+   the marketing card lands on the same beat (900ms). */
+.home-features-history-count {
+  display: inline;
+  --count-target: 0;
+  --count-num: var(--count-target);
+  counter-reset: countNum var(--count-num);
+}
+
+.home-features-history-count::after {
+  content: counter(countNum);
+}
+
+/* Idle: pin to 0 so the cascade starts from "freshly
+   computed, not yet revealed." */
+.home-features-motion[data-features-phase="idle"]
+  .home-features-history-count {
+  --count-num: 0;
+}
+
+.home-features-motion[data-features-phase="playing"]
+  .home-features-history-count {
+  animation: hgm-count-up 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94)
+    forwards;
+}
+
+/* Today active pill — soft inset green glow synced to the
+   count-up (same 900ms / same hgm-today-glow keyframe used
+   in the hero so both surfaces feel like one animation). */
+.home-features-motion[data-features-phase="playing"]
+  .home-features-history-active {
+  animation: hgm-today-glow 900ms ease-out forwards;
+}
+
+/* ---- CARD 3: toggle thumbs slide off → on ---- */
+
+/* Idle: drag the ON toggles back to the OFF visual state
+   so the play state has somewhere to animate FROM. */
+.home-features-motion[data-features-phase="idle"]
+  .home-features-toggle--on {
+  background: #ffffff;
+}
+.home-features-motion[data-features-phase="idle"]
+  .home-features-toggle--on
+  .home-features-toggle-thumb {
+  left: 2px;
+}
+
+.home-features-motion[data-features-phase="playing"]
+  .home-features-toggle--on {
+  animation: features-toggle-bg 250ms ease-out forwards;
+}
+.home-features-motion[data-features-phase="playing"]
+  .home-features-toggle--on
+  .home-features-toggle-thumb {
+  animation: features-toggle-slide 250ms ease-out forwards;
+}
+
+/* Stagger the 2nd ON toggle (the 3rd direct child of
+   .home-features-toggles — row-divider-row pattern means
+   the 2nd toggle row sits at :nth-child(3)). */
+.home-features-motion[data-features-phase="playing"]
+  .home-features-toggles
+  > :nth-child(3)
+  .home-features-toggle--on,
+.home-features-motion[data-features-phase="playing"]
+  .home-features-toggles
+  > :nth-child(3)
+  .home-features-toggle--on
+  .home-features-toggle-thumb {
+  animation-delay: 150ms;
+}
+
+@keyframes features-toggle-bg {
+  from {
+    background: #ffffff;
+  }
+  to {
+    background: var(--color-success);
+  }
+}
+
+@keyframes features-toggle-slide {
+  from {
+    left: 2px;
+  }
+  to {
+    left: 22px;
+  }
+}
+
+/* ---- prefers-reduced-motion: skip everything ---- */
+@media (prefers-reduced-motion: reduce) {
+  .home-features-motion[data-features-phase="playing"] .home-features-recap-item,
+  .home-features-motion[data-features-phase="playing"] .home-features-history-count,
+  .home-features-motion[data-features-phase="playing"] .home-features-history-active,
+  .home-features-motion[data-features-phase="playing"] .home-features-toggle--on,
+  .home-features-motion[data-features-phase="playing"] .home-features-toggle-thumb {
+    animation: none;
+  }
+}
+
+/* ============================================
    RUN IT LOCALLY — Figma 344:2
    Two-column section: left has badges + title + body +
    install pill + docs link; right has a macOS-style
