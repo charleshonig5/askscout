@@ -1,8 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
+
+/**
+ * FAQ section per Figma 244:2605.
+ *
+ * Layout: header row with a Pridi 36px title on the left and a
+ * segmented tab control on the right (Getting Started / Product
+ * Details / Privacy & Security). The selected tab gets the
+ * bg-secondary fill + inset glow; the others render as #616161
+ * text only. Below the header sits a single rounded card holding
+ * the active tab's questions, each row collapsing/expanding via
+ * native `<details>` so the section works without JS and stays
+ * SSR-clean.
+ *
+ * All rows start closed by default. The Figma comp shows one row
+ * open and one closed as a state example only.
+ */
 
 type FAQItem = { q: string; a: React.ReactNode };
 type FAQTab = { id: string; label: string; items: FAQItem[] };
@@ -10,7 +26,7 @@ type FAQTab = { id: string; label: string; items: FAQItem[] };
 const TABS: FAQTab[] = [
   {
     id: "start",
-    label: "Getting started",
+    label: "Getting Started",
     items: [
       {
         q: "What is AskScout?",
@@ -75,8 +91,74 @@ const TABS: FAQTab[] = [
     ],
   },
   {
+    id: "details",
+    label: "Product Details",
+    items: [
+      {
+        q: "What's the difference between the web app and the CLI?",
+        a: (
+          <p>
+            The AskScout web app runs in your browser, signs in with GitHub, and stores your
+            digest history under your account so you can revisit past summaries. The AskScout
+            CLI runs locally in any git repo, uses your own API key, and stores nothing online
+            beyond the calls to your provider. Same digest format and same daily summary, two
+            surfaces, depending on whether you want a hosted history or a fully local workflow.
+          </p>
+        ),
+      },
+      {
+        q: "Does AskScout work with private repos?",
+        a: (
+          <p>
+            Yes. Once you grant access during GitHub sign-in, the AskScout web app generates
+            digests for any repo on your account, public or private, including organization
+            repositories you have access to. The CLI works on any local git repository by
+            default since it reads from your local clone, so private repo support is automatic
+            with no extra configuration.
+          </p>
+        ),
+      },
+      {
+        q: "Does AskScout work with GitLab or Bitbucket?",
+        a: (
+          <p>
+            The AskScout CLI works with any git repo regardless of host, including GitLab,
+            Bitbucket, Codeberg, Gitea, and self-hosted git servers, because it reads from your
+            local clone rather than calling a host API. The web app currently only supports
+            GitHub OAuth for sign-in.
+          </p>
+        ),
+      },
+      {
+        q: "How accurate is the AskScout digest?",
+        a: (
+          <p>
+            The digest is automatically generated from your real git history, so it can
+            occasionally miss nuance or restate the same change twice across sections. It stays
+            grounded in your actual commit messages and diffs rather than working from memory,
+            which keeps the output close to what you really shipped. For day-to-day tracking,
+            standup notes, weekly reviews, and remembering your own work, the digest is
+            reliably useful.
+          </p>
+        ),
+      },
+      {
+        q: "Is there a usage limit?",
+        a: (
+          <p>
+            The AskScout web app has a soft cap of 30 digests per day across your entire
+            account, which covers daily standup notes, end-of-day reviews, and weekly summaries
+            comfortably. The CLI has no AskScout-imposed usage limit, so you can run digests as
+            often as you want. The only limits there are your provider&apos;s API rate limits
+            and your own spend on the key you bring.
+          </p>
+        ),
+      },
+    ],
+  },
+  {
     id: "privacy",
-    label: "Privacy & security",
+    label: "Privacy & Security",
     items: [
       {
         q: "Does AskScout read my source code?",
@@ -156,72 +238,6 @@ const TABS: FAQTab[] = [
       },
     ],
   },
-  {
-    id: "details",
-    label: "Product details",
-    items: [
-      {
-        q: "What's the difference between the web app and the CLI?",
-        a: (
-          <p>
-            The AskScout web app runs in your browser, signs in with GitHub, and stores your
-            digest history under your account so you can revisit past summaries. The AskScout
-            CLI runs locally in any git repo, uses your own API key, and stores nothing online
-            beyond the calls to your provider. Same digest format and same daily summary, two
-            surfaces, depending on whether you want a hosted history or a fully local workflow.
-          </p>
-        ),
-      },
-      {
-        q: "Does AskScout work with private repos?",
-        a: (
-          <p>
-            Yes. Once you grant access during GitHub sign-in, the AskScout web app generates
-            digests for any repo on your account, public or private, including organization
-            repositories you have access to. The CLI works on any local git repository by
-            default since it reads from your local clone, so private repo support is automatic
-            with no extra configuration.
-          </p>
-        ),
-      },
-      {
-        q: "Does AskScout work with GitLab or Bitbucket?",
-        a: (
-          <p>
-            The AskScout CLI works with any git repo regardless of host, including GitLab,
-            Bitbucket, Codeberg, Gitea, and self-hosted git servers, because it reads from your
-            local clone rather than calling a host API. The web app currently only supports
-            GitHub OAuth for sign-in.
-          </p>
-        ),
-      },
-      {
-        q: "How accurate is the AskScout digest?",
-        a: (
-          <p>
-            The digest is automatically generated from your real git history, so it can
-            occasionally miss nuance or restate the same change twice across sections. It stays
-            grounded in your actual commit messages and diffs rather than working from memory,
-            which keeps the output close to what you really shipped. For day-to-day tracking,
-            standup notes, weekly reviews, and remembering your own work, the digest is
-            reliably useful.
-          </p>
-        ),
-      },
-      {
-        q: "Is there a usage limit?",
-        a: (
-          <p>
-            The AskScout web app has a soft cap of 30 digests per day across your entire
-            account, which covers daily standup notes, end-of-day reviews, and weekly summaries
-            comfortably. The CLI has no AskScout-imposed usage limit, so you can run digests as
-            often as you want. The only limits there are your provider&apos;s API rate limits
-            and your own spend on the key you bring.
-          </p>
-        ),
-      },
-    ],
-  },
 ];
 
 export default function FAQTabs() {
@@ -229,41 +245,52 @@ export default function FAQTabs() {
   const activeTab = TABS.find((t) => t.id === active) ?? TABS[0]!;
 
   return (
-    <div className="home-faq-wrap">
-      <div className="home-faq-tabs" role="tablist" aria-label="FAQ categories">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            role="tab"
-            aria-selected={t.id === active}
-            aria-controls={`faq-panel-${t.id}`}
-            id={`faq-tab-${t.id}`}
-            className={`home-faq-tab ${t.id === active ? "home-faq-tab--active" : ""}`}
-            onClick={() => setActive(t.id)}
-          >
-            {t.label}
-          </button>
-        ))}
+    <div className="home-faq-section">
+      <div className="home-faq-header">
+        <h2 className="home-faq-title">Frequently asked Questions</h2>
+        <div
+          className="home-faq-tabs"
+          role="tablist"
+          aria-label="FAQ categories"
+        >
+          {TABS.map((t) => (
+            <button
+              key={t.id}
+              role="tab"
+              type="button"
+              aria-selected={t.id === active}
+              aria-controls={`faq-panel-${t.id}`}
+              id={`faq-tab-${t.id}`}
+              className={`home-faq-tab${t.id === active ? " home-faq-tab--active" : ""}`}
+              onClick={() => setActive(t.id)}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
       </div>
       <div
-        className="home-faq"
+        className="home-faq-card"
         role="tabpanel"
         id={`faq-panel-${activeTab.id}`}
         aria-labelledby={`faq-tab-${activeTab.id}`}
       >
         {activeTab.items.map((item, i) => (
-          <details key={`${activeTab.id}-${i}`} className="home-faq-item">
-            <summary className="home-faq-question">
-              <span>{item.q}</span>
-              <ChevronDown
-                size={16}
-                strokeWidth={1.5}
-                className="home-faq-chevron"
-                aria-hidden
-              />
-            </summary>
-            <div className="home-faq-answer">{item.a}</div>
-          </details>
+          <Fragment key={`${activeTab.id}-${i}`}>
+            {i > 0 ? <div className="home-faq-divider" aria-hidden /> : null}
+            <details className="home-faq-item">
+              <summary className="home-faq-question">
+                <span>{item.q}</span>
+                <ChevronDown
+                  size={28}
+                  strokeWidth={1.25}
+                  className="home-faq-chevron"
+                  aria-hidden
+                />
+              </summary>
+              <div className="home-faq-answer">{item.a}</div>
+            </details>
+          </Fragment>
         ))}
       </div>
     </div>

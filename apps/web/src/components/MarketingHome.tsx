@@ -1413,10 +1413,15 @@ export default function MarketingHome() {
           Final CTA so any last-mile objections get cleared right
           before the second sign-in button.
           =========================================================== */}
-      <section className="home-section home-section--quiet">
-        <div className="home-section-inner home-section-inner--narrow">
-          <p className="home-eyebrow">Questions</p>
-          <h2 className="home-section-title">Frequently asked questions.</h2>
+      {/* ===========================================================
+          FAQ — Figma 244:2605. Pridi title + 3-tab segmented
+          control as a single header row, followed by a single
+          rounded card holding the active tab's questions. Native
+          <details>/<summary> for SSR-clean disclosure; all rows
+          collapse on load.
+          =========================================================== */}
+      <section className="home-section">
+        <div className="home-faq-inner">
           <FAQTabs />
         </div>
       </section>
