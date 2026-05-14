@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { SquareArrowUpRight } from "lucide-react";
+import { LogIn, ShieldCheck, SquareArrowUpRight } from "lucide-react";
+import { signIn } from "@/auth";
 import { MarketingNav } from "@/components/MarketingNav";
 import { InstallChip } from "@/components/InstallChip";
 import { CommandChip } from "@/components/CommandChip";
@@ -63,32 +64,78 @@ export default function DocsPage() {
         </div>
       </section>
 
-      <div className="page-body">
-        {/* WEB */}
-        <section className="public-section">
-          <h2 className="public-section-title">Web app</h2>
-          <p className="public-text">
-            Run AskScout in your browser, no install required. Sign in with GitHub and get your
-            first digest immediately.
-          </p>
+      {/* ===========================================================
+          WEB APP — Figma 244:3035. Section heading + 2-card row.
+          Lives OUTSIDE the legacy .page-body wrapper so the 1px
+          top-border (section divider) can span the full viewport
+          width per the standard section rhythm.
+          =========================================================== */}
+      <section className="docs-section docs-webapp">
+        <div className="docs-webapp-inner">
+          <div className="docs-section-heading">
+            <h2 className="docs-section-title">Web app</h2>
+            <p className="docs-section-deck">
+              Run AskScout right in your browser with the app, no install
+              required. Sign in with GitHub and get your first digest
+              immediately.
+            </p>
+          </div>
+          <div className="docs-webapp-cards">
+            <div className="docs-webapp-card">
+              <div className="docs-webapp-card-content">
+                <span className="docs-webapp-card-icon" aria-hidden>
+                  <LogIn size={28} strokeWidth={1.25} />
+                </span>
+                <div className="docs-webapp-card-text">
+                  <h3 className="docs-webapp-card-title">
+                    Sign in with GitHub
+                  </h3>
+                  <p className="docs-webapp-card-body">
+                    Your account is created on the spot, and your first
+                    digest starts streaming automatically.
+                  </p>
+                </div>
+              </div>
+              <form
+                action={async () => {
+                  "use server";
+                  await signIn("github", { redirectTo: "/dashboard" });
+                }}
+              >
+                <button type="submit" className="docs-webapp-card-btn">
+                  Sign in with GitHub
+                </button>
+              </form>
+            </div>
+            <div className="docs-webapp-card">
+              <div className="docs-webapp-card-content">
+                <span className="docs-webapp-card-icon" aria-hidden>
+                  <ShieldCheck size={28} strokeWidth={1.25} />
+                </span>
+                <div className="docs-webapp-card-text">
+                  <h3 className="docs-webapp-card-title">
+                    Control your data
+                  </h3>
+                  <p className="docs-webapp-card-body">
+                    There is no setup step and no key to manage. You can
+                    revoke GitHub access any time at
+                  </p>
+                </div>
+              </div>
+              <a
+                href="https://github.com/settings/applications"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="docs-webapp-card-btn"
+              >
+                Revoke access
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
 
-          <h3 className="public-card-title" style={{ marginTop: 16 }}>Getting started</h3>
-          <p className="public-text">
-            Open <Link href="/" className="home-prose-link">askscout.dev</Link> and sign in with
-            your GitHub account. Your account is created on the spot, and your first digest
-            starts streaming automatically once you pick a repo. There is no setup step and no
-            key to manage. You can revoke GitHub access any time at{" "}
-            <a
-              href="https://github.com/settings/applications"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="home-prose-link"
-            >
-              github.com/settings/applications
-            </a>
-            .
-          </p>
-        </section>
+      <div className="page-body">
 
         {/* CLI */}
         <section className="public-section">
