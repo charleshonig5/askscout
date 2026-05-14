@@ -3237,8 +3237,14 @@ a:hover {
      and the 100vw darken scrim — both intentionally bleed past
      the .home-hero's 1100px max-width to fill the viewport, but
      they were also creating a horizontal scroll on the document
-     because nothing was clipping their right edge. */
-  overflow-x: hidden;
+     because nothing was clipping their right edge.
+
+     Use `clip` instead of `hidden`: `overflow-x: hidden` creates
+     a new scroll container, which kills `position: sticky` on
+     every descendant — including the marketing nav. `overflow-x:
+     clip` does the same visual clipping without establishing a
+     scroll container, so the sticky nav still sticks. */
+  overflow-x: clip;
 }
 
 /* ---------- NAV ---------- */
