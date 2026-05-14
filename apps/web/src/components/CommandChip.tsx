@@ -40,7 +40,7 @@ export function CommandChip({ command }: { command: string }) {
       </span>
       <span className="home-cta-chip-text">{command}</span>
       <span className="home-cta-chip-icon" aria-hidden>
-        {copied ? <Check size={14} strokeWidth={2} /> : <Copy size={14} strokeWidth={1.5} />}
+        {copied ? <Check size={16} strokeWidth={2} /> : <Copy size={16} strokeWidth={1.5} />}
       </span>
     </button>
   );

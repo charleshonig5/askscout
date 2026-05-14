@@ -1,9 +1,17 @@
 import Link from "next/link";
-import { LogIn, ShieldCheck, SquareArrowUpRight } from "lucide-react";
+import {
+  Download,
+  LogIn,
+  PlaySquare,
+  Settings,
+  ShieldCheck,
+  SquareArrowUpRight,
+} from "lucide-react";
 import { signIn } from "@/auth";
 import { MarketingNav } from "@/components/MarketingNav";
 import { InstallChip } from "@/components/InstallChip";
 import { CommandChip } from "@/components/CommandChip";
+import { DocsCliCmdInline } from "@/components/DocsCliCmdInline";
 import DocsFAQ from "@/components/DocsFAQ";
 import { SiteFooter } from "@/components/SiteFooter";
 import { DOCS_FAQ_PLAIN } from "@/lib/docs-faq-data";
@@ -135,146 +143,143 @@ export default function DocsPage() {
         </div>
       </section>
 
+      {/* ===========================================================
+          CLI — Figma 244:3062. Heading + deck, divider, 3-step
+          install row (Install / Setup / Run with command pills),
+          divider, command reference list with per-row dividers,
+          and a Pricing footer block.
+          =========================================================== */}
+      <section className="docs-section docs-cli">
+        <div className="docs-cli-inner">
+          <div className="docs-section-heading">
+            <h2 className="docs-section-title">CLI</h2>
+            <p className="docs-section-deck">
+              Run AskScout locally on your machine, with your own LLM key.
+              Works in any local git repo, including private ones and
+              self-hosted git.
+            </p>
+          </div>
+
+          <div className="docs-cli-divider" />
+
+          <div className="docs-cli-steps">
+            <div className="docs-cli-step">
+              <div className="docs-cli-step-content">
+                <span className="docs-cli-step-icon" aria-hidden>
+                  <Download size={28} strokeWidth={1.25} />
+                </span>
+                <div className="docs-cli-step-text">
+                  <h3>Install</h3>
+                  <p>
+                    Copy the command below into your terminal to install
+                    AskScout globally.
+                  </p>
+                </div>
+              </div>
+              <CommandChip command="npm install -g askscout" />
+            </div>
+            <div className="docs-cli-step">
+              <div className="docs-cli-step-content">
+                <span className="docs-cli-step-icon" aria-hidden>
+                  <Settings size={28} strokeWidth={1.25} />
+                </span>
+                <div className="docs-cli-step-text">
+                  <h3>Setup</h3>
+                  <p>
+                    Run setup once to save your Anthropic or OpenAI API key
+                    locally. The key stays on your machine and never goes
+                    anywhere except the LLM provider you configured.
+                  </p>
+                </div>
+              </div>
+              <CommandChip command="askscout --setup" />
+            </div>
+            <div className="docs-cli-step">
+              <div className="docs-cli-step-content">
+                <span className="docs-cli-step-icon" aria-hidden>
+                  <PlaySquare size={28} strokeWidth={1.25} />
+                </span>
+                <div className="docs-cli-step-text">
+                  <h3>Run</h3>
+                  <p>
+                    Run AskScout in any git repo. Your first digest covers
+                    today, and every run after picks up from there.
+                  </p>
+                </div>
+              </div>
+              <CommandChip command="askscout" />
+            </div>
+          </div>
+
+          <div className="docs-cli-divider" />
+
+          <div className="docs-cli-commands">
+            <div className="docs-cli-commands-head">
+              <h3>Commands</h3>
+              <p>
+                Every command AskScout supports, with a quick note on when
+                to use each one.
+              </p>
+            </div>
+            <div className="docs-cli-commands-list">
+              {[
+                {
+                  cmd: "askscout",
+                  desc: "Generate a daily digest of what changed since your last run.",
+                },
+                {
+                  cmd: "askscout --week",
+                  desc: "Generate a digest covering the past 7 days. Good for Friday wrap-ups or catching up after time off.",
+                },
+                {
+                  cmd: "askscout --standup",
+                  desc: "Format your digest as a Slack/Teams-ready standup with Done, Up Next, and Heads Up sections.",
+                },
+                {
+                  cmd: "askscout --resume",
+                  desc: "Generate a context block (tech stack, recent work, current focus, key files) for Claude, Cursor, or Codex. Lets the AI pick up your project on a new session without you explaining it.",
+                },
+                {
+                  cmd: "askscout --json",
+                  desc: "Output the digest as machine-readable JSON. Useful for scripts, dashboards, or CI.",
+                },
+                {
+                  cmd: "askscout --setup",
+                  desc: "Save or replace your API key. Cannot be combined with other options.",
+                },
+                {
+                  cmd: "askscout --dry-run",
+                  desc: "Preview which commits AskScout would include, without calling the LLM. No cost and nothing gets saved.",
+                },
+              ].map((row) => (
+                <div key={row.cmd}>
+                  <div className="docs-cli-cmd-divider" />
+                  <div className="docs-cli-cmd-row">
+                    <DocsCliCmdInline command={row.cmd} />
+                    <p className="docs-cli-cmd-desc">{row.desc}</p>
+                  </div>
+                </div>
+              ))}
+              <div className="docs-cli-cmd-divider" />
+            </div>
+          </div>
+
+          <div className="docs-cli-pricing">
+            <h3>Pricing</h3>
+            <p>A typical digest runs about $0.001 to $0.003.</p>
+            <p>
+              The CLI is free open source software. You bring your own
+              Anthropic or OpenAI API key, paid directly to your provider.
+              AskScout is designed to be cost-effective. A single API call
+              per digest covers everything, which keeps token usage low and
+              avoids the repeated round trips most LLM products rack up.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <div className="page-body">
 
-        {/* CLI */}
-        <section className="public-section">
-          <h2 className="public-section-title">CLI</h2>
-          <p className="public-text">
-            Run AskScout entirely on your machine, with your own LLM key. Works in any local git
-            repo, including private ones and self-hosted git.
-          </p>
-
-          <h3 className="public-card-title" style={{ marginTop: 16 }}>Getting started</h3>
-          <p className="public-text">
-            Copy the command below into your terminal to install AskScout globally:
-          </p>
-          <div style={{ margin: "12px 0" }}>
-            <InstallChip />
-          </div>
-
-          <h3 className="public-card-title" style={{ marginTop: 24 }}>Setup</h3>
-          <p className="public-text">
-            Run setup once to save your Anthropic or OpenAI API key locally. The key stays on
-            your machine and never goes anywhere except the LLM provider you configured.
-          </p>
-          <div style={{ margin: "12px 0" }}>
-            <CommandChip command="askscout --setup" />
-          </div>
-
-          <h3 className="public-card-title" style={{ marginTop: 24 }}>Run your first digest</h3>
-          <p className="public-text">
-            Run AskScout in any git repo. Your first digest covers today, and every run after
-            picks up from there.
-          </p>
-          <div style={{ margin: "12px 0" }}>
-            <CommandChip command="askscout" />
-          </div>
-
-          <h3 className="public-card-title" style={{ marginTop: 24 }}>Commands</h3>
-          <p className="public-text">
-            Every command AskScout supports, with a quick note on when to use each one.
-          </p>
-          <div className="resource-commands">
-            <div className="resource-command">
-              <CommandChip command="askscout" />
-              <span className="resource-command-desc">
-                Generate a daily digest of what changed since your last run.
-              </span>
-            </div>
-            <div className="resource-command">
-              <CommandChip command="askscout --week" />
-              <span className="resource-command-desc">
-                Generate a digest covering the past 7 days. Good for Friday wrap-ups or catching
-                up after time off.
-              </span>
-            </div>
-            <div className="resource-command">
-              <CommandChip command="askscout --standup" />
-              <span className="resource-command-desc">
-                Format your digest as a Slack-ready standup with Done, Up Next, and Heads Up
-                sections.
-              </span>
-            </div>
-            <div className="resource-command">
-              <CommandChip command="askscout --resume" />
-              <span className="resource-command-desc">
-                Generate a context block (tech stack, recent work, current focus, key files) for
-                Claude, Cursor, or Copilot. Lets the AI pick up your project on a new session
-                without you explaining it.
-              </span>
-            </div>
-            <div className="resource-command">
-              <CommandChip command="askscout --json" />
-              <span className="resource-command-desc">
-                Output the digest as machine-readable JSON. Useful for scripts, dashboards, or CI.
-              </span>
-            </div>
-            <div className="resource-command">
-              <CommandChip command="askscout --setup" />
-              <span className="resource-command-desc">
-                Save or replace your API key. Cannot be combined with other options.
-              </span>
-            </div>
-            <div className="resource-command">
-              <CommandChip command="askscout --dry-run" />
-              <span className="resource-command-desc">
-                Preview which commits AskScout would include, without calling the LLM. No cost
-                and nothing gets saved.
-              </span>
-            </div>
-          </div>
-          <p className="public-text">
-            <code className="inline-code">--standup</code> and{" "}
-            <code className="inline-code">--resume</code> cannot be combined.{" "}
-            <code className="inline-code">--setup</code> ignores all other options.
-          </p>
-
-          <h3 className="public-card-title" style={{ marginTop: 24 }}>Advanced configuration</h3>
-          <p className="public-text">
-            Reference for power users. Setup handles the basics. This section is for tweaks
-            like overriding the default model, which require editing the config file directly.
-          </p>
-          <p className="public-text">
-            Your API key lives at <code className="inline-code">~/.askscout/config.json</code>{" "}
-            with <code className="inline-code">chmod 600</code> (owner read/write only). The
-            file is JSON shaped like this (the comment below is illustrative, not valid JSON):
-          </p>
-          <div className="resource-code-block">
-            <code>
-              {`{
-  "provider": "anthropic" | "openai",
-  "apiKey": "sk-...",
-  "model": "claude-haiku-4-5-20250414"   // optional override
-}`}
-            </code>
-          </div>
-          <p className="public-text">
-            At setup, AskScout detects the provider from your key prefix and writes it into the
-            file. Keys starting with <code className="inline-code">sk-ant-</code> route to
-            Anthropic. Other keys starting with <code className="inline-code">sk-</code> route
-            to OpenAI. Any other format is rejected. After setup, the stored provider value is
-            used directly without re-detecting on each run.
-          </p>
-          <p className="public-text">
-            Default models:{" "}
-            <code className="inline-code">claude-haiku-4-5-20250414</code> for Anthropic and{" "}
-            <code className="inline-code">gpt-4o-mini</code> for OpenAI. Cost runs roughly $0.001
-            to $0.003 per digest at the defaults. Override by adding a{" "}
-            <code className="inline-code">model</code> field to the config file. The model has
-            to belong to the same provider as your key.
-          </p>
-          <p className="public-text">
-            Each repo also gets a small{" "}
-            <code className="inline-code">.askscout/state.json</code> in the project root. It
-            stores the last run timestamp, run count, a rolling history of up to your last 10
-            digest runs, and a 200-word AI-maintained summary of the project that feeds back
-            into the next run. Pace Check uses the most recent 3 entries from that history as
-            its baseline; the older entries are kept for context but not currently consumed.
-            Add the folder to your <code className="inline-code">.gitignore</code> if you want
-            to keep it out of version control.
-          </p>
-        </section>
 
         {/* FAQ */}
         <section className="public-section">

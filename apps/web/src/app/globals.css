@@ -11900,6 +11900,271 @@ a:hover {
 }
 
 /* ============================================
+   CLI — Figma 244:3062
+   Heading + deck, divider, 3-step install row,
+   divider, command reference list with per-row
+   dividers, pricing footer block.
+   ============================================ */
+.docs-cli-inner {
+  max-width: 976px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 34px;
+}
+
+.docs-cli-divider {
+  width: 100%;
+  height: 1px;
+  background: var(--color-border);
+}
+
+/* ---- 3-step install row (Install / Setup / Run) ----
+   Per Figma 244:3067 each step is 274 wide, 215 tall, and the
+   command pill is anchored to the bottom. Cards are even-width
+   but the gap (77px) is determined by 976 - 3×274 = 154 / 2. */
+.docs-cli-steps {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  width: 100%;
+  gap: 77px;
+}
+
+.docs-cli-step {
+  width: 274px;
+  height: 215px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+.docs-cli-step-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.docs-cli-step-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: var(--color-text-tertiary);
+}
+
+.docs-cli-step-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+.docs-cli-step-text h3 {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.15;
+  color: var(--color-text-primary);
+}
+
+.docs-cli-step-text p {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-primary);
+}
+
+/* ---- Commands reference block ---- */
+.docs-cli-commands {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+}
+
+.docs-cli-commands-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+.docs-cli-commands-head h3 {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.15;
+  color: var(--color-text-primary);
+}
+
+.docs-cli-commands-head p {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-primary);
+}
+
+.docs-cli-commands-list {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 24px;
+  width: 100%;
+}
+
+.docs-cli-commands-list > div {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.docs-cli-cmd-divider {
+  width: 100%;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.docs-cli-cmd-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+}
+
+/* The Figma rows put the description at left:266 from the row's
+   left edge. We approximate this with a 252px column for the
+   command (so its right edge + 14px gap = 266) and a flex-grow
+   description column. */
+.docs-cli-cmd-inline {
+  appearance: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  width: 252px;
+  flex-shrink: 0;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-sans);
+}
+
+.docs-cli-cmd-inline-prompt {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.2;
+  color: var(--color-text-tertiary);
+}
+
+.docs-cli-cmd-inline-text {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.docs-cli-cmd-inline-icon {
+  display: inline-flex;
+  align-items: center;
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-tertiary);
+  transition: color 0.15s ease;
+}
+
+.docs-cli-cmd-inline:hover .docs-cli-cmd-inline-icon {
+  color: var(--color-text-primary);
+}
+
+.docs-cli-cmd-inline.is-copied .docs-cli-cmd-inline-icon {
+  color: var(--color-success);
+}
+
+.docs-cli-cmd-desc {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-primary);
+  flex: 1;
+  padding-top: 2px;
+}
+
+/* ---- Pricing block ---- */
+.docs-cli-pricing {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+.docs-cli-pricing h3 {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.15;
+  color: var(--color-text-primary);
+}
+
+.docs-cli-pricing p {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-primary);
+}
+
+/* Pricing's outer flex provides 8px between siblings; an extra
+   8px margin on p+p gives 16px between the two paragraphs —
+   matching Figma's empty-<p> spacer. */
+.docs-cli-pricing p + p {
+  margin-top: 8px;
+}
+
+@media (max-width: 1000px) {
+  .docs-cli-steps {
+    flex-direction: column;
+    gap: 32px;
+    align-items: stretch;
+  }
+  .docs-cli-step {
+    width: 100%;
+    max-width: 471px;
+    height: auto;
+  }
+  .docs-cli-cmd-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .docs-cli-cmd-inline {
+    width: auto;
+  }
+}
+
+/* ============================================
    Two-column digest layout
    ============================================ */
 
