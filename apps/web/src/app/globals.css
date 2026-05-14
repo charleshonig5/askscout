@@ -3485,7 +3485,13 @@ a:hover {
   height: 1080px;
   max-width: none;
   object-fit: cover;
-  opacity: 0.4;
+  /* Dropped 0.4 → 0.3 to reduce the brightness disparity
+     between the starfield-tinted upper hero and the pure
+     bg-primary bottom region. With less video reaching the
+     eye, the transition to bg-primary at the hero's lower
+     edge reads as one continuous surface instead of a
+     visible band. */
+  opacity: 0.3;
   filter: blur(3.3px);
   pointer-events: none;
   z-index: 0;
@@ -3525,7 +3531,11 @@ a:hover {
      capped at max-width: 1100px so inset: 0 would leave the
      video's edges undarkened on a 1440 viewport). */
   width: 100vw;
-  background: color-mix(in srgb, var(--color-bg-primary) 60%, transparent);
+  /* Bumped 60% → 70% bg-primary. Knocks the starfield down
+     a notch further so the upper hero reads closer to pure
+     bg-primary, reducing the contrast against the
+     bg-fade'd lower hero / page margin. */
+  background: color-mix(in srgb, var(--color-bg-primary) 70%, transparent);
   pointer-events: none;
   z-index: 1;
 }
@@ -3561,11 +3571,14 @@ a:hover {
      where the fade doesn't paint over them). 100vw kills the
      bleed without changing the fade's vertical shape. */
   width: 100vw;
-  /* Shrunk from Figma's 225 to 150 so the outer fade overlaps
-     less of the digest content. Pairs with .home-hero-card-fade
-     also shrunk (87 → 40) — together they expose more readable
-     digest rows before the gradient kicks in. */
-  height: 150px;
+  /* Extended 150 → 250px and pushed the solid stop from 50%
+     → 30%, so the gradient ramps gently over a longer
+     vertical region. This removes the perceptible "edge"
+     between the slightly-starfield-tinted upper hero and the
+     pure bg-primary lower region — the transition is now
+     gradual enough that the eye reads it as one continuous
+     surface instead of a visible band. */
+  height: 250px;
   pointer-events: none;
   /* IMPORTANT: fade to "bg-primary with alpha 0", NOT to the
      CSS `transparent` keyword. `transparent` is rgba(0,0,0,0)
@@ -3579,7 +3592,7 @@ a:hover {
      the way down. */
   background: linear-gradient(
     in oklab to top,
-    var(--color-bg-primary) 50%,
+    var(--color-bg-primary) 30%,
     rgb(from var(--color-bg-primary) r g b / 0) 100%
   );
   z-index: 2;
