@@ -54,7 +54,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
     {
       url: `${SITE}/privacy`,
-      lastModified: new Date("2026-05-01"),
+      /* Bump in lockstep with PRIVACY_LAST_UPDATED_ISO in
+         app/privacy/page.tsx and the <time> element on the page. */
+      lastModified: new Date("2026-05-04"),
       changeFrequency: "yearly",
       priority: 0.3,
     },

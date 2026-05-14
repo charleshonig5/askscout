@@ -12928,3 +12928,219 @@ a:hover {
   }
 }
 
+/* ============================================================
+   PRIVACY PAGE — Figma 364:12
+
+   One continuous body section under the marketing nav. Hero
+   (Pridi 52 "Privacy" + Work Sans Light "Last updated" deck)
+   sits at the top, then 14 policy sections stack with a
+   consistent 54px gap. Section title is Pridi 36 with leading
+   that matches Pridi's natural metric (~56), body is Work Sans
+   Light 20/26. Lists use a custom • bullet so the marker color
+   is controllable and matches the body color exactly (browsers
+   render the native list-style marker at the same color as the
+   text, but spacing is more predictable with a custom one).
+
+   The same .docs-section / .home-section "104px top + bottom
+   padding, full-bleed top border" pattern would be inconsistent
+   here because the privacy page is single-section content. The
+   .privacy-main wrapper provides matching vertical rhythm
+   without a top border (the marketing nav already supplies the
+   visual divide).
+   ============================================================ */
+
+.privacy-main {
+  padding: 104px 32px;
+}
+
+/* 976px Figma frame width, matches the docs and articles columns
+   for cross-page consistency. */
+.privacy-inner {
+  max-width: 976px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 54px;
+  width: 100%;
+}
+
+/* HERO — title + last-updated deck stacked, no eyebrow. */
+.privacy-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.privacy-hero-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 52px;
+  line-height: 60px;
+  color: var(--color-text-primary);
+}
+
+.privacy-hero-updated {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 20px;
+  line-height: 26px;
+  color: var(--color-text-tertiary);
+}
+
+/* Reset the time element so it inherits the surrounding deck
+   color/font (it would otherwise default to browser styling). */
+.privacy-hero-updated time {
+  font: inherit;
+  color: inherit;
+}
+
+/* SECTIONS — 54px between every section so the visual rhythm
+   matches the Figma's evenly-spaced frame layout. */
+.privacy-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 54px;
+}
+
+.privacy-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+/* Pridi 36 with line-height 56 mirrors the docs section title.
+   We match Pridi's natural Pridi-leading instead of using
+   `line-height: normal` so the gap-14 spacing below is
+   predictable regardless of browser font-metric quirks. */
+.privacy-section-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 56px;
+  color: var(--color-text-primary);
+}
+
+/* Body — flex column with a 26px gap so paragraphs and lists
+   are separated by one body line height regardless of element
+   type. Matches the empty-paragraph spacer pattern in Figma. */
+.privacy-body {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  width: 100%;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 20px;
+  line-height: 26px;
+  color: var(--color-text-primary);
+}
+
+.privacy-body > p {
+  margin: 0;
+}
+
+/* Inline code: monospace at body size with a subtle bg pill so
+   it's distinguishable but doesn't shout in dense policy prose.
+   Padded vertically by 1px so the pill doesn't blow up the line
+   height — important because the section text is 20/26. */
+.privacy-body code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.85em;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--color-bg-secondary);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+/* Links: WS Medium + underline, no color shift (inherits white).
+   Matches the Figma's bold underlined link treatment. */
+.privacy-body a {
+  font-weight: 500;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  transition: opacity 0.15s ease;
+}
+
+.privacy-body a:hover {
+  opacity: 0.7;
+}
+
+/* Bold labels inside list items use WS Medium 500 — same weight
+   as link emphasis so the prose has a single bold register. */
+.privacy-body strong {
+  font-weight: 500;
+}
+
+/* LISTS — custom • bullet so the marker color stays in sync with
+   the body color and the indent stays tight (browsers indent
+   list-style: disc inconsistently across engines). 20px gap
+   between items per Figma. */
+.privacy-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.privacy-list > li {
+  position: relative;
+  padding-left: 22px;
+}
+
+.privacy-list > li::before {
+  content: "\2022"; /* • */
+  position: absolute;
+  left: 4px;
+  top: 0;
+  color: var(--color-text-primary);
+  line-height: 26px;
+}
+
+/* MOBILE — scale down the hero, tighten the page padding, and
+   keep the 54px inter-section gap (it's already a comfortable
+   read on narrow viewports). */
+@media (max-width: 720px) {
+  .privacy-main {
+    padding: 64px 20px;
+  }
+  .privacy-inner {
+    gap: 40px;
+  }
+  .privacy-hero-title {
+    font-size: 40px;
+    line-height: 46px;
+  }
+  .privacy-hero-updated {
+    font-size: 16px;
+    line-height: 22px;
+  }
+  .privacy-sections {
+    gap: 40px;
+  }
+  .privacy-section-title {
+    font-size: 28px;
+    line-height: 36px;
+  }
+  .privacy-body {
+    font-size: 17px;
+    line-height: 24px;
+    gap: 22px;
+  }
+  .privacy-list {
+    gap: 16px;
+  }
+  .privacy-list > li::before {
+    line-height: 24px;
+  }
+}
