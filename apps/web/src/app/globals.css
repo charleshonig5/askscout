@@ -3267,7 +3267,7 @@ a:hover {
   z-index: 50;
   display: flex;
   align-items: center;
-  height: 77px;
+  height: 55px;
   /* Figma insets: 44px from the left edge to the logo, 50px from
      the right edge to the Open App button. */
   padding: 0 50px 0 44px;
@@ -3338,7 +3338,7 @@ a:hover {
    77px nav. */
 .home-nav-divider {
   width: 1px;
-  height: 77px;
+  height: 55px;
   /* Figma node 244:2971 places this divider at x=200 against a
      1440 frame. With the logo's natural ~112px width starting at
      x=44, a 44px gap after the logo lands the divider on the
