@@ -24,6 +24,9 @@ import { InstallChip } from "@/components/InstallChip";
 import { ReadyCTA } from "@/components/ReadyCTA";
 import { FeaturesMotion } from "@/components/FeaturesMotion";
 import { FeaturesResumeBody } from "@/components/FeaturesResumeBody";
+import { RunLocalMotion } from "@/components/RunLocalMotion";
+import { RunLocalPrompt } from "@/components/RunLocalPrompt";
+import { RunLocalStats } from "@/components/RunLocalStats";
 import { Emoji } from "@/components/Emoji";
 import { HeroBgVideo } from "@/components/HeroBgVideo";
 import { HeroCardOpener } from "@/components/HeroCardOpener";
@@ -1237,6 +1240,7 @@ export default function MarketingHome() {
             </Link>
           </div>
 
+          <RunLocalMotion>
           <div className="home-runlocal-right" aria-hidden>
             <div className="home-runlocal-card">
               <div className="home-runlocal-dots">
@@ -1247,10 +1251,8 @@ export default function MarketingHome() {
               <div className="home-runlocal-card-divider" />
               <div className="home-runlocal-stream">
                 <div className="home-runlocal-stream-head">
-                  <p className="home-runlocal-stream-prompt">$ askscout</p>
-                  <p className="home-runlocal-stream-stats">
-                    +425 · -86 · 19 commits · 8 files
-                  </p>
+                  <RunLocalPrompt />
+                  <RunLocalStats />
                 </div>
                 {[
                   {
@@ -1322,6 +1324,7 @@ export default function MarketingHome() {
             </div>
             <div className="home-runlocal-fade" />
           </div>
+          </RunLocalMotion>
         </div>
       </section>
 
