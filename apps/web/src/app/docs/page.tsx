@@ -11,6 +11,7 @@ import { MarketingNav } from "@/components/MarketingNav";
 import { CommandChip } from "@/components/CommandChip";
 import { DocsCliCmdInline } from "@/components/DocsCliCmdInline";
 import DocsFAQ from "@/components/DocsFAQ";
+import { ReadyCTA } from "@/components/ReadyCTA";
 import { SiteFooter } from "@/components/SiteFooter";
 import { DOCS_FAQ_PLAIN } from "@/lib/docs-faq-data";
 
@@ -287,6 +288,15 @@ export default function DocsPage() {
           <DocsFAQ />
         </div>
       </section>
+
+      {/* ===========================================================
+          FINAL CTA — shared <ReadyCTA /> from the homepage. One
+          component, one source of truth: edits to the CTA copy,
+          buttons, or layout propagate to every marketing page that
+          drops it in.
+          =========================================================== */}
+      <ReadyCTA />
+
       <SiteFooter />
     </main>
   );
