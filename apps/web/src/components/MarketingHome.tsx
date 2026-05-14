@@ -177,10 +177,10 @@ export default function MarketingHome() {
                   rel="noopener noreferrer"
                   className="home-hero-chip home-hero-chip--link"
                 >
-                  Open Source
+                  Open source
                   <Forward size={10} strokeWidth={1.5} aria-hidden />
                 </a>
-                <span className="home-hero-chip">Read Only</span>
+                <span className="home-hero-chip">Read only</span>
               </div>
               {/* Pridi title with mixed weights — "Your morning" and
                   "in 10 seconds" render at ExtraLight (200), while
@@ -208,7 +208,7 @@ export default function MarketingHome() {
               }}
             >
               <button type="submit" className="home-cta">
-                Try AskScout Free
+                Try AskScout free
               </button>
             </form>
             {/* Secondary CTA: install command chip. One click copies
@@ -673,7 +673,7 @@ export default function MarketingHome() {
         <div className="home-features-inner">
           <div className="home-features-header">
             <h2 className="home-features-title">
-              A Daily Read on your Code in Plain Language
+              A daily read on your code in plain language
             </h2>
             <p className="home-features-subtitle">
               A simple, structured interface for understanding your own repo.
@@ -751,7 +751,7 @@ export default function MarketingHome() {
               </div>
               <div className="home-features-fade" aria-hidden />
               <div className="home-features-copy">
-                <h3>Your Daily Recap</h3>
+                <h3>Your daily recap</h3>
                 <p>
                   A plain language, easily digestible read on where your
                   codebase stands. What you shipped, changed, where you
@@ -874,7 +874,7 @@ export default function MarketingHome() {
               </div>
               <div className="home-features-fade" aria-hidden />
               <div className="home-features-copy">
-                <h3>Built-in History</h3>
+                <h3>Built-in history</h3>
                 <p>
                   Every digest in every repo is saved for future
                   reference. Your full history is always available.
@@ -929,7 +929,7 @@ export default function MarketingHome() {
               </div>
               <div className="home-features-fade" aria-hidden />
               <div className="home-features-copy">
-                <h3>Customized to your Needs</h3>
+                <h3>Customized to your needs</h3>
                 <p>
                   Toggle every section on or off. Pin a default repo.
                   Clear history per repo or all at once anytime.
@@ -1211,14 +1211,14 @@ export default function MarketingHome() {
                 <div className="home-runlocal-headgroup">
                   <div className="home-runlocal-badges">
                     <Link href="/docs" className="home-runlocal-badge">
-                      <span>Open Source</span>
+                      <span>Open source</span>
                       <Forward size={10} strokeWidth={1.5} aria-hidden />
                     </Link>
                     <span className="home-runlocal-badge">
-                      <span>Fully Local</span>
+                      <span>Fully local</span>
                     </span>
                   </div>
-                  <h2 className="home-runlocal-title">Run it Locally</h2>
+                  <h2 className="home-runlocal-title">Run it locally</h2>
                 </div>
                 <p className="home-runlocal-body">
                   Same product, as a CLI on your machine. Bring your own
@@ -1348,7 +1348,7 @@ export default function MarketingHome() {
         <div className="home-trust-inner">
           <div className="home-trust-header">
             <div className="home-trust-headtext">
-              <h2 className="home-trust-title">Private. Secure. Open Source.</h2>
+              <h2 className="home-trust-title">Private. Secure. Open source.</h2>
               <p className="home-trust-subtitle">
                 You stay in control of your code and your data.
               </p>
@@ -1361,19 +1361,19 @@ export default function MarketingHome() {
             {[
               {
                 icon: <SearchX size={28} strokeWidth={1.25} aria-hidden />,
-                title: "We Don’t Read your Code",
+                title: "We don’t read your code",
                 body: "AskScout only looks at what ‘s changed in your repo. Never your full codebase or your config.",
                 bodyWidth: 259,
               },
               {
                 icon: <ShieldCheck size={28} strokeWidth={1.25} aria-hidden />,
-                title: "Your Data Stays Safe",
+                title: "Your data stays safe",
                 body: "AskScout can never write to your repo. No tracking, ever. Your keys stay private on your machine.",
                 bodyWidth: 268,
               },
               {
                 icon: <PackageOpen size={28} strokeWidth={1.25} aria-hidden />,
-                title: "Fully Open Source",
+                title: "Fully open source",
                 body: "Every line of AskScout is public on GitHub. Free to read, fork, or build on.",
                 bodyWidth: 244,
               },

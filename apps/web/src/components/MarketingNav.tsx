@@ -59,7 +59,7 @@ export function MarketingNav() {
       </div>
       <div className="home-nav-right">
         <Link href="/dashboard" className="home-nav-open-app">
-          Open App
+          Open app
         </Link>
       </div>
     </nav>

@@ -28,11 +28,11 @@ export function ReadyCTA() {
             rel="noopener noreferrer"
             className="home-readycta-badge"
           >
-            <span>Open Source</span>
+            <span>Open source</span>
             <Forward size={10} strokeWidth={1.5} aria-hidden />
           </a>
           <span className="home-readycta-badge">
-            <span>Read Only</span>
+            <span>Read only</span>
           </span>
         </div>
         <div className="home-readycta-row">
@@ -50,7 +50,7 @@ export function ReadyCTA() {
               }}
             >
               <button type="submit" className="home-readycta-btn">
-                Try AskScout Free
+                Try AskScout free
               </button>
             </form>
             <ReadyCTAInstall />

@@ -26,7 +26,7 @@ type FAQTab = { id: string; label: string; items: FAQItem[] };
 const TABS: FAQTab[] = [
   {
     id: "start",
-    label: "Getting Started",
+    label: "Getting started",
     items: [
       {
         q: "What is AskScout?",
@@ -92,7 +92,7 @@ const TABS: FAQTab[] = [
   },
   {
     id: "details",
-    label: "Product Details",
+    label: "Product details",
     items: [
       {
         q: "What's the difference between the web app and the CLI?",
@@ -158,7 +158,7 @@ const TABS: FAQTab[] = [
   },
   {
     id: "privacy",
-    label: "Privacy & Security",
+    label: "Privacy & security",
     items: [
       {
         q: "Does AskScout read my source code?",
@@ -246,7 +246,7 @@ export default function FAQTabs() {
   return (
     <div className="home-faq-section">
       <div className="home-faq-header">
-        <h2 className="home-faq-title">Frequently asked Questions</h2>
+        <h2 className="home-faq-title">Frequently asked questions</h2>
         <div
           className="home-faq-tabs"
           role="tablist"
