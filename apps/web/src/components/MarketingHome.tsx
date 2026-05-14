@@ -26,7 +26,6 @@ import { FeaturesMotion } from "@/components/FeaturesMotion";
 import { FeaturesResumeBody } from "@/components/FeaturesResumeBody";
 import { RunLocalMotion } from "@/components/RunLocalMotion";
 import { RunLocalPrompt } from "@/components/RunLocalPrompt";
-import { RunLocalStats } from "@/components/RunLocalStats";
 import { Emoji } from "@/components/Emoji";
 import { HeroBgVideo } from "@/components/HeroBgVideo";
 import { HeroCardOpener } from "@/components/HeroCardOpener";
@@ -1252,7 +1251,9 @@ export default function MarketingHome() {
               <div className="home-runlocal-stream">
                 <div className="home-runlocal-stream-head">
                   <RunLocalPrompt />
-                  <RunLocalStats />
+                  <p className="home-runlocal-stream-stats">
+                    +425 · -86 · 19 commits · 8 files
+                  </p>
                 </div>
                 {[
                   {

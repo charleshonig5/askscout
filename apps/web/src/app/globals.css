@@ -7172,9 +7172,11 @@ a:hover {
   display: block;
 }
 
-/* Idle — pre-set every section heading + item to the
-   animation's "from" state so the playing phase animates
-   cleanly from there. */
+/* Idle — pre-set the stats line + every section heading +
+   item to the animation's "from" state so the playing phase
+   animates cleanly from there. */
+.home-runlocal-motion[data-runlocal-phase="idle"]
+  .home-runlocal-stream-stats,
 .home-runlocal-motion[data-runlocal-phase="idle"]
   .home-runlocal-stream-heading,
 .home-runlocal-motion[data-runlocal-phase="idle"]
@@ -7183,68 +7185,78 @@ a:hover {
   transform: translateY(4px);
 }
 
-/* Playing — fade up each heading + item with its own
-   cascade delay. fill-mode: both holds the "from" state
-   during the delay so there's no flash. */
+/* Playing — fade up the stats line, then each section
+   heading + items, with widely-spaced delays so each
+   element gets its own beat. fill-mode: both holds the
+   "from" state during the delay so there's no flash. */
+.home-runlocal-motion[data-runlocal-phase="playing"]
+  .home-runlocal-stream-stats {
+  animation: runlocal-fade-up 300ms ease-out 550ms both;
+}
+
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-heading {
-  animation: runlocal-fade-up 200ms ease-out both;
+  animation: runlocal-fade-up 250ms ease-out both;
 }
 
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-item {
-  animation: runlocal-fade-up 250ms ease-out both;
+  animation: runlocal-fade-up 300ms ease-out both;
 }
+
+/* Section / item delay cascade — 700ms between section
+   headers, 200ms from header to first item, 150ms between
+   items within a section. */
 
 /* Shipped (2nd child of .home-runlocal-stream — head is 1st) */
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-section:nth-child(2)
   .home-runlocal-stream-heading {
-  animation-delay: 700ms;
+  animation-delay: 1050ms;
 }
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-section:nth-child(2)
   .home-runlocal-stream-item:nth-child(1) {
-  animation-delay: 850ms;
+  animation-delay: 1250ms;
 }
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-section:nth-child(2)
   .home-runlocal-stream-item:nth-child(2) {
-  animation-delay: 900ms;
+  animation-delay: 1400ms;
 }
 
 /* Changed (3rd child) */
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-section:nth-child(3)
   .home-runlocal-stream-heading {
-  animation-delay: 1250ms;
+  animation-delay: 1750ms;
 }
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-section:nth-child(3)
   .home-runlocal-stream-item:nth-child(1) {
-  animation-delay: 1400ms;
+  animation-delay: 1950ms;
 }
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-section:nth-child(3)
   .home-runlocal-stream-item:nth-child(2) {
-  animation-delay: 1450ms;
+  animation-delay: 2100ms;
 }
 
 /* Still Shifting (4th child) */
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-section:nth-child(4)
   .home-runlocal-stream-heading {
-  animation-delay: 1800ms;
+  animation-delay: 2450ms;
 }
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-section:nth-child(4)
   .home-runlocal-stream-item:nth-child(1) {
-  animation-delay: 1950ms;
+  animation-delay: 2650ms;
 }
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-section:nth-child(4)
   .home-runlocal-stream-item:nth-child(2) {
-  animation-delay: 2000ms;
+  animation-delay: 2800ms;
 }
 
 @keyframes runlocal-fade-up {
@@ -7259,6 +7271,7 @@ a:hover {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .home-runlocal-motion[data-runlocal-phase="playing"] .home-runlocal-stream-stats,
   .home-runlocal-motion[data-runlocal-phase="playing"] .home-runlocal-stream-heading,
   .home-runlocal-motion[data-runlocal-phase="playing"] .home-runlocal-stream-item {
     animation: none;
