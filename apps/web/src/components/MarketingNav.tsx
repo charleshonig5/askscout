@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "@/components/Logo";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { ForceDarkTheme } from "@/components/ForceDarkTheme";
 
 /**
  * Marketing-site top nav (Figma node 244:2962).
@@ -15,7 +15,14 @@ import { ThemeToggle } from "@/components/ThemeToggle";
  * component is rendered — no per-page "current" prop needed.
  *
  * Layout (left → right): logo · vertical divider · Home / Docs /
- * Articles / Privacy · spacer · ThemeToggle · Open App button.
+ * Articles / Privacy · spacer · Open App button.
+ *
+ * Marketing is dark-mode-only — the theme toggle was removed
+ * because the light treatment doesn't land on the marketing
+ * visual language. <ForceDarkTheme /> sits at the top of the
+ * nav and pins data-theme="dark" on the html element without
+ * touching the cookie, so the dashboard's per-user theme
+ * preference is preserved across navigations.
  */
 const NAV_LINKS: Array<{ href: string; label: string; matchPrefix?: string }> = [
   { href: "/home", label: "Home" },
@@ -28,6 +35,7 @@ export function MarketingNav() {
   const pathname = usePathname() ?? "";
   return (
     <nav className="home-nav" aria-label="Site">
+      <ForceDarkTheme />
       <Link href="/home" className="home-nav-logo" aria-label="AskScout home">
         <Logo height={20} />
       </Link>
@@ -50,7 +58,6 @@ export function MarketingNav() {
         })}
       </div>
       <div className="home-nav-right">
-        <ThemeToggle />
         <Link href="/dashboard" className="home-nav-open-app">
           Open App
         </Link>
