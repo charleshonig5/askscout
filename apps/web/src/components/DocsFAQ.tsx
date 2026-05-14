@@ -1,79 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { ChevronDown } from "lucide-react";
+
+/**
+ * Docs FAQ — Figma 244:3186.
+ *
+ * Visually + functionally identical to the homepage <FAQTabs />:
+ * Pridi 36 title on the left, segmented tab control on the
+ * right, single rounded card below holding the active tab's
+ * questions, native <details>/<summary> for SSR-clean disclosure.
+ *
+ * Reuses the same .home-faq-* class set so the design system
+ * stays in one place — only the questions and tab labels differ.
+ *
+ * Two tabs (vs the homepage's three): Web app + CLI. Web app
+ * is first so the most common landing case (browser users)
+ * appears by default.
+ *
+ * Every tab's questions are rendered into the initial HTML
+ * (non-active tabs hidden via display:none + the hidden
+ * attribute) so AI search crawlers can read all 10 Q&As
+ * without executing JS to switch tabs.
+ */
 
 type DocsFAQItem = { q: string; a: React.ReactNode };
 type DocsFAQTab = { id: string; label: string; items: DocsFAQItem[] };
 
 const TABS: DocsFAQTab[] = [
-  {
-    id: "cli",
-    label: "CLI",
-    items: [
-      {
-        q: "Does the AskScout CLI work in a monorepo?",
-        a: (
-          <p>
-            Yes. The CLI walks up from your current directory to find the nearest{" "}
-            <code>.git</code> root and reads every commit in that repo. It does not filter by
-            subdirectory, so a digest from a monorepo covers every package and workspace
-            inside. To scope a digest to one package, run the CLI from a separate clone of just
-            that package.
-          </p>
-        ),
-      },
-      {
-        q: "Where does the CLI store my data?",
-        a: (
-          <p>
-            Two places, both local. Your API key and provider live at{" "}
-            <code>~/.askscout/config.json</code> with owner-only permissions (
-            <code>chmod 600</code>). Each repo also gets its own{" "}
-            <code>.askscout/state.json</code> in the project root holding the last run
-            timestamp, run count, project summary, and a small history of recent runs. The CLI
-            sends no telemetry and stores nothing online.
-          </p>
-        ),
-      },
-      {
-        q: "Why does the CLI reject my API key?",
-        a: (
-          <p>
-            Three reasons setup will reject a key. The key is shorter than 20 characters. The
-            key contains characters outside letters, numbers, hyphens, or underscores. Or the
-            prefix is not <code>sk-ant-</code> (Anthropic) or <code>sk-</code> (OpenAI). To
-            replace a stored key, run <code>askscout --setup</code> again. The existing config
-            is overwritten in place.
-          </p>
-        ),
-      },
-      {
-        q: "Can I run the AskScout CLI in CI or cron?",
-        a: (
-          <p>
-            Yes. When the CLI runs without a TTY (piped to a file, in CI logs, or cron
-            emails), it automatically suppresses the spinner and swaps emoji headers and
-            unicode bullets for bracketed plain text and ASCII characters. For
-            machine-readable output, use <code>askscout --json</code>. Setting{" "}
-            <code>NO_COLOR=1</code> also forces plain-text mode.
-          </p>
-        ),
-      },
-      {
-        q: "How do I reset or uninstall the CLI?",
-        a: (
-          <p>
-            Run <code>npm uninstall -g askscout</code> to remove the binary. Delete{" "}
-            <code>~/.askscout</code> to clear your saved API key and provider. Delete{" "}
-            <code>.askscout</code> inside any repo to clear that project&apos;s history and
-            AI-maintained summary. These three are independent. You can uninstall the binary
-            while keeping config, or wipe config while keeping the binary.
-          </p>
-        ),
-      },
-    ],
-  },
   {
     id: "web",
     label: "Web app",
@@ -116,8 +70,8 @@ const TABS: DocsFAQTab[] = [
           <p>
             The hosted web app uses our own LLM API key, and the cap keeps API costs
             predictable. 30 digests per day per account covers daily standup and end-of-day
-            reviews. If you need more, the CLI has no AskScout-imposed cap. You bring your own
-            API key and pay your provider directly.
+            reviews. If you need more, the CLI has no AskScout-imposed cap. You bring your
+            own API key and pay your provider directly.
           </p>
         ),
       },
@@ -147,50 +101,136 @@ const TABS: DocsFAQTab[] = [
       },
     ],
   },
+  {
+    id: "cli",
+    label: "CLI",
+    items: [
+      {
+        q: "Does the AskScout CLI work in a monorepo?",
+        a: (
+          <p>
+            Yes. The CLI walks up from your current directory to find the nearest{" "}
+            <code>.git</code> root and reads every commit in that repo. It does not filter
+            by subdirectory, so a digest from a monorepo covers every package and workspace
+            inside. To scope a digest to one package, run the CLI from a separate clone of
+            just that package.
+          </p>
+        ),
+      },
+      {
+        q: "Where does the CLI store my data?",
+        a: (
+          <p>
+            Two places, both local. Your API key and provider live at{" "}
+            <code>~/.askscout/config.json</code> with owner-only permissions (
+            <code>chmod 600</code>). Each repo also gets its own{" "}
+            <code>.askscout/state.json</code> in the project root holding the last run
+            timestamp, run count, project summary, and a small history of recent runs. The
+            CLI sends no telemetry and stores nothing online.
+          </p>
+        ),
+      },
+      {
+        q: "Why does the CLI reject my API key?",
+        a: (
+          <p>
+            Three reasons setup will reject a key. The key is shorter than 20 characters.
+            The key contains characters outside letters, numbers, hyphens, or underscores.
+            Or the prefix is not <code>sk-ant-</code> (Anthropic) or <code>sk-</code>{" "}
+            (OpenAI). To replace a stored key, run <code>askscout --setup</code> again. The
+            existing config is overwritten in place.
+          </p>
+        ),
+      },
+      {
+        q: "Can I run the AskScout CLI in CI or cron?",
+        a: (
+          <p>
+            Yes. When the CLI runs without a TTY (piped to a file, in CI logs, or cron
+            emails), it automatically suppresses the spinner and swaps emoji headers and
+            unicode bullets for bracketed plain text and ASCII characters. For
+            machine-readable output, use <code>askscout --json</code>. Setting{" "}
+            <code>NO_COLOR=1</code> also forces plain-text mode.
+          </p>
+        ),
+      },
+      {
+        q: "How do I reset or uninstall the CLI?",
+        a: (
+          <p>
+            Run <code>npm uninstall -g askscout</code> to remove the binary. Delete{" "}
+            <code>~/.askscout</code> to clear your saved API key and provider. Delete{" "}
+            <code>.askscout</code> inside any repo to clear that project&apos;s history and
+            AI-maintained summary. These three are independent. You can uninstall the
+            binary while keeping config, or wipe config while keeping the binary.
+          </p>
+        ),
+      },
+    ],
+  },
 ];
 
 export default function DocsFAQ() {
   const [active, setActive] = useState(TABS[0]!.id);
-  const activeTab = TABS.find((t) => t.id === active) ?? TABS[0]!;
 
   return (
-    <div className="home-faq-wrap">
-      <div className="home-faq-tabs" role="tablist" aria-label="Docs FAQ categories">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            role="tab"
-            aria-selected={t.id === active}
-            aria-controls={`docs-faq-panel-${t.id}`}
-            id={`docs-faq-tab-${t.id}`}
-            className={`home-faq-tab ${t.id === active ? "home-faq-tab--active" : ""}`}
-            onClick={() => setActive(t.id)}
-          >
-            {t.label}
-          </button>
-        ))}
+    <div className="home-faq-section">
+      <div className="home-faq-header">
+        <h2 className="home-faq-title">Frequently asked questions</h2>
+        <div
+          className="home-faq-tabs"
+          role="tablist"
+          aria-label="Docs FAQ categories"
+        >
+          {TABS.map((t) => (
+            <button
+              key={t.id}
+              role="tab"
+              type="button"
+              aria-selected={t.id === active}
+              aria-controls={`docs-faq-panel-${t.id}`}
+              id={`docs-faq-tab-${t.id}`}
+              className={`home-faq-tab${t.id === active ? " home-faq-tab--active" : ""}`}
+              onClick={() => setActive(t.id)}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
       </div>
-      <div
-        className="home-faq"
-        role="tabpanel"
-        id={`docs-faq-panel-${activeTab.id}`}
-        aria-labelledby={`docs-faq-tab-${activeTab.id}`}
-      >
-        {activeTab.items.map((item, i) => (
-          <details key={`${activeTab.id}-${i}`} className="home-faq-item">
-            <summary className="home-faq-question">
-              <span>{item.q}</span>
-              <ChevronDown
-                size={16}
-                strokeWidth={1.5}
-                className="home-faq-chevron"
-                aria-hidden
-              />
-            </summary>
-            <div className="home-faq-answer">{item.a}</div>
-          </details>
-        ))}
-      </div>
+      {/* Render every tab's panel into the initial HTML — only
+          the active one is visible (others hidden via
+          display:none + the hidden attribute). AI search
+          crawlers see all 10 Q&As without executing JS. */}
+      {TABS.map((tab) => (
+        <div
+          key={tab.id}
+          className={`home-faq-card${tab.id === active ? "" : " home-faq-card--hidden"}`}
+          role="tabpanel"
+          id={`docs-faq-panel-${tab.id}`}
+          aria-labelledby={`docs-faq-tab-${tab.id}`}
+          aria-hidden={tab.id !== active}
+          hidden={tab.id !== active ? true : undefined}
+        >
+          {tab.items.map((item, i) => (
+            <Fragment key={`${tab.id}-${i}`}>
+              {i > 0 ? <div className="home-faq-divider" aria-hidden /> : null}
+              <details className="home-faq-item">
+                <summary className="home-faq-question">
+                  <span>{item.q}</span>
+                  <ChevronDown
+                    size={28}
+                    strokeWidth={1.25}
+                    className="home-faq-chevron"
+                    aria-hidden
+                  />
+                </summary>
+                <div className="home-faq-answer">{item.a}</div>
+              </details>
+            </Fragment>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }

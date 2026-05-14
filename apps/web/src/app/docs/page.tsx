@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   Download,
   LogIn,
@@ -277,38 +276,17 @@ export default function DocsPage() {
         </div>
       </section>
 
-      <div className="page-body">
-
-
-        {/* FAQ */}
-        <section className="public-section">
-          <h2 className="public-section-title">FAQ</h2>
-          <p className="public-text">
-            For product-level questions (privacy, pricing, what AskScout reads),{" "}
-            <Link href="/" className="home-prose-link">see the homepage FAQ</Link>. The questions
-            below are docs-specific.
-          </p>
+      {/* ===========================================================
+          FAQ — Figma 244:3186. Reuses the homepage FAQTabs design
+          system (.home-faq-*) for 1:1 parity. Two tabs (Web app,
+          CLI) with docs-specific questions. Full-bleed top border
+          with 104px section padding per the standard rhythm.
+          =========================================================== */}
+      <section className="docs-section docs-faq">
+        <div className="home-faq-inner">
           <DocsFAQ />
-          <p className="public-text" style={{ marginTop: 24 }}>
-            Found a bug or want to request a feature? Open an issue at{" "}
-            <a
-              href="https://github.com/charleshonig5/askscout/issues"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="home-prose-link"
-            >
-              github.com/charleshonig5/askscout/issues
-            </a>
-            . Include your AskScout version, OS, and the command you ran.
-          </p>
-        </section>
-
-        <div className="public-cta">
-          <Link href="/" className="btn btn-primary" style={{ fontSize: 15, padding: "10px 24px" }}>
-            Try AskScout
-          </Link>
         </div>
-      </div>
+      </section>
       <SiteFooter />
     </main>
   );
