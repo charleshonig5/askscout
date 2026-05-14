@@ -3449,6 +3449,16 @@ a:hover {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  /* Clip the bg video to the hero box. The 1080px video sits at
+     top: 0 of the hero, but the hero is shorter than 1080px on
+     most viewports — without clipping, the video extends ~45px
+     below the hero into the 104px margin, painting a faint
+     starfield strip while the bg-fade has already ended. That
+     produces a hard seam at the hero's bottom edge that reads
+     as a thin dark line. `overflow: clip` (not `hidden`) keeps
+     the sticky nav working — `hidden` would create a scroll
+     container that disables position: sticky for the nav. */
+  overflow: clip;
   /* 74px top = nav→text gap; 7px bottom = graphic→hero-bottom
      gap. The hero's bg-fade is anchored to hero-bottom and
      needs to overlap the graphic's bottom in order to mask
