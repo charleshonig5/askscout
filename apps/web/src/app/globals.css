@@ -11634,6 +11634,106 @@ a:hover {
 }
 
 /* ============================================
+   DOCS HERO — Figma 244:3018
+   First section on /docs. 104px top + bottom
+   padding so the next section's divider (with
+   its own 104px section padding-top) lands on
+   the same rhythm every other section uses.
+   ============================================ */
+.docs-hero {
+  padding: 104px 32px;
+}
+
+.docs-hero-inner {
+  max-width: 976px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 34px;
+}
+
+.docs-hero-headblock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  max-width: 601px;
+}
+
+.docs-hero-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 52px;
+  line-height: 60px;
+  color: var(--color-text-primary);
+}
+
+.docs-hero-updated {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 20px;
+  line-height: 26px;
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+}
+
+.docs-hero-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+}
+
+.docs-hero-deck {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 20px;
+  line-height: 26px;
+  color: var(--color-text-primary);
+}
+
+.docs-hero-github {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.docs-hero-github svg {
+  color: var(--color-text-tertiary);
+  transition: color 0.15s ease;
+}
+
+.docs-hero-github:hover svg {
+  color: var(--color-text-primary);
+}
+
+@media (max-width: 768px) {
+  .docs-hero {
+    padding: 64px 24px;
+  }
+  .docs-hero-title {
+    font-size: 40px;
+    line-height: 48px;
+  }
+  .docs-hero-updated,
+  .docs-hero-deck {
+    font-size: 16px;
+    line-height: 22px;
+  }
+}
+
+/* ============================================
    Two-column digest layout
    ============================================ */
 

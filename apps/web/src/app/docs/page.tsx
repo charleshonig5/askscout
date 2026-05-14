@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SquareArrowUpRight } from "lucide-react";
 import { MarketingNav } from "@/components/MarketingNav";
 import { InstallChip } from "@/components/InstallChip";
 import { CommandChip } from "@/components/CommandChip";
@@ -31,26 +32,36 @@ export default function DocsPage() {
       />
       <MarketingNav />
 
-      <header className="page-header">
-        <div className="page-header-inner">
-          <p className="home-eyebrow">Docs</p>
-          <h1 className="page-title">Run AskScout your way.</h1>
-          <p className="page-deck">
-            AskScout is an open source daily digest tool for developers and vibe coders. It reads
-            your git activity and writes a digestible, plain-English summary of what you worked
-            on each day. Use the web app or run the CLI locally on your device.
-          </p>
-          <a
-            href="https://github.com/charleshonig5/askscout"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-primary"
-            style={{ marginTop: 16, fontSize: 14, padding: "8px 18px" }}
-          >
-            View on GitHub →
-          </a>
+      {/* ===========================================================
+          DOCS HERO — Figma 244:3018. Pridi 52 title + last-updated
+          date as a stacked head, then a 20px body deck with a
+          "View on GitHub" link below.
+          =========================================================== */}
+      <section className="docs-hero">
+        <div className="docs-hero-inner">
+          <div className="docs-hero-headblock">
+            <h1 className="docs-hero-title">AskScout documentation</h1>
+            <p className="docs-hero-updated">Last updated May 4, 2026</p>
+          </div>
+          <div className="docs-hero-body">
+            <p className="docs-hero-deck">
+              AskScout is an open source daily digest tool for developers and
+              vibe coders. It reads your git activity and writes a digestible,
+              plain-English summary of what you worked on each day. Use the
+              web app or run the CLI locally on your device.
+            </p>
+            <a
+              href="https://github.com/charleshonig5/askscout"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="docs-hero-github"
+            >
+              <span>View on GitHub</span>
+              <SquareArrowUpRight size={16} strokeWidth={1.5} aria-hidden />
+            </a>
+          </div>
         </div>
-      </header>
+      </section>
 
       <div className="page-body">
         {/* WEB */}
