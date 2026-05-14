@@ -12555,3 +12555,376 @@ a:hover {
     flex: none;
   }
 }
+
+/* ============================================================
+   ARTICLES INDEX — Figma 256:4790
+
+   One continuous section under the marketing nav. Pridi 52 hero
+   stacked over a controls row (tag filter chips on the left,
+   Shuffle + RSS utility buttons on the right) and a 3-column
+   card grid. Cards are fixed 269 tall with an inset 40px glow;
+   their title clamps to 3 lines to preserve the design rhythm
+   regardless of how long the editorial title gets.
+   ============================================================ */
+
+/* Outer wrapper — standard marketing section padding without a
+   top border (this is the first section after the nav, no need
+   for a divider). */
+.articles-main {
+  padding: 104px 32px;
+}
+
+/* Inner content column. 976px matches the Figma frame exactly so
+   the 3×303 + 2×34 grid spans full width with no leftover gutter. */
+.articles-inner {
+  max-width: 976px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 54px;
+  width: 100%;
+}
+
+/* Hero — title + deck. 407px max width per Figma keeps the deck
+   from running wider than the title's optical column. */
+.articles-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  max-width: 407px;
+}
+
+.articles-hero-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 52px;
+  line-height: 60px;
+  color: var(--color-text-primary);
+}
+
+.articles-hero-deck {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 20px;
+  line-height: 26px;
+  color: var(--color-text-primary);
+}
+
+/* Controls + grid stack. 24px between the controls row and the
+   first row of cards per Figma 256:4789. */
+.articles-index {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+/* CONTROLS ROW — left: filter chips. right: shuffle + RSS. */
+.articles-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 24px;
+}
+
+/* Filter chip group. Behaves like a segmented control: one active
+   at a time, no visible container — only the active chip carries
+   the border + bg-primary + inset glow. Inactive chips are tertiary
+   gray text on transparent. */
+.articles-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.articles-filter-chip {
+  appearance: none;
+  border: 0;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.articles-filter-chip:hover {
+  color: var(--color-text-primary);
+}
+
+.articles-filter-chip--active {
+  /* bg-secondary (#121212) — slightly lighter than the page bg —
+     matches the homepage FAQ active tab and the Figma comp.
+     Pairing it with the page-bg-primary Shuffle/RSS buttons next
+     to it creates a subtle layered hierarchy. */
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    inset 0 0 20px 0 var(--color-inner-glow);
+}
+
+/* Utility buttons (right side of controls row). The Shuffle button
+   is text + icon; the RSS button is icon-only in a 34×34 square.
+   Both share the same chrome: 34 tall, rounded 8, bg-primary with
+   inset border + glow. */
+.articles-utils {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.articles-util-btn {
+  appearance: none;
+  border: 0;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--color-bg-primary);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    inset 0 0 20px 0 var(--color-inner-glow);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+.articles-util-btn:hover {
+  background: var(--color-bg-secondary);
+}
+
+.articles-util-icon-btn {
+  appearance: none;
+  border: 0;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--color-bg-primary);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    inset 0 0 20px 0 var(--color-inner-glow);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.articles-util-icon-btn:hover {
+  background: var(--color-bg-secondary);
+}
+
+/* CARD GRID — 3 columns, 34×34 gap. <ul> reset. */
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 34px;
+  width: 100%;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.articles-card-wrap {
+  /* The <li> itself stays in flow; only the card inside it carries
+     the visual chrome. This split makes the filter "hide" affordance
+     (display:none on the wrapper) clean without touching the card. */
+  display: block;
+}
+
+/* Inactive (filtered-out) cards stay in the DOM so crawlers index
+   them, but are removed from layout. Same trick as FAQ tabs. */
+.articles-card-wrap--hidden {
+  display: none;
+}
+
+/* The card itself is a single <Link> — entire surface is clickable.
+   Body + footer stack inside; footer is pinned to the bottom by the
+   body's flex:1, and the divider line between them is the footer's
+   border-top. Fixed 269 height matches Figma exactly. */
+.articles-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 269px;
+  border-radius: 8px;
+  background: var(--color-bg-primary);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    inset 0 0 40px 0 var(--color-inner-glow);
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  transition: background 0.2s ease;
+}
+
+.articles-card:hover {
+  background: var(--color-bg-secondary);
+}
+
+.articles-card:focus-visible {
+  outline: 2px solid var(--color-text-primary);
+  outline-offset: 2px;
+}
+
+.articles-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 23px 23px 0 23px;
+  /* hidden keeps the 3-line title clamp from spilling past the
+     body box if a title hits the upper bound. */
+  overflow: hidden;
+}
+
+.articles-card-tags {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Tag pill — same chrome as the homepage readycta badges (border
+   only, no fill), but smaller. Used for both the category pill
+   and the "X min read" pill. */
+.articles-card-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.articles-card-headblock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Title clamps to 3 lines so editorial titles never push past the
+   card design. The clamp also gracefully handles longer-than-Figma
+   titles in the source data — they truncate with an ellipsis. */
+.articles-card-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 24px;
+  color: var(--color-text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.articles-card-desc {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-primary);
+  /* Descriptions get a 3-line clamp too so cards stay rhythm-perfect
+     even with a longer dek. Anything past 3 lines is editorial too
+     long for the card anyway. */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Card footer — pinned to the bottom by the body's flex:1. The
+   border-top is the divider line from the Figma comp; no separate
+   divider element needed. */
+.articles-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 23px;
+  border-top: 1px solid var(--color-border);
+}
+
+.articles-card-read {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+
+.articles-card-date {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--color-text-tertiary);
+}
+
+/* Mobile — collapse the grid to one column and let the controls
+   row wrap so the filter chips and utility buttons stack instead
+   of squishing. */
+@media (max-width: 720px) {
+  .articles-main {
+    padding: 64px 20px;
+  }
+  .articles-inner {
+    gap: 34px;
+  }
+  .articles-hero-title {
+    font-size: 40px;
+    line-height: 46px;
+  }
+  .articles-hero-deck {
+    font-size: 16px;
+    line-height: 22px;
+  }
+  .articles-controls {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .articles-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .articles-card {
+    height: auto;
+    min-height: 240px;
+  }
+}
+

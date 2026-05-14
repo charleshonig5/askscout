@@ -1,65 +1,88 @@
-import Link from "next/link";
 import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
-import { ArticleControls } from "@/components/ArticleControls";
+import { ReadyCTA } from "@/components/ReadyCTA";
+import { ArticlesIndexInteractive } from "@/components/ArticlesIndexInteractive";
 import { ARTICLES } from "@/lib/articles-data";
 
 export const metadata = {
   title: "Articles | AskScout",
-  description: "Writing on vibe coding, AI-assisted development, and the daily-digest workflow.",
+  description: "Long-form writing from the AskScout team.",
   alternates: {
+    canonical: "/articles",
     types: {
-      "application/atom+xml": [
-        { url: "/dispatch", title: "AskScout Articles" },
-      ],
+      "application/atom+xml": [{ url: "/dispatch", title: "AskScout Articles" }],
     },
+  },
+  openGraph: {
+    title: "Articles | AskScout",
+    description: "Long-form writing from the AskScout team.",
+    url: "/articles",
+    siteName: "AskScout",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Articles | AskScout",
+    description: "Long-form writing from the AskScout team.",
   },
 };
 
-function formatDate(iso: string): string {
-  const d = new Date(iso + "T00:00:00");
-  return d.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
+/* Blog/CollectionPage JSON-LD for AI search and rich results. Each
+   article gets an embedded BlogPosting entry so crawlers don't have
+   to follow individual links to understand the catalog. */
+const BLOG_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  name: "AskScout Articles",
+  description: "Long-form writing from the AskScout team.",
+  url: "https://askscout.dev/articles",
+  inLanguage: "en",
+  publisher: {
+    "@type": "Organization",
+    name: "AskScout",
+    url: "https://askscout.dev",
+  },
+  blogPost: ARTICLES.map((a) => ({
+    "@type": "BlogPosting",
+    headline: a.title,
+    description: a.description,
+    url: `https://askscout.dev/articles/${a.slug}`,
+    datePublished: a.date,
+    keywords: a.tag,
+    author: { "@type": "Organization", name: "AskScout" },
+  })),
+};
 
 export default function ArticlesIndexPage() {
   return (
     <main className="page">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(BLOG_SCHEMA) }}
+      />
       <MarketingNav />
 
-      {/* Hero header — same eyebrow + display-font H1 treatment as the
-          home page's section titles, just smaller (64px) since this
-          isn't a marketing landing surface. */}
-      <header className="page-header">
-        <div className="page-header-inner">
-          <p className="home-eyebrow">Writing</p>
-          <div className="page-title-row">
-            <h1 className="page-title">Articles</h1>
-            <ArticleControls articles={ARTICLES} />
+      {/* ===========================================================
+          ARTICLES — Figma 256:4790. One continuous section: Pridi
+          52 hero up top, then a controls row (tag filter chips on
+          the left, Shuffle + RSS on the right), then a 3-column
+          card grid. No internal section dividers — the hero, the
+          controls, and the grid all live inside .articles-inner
+          with a 54px gap between the hero and the interactive
+          block. =========================================================== */}
+      <section className="articles-main">
+        <div className="articles-inner">
+          <div className="articles-hero">
+            <h1 className="articles-hero-title">Articles</h1>
+            <p className="articles-hero-deck">
+              Long-form writing from the AskScout team.
+            </p>
           </div>
-          <p className="page-deck">
-            Notes on vibe coding, AI-assisted dev work, and what we&apos;re learning about the
-            daily-digest habit.
-          </p>
+          <ArticlesIndexInteractive articles={ARTICLES} />
         </div>
-      </header>
+      </section>
 
-      <div className="page-body">
-        <ul className="article-list">
-          {ARTICLES.map((article) => (
-            <li key={article.slug} className="article-list-item">
-              <Link href={`/articles/${article.slug}`} className="article-list-link">
-                <span className="article-list-date">{formatDate(article.date)}</span>
-                <h2 className="article-list-title">{article.title}</h2>
-                <p className="article-list-description">{article.description}</p>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <ReadyCTA />
       <SiteFooter />
     </main>
   );
