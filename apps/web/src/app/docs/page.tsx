@@ -15,11 +15,48 @@ import { ReadyCTA } from "@/components/ReadyCTA";
 import { SiteFooter } from "@/components/SiteFooter";
 import { DOCS_FAQ_PLAIN } from "@/lib/docs-faq-data";
 
+/* "Last updated" date for the docs. Shown in the hero as a
+   human-readable string AND embedded as a machine-readable
+   dateModified in both the <time> element and the TechArticle
+   JSON-LD below — bump all three together when docs change. */
+const DOCS_LAST_UPDATED_ISO = "2026-05-04";
+const DOCS_LAST_UPDATED_HUMAN = "May 4, 2026";
+
 export const metadata = {
   title: "Docs | AskScout",
   description:
     "AskScout docs. How to use the web app, the CLI, and answers to common questions.",
+  alternates: {
+    canonical: "/docs",
+  },
+  openGraph: {
+    title: "AskScout docs",
+    description:
+      "How to use the AskScout web app and CLI, plus answers to common questions.",
+    url: "/docs",
+    siteName: "AskScout",
+    type: "article",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AskScout docs",
+    description:
+      "How to use the AskScout web app and CLI, plus answers to common questions.",
+  },
 };
+
+/* ----------------------------------------------------------------
+   STRUCTURED DATA — one JSON-LD block per schema type. Multiple
+   blocks (instead of one @graph object) keeps each schema isolated
+   so Google's Rich Results tool reports clean per-type validation
+   and a future edit to one schema can't accidentally break another.
+
+   Stack:
+   - FAQPage: the 10 Q&As (rich results + AI search ingestion)
+   - TechArticle: the docs page itself (dateModified, author, about)
+   - HowTo: the Install / Setup / Run three-step CLI install flow
+   - BreadcrumbList: Home > Docs trail for SERP breadcrumbs
+   ---------------------------------------------------------------- */
 
 const FAQ_SCHEMA = {
   "@context": "https://schema.org",
@@ -31,12 +68,107 @@ const FAQ_SCHEMA = {
   })),
 };
 
+const ARTICLE_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: "AskScout documentation",
+  description:
+    "How to use the AskScout web app and CLI, plus answers to common questions.",
+  url: "https://askscout.dev/docs",
+  inLanguage: "en",
+  dateModified: DOCS_LAST_UPDATED_ISO,
+  author: { "@type": "Organization", name: "AskScout" },
+  publisher: {
+    "@type": "Organization",
+    name: "AskScout",
+    url: "https://askscout.dev",
+    logo: {
+      "@type": "ImageObject",
+      url: "https://askscout.dev/logo-white.svg",
+    },
+  },
+  about: { "@type": "SoftwareApplication", name: "AskScout" },
+  mainEntityOfPage: { "@type": "WebPage", "@id": "https://askscout.dev/docs" },
+};
+
+const HOWTO_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "Install the AskScout CLI",
+  description:
+    "Three steps to install AskScout locally and run your first digest in any git repo.",
+  totalTime: "PT2M",
+  estimatedCost: { "@type": "MonetaryAmount", currency: "USD", value: "0" },
+  tool: [
+    { "@type": "HowToTool", name: "Node.js (npm)" },
+    { "@type": "HowToTool", name: "An Anthropic or OpenAI API key" },
+  ],
+  step: [
+    {
+      "@type": "HowToStep",
+      position: 1,
+      name: "Install",
+      text: "Install AskScout globally with npm.",
+      itemListElement: [
+        { "@type": "HowToDirection", text: "npm install -g askscout" },
+      ],
+    },
+    {
+      "@type": "HowToStep",
+      position: 2,
+      name: "Setup",
+      text: "Run setup once to save your Anthropic or OpenAI API key locally. The key stays on your machine and is only sent to the LLM provider you configured.",
+      itemListElement: [
+        { "@type": "HowToDirection", text: "askscout --setup" },
+      ],
+    },
+    {
+      "@type": "HowToStep",
+      position: 3,
+      name: "Run",
+      text: "Run AskScout in any git repo. Your first digest covers today, and every run after picks up from there.",
+      itemListElement: [{ "@type": "HowToDirection", text: "askscout" }],
+    },
+  ],
+};
+
+const BREADCRUMB_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://askscout.dev/",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Docs",
+      item: "https://askscout.dev/docs",
+    },
+  ],
+};
+
 export default function DocsPage() {
   return (
     <main className="page">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ARTICLE_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(HOWTO_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(BREADCRUMB_SCHEMA) }}
       />
       <MarketingNav />
 
@@ -49,7 +181,12 @@ export default function DocsPage() {
         <div className="docs-hero-inner">
           <div className="docs-hero-headblock">
             <h1 className="docs-hero-title">AskScout documentation</h1>
-            <p className="docs-hero-updated">Last updated May 4, 2026</p>
+            <p className="docs-hero-updated">
+              Last updated{" "}
+              <time dateTime={DOCS_LAST_UPDATED_ISO}>
+                {DOCS_LAST_UPDATED_HUMAN}
+              </time>
+            </p>
           </div>
           <div className="docs-hero-body">
             <p className="docs-hero-deck">

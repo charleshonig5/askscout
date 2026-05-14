@@ -133,12 +133,65 @@ const FAQ_SCHEMA = {
   })),
 };
 
+/* SoftwareApplication schema lives on the homepage (the canonical
+   product surface) so AI search models — ChatGPT, Perplexity,
+   Claude, Google's AI Overviews — get a structured answer to
+   "what is AskScout, how much does it cost, where does it run."
+   Other pages reference this entity by name via `about` in their
+   own schemas. Kept conservative: no aggregateRating (no real
+   review pool to claim) and no fabricated metrics. */
+const SOFTWARE_APP_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "AskScout",
+  description:
+    "AskScout is an open source daily digest tool for developers and vibe coders. It reads your git activity and writes a plain-English summary of what you shipped each day. Run it in the browser or as a local CLI.",
+  applicationCategory: "DeveloperApplication",
+  applicationSubCategory: "Developer productivity",
+  operatingSystem: "Web, macOS, Linux, Windows",
+  url: "https://askscout.dev",
+  downloadUrl: "https://www.npmjs.com/package/askscout",
+  installUrl: "https://www.npmjs.com/package/askscout",
+  license: "https://opensource.org/licenses/MIT",
+  /* sameAs lets AI search and graph crawlers tie this entity to its
+     canonical presences on other platforms (GitHub repo, npm
+     package, docs page) — the standard way to express "these URLs
+     are all the same product." */
+  sameAs: [
+    "https://github.com/charleshonig5/askscout",
+    "https://www.npmjs.com/package/askscout",
+    "https://askscout.dev/docs",
+  ],
+  isAccessibleForFree: true,
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+  author: {
+    "@type": "Organization",
+    name: "AskScout",
+    url: "https://askscout.dev",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "AskScout",
+    url: "https://askscout.dev",
+  },
+};
+
 export default function MarketingHome() {
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(SOFTWARE_APP_SCHEMA),
+        }}
       />
     <main className="home">
       {/* ===========================================================

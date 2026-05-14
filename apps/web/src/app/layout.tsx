@@ -30,6 +30,11 @@ const pridi = Pridi({
 });
 
 export const metadata: Metadata = {
+  // metadataBase is required for Next to absolutize any relative OG
+  // image URLs (and silences the build-time warning). It is also
+  // the base used by `alternates.canonical` on individual pages
+  // when they supply a path-only canonical like "/docs".
+  metadataBase: new URL("https://askscout.dev"),
   title: "AskScout, the daily digest for vibe coders",
   description:
     "AI wrote half your code this week. AskScout reads your repo and tells you, in plain English, what you actually shipped.",
