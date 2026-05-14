@@ -7191,7 +7191,7 @@ a:hover {
    "from" state during the delay so there's no flash. */
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-stats {
-  animation: runlocal-fade-up 300ms ease-out 550ms both;
+  animation: runlocal-fade-up 300ms ease-out 700ms both;
 }
 
 .home-runlocal-motion[data-runlocal-phase="playing"]
@@ -7212,51 +7212,51 @@ a:hover {
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-section:nth-child(2)
   .home-runlocal-stream-heading {
-  animation-delay: 1050ms;
+  animation-delay: 1200ms;
 }
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-section:nth-child(2)
   .home-runlocal-stream-item:nth-child(1) {
-  animation-delay: 1250ms;
+  animation-delay: 1400ms;
 }
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-section:nth-child(2)
   .home-runlocal-stream-item:nth-child(2) {
-  animation-delay: 1400ms;
+  animation-delay: 1550ms;
 }
 
 /* Changed (3rd child) */
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-section:nth-child(3)
   .home-runlocal-stream-heading {
-  animation-delay: 1750ms;
+  animation-delay: 1900ms;
 }
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-section:nth-child(3)
   .home-runlocal-stream-item:nth-child(1) {
-  animation-delay: 1950ms;
+  animation-delay: 2100ms;
 }
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-section:nth-child(3)
   .home-runlocal-stream-item:nth-child(2) {
-  animation-delay: 2100ms;
+  animation-delay: 2250ms;
 }
 
 /* Still Shifting (4th child) */
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-section:nth-child(4)
   .home-runlocal-stream-heading {
-  animation-delay: 2450ms;
+  animation-delay: 2600ms;
 }
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-section:nth-child(4)
   .home-runlocal-stream-item:nth-child(1) {
-  animation-delay: 2650ms;
+  animation-delay: 2800ms;
 }
 .home-runlocal-motion[data-runlocal-phase="playing"]
   .home-runlocal-stream-section:nth-child(4)
   .home-runlocal-stream-item:nth-child(2) {
-  animation-delay: 2800ms;
+  animation-delay: 2950ms;
 }
 
 @keyframes runlocal-fade-up {

@@ -14,7 +14,7 @@ import { RunLocalPhaseContext } from "@/components/RunLocalMotion";
  */
 
 const PROMPT = "$ askscout";
-const PER_CHAR_MS = 45;
+const PER_CHAR_MS = 60;
 
 export function RunLocalPrompt() {
   const phase = useContext(RunLocalPhaseContext);
