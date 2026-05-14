@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import { signIn } from "@/auth";
 import { MarketingNav } from "@/components/MarketingNav";
-import { InstallChip } from "@/components/InstallChip";
 import { CommandChip } from "@/components/CommandChip";
 import { DocsCliCmdInline } from "@/components/DocsCliCmdInline";
 import DocsFAQ from "@/components/DocsFAQ";
