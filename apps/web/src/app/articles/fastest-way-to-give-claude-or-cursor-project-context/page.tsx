@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
+import { ArticleHero } from "@/components/ArticleHero";
 
 export const metadata = {
   title:
@@ -59,18 +60,13 @@ export default function FastestWayToContextPage() {
       />
       <MarketingNav />
 
-      <article className="page-body page-body--reading article">
-        <Link href="/articles" className="article-back-link">
-          ← All articles
-        </Link>
-        <h1 className="page-title page-title--article">
-          The fastest way to bring Claude Code, Cursor, or Codex up to speed on your project
-        </h1>
-        <p className="article-deck">
-          A practical guide to giving AI coding tools project context that actually works,
-          without re-explaining your codebase every session.
-        </p>
+      <ArticleHero
+        slug="fastest-way-to-give-claude-or-cursor-project-context"
+        title="The fastest way to bring Claude Code, Cursor, or Codex up to speed on your project"
+        deck="A practical guide to giving AI coding tools project context that actually works, without re-explaining your codebase every session."
+      />
 
+      <article className="page-body page-body--reading article article--has-hero">
         <section className="public-section">
           <h2 className="public-section-title">TLDR</h2>
           <p className="public-text">

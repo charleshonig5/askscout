@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
+import { ArticleHero } from "@/components/ArticleHero";
 
 export const metadata = {
   title: "The Hidden Cost of Vibe Coding | AskScout",
@@ -58,16 +59,13 @@ export default function HiddenCostPage() {
       />
       <MarketingNav />
 
-      <article className="page-body page-body--reading article">
-        <Link href="/articles" className="article-back-link">
-          ← All articles
-        </Link>
-        <h1 className="page-title page-title--article">The Hidden Cost of Vibe Coding</h1>
-        <p className="article-deck">
-          AI coding tools sped us up. They also made it harder to keep track of what we actually
-          built. Why I think the next big workflow problem is digesting your own code.
-        </p>
+      <ArticleHero
+        slug="the-hidden-cost-of-vibe-coding"
+        title="The Hidden Cost of Vibe Coding"
+        deck="AI coding tools sped us up. They also made it harder to keep track of what we actually built. Why I think the next big workflow problem is digesting your own code."
+      />
 
+      <article className="page-body page-body--reading article article--has-hero">
         <section className="public-section">
           <h2 className="public-section-title">TLDR</h2>
           <p className="public-text">

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
+import { ArticleHero } from "@/components/ArticleHero";
 
 export const metadata = {
   title: "How AskScout turns a noisy git log into a 10-second digest | AskScout",
@@ -58,18 +59,13 @@ export default function HowAskScoutSummarizesGitPage() {
       />
       <MarketingNav />
 
-      <article className="page-body page-body--reading article">
-        <Link href="/articles" className="article-back-link">
-          ← All articles
-        </Link>
-        <h1 className="page-title page-title--article">
-          How AskScout turns a noisy git log into a 10-second digest
-        </h1>
-        <p className="article-deck">
-          A walkthrough of the four steps between your messy git history and a digest you can
-          actually read.
-        </p>
+      <ArticleHero
+        slug="how-askscout-summarizes-git"
+        title="How AskScout turns a noisy git log into a 10-second digest"
+        deck="A walkthrough of the four steps between your messy git history and a digest you can actually read."
+      />
 
+      <article className="page-body page-body--reading article article--has-hero">
         <section className="public-section">
           <h2 className="public-section-title">TLDR</h2>
           <p className="public-text">

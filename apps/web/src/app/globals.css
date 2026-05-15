@@ -8546,17 +8546,6 @@ a:hover {
   padding-bottom: 10px;
 }
 
-/* Single-article variant — the article H1 is paired with a
-   "← All articles" back-link sitting above it, plus a deck
-   below, so it carries less weight than the index/landing
-   titles. Slightly smaller + slightly less aggressive
-   tracking gives it a "first heading inside an article"
-   feel rather than a hero feel. */
-.page-title--article {
-  font-size: 52px;
-  letter-spacing: -0.025em;
-}
-
 .page-deck {
   font-family: var(--font-sans);
   font-size: 18px;
@@ -8608,9 +8597,6 @@ a:hover {
   .public-title {
     font-size: 44px;
   }
-  .page-title--article {
-    font-size: 38px;
-  }
   .page-header {
     padding: 40px 24px 32px;
   }
@@ -8627,9 +8613,6 @@ a:hover {
   .public-title {
     font-size: 34px;
     letter-spacing: -0.02em;
-  }
-  .page-title--article {
-    font-size: 30px;
   }
   .page-header {
     padding: 32px 20px 24px;
@@ -8740,33 +8723,6 @@ a:hover {
   margin-bottom: var(--space-md);
 }
 
-/* "← All articles" breadcrumb at the top of an article. Quiet
-   color so it doesn't compete with the title; hover bumps to
-   primary as the affordance. */
-.article-back-link {
-  display: inline-block;
-  font-size: 13px;
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  margin-bottom: var(--space-lg);
-  transition: color 0.15s ease;
-}
-
-.article-back-link:hover {
-  color: var(--color-text-primary);
-}
-
-/* Deck — the short subtitle directly under the H1 that frames the
-   piece in 1-2 sentences. Larger than body, secondary color so it
-   reads as introduction, not body. */
-.article-deck {
-  font-size: 18px;
-  line-height: 1.55;
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-2xl);
-  max-width: 580px;
-}
-
 /* Close pull-quote — the takeaway line at the end of the essay,
    set apart with extra space and a stronger weight. The text
    itself is wrapped in <strong>, so we just need the spacing
@@ -8797,6 +8753,161 @@ a:hover {
 
 .article-cta-secondary:hover {
   color: var(--color-text-primary);
+}
+
+/* ---- Article hero — Figma 257:4862 ----
+   Title + italic deck + meta row, then a full-bleed divider with
+   104px of air on each side. .article-hero is full-width (it sits
+   directly inside .page, which has no max-width) so the divider can
+   run edge to edge; .article-hero-inner re-applies the 720px reading
+   column shared with the article body. */
+.article-hero {
+  padding-top: 32px;
+}
+
+.article-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 34px;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* Mirrors .articles-hero-title: Pridi Regular 52/60. */
+.article-hero-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 52px;
+  line-height: 60px;
+  color: var(--color-text-primary);
+}
+
+/* Mirrors .articles-hero-deck but italic, per the Figma hero. */
+.article-hero-deck {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-style: italic;
+  font-size: 20px;
+  line-height: 26px;
+  color: var(--color-text-primary);
+}
+
+.article-hero-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.article-hero-meta-left {
+  display: flex;
+  align-items: center;
+  gap: 44px;
+  flex-wrap: wrap;
+}
+
+.article-hero-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/* Back to Articles (link) + Copy URL (button) share one rule —
+   the button is reset to look identical to the link. */
+.article-hero-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: normal;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.article-hero-link:hover {
+  color: var(--color-text-secondary);
+}
+
+.article-hero-pills {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.article-hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: normal;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.article-hero-date {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: normal;
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+}
+
+/* Full-bleed divider — 104px of air above and below per spec. */
+.article-hero-rule {
+  height: 0;
+  margin: 104px 0;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+}
+
+/* Article body sits flush under the hero's divider: the 104px below
+   the rule is the only gap, so drop .page-body's default top pad. */
+.article--has-hero {
+  padding-top: 0;
+}
+
+@media (max-width: 880px) {
+  .article-hero-title {
+    font-size: 38px;
+    line-height: 1.15;
+  }
+  .article-hero-rule {
+    margin: 64px 0;
+  }
+}
+
+@media (max-width: 540px) {
+  .article-hero {
+    padding-top: 20px;
+  }
+  .article-hero-inner {
+    padding: 0 20px;
+    gap: 24px;
+  }
+  .article-hero-title {
+    font-size: 30px;
+  }
 }
 
 .public-text {

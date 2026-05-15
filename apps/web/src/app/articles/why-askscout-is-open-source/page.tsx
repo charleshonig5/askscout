@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
+import { ArticleHero } from "@/components/ArticleHero";
 
 export const metadata = {
   title: "Why we made AskScout open source | AskScout",
@@ -58,16 +59,13 @@ export default function WhyAskScoutOpenSourcePage() {
       />
       <MarketingNav />
 
-      <article className="page-body page-body--reading article">
-        <Link href="/articles" className="article-back-link">
-          ← All articles
-        </Link>
-        <h1 className="page-title page-title--article">Why we made AskScout open source</h1>
-        <p className="article-deck">
-          Trust matters more than moat for a tool that reads your code. Why AskScout is fully MIT,
-          including the prompt.
-        </p>
+      <ArticleHero
+        slug="why-askscout-is-open-source"
+        title="Why we made AskScout open source"
+        deck="Trust matters more than moat for a tool that reads your code. Why AskScout is fully MIT, including the prompt."
+      />
 
+      <article className="page-body page-body--reading article article--has-hero">
         <section className="public-section">
           <h2 className="public-section-title">TLDR</h2>
           <p className="public-text">

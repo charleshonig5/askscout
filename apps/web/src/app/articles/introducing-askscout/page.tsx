@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
+import { ArticleHero } from "@/components/ArticleHero";
 
 export const metadata = {
   title: "Introducing AskScout: your vibe coding companion | AskScout",
@@ -58,18 +59,13 @@ export default function IntroducingAskScoutPage() {
       />
       <MarketingNav />
 
-      <article className="page-body page-body--reading article">
-        <Link href="/articles" className="article-back-link">
-          ← All articles
-        </Link>
-        <h1 className="page-title page-title--article">
-          Introducing AskScout: your vibe coding companion
-        </h1>
-        <p className="article-deck">
-          AskScout reads your repo and writes you a daily digest of what you shipped. The
-          companion tool for developers using Claude Code, Cursor, and Codex.
-        </p>
+      <ArticleHero
+        slug="introducing-askscout"
+        title="Introducing AskScout: your vibe coding companion"
+        deck="AskScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex."
+      />
 
+      <article className="page-body page-body--reading article article--has-hero">
         <section className="public-section">
           <h2 className="public-section-title">TLDR</h2>
           <p className="public-text">

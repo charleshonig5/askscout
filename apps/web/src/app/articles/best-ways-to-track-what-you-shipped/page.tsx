@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
+import { ArticleHero } from "@/components/ArticleHero";
 
 export const metadata = {
   title: "Best Ways to Track What You Shipped as a Developer | AskScout",
@@ -58,18 +59,13 @@ export default function TrackWhatYouShippedPage() {
       />
       <MarketingNav />
 
-      <article className="page-body page-body--reading article">
-        <Link href="/articles" className="article-back-link">
-          ← All articles
-        </Link>
-        <h1 className="page-title page-title--article">
-          Best Ways to Track What You Shipped as a Developer
-        </h1>
-        <p className="article-deck">
-          Four options that actually work, ranked by how much effort each one costs you. Plus the
-          tradeoffs nobody mentions.
-        </p>
+      <ArticleHero
+        slug="best-ways-to-track-what-you-shipped"
+        title="Best Ways to Track What You Shipped as a Developer"
+        deck="Four options that actually work, ranked by how much effort each one costs you. Plus the tradeoffs nobody mentions."
+      />
 
+      <article className="page-body page-body--reading article article--has-hero">
         <section className="public-section">
           <h2 className="public-section-title">TLDR</h2>
           <p className="public-text">

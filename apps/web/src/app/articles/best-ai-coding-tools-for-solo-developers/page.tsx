@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
+import { ArticleHero } from "@/components/ArticleHero";
 
 export const metadata = {
   title: "Best AI Coding Tools for Solo Developers | AskScout",
@@ -58,18 +59,13 @@ export default function BestAICodingToolsPage() {
       />
       <MarketingNav />
 
-      <article className="page-body page-body--reading article">
-        <Link href="/articles" className="article-back-link">
-          ← All articles
-        </Link>
-        <h1 className="page-title page-title--article">
-          Best AI Coding Tools for Solo Developers
-        </h1>
-        <p className="article-deck">
-          An honest read on the tools solo devs actually use, what each one is good at, and the
-          layer they all leave out.
-        </p>
+      <ArticleHero
+        slug="best-ai-coding-tools-for-solo-developers"
+        title="Best AI Coding Tools for Solo Developers"
+        deck="An honest read on the tools solo devs actually use, what each one is good at, and the layer they all leave out."
+      />
 
+      <article className="page-body page-body--reading article article--has-hero">
         <section className="public-section">
           <h2 className="public-section-title">TLDR</h2>
           <p className="public-text">
