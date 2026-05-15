@@ -2,6 +2,8 @@ import Link from "next/link";
 import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
+import { ArticleFAQ } from "@/components/ArticleFAQ";
+import { ReadyCTA } from "@/components/ReadyCTA";
 
 export const metadata = {
   title:
@@ -67,18 +69,15 @@ export default function FastestWayToContextPage() {
       />
 
       <article className="page-body page-body--reading article article--has-hero">
-        <section className="public-section">
-          <h2 className="public-section-title">TLDR</h2>
-          <p className="public-text">
-            Claude Code, Cursor, and Codex work best when they understand your project. The
-            fastest way to give them context is to paste a structured block at the start of a
-            session covering tech stack, recent work, current focus, key files, and any
-            warnings. The AskScout web app has an <strong>AI Resume Prompt</strong> button that
-            generates this block from your latest digest; the CLI does the same thing with{" "}
-            <code className="inline-code">askscout --resume</code>. Below is what good context
-            looks like and how to assemble it whether you use AskScout or not.
-          </p>
-        </section>
+        <p className="public-text article-tldr">
+          <strong>TLDR:</strong> Claude Code, Cursor, and Codex work best when they understand
+          your project. The fastest way to give them context is to paste a structured block at
+          the start of a session covering tech stack, recent work, current focus, key files,
+          and any warnings. The AskScout web app has an <strong>AI Resume Prompt</strong> button
+          that generates this block from your latest digest; the CLI does the same thing with{" "}
+          <code className="inline-code">askscout --resume</code>. Below is what good context
+          looks like and how to assemble it whether you use AskScout or not.
+        </p>
 
         <section className="public-section">
           <h2 className="public-section-title">The catch-up problem</h2>
@@ -225,29 +224,10 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
           </p>
         </section>
 
-        <section className="public-section">
-          <h2 className="public-section-title">FAQ</h2>
-          <div className="faq-list">
-            {FAQ_PLAIN.map((item) => (
-              <div key={item.q} className="faq-item">
-                <h3 className="faq-question">{item.q}</h3>
-                <p className="public-text">{item.a}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="public-section">
-          <div className="article-cta">
-            <Link href="/" className="btn btn-primary">
-              Try AskScout
-            </Link>
-            <Link href="/docs" className="article-cta-secondary">
-              Or read the docs →
-            </Link>
-          </div>
-        </section>
+        <ArticleFAQ items={FAQ_PLAIN} />
       </article>
+
+      <ReadyCTA />
       <SiteFooter />
     </main>
   );

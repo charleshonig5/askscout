@@ -2,6 +2,8 @@ import Link from "next/link";
 import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
+import { ArticleFAQ } from "@/components/ArticleFAQ";
+import { ReadyCTA } from "@/components/ReadyCTA";
 
 export const metadata = {
   title: "Introducing AskScout: your vibe coding companion | AskScout",
@@ -66,17 +68,14 @@ export default function IntroducingAskScoutPage() {
       />
 
       <article className="page-body page-body--reading article article--has-hero">
-        <section className="public-section">
-          <h2 className="public-section-title">TLDR</h2>
-          <p className="public-text">
-            AskScout is a daily digest tool for developers who code with AI assistance. Claude
-            Code, Cursor, and Codex help you write code. AskScout reads what you wrote and
-            writes you back a 10-second summary covering what shipped, what changed, what kept
-            getting reworked, and what you left off. The web app runs in your browser, signed
-            in with GitHub. The CLI runs in any local git repo with your own LLM key. Both are
-            free, both are open source.
-          </p>
-        </section>
+        <p className="public-text article-tldr">
+          <strong>TLDR:</strong> AskScout is a daily digest tool for developers who code with AI
+          assistance. Claude Code, Cursor, and Codex help you write code. AskScout reads what
+          you wrote and writes you back a 10-second summary covering what shipped, what changed,
+          what kept getting reworked, and what you left off. The web app runs in your browser,
+          signed in with GitHub. The CLI runs in any local git repo with your own LLM key. Both
+          are free, both are open source.
+        </p>
 
         <section className="public-section">
           <h2 className="public-section-title">The problem AI coding tools created</h2>
@@ -163,29 +162,10 @@ export default function IntroducingAskScoutPage() {
           </p>
         </section>
 
-        <section className="public-section">
-          <h2 className="public-section-title">FAQ</h2>
-          <div className="faq-list">
-            {FAQ_PLAIN.map((item) => (
-              <div key={item.q} className="faq-item">
-                <h3 className="faq-question">{item.q}</h3>
-                <p className="public-text">{item.a}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="public-section">
-          <div className="article-cta">
-            <Link href="/" className="btn btn-primary">
-              Try AskScout
-            </Link>
-            <Link href="/docs" className="article-cta-secondary">
-              Or read the docs →
-            </Link>
-          </div>
-        </section>
+        <ArticleFAQ items={FAQ_PLAIN} />
       </article>
+
+      <ReadyCTA />
       <SiteFooter />
     </main>
   );

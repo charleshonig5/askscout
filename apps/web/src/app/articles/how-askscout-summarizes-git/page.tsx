@@ -1,7 +1,8 @@
-import Link from "next/link";
 import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
+import { ArticleFAQ } from "@/components/ArticleFAQ";
+import { ReadyCTA } from "@/components/ReadyCTA";
 
 export const metadata = {
   title: "How AskScout turns a noisy git log into a 10-second digest | AskScout",
@@ -66,16 +67,13 @@ export default function HowAskScoutSummarizesGitPage() {
       />
 
       <article className="page-body page-body--reading article article--has-hero">
-        <section className="public-section">
-          <h2 className="public-section-title">TLDR</h2>
-          <p className="public-text">
-            AskScout reads your commits and diffs through git, groups them into four sections
-            (Shipped, Changed, Still Shifting, Left Off), computes two structural signals
-            (Codebase Health, Pace Check), and feeds the whole package into a tuned LLM prompt
-            that renders the result in plain English. Each step exists for a specific reason.
-            All of it is open source.
-          </p>
-        </section>
+        <p className="public-text article-tldr">
+          <strong>TLDR:</strong> AskScout reads your commits and diffs through git, groups them
+          into four sections (Shipped, Changed, Still Shifting, Left Off), computes two
+          structural signals (Codebase Health, Pace Check), and feeds the whole package into a
+          tuned LLM prompt that renders the result in plain English. Each step exists for a
+          specific reason. All of it is open source.
+        </p>
 
         <section className="public-section">
           <h2 className="public-section-title">Why git log fails at AI-coding pace</h2>
@@ -220,29 +218,10 @@ f6a7b8c fix tests`}
           </p>
         </section>
 
-        <section className="public-section">
-          <h2 className="public-section-title">FAQ</h2>
-          <div className="faq-list">
-            {FAQ_PLAIN.map((item) => (
-              <div key={item.q} className="faq-item">
-                <h3 className="faq-question">{item.q}</h3>
-                <p className="public-text">{item.a}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="public-section">
-          <div className="article-cta">
-            <Link href="/" className="btn btn-primary">
-              Try AskScout
-            </Link>
-            <Link href="/docs" className="article-cta-secondary">
-              Or read the docs →
-            </Link>
-          </div>
-        </section>
+        <ArticleFAQ items={FAQ_PLAIN} />
       </article>
+
+      <ReadyCTA />
       <SiteFooter />
     </main>
   );

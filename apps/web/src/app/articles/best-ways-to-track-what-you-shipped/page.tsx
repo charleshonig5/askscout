@@ -2,6 +2,8 @@ import Link from "next/link";
 import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
+import { ArticleFAQ } from "@/components/ArticleFAQ";
+import { ReadyCTA } from "@/components/ReadyCTA";
 
 export const metadata = {
   title: "Best Ways to Track What You Shipped as a Developer | AskScout",
@@ -66,17 +68,14 @@ export default function TrackWhatYouShippedPage() {
       />
 
       <article className="page-body page-body--reading article article--has-hero">
-        <section className="public-section">
-          <h2 className="public-section-title">TLDR</h2>
-          <p className="public-text">
-            If you want to remember what you shipped, you have four real options: scroll your git
-            log, lean on GitHub&apos;s Insights tab, write things down manually, or run an
-            automated digest tool. Git log is free but unreadable at scale. GitHub shows shape
-            without substance. Manual journals work if you actually keep them. Automated digests
-            handle the volume but cost a tiny amount per run. Pick by how much friction you
-            tolerate.
-          </p>
-        </section>
+        <p className="public-text article-tldr">
+          <strong>TLDR:</strong> If you want to remember what you shipped, you have four real
+          options: scroll your git log, lean on GitHub&apos;s Insights tab, write things down
+          manually, or run an automated digest tool. Git log is free but unreadable at scale.
+          GitHub shows shape without substance. Manual journals work if you actually keep them.
+          Automated digests handle the volume but cost a tiny amount per run. Pick by how much
+          friction you tolerate.
+        </p>
 
         <section className="public-section">
           <p className="public-text">
@@ -218,29 +217,10 @@ export default function TrackWhatYouShippedPage() {
           </p>
         </section>
 
-        <section className="public-section">
-          <h2 className="public-section-title">FAQ</h2>
-          <div className="faq-list">
-            {FAQ_PLAIN.map((item) => (
-              <div key={item.q} className="faq-item">
-                <h3 className="faq-question">{item.q}</h3>
-                <p className="public-text">{item.a}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="public-section">
-          <div className="article-cta">
-            <Link href="/" className="btn btn-primary">
-              Try AskScout
-            </Link>
-            <Link href="/docs" className="article-cta-secondary">
-              Or read the docs →
-            </Link>
-          </div>
-        </section>
+        <ArticleFAQ items={FAQ_PLAIN} />
       </article>
+
+      <ReadyCTA />
       <SiteFooter />
     </main>
   );

@@ -2,6 +2,8 @@ import Link from "next/link";
 import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
+import { ArticleFAQ } from "@/components/ArticleFAQ";
+import { ReadyCTA } from "@/components/ReadyCTA";
 
 export const metadata = {
   title: "The Hidden Cost of Vibe Coding | AskScout",
@@ -66,16 +68,13 @@ export default function HiddenCostPage() {
       />
 
       <article className="page-body page-body--reading article article--has-hero">
-        <section className="public-section">
-          <h2 className="public-section-title">TLDR</h2>
-          <p className="public-text">
-            The way most of us code now produces more output than our brains can hold. AI tools
-            took the friction out of writing code. They did not take the friction out of
-            remembering it. By Friday afternoon you have shipped two hundred commits and you
-            cannot account for half of them. The fix is a daily digest of what your repo actually
-            did.
-          </p>
-        </section>
+        <p className="public-text article-tldr">
+          <strong>TLDR:</strong> The way most of us code now produces more output than our
+          brains can hold. AI tools took the friction out of writing code. They did not take the
+          friction out of remembering it. By Friday afternoon you have shipped two hundred
+          commits and you cannot account for half of them. The fix is a daily digest of what
+          your repo actually did.
+        </p>
 
         <section className="public-section">
           <p className="public-text">
@@ -177,29 +176,10 @@ export default function HiddenCostPage() {
           </p>
         </section>
 
-        <section className="public-section">
-          <h2 className="public-section-title">FAQ</h2>
-          <div className="faq-list">
-            {FAQ_PLAIN.map((item) => (
-              <div key={item.q} className="faq-item">
-                <h3 className="faq-question">{item.q}</h3>
-                <p className="public-text">{item.a}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="public-section">
-          <div className="article-cta">
-            <Link href="/" className="btn btn-primary">
-              Try AskScout
-            </Link>
-            <Link href="/docs" className="article-cta-secondary">
-              Or read the docs →
-            </Link>
-          </div>
-        </section>
+        <ArticleFAQ items={FAQ_PLAIN} />
       </article>
+
+      <ReadyCTA />
       <SiteFooter />
     </main>
   );

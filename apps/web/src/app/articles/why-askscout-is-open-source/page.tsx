@@ -2,6 +2,8 @@ import Link from "next/link";
 import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
+import { ArticleFAQ } from "@/components/ArticleFAQ";
+import { ReadyCTA } from "@/components/ReadyCTA";
 
 export const metadata = {
   title: "Why we made AskScout open source | AskScout",
@@ -66,15 +68,13 @@ export default function WhyAskScoutOpenSourcePage() {
       />
 
       <article className="page-body page-body--reading article article--has-hero">
-        <section className="public-section">
-          <h2 className="public-section-title">TLDR</h2>
-          <p className="public-text">
-            AskScout is MIT licensed because trust matters more than moat for a tool that reads
-            your code. Every line is on GitHub, including the LLM prompt and the way we handle
-            your data. The CLI uses your own API key, so on the local surface your data never
-            touches our servers. Open source is the baseline, not a marketing feature.
-          </p>
-        </section>
+        <p className="public-text article-tldr">
+          <strong>TLDR:</strong> AskScout is MIT licensed because trust matters more than moat
+          for a tool that reads your code. Every line is on GitHub, including the LLM prompt and
+          the way we handle your data. The CLI uses your own API key, so on the local surface
+          your data never touches our servers. Open source is the baseline, not a marketing
+          feature.
+        </p>
 
         <section className="public-section">
           <h2 className="public-section-title">The problem with closed-source AI tools that read your code</h2>
@@ -187,29 +187,10 @@ export default function WhyAskScoutOpenSourcePage() {
           </p>
         </section>
 
-        <section className="public-section">
-          <h2 className="public-section-title">FAQ</h2>
-          <div className="faq-list">
-            {FAQ_PLAIN.map((item) => (
-              <div key={item.q} className="faq-item">
-                <h3 className="faq-question">{item.q}</h3>
-                <p className="public-text">{item.a}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="public-section">
-          <div className="article-cta">
-            <Link href="/" className="btn btn-primary">
-              Try AskScout
-            </Link>
-            <Link href="/docs" className="article-cta-secondary">
-              Or read the docs →
-            </Link>
-          </div>
-        </section>
+        <ArticleFAQ items={FAQ_PLAIN} />
       </article>
+
+      <ReadyCTA />
       <SiteFooter />
     </main>
   );

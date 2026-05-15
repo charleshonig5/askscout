@@ -2,6 +2,8 @@ import Link from "next/link";
 import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
+import { ArticleFAQ } from "@/components/ArticleFAQ";
+import { ReadyCTA } from "@/components/ReadyCTA";
 
 export const metadata = {
   title: "Best AI Coding Tools for Solo Developers | AskScout",
@@ -66,17 +68,14 @@ export default function BestAICodingToolsPage() {
       />
 
       <article className="page-body page-body--reading article article--has-hero">
-        <section className="public-section">
-          <h2 className="public-section-title">TLDR</h2>
-          <p className="public-text">
-            The AI coding tools most solo developers use right now: Claude Code for agent-style
-            multi-file work, Cursor for everyday editing, Codex as OpenAI&apos;s equivalent
-            agent CLI, GitHub Copilot for autocomplete inside any editor, and Aider for
-            terminal-driven workflows. They all write code. None of them tell you what you
-            wrote. That last layer is missing, which is why tools like AskScout exist next to
-            them.
-          </p>
-        </section>
+        <p className="public-text article-tldr">
+          <strong>TLDR:</strong> The AI coding tools most solo developers use right now: Claude
+          Code for agent-style multi-file work, Cursor for everyday editing, Codex as
+          OpenAI&apos;s equivalent agent CLI, GitHub Copilot for autocomplete inside any editor,
+          and Aider for terminal-driven workflows. They all write code. None of them tell you
+          what you wrote. That last layer is missing, which is why tools like AskScout exist
+          next to them.
+        </p>
 
         <section className="public-section">
           <p className="public-text">
@@ -237,29 +236,10 @@ export default function BestAICodingToolsPage() {
           </p>
         </section>
 
-        <section className="public-section">
-          <h2 className="public-section-title">FAQ</h2>
-          <div className="faq-list">
-            {FAQ_PLAIN.map((item) => (
-              <div key={item.q} className="faq-item">
-                <h3 className="faq-question">{item.q}</h3>
-                <p className="public-text">{item.a}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="public-section">
-          <div className="article-cta">
-            <Link href="/" className="btn btn-primary">
-              Try AskScout
-            </Link>
-            <Link href="/docs" className="article-cta-secondary">
-              Or read the docs →
-            </Link>
-          </div>
-        </section>
+        <ArticleFAQ items={FAQ_PLAIN} />
       </article>
+
+      <ReadyCTA />
       <SiteFooter />
     </main>
   );
