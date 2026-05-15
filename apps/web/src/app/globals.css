@@ -11607,6 +11607,7 @@ a:hover {
    white-glow). */
 .digest-bottom-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 15px;
   margin-top: var(--space-xl);
 }
