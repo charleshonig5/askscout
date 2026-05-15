@@ -11601,11 +11601,11 @@ a:hover {
 }
 
 /* Bottom action row — Generate Standup / Generate Todo List.
-   Pixel-mapped from the Figma frame (node 50:962): 15px gap, each
-   button splits the row evenly (flex: 1) and carries the same
-   elevated-pill treatment as the header Copy/Download/Email buttons
-   (1px #252525 border on body surface, 8px radius, 20px icon at 1px
-   stroke, Work Sans Light 16 label, subtle inset white-glow). */
+   Buttons hug their content and left-align, matching the header
+   Copy/Download/Email pattern, and carry the same elevated-pill
+   treatment (1px #252525 border on body surface, 8px radius, 20px
+   icon at 1px stroke, Work Sans Light 16 label, subtle inset
+   white-glow). */
 .digest-bottom-actions {
   display: flex;
   gap: 15px;
@@ -11613,7 +11613,6 @@ a:hover {
 }
 
 .digest-bottom-actions .standup-btn {
-  flex: 1;
   gap: 8px;
   padding: 10px 14px;
   font-family: var(--font-sans);
@@ -12543,16 +12542,6 @@ a:hover {
        scroll instead of sitting flush against the screen edge. */
     padding: 24px 0;
     border-top: 1px solid var(--color-border);
-  }
-
-  /* Desktop's scoped .digest-bottom-actions .standup-btn rule
-     already supplies 16/Light type, primary color, tertiary border,
-     bg-secondary fill, and the inset glow — every color and chrome
-     value cascades unchanged. Mobile only neutralises the desktop
-     `flex: 1` row-stretch so the column-stacked buttons can size to
-     their content. */
-  .digest-bottom-actions .standup-btn {
-    flex: none;
   }
 }
 
