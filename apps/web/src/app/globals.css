@@ -12200,8 +12200,11 @@ a:hover {
 
 /* Collapse the trailing margin on the last .digest-section in either
    column so the final section sits flush against the 34px bottom
-   padding without an extra 32px of whitespace below it. */
-.digest-main > .digest-section:last-child,
+   padding without an extra 32px of whitespace below it.
+   Descendant combinator (not `>`) for .digest-main: StreamingDigest
+   wraps its sections in an unclassed div, so the sections are nested
+   one level below .digest-main, not direct children. */
+.digest-main .digest-section:last-child,
 .digest-stats-sidebar > .digest-section:last-child {
   margin-bottom: 0;
 }
@@ -12249,31 +12252,33 @@ a:hover {
     border-left: 1px solid var(--color-border);
   }
 
-  .digest-layout--two-col .digest-bottom-actions {
+  /* Two classes (.digest-layout.digest-layout--two-col) so this beats
+     the single-column `.digest-layout > .digest-bottom-actions` rule
+     below on specificity — that rule applies a negative margin-top to
+     cancel the flex gap, which must NOT happen in this grid layout. */
+  .digest-layout.digest-layout--two-col .digest-bottom-actions {
     grid-area: actions;
-    /* Main supplies its own 34px padding-bottom, which doubles as the
-       gap from the last narrative section to the buttons. Without this
-       reset the buttons would inherit the inside-main margin-top
-       (32px) on top of main's 34px padding, producing a 66px gap. */
+    /* Grid gap is 0 and main's 34px padding-bottom is the gap to the
+       buttons. Reset the base .digest-bottom-actions margin-top so it
+       doesn't add 32px on top of that. */
     margin-top: 0;
   }
 }
 
 /* Single-column fallback (renderSidebar=false on desktop, OR <1080
-   viewport): bottom-actions sits below main as a flex sibling. Same
-   reset as the two-col grid so its margin-top doesn't double up with
-   main's 34px padding-bottom. The mobile @media block further down
-   re-introduces a 24px breathing room above the divider line.
+   viewport): bottom-actions sits below main as a flex sibling.
+   .digest-layout is a flex column with a 32px gap, so on top of
+   main's 34px padding-bottom the buttons would sit 66px below the
+   last section. The negative margin-top cancels that flex gap so
+   main's 34px padding is the only gap — matching the grid layout.
+   The mobile @media block further down overrides this with its own
+   divider treatment.
 
    Padding restores the 34px left/right/bottom inset that bottom-
-   actions used to inherit by being inside .digest-main. Moving it
-   out for the mobile flow stripped that inheritance, so on desktop
-   the buttons were stretching edge-to-edge against the card. Top
-   padding stays 0 because main's own padding-bottom already
-   provides the gap above. Mobile overrides this via the @media
-   block below. */
+   actions used to inherit by being inside .digest-main. Top padding
+   stays 0 because main's own padding-bottom provides the gap above. */
 .digest-layout > .digest-bottom-actions {
-  margin-top: 0;
+  margin-top: calc(-1 * var(--space-xl));
   padding: 0 34px 34px;
 }
 
@@ -12489,8 +12494,8 @@ a:hover {
      it because .digest-main has its own 34px bottom padding; mobile
      drops that padding, so the section's own bottom margin carries
      the rhythm into the stats column that follows. */
-  .digest-main > .digest-section:last-child,
-  .digest-main > .digest-vibe:last-child {
+  .digest-main .digest-section:last-child,
+  .digest-main .digest-vibe:last-child {
     margin-bottom: 34px;
   }
 
