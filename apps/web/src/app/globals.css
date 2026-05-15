@@ -9886,8 +9886,7 @@ a:hover {
 
 /* Shared action button — used by the top-row Copy/Download/Email buttons and
    the bottom-row Generate Standup / To-Do List buttons. Same style, same
-   height. The top-row buttons size to content; the bottom-row buttons get
-   `flex: 1` from .standup-btn so they stretch edge-to-edge. */
+   height. Both rows size to content. */
 .action-btn,
 .standup-btn {
   display: inline-flex;
@@ -12275,13 +12274,6 @@ a:hover {
 .digest-layout > .digest-bottom-actions {
   margin-top: 0;
   padding: 0 34px 34px;
-}
-
-/* Bottom-row variant of the shared action button: stretches to fill the
-   row so the two buttons split the card width evenly. Visual style comes
-   from the shared .action-btn, .standup-btn base rule above. */
-.standup-btn {
-  flex: 1;
 }
 
 /* ==========================================================================
