@@ -81,12 +81,35 @@ function parseResumePrompt(text: string): Section[] {
   });
 }
 
+/**
+ * Fixed framing section prepended ahead of the LLM-produced sections.
+ * It tells the AI coding tool what the briefing is and to load context
+ * without acting, so it can't run off and edit files from an
+ * incomplete summary. Deliberately static — not LLM-generated — so its
+ * wording and formatting never drift.
+ */
+const START_HERE_SECTION: Section = {
+  heading: "Start Here",
+  type: "prose",
+  lines: [
+    "Use this briefing to load context on the project. Do not make any changes yet. Once you've read it, briefly restate the current state and the suggested Next move, then wait for my instruction.",
+  ],
+};
+
 export function AIContextModal({ isOpen, onClose, content }: AIContextModalProps) {
   const [copied, setCopied] = useState(false);
   // Lock body scroll while the modal is open.
   useBodyScrollLock(isOpen);
 
-  const sections = useMemo(() => (content ? parseResumePrompt(content) : []), [content]);
+  // Prepend the static Start Here section ahead of the parsed sections.
+  // Skipped when the content is empty or doesn't parse — there's nothing
+  // to resume into, so the framing would be pointless.
+  const sections = useMemo(() => {
+    if (!content) return [];
+    const parsed = parseResumePrompt(content);
+    if (parsed.length === 0) return [];
+    return [START_HERE_SECTION, ...parsed];
+  }, [content]);
 
   /** Build the copy payload from PARSED sections so the formatting
    *  is the same shape the StandupModal copy uses — colon-suffixed
