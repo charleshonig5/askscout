@@ -296,8 +296,6 @@ export default function DocsPage() {
             </p>
           </div>
 
-          <div className="docs-cli-divider" />
-
           <div className="docs-cli-steps">
             <div className="docs-cli-step">
               <div className="docs-cli-step-content">

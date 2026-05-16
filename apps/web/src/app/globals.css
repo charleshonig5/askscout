@@ -12062,6 +12062,12 @@ a:hover {
   align-items: stretch;
 }
 
+/* The command chip hugs its command text instead of stretching to
+   the step's full width. */
+.docs-cli-step .home-cta-chip {
+  align-self: flex-start;
+}
+
 .docs-cli-step-content {
   display: flex;
   flex-direction: column;
