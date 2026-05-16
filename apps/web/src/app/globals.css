@@ -13038,6 +13038,13 @@ a:hover {
   color: var(--color-text-primary);
 }
 
+/* Icon sits in the muted tertiary grey while the label stays primary,
+   matching the SquareArrowUpRight treatment on the home page
+   (.home-runlocal-doclink) and docs (.docs-hero-github). */
+.articles-card-read svg {
+  color: var(--color-text-tertiary);
+}
+
 .articles-card-date {
   font-family: var(--font-sans);
   font-weight: 300;
