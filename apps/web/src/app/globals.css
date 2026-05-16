@@ -12401,6 +12401,12 @@ a:hover {
        buttons. Reset the base .digest-bottom-actions margin-top so it
        doesn't add 32px on top of that. */
     margin-top: 0;
+    /* align-self:start, not the grid's default stretch: the `actions`
+       track grows tall whenever the stats sidebar (which spans both
+       rows) outruns a short digest. Stretch would inflate this
+       container to fill that track, leaving a large empty band below
+       the buttons. Keep it at its natural height, pinned to the top. */
+    align-self: start;
   }
 }
 
