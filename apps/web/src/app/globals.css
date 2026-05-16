@@ -3461,14 +3461,19 @@ a:hover {
        wide for a phone). */
     padding: 0 24px;
   }
-  .home-nav-right {
+  /* Nav links move into the dropdown menu; the Open App button and
+     GitHub icon stay inline in the bar. */
+  .home-nav-links {
     display: none;
+  }
+  .home-nav-actions {
+    gap: 16px;
   }
   .home-nav-hamburger {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-left: auto;
+    margin-left: 16px;
     width: 40px;
     height: 40px;
     padding: 0;
@@ -3483,11 +3488,10 @@ a:hover {
     background: var(--color-bg-secondary);
   }
 
-  /* Dropdown panel below the nav bar. */
+  /* Dropdown panel below the nav bar — the four nav links, stacked. */
   .home-nav-menu {
     display: flex;
     flex-direction: column;
-    gap: 20px;
     position: absolute;
     top: 100%;
     left: 0;
@@ -3503,13 +3507,6 @@ a:hover {
   .home-nav-menu-links .home-nav-link {
     padding: 12px 0;
     font-size: 14px;
-  }
-  .home-nav-menu-actions {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    padding-top: 20px;
-    border-top: 1px solid var(--color-border);
   }
 
   /* Dim overlay across the page below the nav bar — tap to close. */

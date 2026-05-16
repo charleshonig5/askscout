@@ -146,12 +146,6 @@ export function MarketingNav() {
           />
           <div className="home-nav-menu" id="home-nav-menu">
             <div className="home-nav-menu-links">{renderLinks()}</div>
-            <div className="home-nav-menu-actions">
-              <Link href="/dashboard" className="home-nav-open-app">
-                Open app
-              </Link>
-              <GithubLink />
-            </div>
           </div>
         </>
       )}
