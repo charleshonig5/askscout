@@ -2468,6 +2468,11 @@ a:hover {
 .app-main {
   flex: 1;
   min-width: 0;
+  /* Hug content height instead of stretching to .app-layout's
+     min-height:100vh. A short digest then ends where its content
+     ends, rather than leaving an empty card interior below it. The
+     left nav still spans full height via the layout's min-height. */
+  align-self: flex-start;
   /* Floating card treatment: 24px gap on top/right/bottom, and the same 24px
      offset from the fixed sidebar on the left. The elevated background +
      subtle border visually lifts the content panel off the body, so the
