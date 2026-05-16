@@ -5,6 +5,29 @@ import { usePathname } from "next/navigation";
 import { Logo } from "@/components/Logo";
 import { ForceDarkTheme } from "@/components/ForceDarkTheme";
 
+/* GitHub mark (Figma 391:44). lucide-react dropped its brand icons,
+   so the official mark is inlined. fill:currentColor lets the
+   .home-nav-github color token drive it. */
+function GithubMark() {
+  return (
+    <svg
+      width="34"
+      height="34"
+      viewBox="0 0 34 34"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M17 1.0625C7.99885 1.0625 0.708333 8.35302 0.708333 17.3542C0.708333 24.5632 5.37182 30.6522 11.8478 32.8109C12.6623 32.9534 12.9678 32.4647 12.9678 32.037C12.9678 31.6501 12.9474 30.3671 12.9474 29.0027C8.85417 29.7562 7.79521 28.0048 7.46937 27.0884C7.28609 26.62 6.49187 25.1742 5.79948 24.7872C5.22927 24.4818 4.41469 23.7283 5.77911 23.7079C7.06208 23.6875 7.97849 24.8891 8.28396 25.3778C9.75021 27.8419 12.0921 27.1495 13.0289 26.7219C13.1715 25.6629 13.5991 24.9502 14.0675 24.5429C10.4426 24.1356 6.65479 22.7304 6.65479 16.4989C6.65479 14.7271 7.28609 13.2609 8.32469 12.1205C8.16177 11.7132 7.59156 10.0433 8.4876 7.80318C8.4876 7.80318 9.85203 7.37552 12.9678 9.47307C14.2711 9.10651 15.6559 8.92323 17.0407 8.92323C18.4255 8.92323 19.8103 9.10651 21.1136 9.47307C24.2294 7.35516 25.5939 7.80318 25.5939 7.80318C26.4899 10.0433 25.9197 11.7132 25.7568 12.1205C26.7954 13.2609 27.4267 14.7068 27.4267 16.4989C27.4267 22.7508 23.6185 24.1356 19.9936 24.5429C20.5842 25.052 21.0933 26.0295 21.0933 27.5568C21.0933 29.7358 21.0729 31.4872 21.0729 32.037C21.0729 32.4647 21.3784 32.9738 22.193 32.8109C28.6282 30.6522 33.2917 24.5429 33.2917 17.3542C33.2917 8.35302 26.0011 1.0625 17 1.0625V1.0625Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
 /**
  * Marketing-site top nav (Figma node 244:2962).
  *
@@ -14,8 +37,8 @@ import { ForceDarkTheme } from "@/components/ForceDarkTheme";
  * usePathname so the right link auto-highlights wherever this
  * component is rendered — no per-page "current" prop needed.
  *
- * Layout (left → right): logo · vertical divider · Home / Docs /
- * Articles / Privacy · spacer · Open App button.
+ * Layout (left → right): logo · spacer · Home / Docs / Articles /
+ * Privacy · Open App button · GitHub icon. Per Figma 391:31.
  *
  * Marketing is dark-mode-only — the theme toggle was removed
  * because the light treatment doesn't land on the marketing
@@ -39,28 +62,38 @@ export function MarketingNav() {
       <Link href="/home" className="home-nav-logo" aria-label="AskScout home">
         <Logo height={20} />
       </Link>
-      <span className="home-nav-divider" aria-hidden />
-      <div className="home-nav-links">
-        {NAV_LINKS.map((link) => {
-          const isActive =
-            pathname === link.href ||
-            (link.matchPrefix !== undefined && pathname.startsWith(link.matchPrefix));
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={isActive ? "home-nav-link is-active" : "home-nav-link"}
-              aria-current={isActive ? "page" : undefined}
-            >
-              {link.label}
-            </Link>
-          );
-        })}
-      </div>
       <div className="home-nav-right">
-        <Link href="/dashboard" className="home-nav-open-app">
-          Open app
-        </Link>
+        <div className="home-nav-links">
+          {NAV_LINKS.map((link) => {
+            const isActive =
+              pathname === link.href ||
+              (link.matchPrefix !== undefined && pathname.startsWith(link.matchPrefix));
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={isActive ? "home-nav-link is-active" : "home-nav-link"}
+                aria-current={isActive ? "page" : undefined}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </div>
+        <div className="home-nav-actions">
+          <Link href="/dashboard" className="home-nav-open-app">
+            Open app
+          </Link>
+          <a
+            href="https://github.com/charleshonig5/askscout"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="home-nav-github"
+            aria-label="AskScout on GitHub"
+          >
+            <GithubMark />
+          </a>
+        </div>
       </div>
     </nav>
   );

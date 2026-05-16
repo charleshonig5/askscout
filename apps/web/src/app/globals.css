@@ -3279,9 +3279,9 @@ a:hover {
   display: flex;
   align-items: center;
   height: 65px;
-  /* Figma insets: 44px from the left edge to the logo, 50px from
-     the right edge to the Open App button. */
-  padding: 0 50px 0 44px;
+  /* 44px inset on both edges — logo on the left, GitHub icon on
+     the right (Figma 391:31). */
+  padding: 0 44px;
   /* Glass: 75% bg-primary fill + 12px backdrop blur. Matches the
      mobile chrome .header exactly so the marketing site and the
      in-app chrome share one shared surface treatment. The fill
@@ -3347,30 +3347,11 @@ a:hover {
    the divider follows the logo naturally at any viewport width
    while staying close to the Figma rhythm. Height matches the
    77px nav. */
-.home-nav-divider {
-  width: 1px;
-  height: 65px;
-  /* Figma node 244:2971 places this divider at x=200 against a
-     1440 frame. With the logo's natural ~112px width starting at
-     x=44, a 44px gap after the logo lands the divider on the
-     intended grid mark. */
-  margin-left: 44px;
-  background: var(--color-border);
-  flex-shrink: 0;
-}
-
 .home-nav-links {
   display: flex;
   align-items: center;
-  /* Consistent 44px rhythm across the whole nav: 44 from logo to
-     divider, 44 between every nav link, 44 from the divider to
-     the first link. margin-right: auto absorbs all remaining
-     horizontal space so the right cluster (theme toggle + Open
-     App) lands flush against the right padding edge at any
-     viewport width. */
+  /* 44px between every nav link (Figma 391:33). */
   gap: 44px;
-  margin-left: 44px;
-  margin-right: auto;
 }
 
 .home-nav-link {
@@ -3399,7 +3380,29 @@ a:hover {
 .home-nav-right {
   display: flex;
   align-items: center;
-  gap: 34px;
+  /* margin-left:auto pushes the whole right cluster (nav links +
+     actions) flush to the right inset; 64px from the links to the
+     Open App button per Figma 391:31. */
+  margin-left: auto;
+  gap: 64px;
+}
+
+.home-nav-actions {
+  display: flex;
+  align-items: center;
+  /* 24px between the Open App button and the GitHub icon. */
+  gap: 24px;
+}
+
+.home-nav-github {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-text-primary);
+  transition: color 0.15s ease;
+}
+
+.home-nav-github:hover {
+  color: var(--color-text-secondary);
 }
 
 /* Open App CTA — same chip silhouette as the digest header
