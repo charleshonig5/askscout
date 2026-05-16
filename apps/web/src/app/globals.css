@@ -3985,22 +3985,13 @@ a:hover {
 }
 
 /* Mobile: stack the two CTAs so the button labels don't wrap to a
-   second line and the install chip can't overflow a narrow screen. */
+   second line and the install chip can't overflow a narrow screen.
+   Each button hugs its content rather than stretching full-width. */
 @media (max-width: 768px) {
   .home-hero-cta {
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
     gap: 12px;
-  }
-
-  .home-hero-cta > form,
-  .home-hero-cta .home-cta,
-  .home-hero-cta .home-cta-chip {
-    width: 100%;
-  }
-
-  .home-hero-cta .home-cta {
-    justify-content: center;
   }
 }
 
