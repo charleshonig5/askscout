@@ -1,8 +1,8 @@
 import {
+  Cog,
   Download,
   LogIn,
   PlaySquare,
-  Settings,
   ShieldCheck,
   SquareArrowUpRight,
 } from "lucide-react";
@@ -315,7 +315,7 @@ export default function DocsPage() {
             <div className="docs-cli-step">
               <div className="docs-cli-step-content">
                 <span className="docs-cli-step-icon" aria-hidden>
-                  <Settings size={28} strokeWidth={1.25} />
+                  <Cog size={28} strokeWidth={1.25} />
                 </span>
                 <div className="docs-cli-step-text">
                   <h3>Setup</h3>
