@@ -12375,6 +12375,12 @@ a:hover {
     grid-template-areas:
       "main sidebar"
       "actions sidebar";
+    /* max-content pins the narrative row to its exact content height
+       so the buttons sit flush beneath it. 1fr lets only the actions
+       row absorb slack when the stats sidebar (which spans both rows)
+       outruns a short digest — without this, both auto rows grew and
+       the slack split into a gap above AND below the buttons. */
+    grid-template-rows: max-content 1fr;
     gap: 0;
     align-items: stretch;
   }
