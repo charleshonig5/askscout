@@ -7940,6 +7940,13 @@ a:hover {
     inset 0 0 20px 0 var(--color-inner-glow);
 }
 
+/* The docs FAQ has only two tabs; the 386px width is sized for the
+   home page's three. Hug the content so the two tabs aren't adrift
+   in empty space. */
+.docs-faq .home-faq-tabs {
+  width: fit-content;
+}
+
 .home-faq-tab {
   appearance: none;
   border: 0;
