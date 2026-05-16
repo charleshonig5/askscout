@@ -8943,14 +8943,13 @@ a:hover {
 }
 
 .public-text {
-  /* 16px reading body — bumps line-length comfort for long-form
-     prose (privacy, articles). Color stays secondary for the
-     newspaper-comfortable contrast. */
+  /* 16px reading body for long-form article prose, primary color
+     for legibility. */
   font-family: var(--font-sans);
   font-size: 16px;
   font-weight: 300;
   line-height: 1.7;
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
   margin-bottom: 18px;
 }
 
@@ -13198,8 +13197,10 @@ a:hover {
   width: 100%;
   font-family: var(--font-sans);
   font-weight: 300;
-  font-size: 20px;
-  line-height: 26px;
+  /* 16/1.7 primary — matches the articles body so long-form prose
+     reads the same site-wide. */
+  font-size: 16px;
+  line-height: 1.7;
   color: var(--color-text-primary);
 }
 
@@ -13222,7 +13223,7 @@ a:hover {
   white-space: nowrap;
 }
 
-/* Links: WS Medium + underline, no color shift (inherits white).
+/* Links: WS Medium + underline, inheriting the primary body color.
    Matches the Figma's bold underlined link treatment. */
 .privacy-body a {
   font-weight: 500;
@@ -13267,7 +13268,7 @@ a:hover {
   left: 4px;
   top: 0;
   color: var(--color-text-primary);
-  line-height: 26px;
+  line-height: 1.7;
 }
 
 /* MOBILE — scale down the hero, tighten the page padding, and
@@ -13296,8 +13297,8 @@ a:hover {
     line-height: 36px;
   }
   .privacy-body {
-    font-size: 17px;
-    line-height: 24px;
+    font-size: 16px;
+    line-height: 1.7;
     gap: 22px;
   }
   .privacy-list {
