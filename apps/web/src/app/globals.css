@@ -8837,6 +8837,13 @@ a:hover {
   color: var(--color-text-secondary);
 }
 
+/* The Back to Articles / Copy URL icons sit in the tertiary grey
+   per Figma 257:4865, while the label stays primary. The pill clock
+   icon is separately white, so it isn't covered here. */
+.article-hero-link svg {
+  color: var(--color-text-tertiary);
+}
+
 .article-hero-pills {
   display: flex;
   align-items: center;
