@@ -4,11 +4,15 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
 import { ArticleFAQ } from "@/components/ArticleFAQ";
 import { ReadyCTA } from "@/components/ReadyCTA";
+import { articleJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
   title: "The Hidden Cost of Vibe Coding | AskScout",
   description:
     "AI coding tools sped us up. They also made it harder to remember what we actually built. Why I think the next big workflow problem is digesting your own code.",
+  alternates: {
+    canonical: "/articles/the-hidden-cost-of-vibe-coding",
+  },
   openGraph: {
     title: "The Hidden Cost of Vibe Coding",
     description:
@@ -52,12 +56,23 @@ const FAQ_SCHEMA = {
   })),
 };
 
+const ARTICLE_SCHEMA = articleJsonLd({
+  slug: "the-hidden-cost-of-vibe-coding",
+  headline: "The Hidden Cost of Vibe Coding",
+  description:
+    "AI coding tools sped us up. They also made it harder to remember what we actually built. Why I think the next big workflow problem is digesting your own code.",
+});
+
 export default function HiddenCostPage() {
   return (
     <main className="page">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ARTICLE_SCHEMA) }}
       />
       <MarketingNav />
 

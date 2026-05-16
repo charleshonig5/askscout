@@ -4,11 +4,15 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
 import { ArticleFAQ } from "@/components/ArticleFAQ";
 import { ReadyCTA } from "@/components/ReadyCTA";
+import { articleJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
   title: "Best Ways to Track What You Shipped as a Developer | AskScout",
   description:
     "An honest comparison of git log, GitHub Insights, dev journals, and automated digests for tracking what you actually built each week.",
+  alternates: {
+    canonical: "/articles/best-ways-to-track-what-you-shipped",
+  },
   openGraph: {
     title: "Best Ways to Track What You Shipped as a Developer",
     description:
@@ -52,12 +56,23 @@ const FAQ_SCHEMA = {
   })),
 };
 
+const ARTICLE_SCHEMA = articleJsonLd({
+  slug: "best-ways-to-track-what-you-shipped",
+  headline: "Best Ways to Track What You Shipped as a Developer",
+  description:
+    "An honest comparison of git log, GitHub Insights, dev journals, and automated digests for tracking what you actually built each week.",
+});
+
 export default function TrackWhatYouShippedPage() {
   return (
     <main className="page">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ARTICLE_SCHEMA) }}
       />
       <MarketingNav />
 

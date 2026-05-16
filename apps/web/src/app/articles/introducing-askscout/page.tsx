@@ -4,11 +4,15 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
 import { ArticleFAQ } from "@/components/ArticleFAQ";
 import { ReadyCTA } from "@/components/ReadyCTA";
+import { articleJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
   title: "Introducing AskScout: your vibe coding companion | AskScout",
   description:
     "AskScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex.",
+  alternates: {
+    canonical: "/articles/introducing-askscout",
+  },
   openGraph: {
     title: "Introducing AskScout: your vibe coding companion",
     description:
@@ -52,12 +56,23 @@ const FAQ_SCHEMA = {
   })),
 };
 
+const ARTICLE_SCHEMA = articleJsonLd({
+  slug: "introducing-askscout",
+  headline: "Introducing AskScout: your vibe coding companion",
+  description:
+    "AskScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex.",
+});
+
 export default function IntroducingAskScoutPage() {
   return (
     <main className="page">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ARTICLE_SCHEMA) }}
       />
       <MarketingNav />
 

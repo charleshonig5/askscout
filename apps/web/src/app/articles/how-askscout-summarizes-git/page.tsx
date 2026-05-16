@@ -3,11 +3,15 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
 import { ArticleFAQ } from "@/components/ArticleFAQ";
 import { ReadyCTA } from "@/components/ReadyCTA";
+import { articleJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
   title: "How AskScout turns a noisy git log into a 10-second digest | AskScout",
   description:
     "A walkthrough of how AskScout reads commits and diffs, computes structural signals, and uses a tuned LLM prompt to produce a readable digest.",
+  alternates: {
+    canonical: "/articles/how-askscout-summarizes-git",
+  },
   openGraph: {
     title: "How AskScout turns a noisy git log into a 10-second digest",
     description:
@@ -51,12 +55,23 @@ const FAQ_SCHEMA = {
   })),
 };
 
+const ARTICLE_SCHEMA = articleJsonLd({
+  slug: "how-askscout-summarizes-git",
+  headline: "How AskScout turns a noisy git log into a 10-second digest",
+  description:
+    "A walkthrough of how AskScout reads commits and diffs, computes structural signals, and uses a tuned LLM prompt to produce a readable digest.",
+});
+
 export default function HowAskScoutSummarizesGitPage() {
   return (
     <main className="page">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ARTICLE_SCHEMA) }}
       />
       <MarketingNav />
 

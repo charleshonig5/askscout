@@ -4,12 +4,16 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
 import { ArticleFAQ } from "@/components/ArticleFAQ";
 import { ReadyCTA } from "@/components/ReadyCTA";
+import { articleJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
   title:
     "The fastest way to bring Claude Code, Cursor, or Codex up to speed on your project | AskScout",
   description:
     "How to give Claude Code, Cursor, or Codex a one-shot context block covering tech stack, recent work, current focus, and key files, so the AI is useful from the first message.",
+  alternates: {
+    canonical: "/articles/fastest-way-to-give-claude-or-cursor-project-context",
+  },
   openGraph: {
     title: "The fastest way to bring Claude Code, Cursor, or Codex up to speed on your project",
     description:
@@ -53,12 +57,24 @@ const FAQ_SCHEMA = {
   })),
 };
 
+const ARTICLE_SCHEMA = articleJsonLd({
+  slug: "fastest-way-to-give-claude-or-cursor-project-context",
+  headline:
+    "The fastest way to bring Claude Code, Cursor, or Codex up to speed on your project",
+  description:
+    "How to give Claude Code, Cursor, or Codex a one-shot context block covering tech stack, recent work, current focus, and key files, so the AI is useful from the first message.",
+});
+
 export default function FastestWayToContextPage() {
   return (
     <main className="page">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ARTICLE_SCHEMA) }}
       />
       <MarketingNav />
 
