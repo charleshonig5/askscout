@@ -4105,6 +4105,8 @@ a:hover {
 .home-cta-chip {
   display: inline-flex;
   align-items: center;
+  /* A shell command never wraps mid-token. */
+  white-space: nowrap;
   gap: 14px;
   height: 54px;
   padding: 15px 24px;
@@ -11902,7 +11904,8 @@ a:hover {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 34px;
+  /* 54px from the heading block down to the cards. */
+  gap: 54px;
 }
 
 .docs-webapp-cards {
@@ -12027,7 +12030,9 @@ a:hover {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 34px;
+  /* 54px between every sub-section (heading, steps, commands,
+     pricing) and the dividers that separate them. */
+  gap: 54px;
 }
 
 .docs-cli-divider {
@@ -12260,7 +12265,12 @@ a:hover {
   margin-top: 8px;
 }
 
-@media (max-width: 1000px) {
+/* 1040, not 1000: the 3-up step row needs the full 976px inner
+   (3x274 + 2x77), which the viewport only affords past 1040px (976 +
+   2x32 section padding). Between 1000 and 1040 the steps would shrink
+   under 274px and the command-chip text would wrap. Stack before
+   that squeeze window. */
+@media (max-width: 1040px) {
   .docs-cli-steps {
     flex-direction: column;
     gap: 32px;
