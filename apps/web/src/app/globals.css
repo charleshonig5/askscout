@@ -3984,6 +3984,26 @@ a:hover {
   gap: 24px;
 }
 
+/* Mobile: stack the two CTAs so the button labels don't wrap to a
+   second line and the install chip can't overflow a narrow screen. */
+@media (max-width: 768px) {
+  .home-hero-cta {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .home-hero-cta > form,
+  .home-hero-cta .home-cta,
+  .home-hero-cta .home-cta-chip {
+    width: 100%;
+  }
+
+  .home-hero-cta .home-cta {
+    justify-content: center;
+  }
+}
+
 /* Trust chips row — sits ABOVE the title per Figma 244:2429.
    Rectangular bordered chips (rounded 4) with transparent fill,
    Work Sans Light 12 primary text. Two chips: "Open Source" links

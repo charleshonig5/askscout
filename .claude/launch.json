@@ -4,7 +4,7 @@
     {
       "name": "web",
       "runtimeExecutable": "/bin/bash",
-      "runtimeArgs": ["-c", "export PATH=/usr/local/bin:$PATH && cd apps/web && pnpm dev"],
+      "runtimeArgs": ["-c", "export PATH=/usr/local/bin:$PATH && cd /Users/charleshonig/Desktop/askscout/.claude/worktrees/wizardly-johnson-f587f6/apps/web && pnpm dev"],
       "port": 3000
     }
   ]
