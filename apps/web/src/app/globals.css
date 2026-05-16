@@ -3444,6 +3444,86 @@ a:hover {
   transform: translateY(1px);
 }
 
+/* ---- Mobile nav (<=768px) ----
+   The desktop inline cluster collapses into a hamburger that
+   toggles a dropdown panel, borrowing the web app <Header/>'s
+   Menu/CircleX toggle pattern. The hamburger and the menu/overlay
+   are display:none by default so they never show on desktop. */
+.home-nav-hamburger,
+.home-nav-menu,
+.home-nav-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .home-nav {
+    /* Tighter 24px inset on mobile (the 44px desktop inset is too
+       wide for a phone). */
+    padding: 0 24px;
+  }
+  .home-nav-right {
+    display: none;
+  }
+  .home-nav-hamburger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .home-nav-hamburger:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  /* Dropdown panel below the nav bar. */
+  .home-nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding: 24px;
+    background: var(--color-bg-primary);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .home-nav-menu-links {
+    display: flex;
+    flex-direction: column;
+  }
+  .home-nav-menu-links .home-nav-link {
+    padding: 12px 0;
+    font-size: 14px;
+  }
+  .home-nav-menu-actions {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  /* Dim overlay across the page below the nav bar — tap to close. */
+  .home-nav-overlay {
+    display: block;
+    position: fixed;
+    top: 65px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--color-modal-backdrop);
+  }
+}
+
 /* ---------- HERO ---------- */
 /* Hero — three-block stack per Figma node 244:2058:
      nav (77, already shipped) — gap 88 — text+button block (707

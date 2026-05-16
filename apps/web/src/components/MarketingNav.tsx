@@ -1,9 +1,14 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Menu, CircleX } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { ForceDarkTheme } from "@/components/ForceDarkTheme";
+import { useBodyScrollLock } from "@/lib/useBodyScrollLock";
+
+const GITHUB_URL = "https://github.com/charleshonig5/askscout";
 
 /* GitHub mark (Figma 391:44). lucide-react dropped its brand icons,
    so the official mark is inlined. fill:currentColor lets the
@@ -28,8 +33,22 @@ function GithubMark() {
   );
 }
 
+function GithubLink() {
+  return (
+    <a
+      href={GITHUB_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="home-nav-github"
+      aria-label="AskScout on GitHub"
+    >
+      <GithubMark />
+    </a>
+  );
+}
+
 /**
- * Marketing-site top nav (Figma node 244:2962).
+ * Marketing-site top nav (Figma node 391:31).
  *
  * Shared across every public marketing surface (/home, /docs,
  * /articles, /privacy, and every article subpage) so visual updates
@@ -37,15 +56,16 @@ function GithubMark() {
  * usePathname so the right link auto-highlights wherever this
  * component is rendered — no per-page "current" prop needed.
  *
- * Layout (left → right): logo · spacer · Home / Docs / Articles /
- * Privacy · Open App button · GitHub icon. Per Figma 391:31.
+ * Desktop (left → right): logo · spacer · Home / Docs / Articles /
+ * Privacy · Open App button · GitHub icon.
  *
- * Marketing is dark-mode-only — the theme toggle was removed
- * because the light treatment doesn't land on the marketing
- * visual language. <ForceDarkTheme /> sits at the top of the
- * nav and pins data-theme="dark" on the html element without
- * touching the cookie, so the dashboard's per-user theme
- * preference is preserved across navigations.
+ * Mobile (≤768px): logo · spacer · hamburger. The hamburger flips
+ * Menu ⇄ CircleX and toggles a dropdown panel carrying the same
+ * links + Open App + GitHub — the toggle pattern is borrowed from
+ * the web app's <Header />.
+ *
+ * Marketing is dark-mode-only — <ForceDarkTheme /> pins
+ * data-theme="dark" without touching the dashboard's theme cookie.
  */
 const NAV_LINKS: Array<{ href: string; label: string; matchPrefix?: string }> = [
   { href: "/home", label: "Home" },
@@ -56,45 +76,85 @@ const NAV_LINKS: Array<{ href: string; label: string; matchPrefix?: string }> = 
 
 export function MarketingNav() {
   const pathname = usePathname() ?? "";
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Lock body scroll while the mobile menu is open.
+  useBodyScrollLock(menuOpen);
+
+  // Close the mobile menu whenever the route changes.
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  const renderLinks = () =>
+    NAV_LINKS.map((link) => {
+      const isActive =
+        pathname === link.href ||
+        (link.matchPrefix !== undefined && pathname.startsWith(link.matchPrefix));
+      return (
+        <Link
+          key={link.href}
+          href={link.href}
+          className={isActive ? "home-nav-link is-active" : "home-nav-link"}
+          aria-current={isActive ? "page" : undefined}
+        >
+          {link.label}
+        </Link>
+      );
+    });
+
   return (
     <nav className="home-nav" aria-label="Site">
       <ForceDarkTheme />
       <Link href="/home" className="home-nav-logo" aria-label="AskScout home">
         <Logo height={20} />
       </Link>
+
+      {/* Desktop: inline link + action cluster. Hidden ≤768px. */}
       <div className="home-nav-right">
-        <div className="home-nav-links">
-          {NAV_LINKS.map((link) => {
-            const isActive =
-              pathname === link.href ||
-              (link.matchPrefix !== undefined && pathname.startsWith(link.matchPrefix));
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={isActive ? "home-nav-link is-active" : "home-nav-link"}
-                aria-current={isActive ? "page" : undefined}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-        </div>
+        <div className="home-nav-links">{renderLinks()}</div>
         <div className="home-nav-actions">
           <Link href="/dashboard" className="home-nav-open-app">
             Open app
           </Link>
-          <a
-            href="https://github.com/charleshonig5/askscout"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="home-nav-github"
-            aria-label="AskScout on GitHub"
-          >
-            <GithubMark />
-          </a>
+          <GithubLink />
         </div>
       </div>
+
+      {/* Mobile: hamburger toggles the dropdown menu. Hidden >768px. */}
+      <button
+        type="button"
+        className="home-nav-hamburger"
+        onClick={() => setMenuOpen((v) => !v)}
+        aria-label={menuOpen ? "Close menu" : "Open menu"}
+        aria-expanded={menuOpen}
+        aria-controls="home-nav-menu"
+      >
+        {menuOpen ? (
+          <CircleX size={20} strokeWidth={1} aria-hidden />
+        ) : (
+          <Menu size={20} strokeWidth={1} aria-hidden />
+        )}
+      </button>
+
+      {menuOpen && (
+        <>
+          <div
+            className="home-nav-overlay"
+            onClick={() => setMenuOpen(false)}
+            aria-hidden
+          />
+          <div className="home-nav-menu" id="home-nav-menu">
+            <div className="home-nav-menu-links">{renderLinks()}</div>
+            <div className="home-nav-menu-actions">
+              <Link href="/dashboard" className="home-nav-open-app">
+                Open app
+              </Link>
+              <GithubLink />
+            </div>
+          </div>
+        </>
+      )}
     </nav>
   );
 }
