@@ -11727,6 +11727,12 @@ a:hover {
 .digest-bottom-actions {
   display: flex;
   flex-wrap: wrap;
+  /* flex-start, not the default stretch: in the two-col grid this
+     container is stretched to fill the `actions` track, which grows
+     tall whenever the stats sidebar outruns a short digest. With the
+     default stretch the buttons stretched vertically to fill it, so
+     button height varied with digest length. */
+  align-items: flex-start;
   gap: 15px;
   margin-top: var(--space-xl);
 }
