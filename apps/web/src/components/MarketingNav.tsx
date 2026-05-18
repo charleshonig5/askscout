@@ -59,10 +59,10 @@ function GithubLink() {
  * Desktop (left → right): logo · spacer · Home / Docs / Articles /
  * Privacy · Open App button · GitHub icon.
  *
- * Mobile (≤768px): logo · spacer · hamburger. The hamburger flips
- * Menu ⇄ CircleX and toggles a dropdown panel carrying the same
- * links + Open App + GitHub — the toggle pattern is borrowed from
- * the web app's <Header />.
+ * Mobile (≤768px): hamburger · logo · spacer · Open App. The
+ * hamburger flips Menu ⇄ CircleX and toggles a full-screen menu
+ * takeover carrying the four nav links + the GitHub mark, centered
+ * — the toggle pattern is borrowed from the web app's <Header />.
  *
  * Marketing is dark-mode-only — <ForceDarkTheme /> pins
  * data-theme="dark" without touching the dashboard's theme cookie.
@@ -86,6 +86,19 @@ export function MarketingNav() {
     setMenuOpen(false);
   }, [pathname]);
 
+  // Close the menu if the viewport grows past the mobile breakpoint.
+  // The hamburger (and the menu itself) are display:none on desktop,
+  // so a menu left open across a resize would strand the body
+  // scroll-lock with no visible affordance to release it.
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 769px)");
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (e.matches) setMenuOpen(false);
+    };
+    mq.addEventListener("change", handleChange);
+    return () => mq.removeEventListener("change", handleChange);
+  }, []);
+
   const renderLinks = () =>
     NAV_LINKS.map((link) => {
       const isActive =
@@ -104,51 +117,60 @@ export function MarketingNav() {
     });
 
   return (
-    <nav className="home-nav" aria-label="Site">
-      <ForceDarkTheme />
-      <Link href="/home" className="home-nav-logo" aria-label="AskScout home">
-        <Logo height={20} />
-      </Link>
-
-      {/* Desktop: inline link + action cluster. Hidden ≤768px. */}
-      <div className="home-nav-right">
-        <div className="home-nav-links">{renderLinks()}</div>
-        <div className="home-nav-actions">
-          <Link href="/dashboard" className="home-nav-open-app">
-            Open app
-          </Link>
-          <GithubLink />
-        </div>
-      </div>
-
-      {/* Mobile: hamburger toggles the dropdown menu. Hidden >768px. */}
-      <button
-        type="button"
-        className="home-nav-hamburger"
-        onClick={() => setMenuOpen((v) => !v)}
-        aria-label={menuOpen ? "Close menu" : "Open menu"}
-        aria-expanded={menuOpen}
-        aria-controls="home-nav-menu"
+    <>
+      <nav
+        className={menuOpen ? "home-nav home-nav--menu-open" : "home-nav"}
+        aria-label="Site"
       >
-        {menuOpen ? (
-          <CircleX size={20} strokeWidth={1} aria-hidden />
-        ) : (
-          <Menu size={20} strokeWidth={1} aria-hidden />
-        )}
-      </button>
+        <ForceDarkTheme />
+        <Link href="/home" className="home-nav-logo" aria-label="AskScout home">
+          <Logo height={20} />
+        </Link>
 
-      {menuOpen && (
-        <>
-          <div
-            className="home-nav-overlay"
-            onClick={() => setMenuOpen(false)}
-            aria-hidden
-          />
-          <div className="home-nav-menu" id="home-nav-menu">
-            <div className="home-nav-menu-links">{renderLinks()}</div>
+        {/* Desktop: inline link + action cluster. Hidden ≤768px. */}
+        <div className="home-nav-right">
+          <div className="home-nav-links">{renderLinks()}</div>
+          <div className="home-nav-actions">
+            <Link href="/dashboard" className="home-nav-open-app">
+              Open app
+            </Link>
+            <GithubLink />
           </div>
-        </>
+        </div>
+
+        {/* Mobile: hamburger toggles the full-screen menu. Hidden >768px. */}
+        <button
+          type="button"
+          className="home-nav-hamburger"
+          onClick={() => setMenuOpen((v) => !v)}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          aria-controls="home-nav-menu"
+        >
+          {menuOpen ? (
+            <CircleX size={20} strokeWidth={1} aria-hidden />
+          ) : (
+            <Menu size={20} strokeWidth={1} aria-hidden />
+          )}
+        </button>
+      </nav>
+
+      {/* Mobile full-screen menu — Figma 399:2929. A full-viewport
+          takeover with the four nav links + the GitHub mark stacked
+          and centered. Rendered as a SIBLING of <nav> (not a child)
+          on purpose: the nav's backdrop-filter creates a containing
+          block, so a position:fixed child would be trapped inside
+          the 68px header box instead of filling the viewport. Sits
+          at z-index 49 — just below the sticky nav (50) — so the
+          header's close button stays on top and tappable. */}
+      {menuOpen && (
+        <div className="home-nav-menu" id="home-nav-menu">
+          <div className="home-nav-menu-links">
+            {renderLinks()}
+            <GithubLink />
+          </div>
+        </div>
       )}
-    </nav>
+    </>
   );
 }

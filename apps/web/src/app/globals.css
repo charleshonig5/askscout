@@ -3446,40 +3446,71 @@ a:hover {
 
 /* ---- Mobile nav (<=768px) ----
    The desktop inline cluster collapses into a hamburger that
-   toggles a dropdown panel, borrowing the web app <Header/>'s
-   Menu/CircleX toggle pattern. The hamburger and the menu/overlay
-   are display:none by default so they never show on desktop. */
+   toggles a full-screen menu takeover, borrowing the web app
+   <Header/>'s Menu/CircleX toggle pattern. The hamburger and the
+   menu are display:none by default so they never show on desktop. */
 .home-nav-hamburger,
-.home-nav-menu,
-.home-nav-overlay {
+.home-nav-menu {
   display: none;
 }
 
 @media (max-width: 768px) {
+  /* Mobile nav bar — Figma 397:352. Hamburger (left) -> logo ->
+     spacer -> Open App button (right). 68px tall with a 1px
+     bottom border. The glass fill + 12px backdrop blur + sticky
+     scroll behaviour all come from the base .home-nav rule and
+     are kept intact. */
   .home-nav {
     /* Tighter 24px inset on mobile (the 44px desktop inset is too
        wide for a phone). */
     padding: 0 24px;
+    height: 68px;
   }
-  /* Nav links move into the dropdown menu; the Open App button and
-     GitHub icon stay inline in the bar. */
+  /* Nav links move into the full-screen menu. The Open App button
+     stays inline on the right; the GitHub icon is dropped from the
+     mobile bar (scoped to the bar's action cluster so the copy of
+     the GitHub mark inside the menu stays visible). */
   .home-nav-links {
     display: none;
   }
-  .home-nav-actions {
-    gap: 16px;
+  .home-nav-actions .home-nav-github {
+    display: none;
   }
+
+  /* Menu-open state — the nav drops its glass blur. The blur is
+     pointless behind a full-screen takeover, AND backdrop-filter
+     makes the nav a containing block for position:fixed children;
+     dropping it lets the menu (a sibling) fill the true viewport.
+     Solid bg-secondary so the header strip matches the #121212
+     menu field (Figma 399:2929) — its 1px bottom border becomes
+     the divider under the header. */
+  .home-nav--menu-open {
+    background: var(--color-bg-secondary);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  /* Open App button — 40px tall to match the hamburger square
+     (Figma: both buttons h40, px14 py10). */
+  .home-nav-open-app {
+    height: 40px;
+  }
+  /* Hamburger — moved to the LEFT of the logo via flex order
+     (it's last in the DOM). 40x40 bordered square with the same
+     inset inner-glow as the Open App button, 14px gap to the
+     logo (Figma: hamburger left24..64, logo at 78). */
   .home-nav-hamburger {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-left: 16px;
+    order: -1;
+    margin-right: 14px;
     width: 40px;
     height: 40px;
     padding: 0;
     border: 1px solid var(--color-border);
     border-radius: 8px;
     background: var(--color-bg-primary);
+    box-shadow: inset 0 0 20px 0 var(--color-inner-glow);
     color: var(--color-text-primary);
     cursor: pointer;
     transition: background 0.15s ease;
@@ -3488,36 +3519,36 @@ a:hover {
     background: var(--color-bg-secondary);
   }
 
-  /* Dropdown panel below the nav bar — the four nav links, stacked. */
+  /* Full-screen menu takeover — Figma 399:2929. A fixed,
+     viewport-filling #121212 field with the links + GitHub mark
+     centered. z-index 49 sits it just under the sticky nav (50)
+     so the header bar — including the close button — stays on
+     top and tappable. */
   .home-nav-menu {
     display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    inset: 0;
+    z-index: 49;
     padding: 24px;
-    background: var(--color-bg-primary);
-    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg-secondary);
   }
+  /* Link stack — four links + the GitHub mark, 64px gaps,
+     centered (Figma 399:2969). */
   .home-nav-menu-links {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: 64px;
   }
+  /* Menu links — Work Sans Light 32px, all white (the active
+     link carries no extra emphasis here per Figma). */
   .home-nav-menu-links .home-nav-link {
-    padding: 12px 0;
-    font-size: 14px;
-  }
-
-  /* Dim overlay across the page below the nav bar — tap to close. */
-  .home-nav-overlay {
-    display: block;
-    position: fixed;
-    top: 65px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: var(--color-modal-backdrop);
+    padding: 0;
+    font-size: 32px;
+    font-weight: 300;
+    color: var(--color-text-primary);
   }
 }
 
