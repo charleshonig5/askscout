@@ -8565,15 +8565,9 @@ a:hover {
 }
 
 @media (max-width: 540px) {
-  .home-hero {
-    padding: 48px 20px 80px;
-  }
   .home-hero-title {
     font-size: 40px;
     letter-spacing: -0.02em;
-  }
-  .home-section {
-    padding: 64px 20px;
   }
   .home-section-title {
     font-size: 32px;
@@ -8584,6 +8578,71 @@ a:hover {
   .home-footer-cols {
     flex-direction: column;
     gap: 32px;
+  }
+}
+
+/* ============================================================
+   MOBILE MARKETING — SECTION RHYTHM + HERO VIDEO
+   ============================================================
+   The mobile marketing design system (Figma 397:2). Below the
+   768px marketing breakpoint the section rhythm tightens: every
+   .home-section divider gets 54px of breathing room above and
+   below (vs 104px desktop), and content sits in a 354px column
+   inside the 402px frame — i.e. 24px side gutters.
+
+   Placed AFTER the 540px block so these values win at every
+   width <= 768px. Per-section type + component scaling lands in
+   follow-up passes; this block is spacing + the hero video only.
+   ============================================================ */
+@media (max-width: 768px) {
+  /* Section divider rhythm — 54px above/below the 1px top border. */
+  .home-section {
+    padding: 54px 24px;
+  }
+  .home-section--cta {
+    padding: 54px 24px;
+  }
+
+  /* Hero box — nav-to-content gap drops 74px -> 34px (Figma:
+     header underline at y68, hero chips at y102). 7px bottom
+     padding stays so the bg-fade keeps overlapping the graphic
+     border. margin-bottom 47px + that 7px = the same 54px gap
+     to the first section divider as every other section. */
+  .home-hero {
+    padding: 34px 24px 7px;
+    margin-bottom: 47px;
+  }
+
+  /* Hero background video — scaled down to mobile. The desktop
+     element is a fixed 1920x1080 that deliberately bleeds past
+     the viewport so the starfield reaches edge-to-edge. On
+     mobile it keeps that same job: a soft, dim, blurred
+     starfield covering the hero and fading to black at the
+     bottom — just at mobile scale.
+
+       - width 120vw: a modest bleed past the viewport (the
+         video is wider than the hero, so it bleeds off the
+         sides — that's intentional). Height stays at the base
+         1080px so object-fit: cover keeps the hero covered;
+         the hero's clip-path trims the overflow.
+       - blur 1px: the desktop 3.3px blur is tuned for a 1920px
+         video. On a ~450px-wide mobile video that same radius
+         is proportionally ~4x stronger and turns the starfield
+         to mush. 1px keeps the soft atmospheric haze at mobile
+         scale (≈ 3.3px x viewport/1920).
+       - opacity stays 0.35 — opacity doesn't scale with size.
+       - the bottom mask is percentage-based, so it scales on
+         its own. */
+  .home-hero-bg {
+    width: 120vw;
+    filter: blur(1px);
+  }
+
+  /* Bottom-fade overlay — desktop's 150px bg-primary fade,
+     scaled down to 96px so it dissolves the same proportion of
+     the shorter mobile hero into the page background. */
+  .home-hero-bg-fade {
+    height: 96px;
   }
 }
 
