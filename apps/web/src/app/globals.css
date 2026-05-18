@@ -3477,14 +3477,27 @@ a:hover {
     display: none;
   }
 
-  /* Menu-open state — the nav drops its glass blur. The blur is
-     pointless behind a full-screen takeover, AND backdrop-filter
-     makes the nav a containing block for position:fixed children;
-     dropping it lets the menu (a sibling) fill the true viewport.
-     Solid bg-secondary so the header strip matches the #121212
-     menu field (Figma 399:2929) — its 1px bottom border becomes
-     the divider under the header. */
+  /* Menu-open state. Three things happen here:
+
+     1. Drop the glass blur — pointless behind a full-screen
+        takeover, and backdrop-filter makes the nav a containing
+        block for position:fixed children, which would trap the
+        menu sibling.
+     2. Solid bg-secondary so the header strip matches the
+        #121212 menu field (Figma 399:2929); the nav's 1px bottom
+        border becomes the divider under the header.
+     3. position:fixed + left/right:0. The base nav is
+        position:sticky inside <body>, and useBodyScrollLock pads
+        the body's right edge (scrollbar compensation) when the
+        menu opens. That padding shrinks a width:100% sticky nav,
+        leaving its bottom-border divider short of the viewport
+        edge. Fixed + left/right:0 spans the true viewport so the
+        divider stays full-bleed, aligned with the fixed menu. */
   .home-nav--menu-open {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     background: var(--color-bg-secondary);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
