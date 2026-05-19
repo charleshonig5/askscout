@@ -9090,6 +9090,12 @@ a:hover {
     gap: 34px;
     align-items: flex-start;
   }
+  /* Card padding — 24px, overriding the older 16px set by the
+     <=1000px block, so it matches the 24px row gap / divider
+     spacing and the mobile pattern. */
+  .home-faq-card {
+    padding: 24px;
+  }
   /* Tab control — hug the three tabs (don't stretch full width).
      Three labels don't fit a phone row at the desktop 12px/14px,
      so drop to 11px with tighter horizontal padding. */
