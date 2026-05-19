@@ -9142,6 +9142,33 @@ a:hover {
   .home-readycta-install {
     display: none;
   }
+
+  /* ============================================
+     FOOTER — Figma 405:6215 (mobile)
+     ============================================
+     Single column: the brand block (logo + copyright) above the
+     three link groups, which themselves stack vertically. Only
+     spacing/padding shift to the mobile pattern — content and
+     type sizes are unchanged. */
+
+  /* Section padding to the mobile 54/24 rhythm (desktop 104/32). */
+  .home-footer {
+    padding: 54px 24px;
+  }
+  /* 34px between the brand block and the link groups (the inner
+     is already a column from the <=880px query). */
+  .home-footer-inner {
+    gap: 34px;
+  }
+  /* Logo -> copyright gap 14 (desktop 24). */
+  .home-footer-brand {
+    gap: 14px;
+  }
+  /* Stack the three link groups vertically, 34px apart. */
+  .home-footer-cols {
+    flex-direction: column;
+    gap: 34px;
+  }
 }
 
 /* ============================================
