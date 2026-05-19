@@ -8768,11 +8768,13 @@ a:hover {
     filter: blur(1px);
   }
 
-  /* Bottom-fade overlay — desktop's 150px bg-primary fade,
-     scaled down to 96px so it dissolves the same proportion of
-     the shorter mobile hero into the page background. */
+  /* Bottom-fade overlay — bg-primary gradient dissolving the hero
+     bottom (graphic + starfield) into the page. 64px: at 96px it
+     ate ~42% of the short mobile graphic; 64px starts the fade
+     lower so it covers less of the graphic while still dissolving
+     it smoothly into the background. */
   .home-hero-bg-fade {
-    height: 96px;
+    height: 64px;
   }
 }
 
