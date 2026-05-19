@@ -8824,17 +8824,18 @@ a:hover {
     gap: 14px;
   }
 
-  /* Cards span the full content width. Height stays fixed (the
-     mock + copy are absolutely positioned): 334 for the
-     two-line-copy cards, 349 for cards 1 & 4 whose narrower
-     mobile copy column wraps to three lines. */
+  /* Cards span the full content width and hug their content. A
+     fixed height would strand empty space below the body text
+     whenever the copy reflows to fewer lines as the viewport
+     widens toward the 768px breakpoint. Instead the mock + fade
+     stay absolutely positioned over the top, the copy flows below
+     them (see .home-features-copy), and a 23px bottom padding
+     closes the card — so the gap under the text is constant no
+     matter how many lines the copy wraps to. */
   .home-features-card {
     width: 100%;
-    height: 334px;
-  }
-  .home-features-grid > .home-features-card:nth-child(1),
-  .home-features-grid > .home-features-card:nth-child(4) {
-    height: 349px;
+    height: auto;
+    padding-bottom: 23px;
   }
 
   /* Mock frame — 307 wide at left:23/top:22 (Figma). Width is
@@ -8857,11 +8858,18 @@ a:hover {
     width: auto;
   }
 
-  /* Copy block — title + body at left:23/top:246. */
+  /* Copy block — title + body. Pulled into normal flow (relative,
+     not absolute) with a 246px top margin clearing the mock + fade
+     above it. In-flow placement is what lets cards 1 & 4 hug their
+     copy: the card height grows/shrinks with the actual line count
+     instead of being pinned. Cards 2 & 3 keep their fixed height —
+     the in-flow copy simply sits inside it. position:relative (vs
+     static) keeps the copy painting above the absolute fade. */
   .home-features-copy {
-    top: 246px;
-    left: 23px;
-    right: 23px;
+    position: relative;
+    top: 0;
+    left: 0;
+    margin: 246px 23px 0;
     width: auto;
   }
 
