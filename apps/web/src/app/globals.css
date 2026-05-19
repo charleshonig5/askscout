@@ -235,15 +235,14 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* Render text at the sizes we specify — don't let mobile
-     browsers auto-inflate it. iOS WebKit's text autosizing
-     boosts long body-text paragraphs in wide blocks; on the
-     scaled-down digest graphic that ballooned the bullet
-     paragraphs unevenly. `none` is the value that actually
-     disables WebKit's autosizer — a percentage (`100%`) is
-     treated as a multiplier ON the autosized result, so it does
-     not switch the feature off. No-op on desktop. */
-  -webkit-text-size-adjust: none;
-  text-size-adjust: none;
+     browsers auto-inflate it. iOS Safari's text autosizing
+     (active when this is left at the default `auto`) boosts
+     "too-small" text per block by varying amounts; on the
+     transform-scaled hero/feature graphics that ballooned the
+     small digest text unevenly. 100% pins text to its designed
+     size. No-op on desktop. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -8709,28 +8708,29 @@ a:hover {
 
      CSS can't derive a unitless scale factor, so HeroGraphicMotion
      sets --hg-scale = (this wrapper's content width) / 976 on the
-     wrapper (see the component). The 0.363 fallback covers SSR /
-     pre-hydration (exact at the 402px design width).
+     wrapper (see the component). The graphic then fills the
+     content column at any width with symmetric 24px gutters. The
+     0.363 fallback covers SSR / pre-hydration (exact at the 402px
+     design width).
 
-     SCALE WITH `zoom`, NOT `transform: scale()`. transform is
-     paint-only — it leaves the layout box at the full 976px. iOS
-     WebKit's text autosizing then sees a block far wider than the
-     viewport and inflates the long bullet paragraphs inside it
-     (it boosts body text, not short labels — hence only the
-     bullets ballooned). `zoom` scales the actual layout: the
-     graphic genuinely becomes ~content-width, a normal phone-
-     width element, so the autosizer never engages. zoom also
-     shrinks the layout box, so no wrapper height hack is needed.
-     The streaming animation scales with it, untouched. Desktop
-     sets no zoom — the var is inert there, desktop untouched. */
+     transform is purely visual, so the streaming animation under-
+     neath keeps running. The wrapper is flex + centred and takes
+     the scaled height so page flow below stays correct. Desktop
+     sets no transform — the var is inert there, desktop untouched. */
   .home-hero-graphic-motion {
-    /* align-self:stretch so the wrapper's width is the hero
-       content column (independent of the graphic) — that's what
-       the JS measures to compute --hg-scale. */
+    display: flex;
+    justify-content: center;
     align-self: stretch;
+    height: calc(584px * var(--hg-scale, 0.363));
   }
   .home-hero-graphic {
-    zoom: var(--hg-scale, 0.363);
+    /* flex-shrink:0 — the flex wrapper would otherwise shrink the
+       976px graphic to fit, and transform:scale would then scale
+       that already-shrunk box (double scale). Keep it at 976 so
+       the transform is the only thing sizing it. */
+    flex-shrink: 0;
+    transform: scale(var(--hg-scale, 0.363));
+    transform-origin: center top;
   }
 
   /* Hero box — 44px gap from the nav header down to the hero
