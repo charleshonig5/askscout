@@ -8988,6 +8988,75 @@ a:hover {
   .home-runlocal-fade {
     width: 100%;
   }
+
+  /* ============================================
+     PRIVATE. SECURE. OPEN SOURCE. — Figma 404:4770 (mobile)
+     ============================================
+     The desktop three-across card row becomes a vertically
+     stacked DECK: each 193px card overlaps the one above it by
+     10px, and each card's existing bottom fade dissolves its
+     lower edge — so a card reads as emerging from behind the
+     faded bottom of the card above. DOM order paints each card
+     over the previous one, which is exactly the layering the
+     deck needs; no z-index required. */
+
+  /* Section + header rhythm — 34px between the header block and
+     the card deck (Figma Frame 335), 34px between the heading
+     text and the Privacy Policy pill, 8px title/subtitle stack. */
+  .home-trust-inner {
+    gap: 34px;
+  }
+  /* align-items:flex-start so the Privacy Policy pill hugs its
+     content (left-aligned) instead of stretching full width. */
+  .home-trust-header {
+    gap: 34px;
+    align-items: flex-start;
+  }
+  .home-trust-headtext {
+    gap: 8px;
+    max-width: none;
+  }
+  /* Title — Pridi 24/32 (desktop 36/56). */
+  .home-trust-title {
+    font-size: 24px;
+    line-height: 32px;
+  }
+  /* Subtitle — Work Sans Light 16/22 (desktop 20). Allow it to
+     wrap (desktop keeps it on one line): at the 402px Figma
+     width it still fits one line, but on narrower phones it
+     must wrap rather than push past the section padding. */
+  .home-trust-subtitle {
+    font-size: 16px;
+    line-height: 22px;
+    white-space: normal;
+  }
+
+  /* Card deck — drop the 34px grid gap and overlap each card
+     onto the previous by 10px (193 tall, 183 apart per Figma).
+     Cards go full-width. */
+  .home-trust-grid {
+    gap: 0;
+  }
+  .home-trust-card {
+    width: 100%;
+    max-width: none;
+  }
+  .home-trust-card + .home-trust-card {
+    margin-top: -10px;
+  }
+  /* Card body — the desktop fixed inline width is too narrow for
+     the full-width mobile card. Bound the absolutely-positioned
+     inner block with a right inset and let the body fill it
+     (!important overrides the per-card inline width). */
+  .home-trust-card-inner {
+    right: 27px;
+  }
+  .home-trust-card-text {
+    width: 100%;
+  }
+  .home-trust-card-body {
+    width: 100% !important;
+  }
 }
 
 /* ============================================
