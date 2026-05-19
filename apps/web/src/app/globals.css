@@ -7349,6 +7349,15 @@ a:hover {
     max-width: 471px;
     padding-top: 0;
   }
+  /* The terminal column is wrapped in <RunLocalMotion> (.home-
+     runlocal-motion). Once the layout stacks, align-items:center
+     stops stretching that wrapper, so its width:100% child would
+     collapse to 0 — give the wrapper an explicit width so the
+     holder card resolves correctly. */
+  .home-runlocal-motion {
+    width: 100%;
+    max-width: 519px;
+  }
   .home-runlocal-right {
     width: 100%;
     max-width: 519px;
@@ -8910,6 +8919,74 @@ a:hover {
      line and doesn't bleed past the mock edge. */
   .home-features-resume-sub-tail {
     display: none;
+  }
+
+  /* ============================================
+     RUN IT LOCALLY — Figma 404:4688 (mobile)
+     ============================================
+     The desktop two-column layout already stacks at ≤1000px
+     (.home-runlocal-inner becomes a column). This block shrinks
+     the stacked pieces to the mobile Figma geometry: smaller
+     heading, tighter gaps, and a terminal card whose width and
+     inner stream are fluid so they fit the phone. The scroll-
+     triggered terminal typing/cascade is untouched. */
+
+  /* Outer stack — 34px between the text block and the terminal
+     mock (Figma Frame 333 gap). */
+  .home-runlocal-inner {
+    gap: 34px;
+  }
+  /* Head + body + install group — 34px between the head block
+     and the install pill (desktop 44). */
+  .home-runlocal-mainblock {
+    gap: 34px;
+  }
+  /* Head block (badges + title + body) — 8px stack (desktop 14);
+     badge row gap 8 (desktop 14). */
+  .home-runlocal-headblock {
+    gap: 8px;
+  }
+  .home-runlocal-badges {
+    gap: 8px;
+  }
+  /* Title — Pridi 24/32 (desktop 36). */
+  .home-runlocal-title {
+    font-size: 24px;
+    line-height: 32px;
+  }
+  /* Body — Work Sans Light 16/22 (desktop 20/26); fluid width so
+     it wraps inside the phone instead of the fixed 370px. */
+  .home-runlocal-body {
+    width: auto;
+    font-size: 16px;
+    line-height: 22px;
+  }
+  /* Install pill — 48px tall (desktop 54). */
+  .home-runlocal-install {
+    height: 48px;
+  }
+
+  /* Terminal card — fluid width via left/right:23 insets (desktop
+     is a fixed 471) so it never overflows the holder on a narrow
+     phone. Height/top unchanged. */
+  .home-runlocal-card {
+    left: 23px;
+    right: 23px;
+    width: auto;
+  }
+  /* Stream column inside the terminal — fluid width to match. */
+  .home-runlocal-stream {
+    left: 13px;
+    right: 13px;
+    width: auto;
+  }
+  /* Bottom fade — kept on mobile (the mobile Figma omitted it,
+     but the dissolve reads better than a hard clip). The holder
+     is 382 tall on mobile too, so the desktop top:204/height:178
+     band still lands in the right place — only the width needs
+     to follow the now-fluid holder. */
+  .home-runlocal-fade {
+    width: 100%;
   }
 }
 
