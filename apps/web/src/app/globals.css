@@ -9080,16 +9080,22 @@ a:hover {
     line-height: 32px;
   }
   /* Block rhythm — 34px between the title, the tabs, and the
-     card (desktop 24 / 54). */
+     card (desktop 24 / 54). align-items:flex-start so the tab
+     control hugs its content and sits left-aligned rather than
+     stretching the full width. */
   .home-faq-section {
     gap: 34px;
   }
   .home-faq-header {
     gap: 34px;
+    align-items: flex-start;
   }
-  /* Tab control — three labels don't fit a phone row at the
-     desktop 12px/14px. Drop to 11px with tighter horizontal
-     padding so the segmented control fits without clipping. */
+  /* Tab control — hug the three tabs (don't stretch full width).
+     Three labels don't fit a phone row at the desktop 12px/14px,
+     so drop to 11px with tighter horizontal padding. */
+  .home-faq-tabs {
+    width: fit-content;
+  }
   .home-faq-tab {
     padding: 10px 8px;
     font-size: 11px;
