@@ -8651,11 +8651,10 @@ a:hover {
      called out below differ. */
 
   /* Outer text-stack -> CTA gap: 44px -> 34px. margin-bottom is
-     the gap down to the hero graphic: 54px -> 51px (Figma 398:450
-     CTA bottom y414, graphic top y465). */
+     the gap from the CTA button down to the hero graphic: 54px. */
   .home-hero-inner {
     gap: 34px;
-    margin-bottom: 51px;
+    margin-bottom: 54px;
   }
   /* Trust-chip row gap: 14px -> 8px. */
   .home-hero-chips {
@@ -8680,6 +8679,14 @@ a:hover {
   .home-cta,
   .home-cta-chip {
     height: 48px;
+  }
+  /* Hide the install-command chip in the hero on mobile — a phone
+     user can't run `npm install -g askscout`, so the hero keeps a
+     single actionable CTA (the web-app sign-in). The CLI is still
+     reachable via the "Run it locally" section and the Docs link.
+     Scoped to .home-hero-cta so the final CTA's chip is untouched. */
+  .home-hero-cta .home-cta-chip {
+    display: none;
   }
 
   /* ---- Hero graphic — Figma 398:476 ----
@@ -8717,13 +8724,13 @@ a:hover {
     transform-origin: center top;
   }
 
-  /* Hero box — nav-to-content gap drops 74px -> 34px (Figma:
-     header underline at y68, hero chips at y102). 7px bottom
-     padding stays so the bg-fade keeps overlapping the graphic
-     border. margin-bottom 47px + that 7px = the same 54px gap
-     to the first section divider as every other section. */
+  /* Hero box — 44px gap from the nav header down to the hero
+     content. 7px bottom padding stays so the bg-fade keeps
+     overlapping the graphic border. margin-bottom 47px + that
+     7px = the same 54px gap to the first section divider as
+     every other section. */
   .home-hero {
-    padding: 34px 24px 7px;
+    padding: 44px 24px 7px;
     margin-bottom: 47px;
   }
 
