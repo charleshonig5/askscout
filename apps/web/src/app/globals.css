@@ -8650,9 +8650,12 @@ a:hover {
      button radius/padding/glow/bg tokens); only the values
      called out below differ. */
 
-  /* Outer text-stack -> CTA gap: 44px -> 34px. */
+  /* Outer text-stack -> CTA gap: 44px -> 34px. margin-bottom is
+     the gap down to the hero graphic: 54px -> 51px (Figma 398:450
+     CTA bottom y414, graphic top y465). */
   .home-hero-inner {
     gap: 34px;
+    margin-bottom: 51px;
   }
   /* Trust-chip row gap: 14px -> 8px. */
   .home-hero-chips {
@@ -8677,6 +8680,32 @@ a:hover {
   .home-cta,
   .home-cta-chip {
     height: 48px;
+  }
+
+  /* ---- Hero graphic — Figma 398:476 ----
+     The desktop digest-preview graphic is a fixed 976x584 card
+     driving a phase-machine animation (HeroGraphicMotion). Rather
+     than rebuild it for mobile, scale the whole thing down with a
+     CSS transform — purely visual, so every timer/observer and the
+     streaming animation underneath keep running untouched.
+
+     Figma's mobile graphic is 546x327 = exactly 0.56x desktop.
+     transform-origin: top left anchors the scale to the gutter so
+     the graphic sits flush at the 24px left edge and bleeds off
+     the RIGHT (clipped by the body's overflow-x — no scrollbar).
+
+     A transform doesn't shrink the layout box, so the motion
+     wrapper is given an explicit 327px height (584 * 0.56) to keep
+     the page flow below correct; align-self:stretch overrides the
+     hero's center alignment so the graphic anchors left. */
+  .home-hero-graphic-motion {
+    align-self: stretch;
+    height: 327px;
+  }
+  .home-hero-graphic {
+    margin: 0;
+    transform: scale(0.56);
+    transform-origin: top left;
   }
 
   /* Hero box — nav-to-content gap drops 74px -> 34px (Figma:
