@@ -118,6 +118,37 @@ export function HeroGraphicMotion({ children }: Props) {
     };
   }, []);
 
+  // Mobile: the digest graphic is a fixed 976px-wide element that
+  // the mobile CSS shrinks with transform:scale to fit the content
+  // column. CSS can't compute a unitless scale factor, so derive
+  // it here — --hg-scale = (this wrapper's content width) / 976.
+  //
+  // Measuring the wrapper directly (rather than deriving from
+  // window.innerWidth) is deliberate: innerWidth includes the
+  // scrollbar, so on classic-scrollbar systems it would over-size
+  // the graphic and skew the gutters. clientWidth is the real
+  // space the graphic must fill. A ResizeObserver re-runs it on
+  // every width change (viewport resize, device rotation).
+  //
+  // The mobile CSS consumes the var for transform:scale and the
+  // wrapper height. Desktop CSS sets no transform, so it's inert
+  // there — desktop is untouched.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const GRAPHIC_WIDTH = 976;
+    const setScale = () => {
+      el.style.setProperty(
+        "--hg-scale",
+        String(el.clientWidth / GRAPHIC_WIDTH),
+      );
+    };
+    setScale();
+    const observer = new ResizeObserver(setScale);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <GraphicPhaseContext.Provider value={phase}>
       <div

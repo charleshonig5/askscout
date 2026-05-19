@@ -8682,34 +8682,39 @@ a:hover {
     height: 48px;
   }
 
-  /* ---- Hero graphic ----
+  /* ---- Hero graphic — Figma 398:476 ----
      The desktop digest-preview graphic is a fixed 976x584 card +
      sidebar driving a phase-machine animation (HeroGraphicMotion).
-     It's scaled with a CSS transform — purely visual, so the
-     streaming animation underneath keeps running untouched.
+     Per the Figma the mobile graphic is the whole thing, uniformly
+     scaled to the content-column width (354px in the 402 frame —
+     a 0.363 ratio): no bleed, no crop, every element keeps its
+     exact desktop proportions.
 
-     Fitting the whole 976px width shrank the text to mush (~5px).
-     Instead, scale UP to 0.8 so the digest body text lands at a
-     crisp ~8px, and translate so the DIGEST CARD is framed: the
-     section content reads flush at the 24px gutter, the card's
-     rounded border peeks just left of it. The sidebar bleeds off
-     the left; the Statistics column + card right edge bleed off
-     the right (clipped by the body's overflow-x — no scrollbar).
+     CSS can't derive a unitless scale factor, so HeroGraphicMotion
+     sets --hg-scale = (this wrapper's content width) / 976 on the
+     wrapper (see the component). The graphic then fills the
+     content column at any width with symmetric 24px gutters. The
+     0.363 fallback covers SSR / pre-hydration (exact at the 402px
+     design width).
 
-     translateX(-178px) ≈ -(0.8 * 222), where 222 is the digest
-     section column's x-offset inside the 976px graphic — that
-     lands the section content at the gutter. transform-origin:
-     top left keeps the math simple (scale + translate both
-     anchored at 0,0). The motion wrapper gets the scaled height
-     (584 * 0.8 = 467px) so page flow below stays correct. */
+     transform is purely visual, so the streaming animation under-
+     neath keeps running. The wrapper is flex + centred and takes
+     the scaled height so page flow below stays correct. Desktop
+     sets no transform — the var is inert there, desktop untouched. */
   .home-hero-graphic-motion {
+    display: flex;
+    justify-content: center;
     align-self: stretch;
-    height: 467px;
+    height: calc(584px * var(--hg-scale, 0.363));
   }
   .home-hero-graphic {
-    margin: 0;
-    transform: translateX(-178px) scale(0.8);
-    transform-origin: top left;
+    /* flex-shrink:0 — the flex wrapper would otherwise shrink the
+       976px graphic to fit, and transform:scale would then scale
+       that already-shrunk box (double scale). Keep it at 976 so
+       the transform is the only thing sizing it. */
+    flex-shrink: 0;
+    transform: scale(var(--hg-scale, 0.363));
+    transform-origin: center top;
   }
 
   /* Hero box — nav-to-content gap drops 74px -> 34px (Figma:
@@ -8732,11 +8737,11 @@ a:hover {
        - width 120vw: a modest bleed past the viewport (the
          video is wider than the hero, so it bleeds off the
          sides — that's intentional).
-       - height 940px: the base 1080px video is taller than the
-         ~895px mobile hero, so its percentage-based bottom mask
+       - height 670px: the base 1080px video is taller than the
+         ~624px mobile hero, so its percentage-based bottom mask
          (the fade region is the video's bottom 23.7%) would land
          entirely BELOW the hero's clip edge and never show — the
-         video would just hard-cut at the hero bottom. 940px keeps
+         video would just hard-cut at the hero bottom. 670px keeps
          the video ~hero-height + a small overshoot (the same
          video:hero ratio desktop uses, 1080 vs ~1035), so the
          mask fade falls inside the hero and the video physically
@@ -8752,7 +8757,7 @@ a:hover {
          its own. */
   .home-hero-bg {
     width: 120vw;
-    height: 940px;
+    height: 670px;
     filter: blur(1px);
   }
 
