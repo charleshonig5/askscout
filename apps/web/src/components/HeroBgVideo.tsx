@@ -30,8 +30,7 @@ export function HeroBgVideo() {
     const resume = () => {
       v.playbackRate = 0.65;
       if (v.paused) {
-        const p = v.play();
-        if (p) p.catch(() => {});
+        void v.play().catch(() => {});
       }
     };
     const onVisibility = () => {
