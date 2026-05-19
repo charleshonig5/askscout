@@ -5,18 +5,44 @@ import { useEffect, useRef } from "react";
 /**
  * Silent looping background video for the marketing hero.
  *
- * Pulled out as a client component for one reason: `playbackRate`
- * can't be set declaratively on `<video>` in JSX. We need a ref +
- * effect to slow the loop down so the starfield drifts at 0.8x —
- * matches the atmospheric pace in the Figma reference rather than
- * the raw 30fps timelapse motion of the source asset.
+ * Client component for two reasons:
+ *   1. `playbackRate` can't be set declaratively on `<video>` in
+ *      JSX — we slow the loop to 0.65x so the starfield drifts at
+ *      an atmospheric pace, matching the Figma reference.
+ *   2. Loop resilience. The `loop` attribute restarts the clip,
+ *      but iOS still *pauses* autoplaying video on tab-switch,
+ *      scroll-away, and Low Power Mode — and doesn't always resume.
+ *      We listen for `pause` / tab-visible and nudge it back.
  */
 export function HeroBgVideo() {
   const ref = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
     const v = ref.current;
-    if (v) v.playbackRate = 0.65;
+    if (!v) return;
+    v.playbackRate = 0.65;
+
+    // Whenever the video gets paused (by the OS, not a user — it
+    // has no controls), or the tab becomes visible again, resume
+    // it and re-assert playbackRate (iOS can reset it on resume).
+    // play() may reject under a hard block like Low Power Mode —
+    // swallow that; nothing more we can do there.
+    const resume = () => {
+      v.playbackRate = 0.65;
+      if (v.paused) {
+        const p = v.play();
+        if (p) p.catch(() => {});
+      }
+    };
+    const onVisibility = () => {
+      if (!document.hidden) resume();
+    };
+    v.addEventListener("pause", resume);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      v.removeEventListener("pause", resume);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, []);
 
   return (

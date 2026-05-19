@@ -4009,6 +4009,13 @@ a:hover {
   max-width: 619px;
 }
 
+/* Forced line break inside the title — desktop hides it (the title
+   wraps naturally); the mobile block flips it to display:inline so
+   the break before "briefing" is guaranteed at every phone width. */
+.home-hero-title-br {
+  display: none;
+}
+
 .home-hero-title-light {
   font-weight: 200;
 }
@@ -8677,12 +8684,15 @@ a:hover {
   .home-hero-chips {
     gap: 8px;
   }
-  /* Title — Pridi 32 / 40 (desktop is 52 / 60). The desktop
-     619px max-width doesn't bind in the narrower mobile column,
-     so it's left alone and the title wraps naturally. */
+  /* Title — Pridi 32 / 40 (desktop is 52 / 60). */
   .home-hero-title {
     font-size: 32px;
     line-height: 40px;
+  }
+  /* Force the title break: "Your morning code" / "briefing in 10
+     seconds" — consistent at every phone width. */
+  .home-hero-title-br {
+    display: inline;
   }
   /* Subtitle — Work Sans Light 16 / 22 (desktop 20 / 26),
      capped at the Figma 337px copy width. */

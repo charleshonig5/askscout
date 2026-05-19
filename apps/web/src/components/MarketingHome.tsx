@@ -241,7 +241,15 @@ export default function MarketingHome() {
                   52px / 60 line-height per Figma. */}
               <h1 className="home-hero-title">
                 <span className="home-hero-title-light">Your morning</span>{" "}
-                code briefing{" "}
+                code
+                {/* Mobile forces the break here so the title always
+                    reads "Your morning code" / "briefing in 10
+                    seconds" at any phone width. Hidden on desktop
+                    (br is display:none there) — desktop wraps as
+                    before. */}
+                {" "}
+                <br className="home-hero-title-br" />
+                briefing{" "}
                 <span className="home-hero-title-light">in 10 seconds</span>
               </h1>
             </div>
