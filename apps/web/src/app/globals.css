@@ -3564,11 +3564,11 @@ a:hover {
     align-items: center;
     gap: 64px;
   }
-  /* Menu links — Work Sans Light 32px, all white (the active
-     link carries no extra emphasis here per Figma). */
+  /* Menu links — Work Sans Light 24px, all white (the active
+     link carries no extra emphasis here per Figma 399:2929). */
   .home-nav-menu-links .home-nav-link {
     padding: 0;
-    font-size: 32px;
+    font-size: 24px;
     font-weight: 300;
     color: var(--color-text-primary);
   }
