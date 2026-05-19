@@ -4030,12 +4030,13 @@ a:hover {
 
 /* Mobile: stack the two CTAs so the button labels don't wrap to a
    second line and the install chip can't overflow a narrow screen.
-   Each button hugs its content rather than stretching full-width. */
+   Each button hugs its content rather than stretching full-width.
+   14px gap between them per Figma 398:465. */
 @media (max-width: 768px) {
   .home-hero-cta {
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
   }
 }
 
@@ -8609,10 +8610,6 @@ a:hover {
 }
 
 @media (max-width: 540px) {
-  .home-hero-title {
-    font-size: 40px;
-    letter-spacing: -0.02em;
-  }
   .home-section-title {
     font-size: 32px;
   }
@@ -8636,7 +8633,7 @@ a:hover {
 
    Placed AFTER the 540px block so these values win at every
    width <= 768px. Per-section type + component scaling lands in
-   follow-up passes; this block is spacing + the hero video only.
+   follow-up passes.
    ============================================================ */
 @media (max-width: 768px) {
   /* Section divider rhythm — 54px above/below the 1px top border. */
@@ -8645,6 +8642,41 @@ a:hover {
   }
   .home-section--cta {
     padding: 54px 24px;
+  }
+
+  /* ---- Hero content — Figma 398:450 ----
+     The hero text + CTA block scaled to mobile. Most of the
+     desktop recipe carries over unchanged (chip padding/radius,
+     button radius/padding/glow/bg tokens); only the values
+     called out below differ. */
+
+  /* Outer text-stack -> CTA gap: 44px -> 34px. */
+  .home-hero-inner {
+    gap: 34px;
+  }
+  /* Trust-chip row gap: 14px -> 8px. */
+  .home-hero-chips {
+    gap: 8px;
+  }
+  /* Title — Pridi 32 / 40 (desktop is 52 / 60). The desktop
+     619px max-width doesn't bind in the narrower mobile column,
+     so it's left alone and the title wraps naturally. */
+  .home-hero-title {
+    font-size: 32px;
+    line-height: 40px;
+  }
+  /* Subtitle — Work Sans Light 16 / 22 (desktop 20 / 26),
+     capped at the Figma 337px copy width. */
+  .home-hero-subtitle {
+    font-size: 16px;
+    line-height: 22px;
+    max-width: 337px;
+  }
+  /* CTA buttons — 48px tall on mobile (desktop is 54px). Radius,
+     padding, border, inner-glow and fill all stay as desktop. */
+  .home-cta,
+  .home-cta-chip {
+    height: 48px;
   }
 
   /* Hero box — nav-to-content gap drops 74px -> 34px (Figma:
