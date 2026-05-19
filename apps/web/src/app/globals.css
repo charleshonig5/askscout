@@ -8778,12 +8778,13 @@ a:hover {
   }
 
   /* Bottom-fade overlay — bg-primary gradient dissolving the hero
-     bottom (graphic + starfield) into the page. 64px: at 96px it
-     ate ~42% of the short mobile graphic; 64px starts the fade
-     lower so it covers less of the graphic while still dissolving
-     it smoothly into the background. */
+     bottom (graphic + starfield) into the page. 44px: keeps the
+     fade short so more of the short mobile graphic stays visible
+     (covers ~17% of it vs 42% at the original 96px), while the
+     gradient's solid lower half still hides the graphic's hard
+     bottom edge and dissolves it cleanly into the background. */
   .home-hero-bg-fade {
-    height: 64px;
+    height: 44px;
   }
 }
 
