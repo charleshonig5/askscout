@@ -9106,6 +9106,42 @@ a:hover {
     padding: 10px 8px;
     font-size: 11px;
   }
+
+  /* ============================================
+     FINAL CTA — Figma 405:6194 (mobile)
+     ============================================
+     Single-column stack: trust badges, a Pridi headline, then
+     one "Try AskScout free" button. The npm install pill is
+     dropped on mobile (a phone can't run the CLI install) —
+     same call as the hero CTA. */
+
+  /* 8px between the badge row and the headline; 34px between
+     the headline and the button (the row gap). */
+  .home-readycta-inner {
+    gap: 8px;
+  }
+  .home-readycta-badges {
+    gap: 8px;
+  }
+  .home-readycta-row {
+    gap: 34px;
+  }
+  /* Headline — Pridi 32/40 (desktop 52/60), 274px wide so it
+     wraps to "Get your first" / "digest now" per Figma. */
+  .home-readycta-headline {
+    width: 274px;
+    font-size: 32px;
+    line-height: 40px;
+  }
+  /* Button — 48px tall (desktop 54). */
+  .home-readycta-btn {
+    height: 48px;
+  }
+  /* Drop the npm install pill on mobile — keep a single
+     actionable CTA, matching the hero. */
+  .home-readycta-install {
+    display: none;
+  }
 }
 
 /* ============================================
