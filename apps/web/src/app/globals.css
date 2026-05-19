@@ -9062,6 +9062,38 @@ a:hover {
   .home-trust-card-body {
     width: 100% !important;
   }
+
+  /* ============================================
+     FAQ — mobile pattern alignment
+     ============================================
+     Brings the FAQ section in line with the mobile home's
+     established rhythm: 24/32 Pridi section title and 34px
+     block gaps. The question-row type size is intentionally
+     left as-is. The segmented tab control is tightened
+     (smaller label type + padding) so all three tabs fit a
+     phone row without clipping. */
+
+  /* Section title — Pridi 24/32, matching every other mobile
+     section heading (desktop 36/56). */
+  .home-faq-title {
+    font-size: 24px;
+    line-height: 32px;
+  }
+  /* Block rhythm — 34px between the title, the tabs, and the
+     card (desktop 24 / 54). */
+  .home-faq-section {
+    gap: 34px;
+  }
+  .home-faq-header {
+    gap: 34px;
+  }
+  /* Tab control — three labels don't fit a phone row at the
+     desktop 12px/14px. Drop to 11px with tighter horizontal
+     padding so the segmented control fits without clipping. */
+  .home-faq-tab {
+    padding: 10px 8px;
+    font-size: 11px;
+  }
 }
 
 /* ============================================
