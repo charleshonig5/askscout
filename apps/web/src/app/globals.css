@@ -8698,39 +8698,385 @@ a:hover {
     display: none;
   }
 
-  /* ---- Hero graphic — Figma 398:476 ----
+  /* ---- Hero graphic — Figma 398:476 — native mobile scale ----
      The desktop digest-preview graphic is a fixed 976x584 card +
-     sidebar driving a phase-machine animation (HeroGraphicMotion).
-     Per the Figma the mobile graphic is the whole thing, uniformly
-     scaled to the content-column width (354px in the 402 frame —
-     a 0.363 ratio): no bleed, no crop, every element keeps its
-     exact desktop proportions.
+     sidebar driving the HeroGraphicMotion phase animation. Per the
+     Figma the mobile graphic is that whole thing at ~0.36 scale.
 
-     CSS can't derive a unitless scale factor, so HeroGraphicMotion
-     sets --hg-scale = (this wrapper's content width) / 976 on the
-     wrapper (see the component). The graphic then fills the
-     content column at any width with symmetric 24px gutters. The
-     0.363 fallback covers SSR / pre-hydration (exact at the 402px
-     design width).
+     It is NOT shrunk with transform/zoom — that leaves the layout
+     box at 976px, which iOS WebKit's text autosizer flags as an
+     oversized block and inflates the paragraph text inside. Instead
+     EVERY dimension below is written as `desktopValue * --hg-scale`,
+     so the browser lays the graphic out GENUINELY small — a normal
+     ~354px-wide element. iOS then sees ordinary phone-width content
+     and never autosizes it.
 
-     transform is purely visual, so the streaming animation under-
-     neath keeps running. The wrapper is flex + centred and takes
-     the scaled height so page flow below stays correct. Desktop
-     sets no transform — the var is inert there, desktop untouched. */
+     --hg-scale is the single scale lever: HeroGraphicMotion sets it
+     on the wrapper from (content width / 976), so the graphic
+     fluidly fills the column with 24px gutters; the 0.363 default
+     covers SSR / pre-hydration (exact at the 402px Figma width).
+
+     Every rule below is an override scoped to this 768px block —
+     the desktop graphic CSS is not touched. */
   .home-hero-graphic-motion {
-    display: flex;
-    justify-content: center;
     align-self: stretch;
-    height: calc(584px * var(--hg-scale, 0.363));
+    --hg-scale: 0.363;
   }
+
+  /* — frame + nested rectangles — */
   .home-hero-graphic {
-    /* flex-shrink:0 — the flex wrapper would otherwise shrink the
-       976px graphic to fit, and transform:scale would then scale
-       that already-shrunk box (double scale). Keep it at 976 so
-       the transform is the only thing sizing it. */
-    flex-shrink: 0;
-    transform: scale(var(--hg-scale, 0.363));
-    transform-origin: center top;
+    width: calc(976 * var(--hg-scale) * 1px);
+    height: calc(584 * var(--hg-scale) * 1px);
+  }
+  .home-hero-frame {
+    border-radius: calc(6 * var(--hg-scale) * 1px);
+    box-shadow: inset 0 0 calc(40 * var(--hg-scale) * 1px) 0 var(--color-inner-glow);
+  }
+  /* Inner frame — desktop insets it 13/13/15/15 (asymmetric); the
+     mobile Figma (404:4038) centres it at an equal 14px all round
+     so the "case" border reads even. */
+  .home-hero-frame-inner {
+    top: calc(14 * var(--hg-scale) * 1px);
+    left: calc(14 * var(--hg-scale) * 1px);
+    width: calc(948 * var(--hg-scale) * 1px);
+    height: calc(556 * var(--hg-scale) * 1px);
+    border-radius: calc(6 * var(--hg-scale) * 1px);
+    box-shadow: inset 0 0 calc(40 * var(--hg-scale) * 1px) 0 var(--color-inner-glow);
+  }
+
+  /* Borders — every 1px border in the graphic is scaled to a
+     hairline. At 0.36x an unscaled 1px border is ~2.75x too heavy
+     and makes every chip/button/card read wrong. */
+  .home-hero-frame,
+  .home-hero-frame-inner,
+  .home-hero-side-repo,
+  .home-hero-frame-card,
+  .home-hero-card-action,
+  .home-hero-card-file-link,
+  .home-hero-card-health-card,
+  .home-hero-card-live {
+    border-width: calc(1 * var(--hg-scale) * 1px);
+  }
+
+  /* — sidebar — */
+  .home-hero-side-top {
+    top: calc(13 * var(--hg-scale) * 1px);
+    left: calc(13 * var(--hg-scale) * 1px);
+    width: calc(166 * var(--hg-scale) * 1px);
+  }
+  .home-hero-side-utils {
+    gap: calc(8 * var(--hg-scale) * 1px);
+  }
+  .home-hero-side-repo {
+    top: calc(57 * var(--hg-scale) * 1px);
+    left: calc(13 * var(--hg-scale) * 1px);
+    width: calc(166 * var(--hg-scale) * 1px);
+    height: calc(30 * var(--hg-scale) * 1px);
+    padding: 0 calc(7 * var(--hg-scale) * 1px);
+    border-radius: calc(6 * var(--hg-scale) * 1px);
+    font-size: calc(12 * var(--hg-scale) * 1px);
+  }
+  .home-hero-side-days {
+    top: calc(111 * var(--hg-scale) * 1px);
+    left: calc(13 * var(--hg-scale) * 1px);
+    width: calc(166 * var(--hg-scale) * 1px);
+  }
+  .home-hero-side-days-active {
+    width: calc(166 * var(--hg-scale) * 1px);
+    height: calc(50 * var(--hg-scale) * 1px);
+    border-radius: calc(6 * var(--hg-scale) * 1px);
+    box-shadow: inset 0 calc(8 * var(--hg-scale) * 1px) calc(20 * var(--hg-scale) * 1px) 0 var(--color-inner-glow);
+  }
+  .home-hero-side-days-list {
+    padding: calc(8 * var(--hg-scale) * 1px);
+    gap: calc(24 * var(--hg-scale) * 1px);
+  }
+  .home-hero-side-day {
+    gap: calc(4 * var(--hg-scale) * 1px);
+  }
+  .home-hero-side-day-label {
+    font-size: calc(12 * var(--hg-scale) * 1px);
+  }
+  .home-hero-side-day-stats {
+    gap: calc(14 * var(--hg-scale) * 1px);
+    font-size: calc(10 * var(--hg-scale) * 1px);
+  }
+  .home-hero-side-day-meta {
+    gap: calc(4 * var(--hg-scale) * 1px);
+  }
+
+  /* — digest card — */
+  .home-hero-frame-card {
+    left: calc(193 * var(--hg-scale) * 1px);
+    width: calc(740 * var(--hg-scale) * 1px);
+    height: calc(528 * var(--hg-scale) * 1px);
+    border-radius: calc(14 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-header {
+    top: calc(17 * var(--hg-scale) * 1px);
+    left: calc(13 * var(--hg-scale) * 1px);
+    width: calc(712 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-heading {
+    gap: calc(4 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-titlerow {
+    gap: calc(14 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-title {
+    font-size: calc(16 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-chips {
+    gap: calc(8 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-chip {
+    gap: calc(4 * var(--hg-scale) * 1px);
+    padding: calc(2 * var(--hg-scale) * 1px) calc(6 * var(--hg-scale) * 1px);
+    border-radius: calc(90 * var(--hg-scale) * 1px);
+    box-shadow: inset 0 calc(8 * var(--hg-scale) * 1px) calc(20 * var(--hg-scale) * 1px) 0 var(--color-inner-glow);
+    font-size: calc(10 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-date {
+    font-size: calc(10 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-actions {
+    gap: calc(8 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-action {
+    gap: calc(6 * var(--hg-scale) * 1px);
+    padding: calc(8 * var(--hg-scale) * 1px) calc(12 * var(--hg-scale) * 1px);
+    border-radius: calc(6 * var(--hg-scale) * 1px);
+    box-shadow: inset 0 0 calc(20 * var(--hg-scale) * 1px) 0 var(--color-inner-glow);
+    font-size: calc(12 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-divider--h {
+    top: calc(64 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-divider--v {
+    top: calc(64 * var(--hg-scale) * 1px);
+    left: calc(492 * var(--hg-scale) * 1px);
+    height: calc(465 * var(--hg-scale) * 1px);
+  }
+
+  /* — card left column (digest sections) — */
+  .home-hero-card-left {
+    top: calc(78 * var(--hg-scale) * 1px);
+    left: calc(13 * var(--hg-scale) * 1px);
+    width: calc(465 * var(--hg-scale) * 1px);
+    gap: calc(18 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-section {
+    gap: calc(8 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-section-head {
+    gap: calc(8 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-section-title {
+    gap: calc(8 * var(--hg-scale) * 1px);
+    font-size: calc(12 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-section-count {
+    padding: calc(2 * var(--hg-scale) * 1px) calc(6 * var(--hg-scale) * 1px);
+    border-radius: calc(60 * var(--hg-scale) * 1px);
+    box-shadow: inset 0 calc(8 * var(--hg-scale) * 1px) calc(20 * var(--hg-scale) * 1px) 0 var(--color-inner-glow);
+    font-size: calc(10 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-bullets {
+    gap: calc(4 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-bullet {
+    gap: calc(4 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-bullet-mark {
+    width: calc(16 * var(--hg-scale) * 1px);
+    height: calc(20 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-bullet-mark::before {
+    width: calc(4 * var(--hg-scale) * 1px);
+    height: calc(4 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-bullet p {
+    font-size: calc(10 * var(--hg-scale) * 1px);
+    line-height: calc(16 * var(--hg-scale) * 1px);
+  }
+
+  /* — card right column (stats / files / health) — */
+  .home-hero-card-right {
+    top: calc(78 * var(--hg-scale) * 1px);
+    left: calc(506 * var(--hg-scale) * 1px);
+    width: calc(219 * var(--hg-scale) * 1px);
+    gap: calc(18 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-stats {
+    gap: calc(4 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-stats-lines {
+    gap: calc(14 * var(--hg-scale) * 1px);
+    font-size: calc(10 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-stats-meta {
+    gap: calc(14 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-stats-metaitem {
+    gap: calc(4 * var(--hg-scale) * 1px);
+    font-size: calc(10 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-block {
+    gap: calc(8 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-block-title {
+    font-size: calc(10 * var(--hg-scale) * 1px);
+    line-height: calc(18 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-files {
+    gap: calc(4 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-file {
+    gap: calc(8 * var(--hg-scale) * 1px);
+    font-size: calc(10 * var(--hg-scale) * 1px);
+    line-height: calc(18 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-file-num {
+    font-size: calc(12 * var(--hg-scale) * 1px);
+    line-height: calc(18 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-file-link {
+    width: calc(16 * var(--hg-scale) * 1px);
+    height: calc(16 * var(--hg-scale) * 1px);
+    border-radius: calc(4 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-health {
+    gap: calc(8 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-health-card {
+    height: calc(68 * var(--hg-scale) * 1px);
+    border-radius: calc(6 * var(--hg-scale) * 1px);
+    box-shadow: inset 0 0 calc(40 * var(--hg-scale) * 1px) 0 var(--color-inner-glow);
+  }
+  .home-hero-card-health-text {
+    top: calc(7 * var(--hg-scale) * 1px);
+    left: calc(7 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-health-label {
+    margin: 0 0 calc(-2 * var(--hg-scale) * 1px) 0;
+    font-size: calc(10 * var(--hg-scale) * 1px);
+    line-height: calc(18 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-health-desc {
+    font-size: calc(10 * var(--hg-scale) * 1px);
+    line-height: calc(18 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-health-pill {
+    top: calc(7 * var(--hg-scale) * 1px);
+    right: calc(7 * var(--hg-scale) * 1px);
+    padding: calc(3 * var(--hg-scale) * 1px) calc(6 * var(--hg-scale) * 1px);
+    border-radius: calc(60 * var(--hg-scale) * 1px);
+    font-size: calc(10 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-health-bar {
+    bottom: calc(15 * var(--hg-scale) * 1px);
+    left: calc(7 * var(--hg-scale) * 1px);
+    width: calc(203 * var(--hg-scale) * 1px);
+    height: calc(4 * var(--hg-scale) * 1px);
+    border-radius: calc(60 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-health-fill {
+    border-radius: calc(60 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-fade {
+    height: calc(40 * var(--hg-scale) * 1px);
+  }
+
+  /* — live badge / skeletons / opener — */
+  .home-hero-card-live {
+    gap: calc(4 * var(--hg-scale) * 1px);
+    padding: calc(2 * var(--hg-scale) * 1px) calc(4 * var(--hg-scale) * 1px);
+    border-radius: calc(3 * var(--hg-scale) * 1px);
+    font-size: calc(8 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-live-dot {
+    width: calc(4 * var(--hg-scale) * 1px);
+    height: calc(4 * var(--hg-scale) * 1px);
+    box-shadow: 0 0 calc(4 * var(--hg-scale) * 1px) 0 color-mix(in srgb, var(--color-success) 45%, transparent);
+  }
+  .home-hero-card-skel {
+    border-radius: calc(4 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-skel--bullet-row,
+  .home-hero-card-skel--stats-row,
+  .home-hero-card-skel--file-row {
+    height: calc(10 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-skel--health-card {
+    height: calc(68 * var(--hg-scale) * 1px);
+    border-radius: calc(6 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-bullets-skel {
+    gap: calc(4 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-opener {
+    top: calc(78 * var(--hg-scale) * 1px);
+    left: calc(13 * var(--hg-scale) * 1px);
+    gap: calc(3 * var(--hg-scale) * 1px);
+    font-size: calc(12 * var(--hg-scale) * 1px);
+  }
+  .home-hero-card-opener-caret {
+    height: calc(12 * var(--hg-scale) * 1px);
+  }
+
+  /* — icons: lucide <svg> and Emoji <img> are sized by JSX
+       `size` props, which render width/height attributes. Scale
+       each distinct size used inside the graphic; scoped to
+       .home-hero-graphic so icons elsewhere on the page are
+       untouched. — */
+  .home-hero-graphic svg[width="8"],
+  .home-hero-graphic img[width="8"] {
+    width: calc(8 * var(--hg-scale) * 1px);
+    height: calc(8 * var(--hg-scale) * 1px);
+  }
+  .home-hero-graphic svg[width="12"],
+  .home-hero-graphic img[width="12"] {
+    width: calc(12 * var(--hg-scale) * 1px);
+    height: calc(12 * var(--hg-scale) * 1px);
+  }
+  .home-hero-graphic svg[width="14"],
+  .home-hero-graphic img[width="14"] {
+    width: calc(14 * var(--hg-scale) * 1px);
+    height: calc(14 * var(--hg-scale) * 1px);
+  }
+  .home-hero-graphic svg[width="16"],
+  .home-hero-graphic img[width="16"] {
+    width: calc(16 * var(--hg-scale) * 1px);
+    height: calc(16 * var(--hg-scale) * 1px);
+  }
+  /* Sidebar brand logo — <Logo height={14}> renders 78x14 imgs. */
+  .home-hero-side-top .brand-logo img {
+    width: calc(78 * var(--hg-scale) * 1px);
+    height: calc(14 * var(--hg-scale) * 1px);
+  }
+
+  /* — health-bar fill width: comes from the inline --fill-target
+       px value (179/117/55px). Scale it everywhere it is applied:
+       the static rules, the slide-in keyframe, and the reduced-
+       motion fallback. — */
+  .home-hero-card-health-fill {
+    width: calc(var(--fill-target) * var(--hg-scale));
+  }
+  [data-graphic-phase="done"] .home-hero-card-health-fill {
+    width: calc(var(--fill-target) * var(--hg-scale));
+  }
+  @keyframes hgm-bar-fill {
+    from {
+      width: 0;
+    }
+    to {
+      width: calc(var(--fill-target) * var(--hg-scale));
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .home-hero-card-health-fill {
+      width: calc(var(--fill-target) * var(--hg-scale)) !important;
+    }
   }
 
   /* Hero box — 44px gap from the nav header down to the hero
