@@ -1028,8 +1028,11 @@ export default function MarketingHome() {
                         Resume Prompt
                       </span>
                       <p className="home-features-resume-sub">
-                        Paste this into your AI coding tool to pick up where
-                        you left off.
+                        Paste this into your AI coding tool
+                        <span className="home-features-resume-sub-tail">
+                          {" "}to pick up where you left off
+                        </span>
+                        .
                       </p>
                     </div>
                     <span className="home-features-resume-close">
