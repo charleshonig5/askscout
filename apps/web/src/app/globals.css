@@ -234,6 +234,15 @@
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Render text at the sizes we specify — don't let mobile
+     browsers auto-inflate it. iOS Safari's text autosizing
+     (active when this is left at the default `auto`) boosts
+     "too-small" text per block by varying amounts; on the
+     transform-scaled hero/feature graphics that ballooned the
+     small digest text unevenly. 100% pins text to its designed
+     size. No-op on desktop. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
