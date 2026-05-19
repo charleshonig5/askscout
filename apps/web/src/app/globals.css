@@ -9079,15 +9079,15 @@ a:hover {
     font-size: 24px;
     line-height: 32px;
   }
-  /* Block rhythm — 34px between the title, the tabs, and the
-     card (desktop 24 / 54). align-items:flex-start so the tab
-     control hugs its content and sits left-aligned rather than
-     stretching the full width. */
+  /* Block rhythm — 24px between the title and the tab control,
+     34px between the tabs and the card. align-items:flex-start
+     so the tab control hugs its content and sits left-aligned
+     rather than stretching the full width. */
   .home-faq-section {
     gap: 34px;
   }
   .home-faq-header {
-    gap: 34px;
+    gap: 24px;
     align-items: flex-start;
   }
   /* Card padding — 24px, overriding the older 16px set by the
