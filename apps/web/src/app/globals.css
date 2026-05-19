@@ -9012,6 +9012,11 @@ a:hover {
     gap: 34px;
     align-items: flex-start;
   }
+  /* Privacy Policy pill — 48px tall on mobile (desktop 54).
+     Figma 405:6160. */
+  .home-trust-policy {
+    height: 48px;
+  }
   .home-trust-headtext {
     gap: 8px;
     max-width: none;
