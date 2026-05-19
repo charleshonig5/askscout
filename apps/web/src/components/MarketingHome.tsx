@@ -714,6 +714,24 @@ export default function MarketingHome() {
           </div>
         </div>
         </HeroGraphicMotion>
+
+        {/* Mobile-only static export of the digest graphic. The live
+            animated graphic above is display:none below 768px and
+            this <img> takes over: scaling the 976px live graphic
+            down hit iOS text-autosizing and sub-pixel drift, so on
+            mobile we show a flat PNG export of the Figma — pixel-
+            exact and autosizing-proof, at the cost of the streaming
+            animation. Desktop keeps the live graphic. aria-hidden:
+            decorative, same as the live graphic. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/hero-graphic.png"
+          alt=""
+          aria-hidden
+          width={1952}
+          height={1168}
+          className="home-hero-graphic-img"
+        />
       </section>
 
       {/* ===========================================================
