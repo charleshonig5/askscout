@@ -12545,20 +12545,10 @@ a:hover {
   color: var(--color-text-primary);
 }
 
-@media (max-width: 768px) {
-  .docs-hero {
-    padding: 64px 24px;
-  }
-  .docs-hero-title {
-    font-size: 40px;
-    line-height: 48px;
-  }
-  .docs-hero-updated,
-  .docs-hero-deck {
-    font-size: 16px;
-    line-height: 22px;
-  }
-}
+/* Mobile pattern alignment for the entire /docs page lives in a
+   single <=768px block below all docs base rules — see the block
+   after the .docs-cli media queries. Keeping it there is required
+   so the mobile overrides win against later base declarations. */
 
 /* ============================================
    DOCS SECTION SHARED — common shell for every
@@ -13002,6 +12992,68 @@ a:hover {
   }
   .docs-cli-cmd-inline {
     width: auto;
+  }
+}
+
+/* ============================================
+   DOCS — mobile pattern alignment
+   ============================================
+   Brings the /docs page in line with the mobile-home pattern:
+   54/24 section padding, Pridi 24/32 titles, 16/22 body, 34px
+   between distinct blocks, 8px within a heading, and 48px
+   buttons. Placed AFTER all the docs base + responsive rules
+   (esp. the <=1040px stack) so these overrides win on source
+   order at <=768px. Scoped to <=768px; desktop untouched. */
+@media (max-width: 768px) {
+  /* ---- Hero ---- */
+  .docs-hero {
+    padding: 54px 24px;
+  }
+  .docs-hero-title {
+    font-size: 24px;
+    line-height: 32px;
+  }
+  .docs-hero-headblock {
+    gap: 8px;
+  }
+  .docs-hero-updated,
+  .docs-hero-deck {
+    font-size: 16px;
+    line-height: 22px;
+  }
+
+  /* ---- Section shell (used by Web app + CLI + FAQ) ---- */
+  .docs-section {
+    padding: 54px 24px;
+  }
+  .docs-section-heading {
+    gap: 8px;
+  }
+  .docs-section-title {
+    font-size: 24px;
+    line-height: 32px;
+  }
+  .docs-section-deck {
+    font-size: 16px;
+    line-height: 22px;
+  }
+
+  /* ---- Web app ---- */
+  .docs-webapp-inner {
+    gap: 34px;
+  }
+  .docs-webapp-card-btn {
+    height: 48px;
+  }
+
+  /* ---- CLI ---- */
+  .docs-cli-inner {
+    gap: 34px;
+  }
+  /* Steps stack column (set by the <=1040px query above);
+     34px between them matches the mobile block rhythm. */
+  .docs-cli-steps {
+    gap: 34px;
   }
 }
 
