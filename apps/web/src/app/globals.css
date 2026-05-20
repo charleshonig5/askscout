@@ -13070,11 +13070,13 @@ a:hover {
     max-width: 274px;
     gap: 24px;
   }
-  /* The command chip fills the 274px step (Figma 412:549 w-full
-     inside the step), instead of the desktop hug-left behavior. */
+  /* Each command chip hugs its own command text and sits
+     left-aligned within the 274px step, so the three chips are
+     different widths (npm install -g askscout vs askscout) and
+     their content reads with consistent padding. */
   .docs-cli-step .home-cta-chip {
-    width: 100%;
-    align-self: stretch;
+    width: auto;
+    align-self: flex-start;
   }
 }
 
