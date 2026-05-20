@@ -9151,9 +9151,19 @@ a:hover {
      spacing/padding shift to the mobile pattern — content and
      type sizes are unchanged. */
 
-  /* Section padding to the mobile 54/24 rhythm (desktop 104/32). */
+  /* Footer spacing — a true 54px above and below the content.
+     Every section uses 54px vertical padding, so the footer
+     would otherwise sit under 108px (the ReadyCTA section's
+     54px bottom padding + the footer's own 54px top). The
+     negative top margin cancels the ReadyCTA's bottom padding
+     (ReadyCTA always renders directly before the footer), and
+     the divider is dropped (the mobile Figma footer has none),
+     leaving a clean 54px gap above the footer content and 54px
+     below it. */
   .home-footer {
+    margin-top: -54px;
     padding: 54px 24px;
+    border-top: none;
   }
   /* 34px between the brand block and the link groups (the inner
      is already a column from the <=880px query). */
