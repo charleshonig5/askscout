@@ -9151,19 +9151,14 @@ a:hover {
      spacing/padding shift to the mobile pattern — content and
      type sizes are unchanged. */
 
-  /* Footer spacing — a true 54px above and below the content.
-     Every section uses 54px vertical padding, so the footer
-     would otherwise sit under 108px (the ReadyCTA section's
-     54px bottom padding + the footer's own 54px top). The
-     negative top margin cancels the ReadyCTA's bottom padding
-     (ReadyCTA always renders directly before the footer), and
-     the divider is dropped (the mobile Figma footer has none),
-     leaving a clean 54px gap above the footer content and 54px
-     below it. */
+  /* Footer padding to the 54/24 mobile rhythm. The divider line
+     (border-top) and the standard inter-section spacing are
+     preserved — the CTA section above ends with its own 54px
+     bottom padding, the 1px divider sits between, and the
+     footer adds its 54px top padding, matching every other
+     section boundary on the site. */
   .home-footer {
-    margin-top: -54px;
     padding: 54px 24px;
-    border-top: none;
   }
   /* 34px between the brand block and the link groups (the inner
      is already a column from the <=880px query). */
@@ -13053,6 +13048,13 @@ a:hover {
   /* Steps stack column (set by the <=1040px query above);
      34px between them matches the mobile block rhythm. */
   .docs-cli-steps {
+    gap: 34px;
+  }
+  /* Each step is auto-height on mobile, so the desktop
+     space-between layout collapses and the command chip ends
+     up jammed against the step body. Add an explicit 34px gap
+     between the step content and its chip. */
+  .docs-cli-step {
     gap: 34px;
   }
 }
