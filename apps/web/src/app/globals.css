@@ -9568,26 +9568,39 @@ a:hover {
   padding-top: 0;
 }
 
-@media (max-width: 880px) {
+/* Article hero — align to the mobile-marketing pattern:
+   54/24 section padding, Pridi 32/40 page H1, 16/22 deck.
+   8px between title and deck (heading pair) with the meta
+   block pushed 34px below the deck (margin-top adds to the
+   8px flex gap = 34 visible). 14px between adjacent small
+   links/pills. */
+@media (max-width: 768px) {
   .article-hero {
-    padding-top: 64px;
+    padding-top: 54px;
+  }
+  .article-hero-inner {
+    padding: 0 24px;
+    gap: 8px;
   }
   .article-hero-title {
-    font-size: 38px;
-    line-height: 1.15;
+    font-size: 32px;
+    line-height: 40px;
+  }
+  .article-hero-deck {
+    font-size: 16px;
+    line-height: 22px;
+  }
+  .article-hero-meta {
+    margin-top: 26px;
+  }
+  .article-hero-meta-left {
+    gap: 14px;
+  }
+  .article-hero-links {
+    gap: 14px;
   }
   .article-hero-rule {
-    margin: 64px 0;
-  }
-}
-
-@media (max-width: 540px) {
-  .article-hero-inner {
-    padding: 0 20px;
-    gap: 24px;
-  }
-  .article-hero-title {
-    font-size: 30px;
+    margin: 54px 0;
   }
 }
 
@@ -9608,6 +9621,24 @@ a:hover {
   font-size: 36px;
   font-weight: 400;
   margin-bottom: 14px;
+}
+
+/* Article body — mobile pattern alignment. 24/32 Pridi section
+   titles with an 8px gap to the body, and 34px between the TLDR
+   / sections instead of the desktop 52. Placed after the base
+   rules so the overrides win on source order. */
+@media (max-width: 768px) {
+  .article .article-tldr {
+    margin-bottom: 34px;
+  }
+  .article .public-section {
+    margin-bottom: 34px;
+  }
+  .article .public-section-title {
+    font-size: 24px;
+    line-height: 32px;
+    margin-bottom: 8px;
+  }
 }
 
 /* FAQ block — Pridi 36 title above the shared FAQ card, 24px gap
@@ -13825,23 +13856,32 @@ a:hover {
   color: var(--color-text-tertiary);
 }
 
-/* Mobile — collapse the grid to one column and let the controls
-   row wrap so the filter chips and utility buttons stack instead
-   of squishing. */
-@media (max-width: 720px) {
+/* Mobile — align to the mobile-marketing pattern: 54/24 main
+   padding, Pridi 32/40 page H1, 16/22 deck, 34px between hero
+   and the interactive block, 8px within the heading, 14px
+   between stacked cards. Controls row wraps so the filter
+   chips and utility buttons stack instead of squishing. */
+@media (max-width: 768px) {
   .articles-main {
-    padding: 64px 20px;
+    padding: 54px 24px;
   }
   .articles-inner {
     gap: 34px;
   }
+  .articles-hero {
+    gap: 8px;
+    max-width: none;
+  }
   .articles-hero-title {
-    font-size: 40px;
-    line-height: 46px;
+    font-size: 32px;
+    line-height: 40px;
   }
   .articles-hero-deck {
     font-size: 16px;
     line-height: 22px;
+  }
+  .articles-index {
+    gap: 34px;
   }
   .articles-controls {
     flex-wrap: wrap;
@@ -13849,11 +13889,12 @@ a:hover {
   }
   .articles-grid {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 14px;
   }
+  /* Cards hug their content on mobile (a stacked single column
+     doesn't need the 269px desktop floor). */
   .articles-card {
     height: auto;
-    min-height: 240px;
   }
 }
 
