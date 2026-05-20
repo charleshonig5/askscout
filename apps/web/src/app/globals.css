@@ -13000,16 +13000,25 @@ a:hover {
    (esp. the <=1040px stack) so these overrides win on source
    order at <=768px. Scoped to <=768px; desktop untouched. */
 @media (max-width: 768px) {
-  /* ---- Hero ---- */
+  /* ---- Hero (Figma 412:497) ---- */
   .docs-hero {
     padding: 54px 24px;
   }
+  /* Hero H1 is Pridi 32/40 (not the 24/32 section title — the
+     page heading is one step larger). */
   .docs-hero-title {
-    font-size: 24px;
-    line-height: 32px;
+    font-size: 32px;
+    line-height: 40px;
+  }
+  /* Title block (title + Last Updated) is 24px above the body
+     block (deck + GitHub link), and the whole title block sits
+     at 0.8 opacity to soften it against the body text. */
+  .docs-hero-inner {
+    gap: 24px;
   }
   .docs-hero-headblock {
     gap: 8px;
+    opacity: 0.8;
   }
   .docs-hero-updated,
   .docs-hero-deck {
@@ -13017,7 +13026,7 @@ a:hover {
     line-height: 22px;
   }
 
-  /* ---- Section shell (used by Web app + CLI + FAQ) ---- */
+  /* ---- Section shell (Web app + CLI + FAQ) ---- */
   .docs-section {
     padding: 54px 24px;
   }
@@ -13033,29 +13042,39 @@ a:hover {
     line-height: 22px;
   }
 
-  /* ---- Web app ---- */
+  /* ---- Web app (Figma 412:512) ---- */
   .docs-webapp-inner {
     gap: 34px;
+  }
+  /* 14px between the two cards (Figma 412:516 gap-14). */
+  .docs-webapp-cards {
+    gap: 14px;
   }
   .docs-webapp-card-btn {
     height: 48px;
   }
 
-  /* ---- CLI ---- */
+  /* ---- CLI (Figma 412:543) ---- */
   .docs-cli-inner {
     gap: 34px;
   }
-  /* Steps stack column (set by the <=1040px query above);
-     34px between them matches the mobile block rhythm. */
+  /* 34px between the three steps (the wrapper at Figma 412:547
+     uses gap-34). */
   .docs-cli-steps {
     gap: 34px;
   }
-  /* Each step is auto-height on mobile, so the desktop
-     space-between layout collapses and the command chip ends
-     up jammed against the step body. Add an explicit 34px gap
-     between the step content and its chip. */
+  /* Each step is 274px wide with a 24px gap between its text
+     block and the command chip (Figma 412:548). */
   .docs-cli-step {
-    gap: 34px;
+    width: 274px;
+    max-width: 274px;
+    gap: 24px;
+  }
+  /* The command chip fills the 274px step (Figma 412:549 w-full
+     inside the step), instead of the desktop hug-left behavior. */
+  .docs-cli-step .home-cta-chip {
+    width: 100%;
+    align-self: stretch;
   }
 }
 
