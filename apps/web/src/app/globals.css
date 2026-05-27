@@ -13792,7 +13792,10 @@ a:hover {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: 23px 23px 0 23px;
+  /* 24px content inset on top + sides (matches the footer inset
+     below). Figma's exported 23/25 is auto-layout pixel-rounding;
+     the design intent is 24 on all sides. */
+  padding: 24px 24px 0;
   /* hidden keeps the 3-line title clamp from spilling past the
      body box if a title hits the upper bound. */
   overflow: hidden;
@@ -13869,8 +13872,9 @@ a:hover {
   justify-content: space-between;
   /* Padding-top compensates for the 1px border so the visible
      gap from the divider line to the Read More text is a true
-     14px, matching the 14px gap below it. */
-  padding: 13px 23px 14px;
+     14px, matching the 14px gap below it. 24px sides to match
+     the body's 24px content inset. */
+  padding: 13px 24px 14px;
   border-top: 1px solid var(--color-border);
 }
 
