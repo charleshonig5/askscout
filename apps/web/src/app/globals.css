@@ -984,6 +984,12 @@ a:hover {
   width: 100%;
   margin: 0;
   padding: 0;
+  /* Flex column so the digest content grows to fill the card's height —
+     short content (quiet-day, errors) gets centered in the remaining
+     space rather than sitting orphaned at the top of an empty card. */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ============================================
@@ -2477,11 +2483,16 @@ a:hover {
 .app-main {
   flex: 1;
   min-width: 0;
-  /* Hug content height instead of stretching to .app-layout's
-     min-height:100vh. A short digest then ends where its content
-     ends, rather than leaving an empty card interior below it. The
-     left nav still spans full height via the layout's min-height. */
-  align-self: flex-start;
+  /* Always fill at least the viewport height, in every state (streaming,
+     digest content, quiet-day, error). A flex column lets the inner
+     digest container grow to fill the card; when content exceeds the
+     viewport, the card grows past min-height and the page scrolls.
+     The min-height calc subtracts the 24px top + 24px bottom margins
+     so the card sits 24px below the top of the viewport and 24px above
+     the bottom on the initial paint with no scroll. */
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 48px);
   /* Floating card treatment: 24px gap on top/right/bottom, and the same 24px
      offset from the fixed sidebar on the left. The elevated background +
      subtle border visually lifts the content panel off the body, so the
@@ -3144,11 +3155,14 @@ a:hover {
 @media (max-width: 768px) {
   .app-main {
     /* Drop the floating-card treatment on mobile — full-bleed reads better
-       when the sidebar is off-canvas. */
+       when the sidebar is off-canvas. The min-height also drops to the
+       viewport minus the mobile header (no top/bottom card margins on
+       mobile) so the card still always fills the screen. */
     margin: 0;
     background: var(--color-bg-primary);
     border: none;
     border-radius: 0;
+    min-height: calc(100vh - var(--header-height));
   }
 
   .sidebar {
@@ -9829,6 +9843,12 @@ a:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* Grow to fill the remaining space inside the digest card and center
+     the empty-state content vertically — so on a tall viewport the
+     emoji + text + button sit in the middle of the card instead of
+     floating at the top with empty space beneath. */
+  flex: 1;
+  justify-content: center;
   gap: 24px;
   padding: 64px 24px;
   text-align: center;
@@ -10357,6 +10377,14 @@ a:hover {
   text-align: center;
   padding: var(--space-2xl) var(--space-lg);
   color: var(--color-text-secondary);
+  /* Center the error state in the filled digest card (matches the
+     quiet-day empty state) so it doesn't float at the top. */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
 }
 
 .digest-error p {
