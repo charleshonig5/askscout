@@ -13867,7 +13867,10 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 23px;
+  /* Padding-top compensates for the 1px border so the visible
+     gap from the divider line to the Read More text is a true
+     14px, matching the 14px gap below it. */
+  padding: 13px 23px 14px;
   border-top: 1px solid var(--color-border);
 }
 
