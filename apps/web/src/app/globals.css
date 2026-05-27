@@ -13949,17 +13949,17 @@ a:hover {
     grid-template-columns: 1fr;
     gap: 14px;
   }
-  /* Fixed 230px height per Figma. The 3-line title clamp and
-     3-line desc clamp already in place keep content inside. */
+  /* Fixed 230px height per Figma. Title clamps to 2 lines on
+     mobile (down from desktop's 3) so a 3-line title can't push
+     the 3-line description over the footer divider. With title
+     2 + desc 3 the body copy reaches ~y=163 and the divider sits
+     at y=185 — a clean 22px gap that mirrors the 23px top/side
+     inset. Shorter descs leave a larger gap; that's the natural
+     consequence of a fixed-height card with variable content. */
   .articles-card {
     height: 230px;
   }
-  /* Drop the desc to 2 lines on mobile so a longer description
-     doesn't eat the breathing room between the body text and the
-     footer divider. With 2-line title + 2-line desc the gap to
-     the divider lands at ~38px (per Figma); 3-line title + 2-line
-     desc leaves ~14px (still readable, no overlap). */
-  .articles-card-desc {
+  .articles-card-title {
     -webkit-line-clamp: 2;
   }
 }
