@@ -2,6 +2,7 @@ import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ReadyCTA } from "@/components/ReadyCTA";
 import { ArticlesIndexInteractive } from "@/components/ArticlesIndexInteractive";
+import { ArticlesUtils } from "@/components/ArticlesUtils";
 import { ARTICLES } from "@/lib/articles-data";
 
 export const metadata = {
@@ -73,7 +74,15 @@ export default function ArticlesIndexPage() {
       <section className="articles-main">
         <div className="articles-inner">
           <div className="articles-hero">
-            <h1 className="articles-hero-title">Articles</h1>
+            {/* Title + utility buttons share one row. On desktop the
+                utils are hidden here and surface inside the controls
+                row below (right of the filter chips). On mobile the
+                utils render here next to the title and the controls
+                row carries only the filter chips. */}
+            <div className="articles-hero-row">
+              <h1 className="articles-hero-title">Articles</h1>
+              <ArticlesUtils articles={ARTICLES} variant="hero" />
+            </div>
             <p className="articles-hero-deck">
               Long-form writing from the AskScout team.
             </p>

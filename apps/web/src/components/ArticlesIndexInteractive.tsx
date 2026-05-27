@@ -2,24 +2,22 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Clock, Rss, Shuffle, SquareArrowUpRight } from "lucide-react";
+import { Clock, SquareArrowUpRight } from "lucide-react";
+import { ArticlesUtils } from "@/components/ArticlesUtils";
 import type { ArticleListing, ArticleTag } from "@/lib/articles-data";
 
 /**
  * Interactive controls + card grid for the articles index, per
  * Figma 256:4790.
  *
- * Owns three pieces of state:
- *   - Active tag filter ("All" | "Company" | "Guides"). Cards
- *     outside the active tag are removed via display:none rather
- *     than dropped from the DOM, so crawlers and AI search bots
- *     still index every article without executing JS to switch
- *     filters. Same trick we use for FAQ tabs.
- *   - Shuffle button — opens a random article (legacy "surprise me"
- *     behavior). Despite sitting next to the filter chips visually,
- *     it navigates rather than reorders the grid.
- *   - RSS link — opens the Atom feed at /dispatch.
+ * Owns the active tag filter ("All" | "Company" | "Guides").
+ * Cards outside the active tag are removed via display:none
+ * rather than dropped from the DOM so crawlers and AI search
+ * bots still index every article without executing JS. The
+ * Shuffle + RSS pair lives in <ArticlesUtils /> and is rendered
+ * once here (visible on desktop, hidden on mobile) and once in
+ * the page hero (hidden on desktop, visible on mobile) — same
+ * buttons, two slots, CSS-toggled per viewport.
  *
  * The page H1 ("Articles") lives in the server-rendered hero
  * above this component, so each card title here is an <h2>.
@@ -48,13 +46,6 @@ export function ArticlesIndexInteractive({
   articles: ArticleListing[];
 }) {
   const [filter, setFilter] = useState<FilterValue>("all");
-  const router = useRouter();
-
-  const openRandomArticle = () => {
-    if (articles.length === 0) return;
-    const idx = Math.floor(Math.random() * articles.length);
-    router.push(`/articles/${articles[idx]!.slug}`);
-  };
 
   return (
     <div className="articles-index">
@@ -85,26 +76,7 @@ export function ArticlesIndexInteractive({
             );
           })}
         </div>
-        <div className="articles-utils">
-          <button
-            type="button"
-            className="articles-util-btn"
-            onClick={openRandomArticle}
-            aria-label="Open a random article"
-            title="Surprise me"
-          >
-            <span>Shuffle</span>
-            <Shuffle size={16} strokeWidth={1.5} aria-hidden />
-          </button>
-          <a
-            className="articles-util-icon-btn"
-            href="/dispatch"
-            aria-label="Subscribe via RSS"
-            title="RSS feed"
-          >
-            <Rss size={16} strokeWidth={1.5} aria-hidden />
-          </a>
-        </div>
+        <ArticlesUtils articles={articles} variant="controls" />
       </div>
 
       {/* Card grid — every article rendered into the initial HTML
