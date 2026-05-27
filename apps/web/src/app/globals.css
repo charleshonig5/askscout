@@ -13954,6 +13954,14 @@ a:hover {
   .articles-card {
     height: 230px;
   }
+  /* Drop the desc to 2 lines on mobile so a longer description
+     doesn't eat the breathing room between the body text and the
+     footer divider. With 2-line title + 2-line desc the gap to
+     the divider lands at ~38px (per Figma); 3-line title + 2-line
+     desc leaves ~14px (still readable, no overlap). */
+  .articles-card-desc {
+    -webkit-line-clamp: 2;
+  }
 }
 
 /* ============================================================
