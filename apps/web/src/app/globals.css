@@ -9582,19 +9582,20 @@ a:hover {
   padding-top: 0;
 }
 
-/* Article hero — align to the mobile-marketing pattern:
-   54/24 section padding, Pridi 32/40 page H1, 16/22 deck.
-   8px between title and deck (heading pair) with the meta
-   block pushed 34px below the deck (margin-top adds to the
-   8px flex gap = 34 visible). 14px between adjacent small
-   links/pills. */
+/* Article hero — align to the mobile-marketing pattern per
+   Figma 424:964. Four elements stack with a uniform 14px gap:
+   title (32/40), deck (16/22 italic), meta row (pills + date),
+   links row (Back + Copy URL). The meta and links rows are
+   stacked instead of sharing a single row like on desktop. */
 @media (max-width: 768px) {
   .article-hero {
     padding-top: 54px;
   }
+  /* Uniform 14px gap between the title, deck, meta row, and
+     links row (matches Figma Frame 327 gap-14). */
   .article-hero-inner {
     padding: 0 24px;
-    gap: 8px;
+    gap: 14px;
   }
   .article-hero-title {
     font-size: 32px;
@@ -9604,14 +9605,36 @@ a:hover {
     font-size: 16px;
     line-height: 22px;
   }
+  /* Restructure the meta block as a 2-row grid: row 1 is the
+     pills cluster + date (left-aligned, 14px between them); row 2
+     is the Back + Copy URL links (24px apart). `display: contents`
+     on .article-hero-meta-left unwraps its children so they
+     participate as direct grid items. */
   .article-hero-meta {
-    margin-top: 26px;
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    row-gap: 14px;
+    column-gap: 14px;
+    align-items: center;
+    width: 100%;
+    margin-top: 0;
   }
   .article-hero-meta-left {
-    gap: 14px;
+    display: contents;
+  }
+  .article-hero-pills {
+    grid-row: 1;
+    grid-column: 1;
+  }
+  .article-hero-date {
+    grid-row: 1;
+    grid-column: 2;
   }
   .article-hero-links {
-    gap: 14px;
+    grid-row: 2;
+    grid-column: 1 / -1;
+    gap: 24px;
+    align-items: center;
   }
   .article-hero-rule {
     margin: 54px 0;
