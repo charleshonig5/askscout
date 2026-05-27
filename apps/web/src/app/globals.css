@@ -13596,13 +13596,14 @@ a:hover {
 /* Title + utility buttons row. On desktop the utils inside the
    row are hidden (.articles-utils--hero { display: none } below)
    so this row reads as just the title. On mobile the utils show
-   here and the controls row carries only the filter chips. */
+   here, sitting 24px to the right of the title (no
+   justify-content:space-between — Figma 412:753 has them
+   immediately next to the title, not pushed to the far edge). */
 .articles-hero-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
-  gap: 14px;
+  gap: 24px;
 }
 
 /* Desktop: hide the hero-slot util buttons. The visible Shuffle +
