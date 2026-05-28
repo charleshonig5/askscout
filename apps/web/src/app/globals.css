@@ -9625,6 +9625,10 @@ a:hover {
   .article-hero-pills {
     grid-row: 1;
     grid-column: 1;
+    /* 8px between the chips on mobile (Figma 417:365), down from
+       the 14px desktop spacing — matches the mobile-pattern chip
+       spacing used everywhere else. */
+    gap: 8px;
   }
   .article-hero-date {
     grid-row: 1;
@@ -13992,6 +13996,12 @@ a:hover {
   }
   .articles-card-title {
     -webkit-line-clamp: 2;
+  }
+  /* 8px between the card's category pill and read-time pill on
+     mobile (Figma 417:365), matching the mobile-pattern chip
+     spacing used on the article hero. */
+  .articles-card-tags {
+    gap: 8px;
   }
 }
 
