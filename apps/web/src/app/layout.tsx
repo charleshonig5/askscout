@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 import { SessionProvider } from "next-auth/react";
 import { Pridi, Work_Sans } from "next/font/google";
@@ -76,6 +76,20 @@ export const metadata: Metadata = {
     apple: { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
   },
   manifest: "/site.webmanifest",
+};
+
+/* Viewport export is the Next 14+ requirement for mobile-friendly
+ * <meta name="viewport"> + <meta name="theme-color">.
+ * Docs: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ *
+ * theme-color drives the mobile browser chrome (Chrome's address
+ * bar fill on Android, Safari's status bar on iOS PWAs). Set to
+ * bg-primary #070707 so the chrome blends seamlessly into the
+ * dark-default site. Matches theme_color in site.webmanifest. */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#070707",
 };
 
 /**
