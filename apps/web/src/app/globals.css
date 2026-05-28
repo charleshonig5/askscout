@@ -9613,8 +9613,12 @@ a:hover {
   .article-hero-meta {
     display: grid;
     grid-template-columns: auto auto 1fr;
+    /* Row 1 is the pills cluster + date; per Figma 424:996 they
+       sit 24px apart, not the 14px row gap below. Row 2 is the
+       Back / Copy URL links, which keep the 14px row spacing
+       from row 1. */
     row-gap: 14px;
-    column-gap: 14px;
+    column-gap: 24px;
     align-items: center;
     width: 100%;
     margin-top: 0;
