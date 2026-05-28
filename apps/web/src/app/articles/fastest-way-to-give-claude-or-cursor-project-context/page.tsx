@@ -4,7 +4,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
 import { ArticleFAQ } from "@/components/ArticleFAQ";
 import { ReadyCTA } from "@/components/ReadyCTA";
-import { articleJsonLd } from "@/lib/article-jsonld";
+import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
   title:
@@ -65,6 +65,11 @@ const ARTICLE_SCHEMA = articleJsonLd({
     "How to give Claude Code, Cursor, or Codex a one-shot context block covering tech stack, recent work, current focus, and key files, so the AI is useful from the first message.",
 });
 
+const BREADCRUMB_SCHEMA = articleBreadcrumbJsonLd({
+  slug: "fastest-way-to-give-claude-or-cursor-project-context",
+  title: "The fastest way to bring Claude Code, Cursor, or Codex up to speed on your project",
+});
+
 export default function FastestWayToContextPage() {
   return (
     <main className="page">
@@ -75,6 +80,10 @@ export default function FastestWayToContextPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ARTICLE_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(BREADCRUMB_SCHEMA) }}
       />
       <MarketingNav />
 

@@ -4,7 +4,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
 import { ArticleFAQ } from "@/components/ArticleFAQ";
 import { ReadyCTA } from "@/components/ReadyCTA";
-import { articleJsonLd } from "@/lib/article-jsonld";
+import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
   title: "Why we made AskScout open source | AskScout",
@@ -63,6 +63,11 @@ const ARTICLE_SCHEMA = articleJsonLd({
     "Why AskScout is MIT licensed: trust matters more than moat for a tool that reads your code. Plus the BYOK story for the CLI.",
 });
 
+const BREADCRUMB_SCHEMA = articleBreadcrumbJsonLd({
+  slug: "why-askscout-is-open-source",
+  title: "Why we made AskScout open source",
+});
+
 export default function WhyAskScoutOpenSourcePage() {
   return (
     <main className="page">
@@ -73,6 +78,10 @@ export default function WhyAskScoutOpenSourcePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ARTICLE_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(BREADCRUMB_SCHEMA) }}
       />
       <MarketingNav />
 

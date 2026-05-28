@@ -4,7 +4,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
 import { ArticleFAQ } from "@/components/ArticleFAQ";
 import { ReadyCTA } from "@/components/ReadyCTA";
-import { articleJsonLd } from "@/lib/article-jsonld";
+import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
   title: "Introducing AskScout: your vibe coding companion | AskScout",
@@ -63,6 +63,11 @@ const ARTICLE_SCHEMA = articleJsonLd({
     "AskScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex.",
 });
 
+const BREADCRUMB_SCHEMA = articleBreadcrumbJsonLd({
+  slug: "introducing-askscout",
+  title: "Introducing AskScout: your vibe coding companion",
+});
+
 export default function IntroducingAskScoutPage() {
   return (
     <main className="page">
@@ -73,6 +78,10 @@ export default function IntroducingAskScoutPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ARTICLE_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(BREADCRUMB_SCHEMA) }}
       />
       <MarketingNav />
 

@@ -4,7 +4,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
 import { ArticleFAQ } from "@/components/ArticleFAQ";
 import { ReadyCTA } from "@/components/ReadyCTA";
-import { articleJsonLd } from "@/lib/article-jsonld";
+import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
   title: "Best AI Coding Tools for Solo Developers | AskScout",
@@ -63,6 +63,11 @@ const ARTICLE_SCHEMA = articleJsonLd({
     "An honest take on Claude Code, Cursor, Codex, GitHub Copilot, and Aider for solo developers. What each one is good at, and the layer they all leave out.",
 });
 
+const BREADCRUMB_SCHEMA = articleBreadcrumbJsonLd({
+  slug: "best-ai-coding-tools-for-solo-developers",
+  title: "Best AI Coding Tools for Solo Developers",
+});
+
 export default function BestAICodingToolsPage() {
   return (
     <main className="page">
@@ -73,6 +78,10 @@ export default function BestAICodingToolsPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ARTICLE_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(BREADCRUMB_SCHEMA) }}
       />
       <MarketingNav />
 

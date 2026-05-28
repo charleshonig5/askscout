@@ -92,6 +92,48 @@ export const viewport: Viewport = {
   themeColor: "#070707",
 };
 
+/* Site-wide Organization + WebSite JSON-LD in a single @graph
+ * block so the entity definitions appear on every page without
+ * duplicating Organization across the per-page schemas.
+ *
+ * @graph is schema.org's canonical pattern for combining multiple
+ * top-level entities in one JSON-LD payload (used by Yoast SEO,
+ * Rank Math, and most professional CMS plugins). Internal @id
+ * URLs let other schemas on the page reference these without
+ * re-inlining the full Organization object.
+ *
+ * Refs:
+ *   https://schema.org/Organization
+ *   https://schema.org/WebSite
+ *   https://developers.google.com/search/docs/appearance/structured-data/logo
+ */
+const SITE_GRAPH = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://askscout.dev/#organization",
+      name: "AskScout",
+      url: "https://askscout.dev",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://askscout.dev/logo-white.svg",
+      },
+      description:
+        "Open-source daily digest tool for developers and vibe coders. Reads your git activity and writes a plain-English summary of what you actually shipped.",
+      sameAs: ["https://github.com/charleshonig5/askscout"],
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://askscout.dev/#website",
+      name: "AskScout",
+      url: "https://askscout.dev",
+      inLanguage: "en",
+      publisher: { "@id": "https://askscout.dev/#organization" },
+    },
+  ],
+};
+
 /**
  * Theme is server-rendered via a cookie. The HTML arrives with the
  * correct data-theme attribute already set, so:
@@ -111,6 +153,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" data-theme={theme} className={`${workSans.variable} ${pridi.variable}`}>
       <body>
+        {/* Site-wide structured data — renders on every page. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(SITE_GRAPH) }}
+        />
         {/* ToastProvider sits OUTSIDE SessionProvider so toasts keep
             working even if auth has a transient client-side error. */}
         <ToastProvider>

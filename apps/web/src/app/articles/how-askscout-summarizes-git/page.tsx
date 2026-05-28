@@ -3,7 +3,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
 import { ArticleFAQ } from "@/components/ArticleFAQ";
 import { ReadyCTA } from "@/components/ReadyCTA";
-import { articleJsonLd } from "@/lib/article-jsonld";
+import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
   title: "How AskScout turns a noisy git log into a 10-second digest | AskScout",
@@ -62,6 +62,11 @@ const ARTICLE_SCHEMA = articleJsonLd({
     "A walkthrough of how AskScout reads commits and diffs, computes structural signals, and uses a tuned LLM prompt to produce a readable digest.",
 });
 
+const BREADCRUMB_SCHEMA = articleBreadcrumbJsonLd({
+  slug: "how-askscout-summarizes-git",
+  title: "How AskScout turns a noisy git log into a 10-second digest",
+});
+
 export default function HowAskScoutSummarizesGitPage() {
   return (
     <main className="page">
@@ -72,6 +77,10 @@ export default function HowAskScoutSummarizesGitPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ARTICLE_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(BREADCRUMB_SCHEMA) }}
       />
       <MarketingNav />
 

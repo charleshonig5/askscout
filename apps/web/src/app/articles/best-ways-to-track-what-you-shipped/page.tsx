@@ -4,7 +4,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
 import { ArticleFAQ } from "@/components/ArticleFAQ";
 import { ReadyCTA } from "@/components/ReadyCTA";
-import { articleJsonLd } from "@/lib/article-jsonld";
+import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
   title: "Best Ways to Track What You Shipped as a Developer | AskScout",
@@ -63,6 +63,11 @@ const ARTICLE_SCHEMA = articleJsonLd({
     "An honest comparison of git log, GitHub Insights, dev journals, and automated digests for tracking what you actually built each week.",
 });
 
+const BREADCRUMB_SCHEMA = articleBreadcrumbJsonLd({
+  slug: "best-ways-to-track-what-you-shipped",
+  title: "Best Ways to Track What You Shipped as a Developer",
+});
+
 export default function TrackWhatYouShippedPage() {
   return (
     <main className="page">
@@ -73,6 +78,10 @@ export default function TrackWhatYouShippedPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ARTICLE_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(BREADCRUMB_SCHEMA) }}
       />
       <MarketingNav />
 
