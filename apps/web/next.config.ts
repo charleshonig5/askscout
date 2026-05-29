@@ -70,7 +70,9 @@ const nextConfig: NextConfig = {
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: https://avatars.githubusercontent.com",
+      // jsdelivr is needed for the Microsoft Fluent Emoji assets
+      // pulled by <Emoji /> on the marketing hero, sidebar, and FAQ.
+      "img-src 'self' data: https://avatars.githubusercontent.com https://cdn.jsdelivr.net",
       "font-src 'self' data:",
       "connect-src 'self'",
       "frame-ancestors 'none'",
