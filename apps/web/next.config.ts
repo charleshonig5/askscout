@@ -20,9 +20,7 @@ const nextConfig: NextConfig = {
       { source: "/rss.xml", destination: "/dispatch", permanent: true },
     ];
   },
-  /* Security headers applied to every response. Intentionally
-   * conservative — anything risky (CSP) is deferred until each
-   * inline style/script and remote origin is catalogued.
+  /* Security headers applied to every response.
    *
    * - Strict-Transport-Security: forces HTTPS for 2 years and
    *   includes subdomains, with the `preload` directive so the
@@ -37,8 +35,50 @@ const nextConfig: NextConfig = {
    *   cross-site.
    * - Permissions-Policy: turns off browser features the app
    *   never uses, so a future XSS can't enumerate them either.
+   *
+   * Content-Security-Policy:
+   *   The session payload (and the GitHub OAuth access_token NextAuth
+   *   currently attaches to it) is reachable from any client-side
+   *   script via /api/auth/session. The defense against XSS or a
+   *   rogue script exfiltrating it is the CSP below — by restricting
+   *   what can execute and where it can talk, an attacker can't run
+   *   their own script in the page nor send data to an attacker-
+   *   controlled origin even if they did.
+   *
+   *   Inline scripts/styles use 'unsafe-inline' because Next.js
+   *   emits both: inline RSC bootstrap scripts and inline styles
+   *   for streaming server components / CSS-in-JS. Replacing
+   *   'unsafe-inline' with per-request nonces is a future step
+   *   (requires middleware integration).
+   *
+   *   img-src includes https://avatars.githubusercontent.com so any
+   *   future direct <img> usage works (next/image already proxies
+   *   through /_next/image on same-origin; this is defensive).
+   *
+   *   form-action includes https://github.com for the NextAuth
+   *   OAuth signin flow which redirects there.
+   *
+   *   frame-ancestors 'none' is the modern replacement for
+   *   X-Frame-Options: DENY; kept both for browser coverage.
+   *
+   *   connect-src is 'self' only — the app makes no direct
+   *   third-party fetches from the browser (all GitHub/LLM/
+   *   Supabase calls happen server-side via API routes).
    */
   async headers() {
+    const csp = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline'",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: https://avatars.githubusercontent.com",
+      "font-src 'self' data:",
+      "connect-src 'self'",
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "form-action 'self' https://github.com",
+      "object-src 'none'",
+    ].join("; ");
+
     return [
       {
         source: "/:path*",
@@ -55,6 +95,7 @@ const nextConfig: NextConfig = {
             value:
               "camera=(), microphone=(), geolocation=(), interest-cohort=()",
           },
+          { key: "Content-Security-Policy", value: csp },
         ],
       },
     ];
