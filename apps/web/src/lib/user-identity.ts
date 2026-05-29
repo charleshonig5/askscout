@@ -6,8 +6,8 @@
  * This is a standalone utility (no NextAuth dependency) so it
  * can be tested without mocking the Next.js server environment.
  */
-export function getUserId(session: {
-  user?: { id?: string; email?: string | null };
-}): string | null {
-  return session.user?.id ?? session.user?.email ?? null;
+export function getUserId(
+  session: { user?: { id?: string; email?: string | null } } | null | undefined,
+): string | null {
+  return session?.user?.id ?? session?.user?.email ?? null;
 }
