@@ -392,7 +392,7 @@ export default function DashboardPage() {
         ...prev,
         [`${selectedRepo}:digest`]: {
           content: digestStream.text,
-          stats: digestStream.stats as DigestViewStats | null,
+          stats: digestStream.stats,
         },
       }));
       // Delay history refresh: the drip finalizes (isDone) when it hits the
@@ -738,7 +738,7 @@ export default function DashboardPage() {
     ? (noNewCommits.stats as DigestViewStats | null)
     : isViewingHistory
       ? (viewingHistoryStats as DigestViewStats | null)
-      : (digestStream.stats as DigestViewStats | null) ||
+      : digestStream.stats ||
         (cachedDigests[`${selectedRepo}:digest`]?.stats as DigestViewStats | null) ||
         null;
 
@@ -976,9 +976,9 @@ export default function DashboardPage() {
                     }
                     streamingText={currentSections?.digest ?? ""}
                     stats={
-                      (digestStream.stats ||
-                        cachedDigests[`${selectedRepo}:digest`]?.stats ||
-                        null) as DigestViewStats | null
+                      digestStream.stats ||
+                      cachedDigests[`${selectedRepo}:digest`]?.stats ||
+                      null
                     }
                     repoName={repoName}
                     repoFullName={selectedRepo}

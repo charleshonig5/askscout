@@ -3,6 +3,19 @@ import { deleteAllDigests, deleteRepoDigests, deleteUserAccount } from "@/lib/su
 
 /** Delete history or account */
 export async function DELETE(req: Request) {
+  // CSRF defense-in-depth: reject any cross-origin request even
+  // before checking the session. SameSite=Lax already blocks
+  // cross-site DELETEs with credentials in current browsers, but
+  // this guard means we don't rely on default cookie policy if it
+  // ever changes (e.g. embedding work that flips SameSite=None).
+  // The DELETE here is irreversible — it wipes every digest, every
+  // project summary, and the user record — so belt-and-suspenders.
+  const url = new URL(req.url);
+  const origin = req.headers.get("origin");
+  if (origin !== null && origin !== url.origin) {
+    return Response.json({ error: "Cross-origin request blocked" }, { status: 403 });
+  }
+
   const session = await auth();
   if (!session?.accessToken) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -12,7 +25,6 @@ export async function DELETE(req: Request) {
     return Response.json({ error: "Unable to identify user" }, { status: 401 });
   }
 
-  const url = new URL(req.url);
   const action = url.searchParams.get("action");
   const repo = url.searchParams.get("repo");
 

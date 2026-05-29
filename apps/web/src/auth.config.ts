@@ -62,7 +62,11 @@ const authConfig: NextAuthConfig = {
     authorized({ auth: authSession, request }) {
       const isLoggedIn = !!authSession?.user;
       const path = request.nextUrl.pathname;
-      const isProtected = path.startsWith("/dashboard") || path.startsWith("/settings");
+      // Keep in sync with middleware.ts matcher.
+      const isProtected =
+        path.startsWith("/dashboard") ||
+        path.startsWith("/settings") ||
+        path.startsWith("/insights");
       if (isProtected && !isLoggedIn) return false;
       return true;
     },
