@@ -6,12 +6,14 @@
  * design without sending real emails. Visit /dev/email-preview to
  * see the current state.
  *
- * Reachable on the deployed site for visual iteration. Contains only
- * static sample data (no real user content), so making it public is
- * safe. Once the email feature ships and we no longer need to iterate
- * on visuals, this route can be deleted or moved behind auth.
+ * Gated to non-production environments — even though the page
+ * contains only static sample data (no real user content), there's
+ * no reason to expose an internal staging surface to prod traffic
+ * and attack-surface scanners. Visible in dev (`pnpm dev`) and on
+ * Vercel preview deployments; returns 404 on the live site.
  */
 
+import { notFound } from "next/navigation";
 import { render } from "@react-email/components";
 import { DigestEmail } from "@/emails/DigestEmail";
 
@@ -66,6 +68,16 @@ const SAMPLE: Parameters<typeof DigestEmail>[0] = {
 };
 
 export default async function EmailPreviewPage() {
+  // Gate the route to non-production deploys. Vercel sets VERCEL_ENV
+  // to "production" only for the production branch; preview deploys
+  // get "preview" and local dev gets "development" (or unset). This
+  // keeps the visual-iteration workflow alive on preview branches
+  // while 404'ing the route on the live site. Vercel preview deploys
+  // run with NODE_ENV=production too, so we deliberately do not gate
+  // on NODE_ENV — that would block legitimate preview testing.
+  if (process.env.VERCEL_ENV === "production") {
+    notFound();
+  }
   // @react-email's render returns the final HTML string. We embed it
   // in an iframe so the email's own <html>/<body> styling renders
   // correctly without leaking into or being polluted by the dashboard
