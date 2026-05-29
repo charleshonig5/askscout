@@ -186,6 +186,22 @@
   --color-border: #252525;
   --color-border-hover: #333333;
 
+  /* Marketing section-divider gradient. Used ONLY on the
+     section-boundary lines that separate top-level marketing
+     sections — .home-section / .home-section--quiet /
+     .home-footer / .article-hero-rule / .docs-section. Smaller
+     in-component dividers (nav border, FAQ rows, CLI rows,
+     card footers, in-card mock dividers) deliberately keep the
+     flat --color-border so the gradient effect only reads at
+     full-bleed scale where it was designed. App / dashboard
+     borders are unaffected. */
+  --divider-gradient: linear-gradient(
+    270deg,
+    #252525 25%,
+    #616161 50%,
+    #252525 75%
+  );
+
   /* Accent = pure White from the palette. Buttons and links use this for
      maximum contrast against the dark surfaces. accent-text inverts to
      Primary Black so text on accent buttons reads cleanly. */
@@ -5613,7 +5629,10 @@ a:hover {
 .home-section {
   padding: 104px 32px;
   position: relative;
+  /* Marketing divider gradient on the section's top border; solid
+     fallback covers browsers without border-image support. */
   border-top: 1px solid var(--color-border);
+  border-image: var(--divider-gradient) 1;
 }
 
 .home-section--quiet {
@@ -5621,6 +5640,7 @@ a:hover {
   /* Keep the bottom border for the inverted-strip treatment;
      top border already comes from .home-section above. */
   border-bottom: 1px solid var(--color-border);
+  border-image: var(--divider-gradient) 1;
 }
 
 .home-section--cta {
@@ -8540,6 +8560,7 @@ a:hover {
    ============================================ */
 .home-footer {
   border-top: 1px solid var(--color-border);
+  border-image: var(--divider-gradient) 1;
   padding: 104px 32px;
 }
 
@@ -9574,6 +9595,7 @@ a:hover {
   margin: 104px 0;
   border: 0;
   border-top: 1px solid var(--color-border);
+  border-image: var(--divider-gradient) 1;
 }
 
 /* Article body sits flush under the hero's divider: the 104px below
@@ -12645,6 +12667,7 @@ a:hover {
 .docs-section {
   padding: 104px 32px;
   border-top: 1px solid var(--color-border);
+  border-image: var(--divider-gradient) 1;
 }
 
 .docs-section-heading {
