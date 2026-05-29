@@ -186,6 +186,21 @@
   --color-border: #252525;
   --color-border-hover: #333333;
 
+  /* Marketing divider gradient. Used wherever a "divider line"
+     separates content on marketing surfaces (sections, navs,
+     footer, FAQ rows, CLI rows, article card footers). A 270deg
+     gradient that runs #252525 (matches --color-border) at the
+     ends and lifts to #616161 (--color-text-tertiary) in the
+     middle — gives every divider a soft glow without making it
+     overpowering. App / dashboard borders deliberately keep the
+     solid --color-border value. */
+  --divider-gradient: linear-gradient(
+    270deg,
+    #252525 25%,
+    #616161 50%,
+    #252525 75%
+  );
+
   /* Accent = pure White from the palette. Buttons and links use this for
      maximum contrast against the dark surfaces. accent-text inverts to
      Primary Black so text on accent buttons reads cleanly. */
@@ -3313,7 +3328,10 @@ a:hover {
   background: color-mix(in srgb, var(--color-bg-primary) 75%, transparent);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
+  /* Marketing divider gradient — solid fallback for old browsers,
+     gradient image rendered on the 1px bottom border in modern. */
   border-bottom: 1px solid var(--color-border);
+  border-image: var(--divider-gradient) 1;
 }
 
 .home-nav-logo {
@@ -4665,7 +4683,7 @@ a:hover {
    match the rest of the frame's stroke. */
 .home-hero-card-divider {
   position: absolute;
-  background: var(--color-border);
+  background: var(--divider-gradient);
   pointer-events: none;
 }
 
@@ -5613,7 +5631,10 @@ a:hover {
 .home-section {
   padding: 104px 32px;
   position: relative;
+  /* Marketing divider gradient on the section's top border; solid
+     fallback covers browsers without border-image support. */
   border-top: 1px solid var(--color-border);
+  border-image: var(--divider-gradient) 1;
 }
 
 .home-section--quiet {
@@ -5621,6 +5642,7 @@ a:hover {
   /* Keep the bottom border for the inverted-strip treatment;
      top border already comes from .home-section above. */
   border-bottom: 1px solid var(--color-border);
+  border-image: var(--divider-gradient) 1;
 }
 
 .home-section--cta {
@@ -6579,7 +6601,7 @@ a:hover {
 
 .home-features-toggle-divider {
   height: 1px;
-  background: var(--color-border);
+  background: var(--divider-gradient);
 }
 
 .home-features-toggle-row {
@@ -6716,7 +6738,7 @@ a:hover {
   left: 0;
   right: 0;
   height: 1px;
-  background: var(--color-border);
+  background: var(--divider-gradient);
 }
 
 .home-features-resume-body {
@@ -7236,7 +7258,7 @@ a:hover {
   left: 0;
   right: 0;
   height: 1px;
-  background: var(--color-border);
+  background: var(--divider-gradient);
 }
 
 .home-runlocal-stream {
@@ -8380,7 +8402,7 @@ a:hover {
 .home-faq-divider {
   width: 100%;
   height: 1px;
-  background: var(--color-border);
+  background: var(--divider-gradient);
 }
 
 .home-faq-item {
@@ -8540,6 +8562,7 @@ a:hover {
    ============================================ */
 .home-footer {
   border-top: 1px solid var(--color-border);
+  border-image: var(--divider-gradient) 1;
   padding: 104px 32px;
 }
 
@@ -9574,6 +9597,7 @@ a:hover {
   margin: 104px 0;
   border: 0;
   border-top: 1px solid var(--color-border);
+  border-image: var(--divider-gradient) 1;
 }
 
 /* Article body sits flush under the hero's divider: the 104px below
@@ -12645,6 +12669,7 @@ a:hover {
 .docs-section {
   padding: 104px 32px;
   border-top: 1px solid var(--color-border);
+  border-image: var(--divider-gradient) 1;
 }
 
 .docs-section-heading {
@@ -12822,7 +12847,7 @@ a:hover {
 .docs-cli-divider {
   width: 100%;
   height: 1px;
-  background: var(--color-border);
+  background: var(--divider-gradient);
 }
 
 /* ---- 3-step install row (Install / Setup / Run) ----
@@ -12946,7 +12971,7 @@ a:hover {
 .docs-cli-cmd-divider {
   width: 100%;
   height: 1px;
-  background: var(--color-border);
+  background: var(--divider-gradient);
 }
 
 .docs-cli-cmd-row {
@@ -13908,6 +13933,7 @@ a:hover {
      the body's 24px content inset. */
   padding: 13px 24px 14px;
   border-top: 1px solid var(--color-border);
+  border-image: var(--divider-gradient) 1;
 }
 
 .articles-card-read {
