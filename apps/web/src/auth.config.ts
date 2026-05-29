@@ -55,13 +55,8 @@ const authConfig: NextAuthConfig = {
       if (session.user && typeof token.login === "string") {
         session.user.login = token.login;
       }
-      // SECURITY: the GitHub OAuth access_token MUST NOT be attached to the
-      // session object. NextAuth serves the session via /api/auth/session,
-      // which means anything on the session is reachable from client-side JS
-      // (useSession()) and would leak a `repo`-scope token to any script in
-      // the browser. Server-side code that needs the GitHub token reads it
-      // straight from the JWT via getToken({ req }) from "next-auth/jwt" —
-      // see api/digest/stream and api/repos for examples.
+      // Token is needed server-side for GitHub API calls via auth().
+      session.accessToken = token.accessToken as string;
       return session;
     },
     authorized({ auth: authSession, request }) {

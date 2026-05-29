@@ -10,7 +10,6 @@
  * CLI and web AI paths relate.
  */
 import { auth, getUserId } from "@/auth";
-import { getGithubToken } from "@/lib/github-token";
 import {
   createGitHubFilesReader,
   extractIssueReferences,
@@ -51,21 +50,12 @@ const GITHUB_NAME_PATTERN = /^[a-zA-Z0-9._-]{1,100}$/;
 export async function POST(req: Request) {
   // 1. Auth check
   const session = await auth();
-  const userId = getUserId(session);
-  if (!userId) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  // GitHub OAuth access_token is read from the JWT (server-side only) rather
-  // than the session — putting it on the session would leak it to client-side
-  // JS via /api/auth/session. See lib/github-token.
-  const accessToken = await getGithubToken(req);
-  if (!accessToken) {
+  if (!session?.accessToken) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   // 2. Rate limiting — Supabase-backed (persists across instances)
-  const rateLimitId = userId;
+  const rateLimitId = session.user?.id ?? session.user?.email ?? "anon";
   const { hourly, daily } = await checkDigestRateLimit(rateLimitId);
 
   if (!hourly.allowed) {
@@ -113,8 +103,11 @@ export async function POST(req: Request) {
   }
 
   try {
-    // 4. Determine time range: returning user vs first run.
-    // userId / accessToken already validated at the top of the handler.
+    // 4. Determine time range: returning user vs first run
+    const userId = getUserId(session);
+    if (!userId) {
+      return Response.json({ error: "Unable to identify user" }, { status: 401 });
+    }
     const repoFullName = `${owner}/${repo}`;
     const [lastRun, projectContext] = await Promise.all([
       getLastRunTime(userId, repoFullName),
@@ -129,7 +122,7 @@ export async function POST(req: Request) {
 
       if (daysSinceLastRun <= 30) {
         // Recent returning user — only show new commits since last run
-        commits = await fetchCommits(accessToken, owner, repo, lastRun);
+        commits = await fetchCommits(session.accessToken, owner, repo, lastRun);
         if (commits.length === 0) {
           return Response.json({ error: "No new commits since your last digest" }, { status: 404 });
         }
@@ -138,7 +131,7 @@ export async function POST(req: Request) {
         const FALLBACK_DAYS = [7, 30, 90] as const;
         for (const days of FALLBACK_DAYS) {
           commits = await fetchCommits(
-            accessToken,
+            session.accessToken,
             owner,
             repo,
             new Date(Date.now() - days * 24 * 60 * 60 * 1000),
@@ -151,7 +144,7 @@ export async function POST(req: Request) {
       const FALLBACK_DAYS = [1, 7, 30, 90] as const;
       for (const days of FALLBACK_DAYS) {
         commits = await fetchCommits(
-          accessToken,
+          session.accessToken,
           owner,
           repo,
           new Date(Date.now() - days * 24 * 60 * 60 * 1000),
@@ -168,7 +161,7 @@ export async function POST(req: Request) {
       diffs,
       filesAdded,
       filesRemoved: filesDeleted,
-    } = await fetchDiffs(accessToken, owner, repo, commits);
+    } = await fetchDiffs(session.accessToken, owner, repo, commits);
 
     // Pull-request + linked-issue context. Enriches the prompt with
     // PR descriptions and the bodies of any `#N` issues those PRs
@@ -181,7 +174,7 @@ export async function POST(req: Request) {
     let linkedIssues: IssueContext[] = [];
     try {
       pullRequests = await fetchPullRequestsForCommits(
-        accessToken,
+        session.accessToken,
         owner,
         repo,
         commits.map((c) => c.hash),
@@ -197,7 +190,7 @@ export async function POST(req: Request) {
       }
       if (issueRefs.size > 0) {
         linkedIssues = await fetchIssuesByNumber(
-          accessToken,
+          session.accessToken,
           owner,
           repo,
           Array.from(issueRefs),
@@ -218,14 +211,14 @@ export async function POST(req: Request) {
       const oldestCommit = commits[commits.length - 1];
       if (oldestCommit) {
         const parentSha = await fetchParentSha(
-          accessToken,
+          session.accessToken,
           owner,
           repo,
           oldestCommit.hash,
         );
         if (parentSha) {
           fileHunkContexts = await fetchFileContextForHunks(
-            accessToken,
+            session.accessToken,
             owner,
             repo,
             parentSha,
@@ -246,7 +239,7 @@ export async function POST(req: Request) {
     // allSettled inside fetchProjectFraming.
     let projectFraming: ProjectFraming = { readme: null, manifest: null };
     try {
-      projectFraming = await fetchProjectFraming(accessToken, owner, repo);
+      projectFraming = await fetchProjectFraming(session.accessToken, owner, repo);
     } catch (err) {
       console.error("[digest] project framing fetch failed:", err);
     }
@@ -576,7 +569,7 @@ export async function POST(req: Request) {
     // 5xx, network) silently return {} and the LLM falls back to inferring
     // the stack from diffs as before. NEVER allowed to break the digest.
     const detectedStack = await detectStack(
-      createGitHubFilesReader(accessToken, owner, repo),
+      createGitHubFilesReader(session.accessToken, owner, repo),
     ).catch(() => ({}));
     const detectedStackBlock = formatDetectedStackBlock(detectedStack);
 
