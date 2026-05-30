@@ -144,7 +144,11 @@ function parseFieldNotes(body: string): { subtitle: string; body: string } | und
 export interface DigestTextToPropsInput {
   /** Full streaming-digest text as stored in Supabase `digests.content`. */
   text: string;
-  /** Repo slug, e.g. "askscout". */
+  /** Full "owner/repo" slug as stored in the digests table (e.g.
+   *  "charleshonig5/askscout"). Used for GitHub / dashboard links;
+   *  the short display name shown in the email's repo chip and
+   *  subject line is derived by splitting on `/` — matches the
+   *  dashboard convention. */
   repoName: string;
   /** Stats object stored alongside the digest. Shape is loose because
    *  upstream callers pass arbitrary JSON; we only pluck the four numbers
@@ -188,9 +192,18 @@ export function digestTextToEmailProps(input: DigestTextToPropsInput): DigestEma
     linesRemoved: pickNumber(input.stats, "linesRemoved"),
   };
 
+  // Split "owner/repo" into a short display name + the full slug, so
+  // the chip shows just "askscout" while links still resolve against
+  // the right GitHub repo. Falls back to the input verbatim when
+  // there's no slash (defensive — current callers always pass the
+  // full slug, but the template typing allows shorter names too).
+  const fullSlug = input.repoName;
+  const shortName = fullSlug.includes("/") ? fullSlug.split("/").pop()! : fullSlug;
+
   return {
     digestTitle: input.digestTitle ?? "Today's Digest",
-    repoName: input.repoName,
+    repoName: shortName,
+    repoFullName: fullSlug,
     streak: input.streak,
     dateLabel: input.dateLabel ?? formatToday(),
     vibeCheck: sections.get("vibe") || undefined,

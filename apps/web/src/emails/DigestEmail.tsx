@@ -78,8 +78,15 @@ export interface BulletItem {
 export interface DigestEmailProps {
   /** Title — e.g. "Today's Digest". Pridi serif 24/400 in the header. */
   digestTitle: string;
-  /** Repo slug, rendered as a chip with a forward arrow next to the title. */
+  /** Short repo display name (e.g. "askscout") — shown in the chip
+   *  and the subject line. Matches the dashboard convention of
+   *  `selectedRepo.split("/").pop()`. */
   repoName: string;
+  /** Full "owner/repo" slug used for the GitHub link target on the
+   *  chip and the "Open in dashboard" CTA. Falls back to repoName
+   *  when omitted so the type remains backwards-compatible with
+   *  callers that haven't been updated. */
+  repoFullName?: string;
   /** Optional consecutive-days streak. Renders the fire-emoji chip when present. */
   streak?: number;
   /** Full date label, e.g. "Thursday, May 8, 2026". */
@@ -114,6 +121,7 @@ const collapseNewlines = (s: string) => s.replace(/\s*\n+\s*/g, " ").trim();
 export function DigestEmail({
   digestTitle,
   repoName,
+  repoFullName,
   streak,
   dateLabel,
   vibeCheck,
@@ -126,6 +134,9 @@ export function DigestEmail({
   stats,
   visibility,
 }: DigestEmailProps) {
+  // Always use the full slug for GitHub / dashboard links; fall back
+  // to repoName when callers haven't passed it (older call sites).
+  const fullSlug = repoFullName ?? repoName;
   const previewText = vibeCheck
     ? collapseNewlines(vibeCheck).slice(0, 120)
     : `Your AskScout digest for ${repoName}`;
@@ -219,7 +230,7 @@ export function DigestEmail({
                     >
                       {digestTitle}
                     </span>
-                    <RepoChip repoName={repoName} />
+                    <RepoChip repoName={repoName} repoFullName={fullSlug} />
                     {streak != null && streak > 0 && (
                       <span style={{ marginLeft: "8px" }}>
                         <StreakChip days={streak} />
@@ -333,7 +344,7 @@ export function DigestEmail({
                 their default repo. The dashboard reads this param
                 on mount and selects the matching repo. */}
             <CTAButton
-              href={`${WEB_URL}/dashboard?repo=${encodeURIComponent(repoName)}`}
+              href={`${WEB_URL}/dashboard?repo=${encodeURIComponent(fullSlug)}`}
             />
           </div>
         </Container>
@@ -483,10 +494,16 @@ const SVG_SQUARE_ARROW_UP_RIGHT =
 /** Repo chip — bg-tertiary pill with the repo slug + Lucide Forward
  *  glyph (10×10). Wraps in an <a> that opens the repo on GitHub in
  *  a new tab, matching the dashboard's .digest-repo-chip behavior. */
-function RepoChip({ repoName }: { repoName: string }) {
+function RepoChip({
+  repoName,
+  repoFullName,
+}: {
+  repoName: string;
+  repoFullName: string;
+}) {
   return (
     <Link
-      href={`https://github.com/${repoName}`}
+      href={`https://github.com/${repoFullName}`}
       style={{
         display: "inline-block",
         padding: "4px 8px",
