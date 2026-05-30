@@ -135,7 +135,11 @@ export default async function EmailPreviewPage() {
           style={{
             width: "100%",
             maxWidth: "1200px",
-            height: "1800px",
+            // Height matches Figma 442:2's frame height (1680px) so
+            // the dark column appears to touch the top and bottom
+            // of the iframe — same way the production email looks
+            // in a Gmail reading pane when content fills the column.
+            height: "1680px",
             display: "block",
             margin: "0 auto",
             border: "1px solid #222",

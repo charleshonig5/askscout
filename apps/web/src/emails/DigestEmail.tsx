@@ -50,7 +50,12 @@ const c = {
   // darken it) instead of force-inverting. Brand newsletters
   // (Substack, Stripe Press, NYT briefings) all use a similar
   // muted off-white for this slot.
-  pageBg: "#f5f5f5",
+  // Page color OUTSIDE the 600px column. Pure white per Figma 442:2
+  // — the centered dark column reads like a postcard on a sheet of
+  // paper. White is also what email clients fall back to in most
+  // dark-mode inverters, so leaving it pure white minimizes the
+  // chance of muddy mid-grays in unusual rendering modes.
+  pageBg: "#ffffff",
   // Stats colors per the design.
   green: "#57d32e",
   red: "#dd1d1d",
@@ -205,42 +210,58 @@ export function DigestEmail({
       <Preview>{previewText}</Preview>
       <Body
         style={{
-          // Body bg is intentionally a light off-white so the dark
-          // digest card pops against it like a postcard on a desk.
-          // No force-dark class on the body — the page is supposed
-          // to be light. The dark card below carries its own
-          // force-dark protection so client-side inverters leave it
-          // alone even when the email is rendered in dark mode.
+          // White page bg per Figma 442:2. The dark 600px column
+          // touches the top and bottom of the page (no vertical
+          // margin on Body) so it reads as a full-height postcard
+          // on a sheet of paper. Page itself stays light — the dark
+          // column below carries its own force-dark protection so
+          // client-side inverters can't flip it to light.
           backgroundColor: c.pageBg,
           fontFamily: fonts.sans,
           margin: 0,
-          padding: "20px 0",
+          padding: 0,
           color: c.textPrimary,
           WebkitFontSmoothing: "antialiased",
           MozOsxFontSmoothing: "grayscale",
         }}
       >
-        {/* SINGLE DIGEST CARD — 600px-wide centered, dark, 1px
-            border, fully rounded. Contains EVERYTHING: header, all
-            digest sections, the CTA button, and the footer (logo +
-            "you sent this to yourself" + copyright). Unifying both
-            blocks under one card matches the brief: "dark email and
-            dark footer with the border, the color outside the
-            border is super light off-white" — one continuous dark
-            surface surrounded by the off-white page. */}
+        {/* OUTER COLUMN — 600px wide, centered, 1px #252525 border,
+            bg #121212 (the lighter "footer" shade), NO rounded
+            corners (the column touches the top + bottom of the
+            white page per Figma 442:3). The darker digest panel
+            nests inside this column with its own rounded bottom
+            corners, so the visible #121212 only appears below the
+            digest scoop where the footer block sits. */}
         <Container
           width="600"
           className="force-dark-card force-dark-border force-dark-text"
           style={{
-            backgroundColor: c.bgPrimary,
+            backgroundColor: c.bgSecondary,
             border: `1px solid ${c.border}`,
-            borderRadius: "30px",
             maxWidth: "600px",
             width: "600px",
             margin: "0 auto",
-            padding: "24px 0 0",
+            padding: 0,
             boxSizing: "border-box",
-            overflow: "hidden",
+          }}
+        >
+        {/* DIGEST PANEL — bg #070707, 1px border, rounded BOTTOM
+            corners only (30px). Sits flush against the top edge of
+            the outer column and "scoops" out at the bottom to
+            reveal the lighter #121212 footer band below. Per Figma
+            442:4 the panel's border continues the outer column's
+            border seamlessly — same color, same width. */}
+        <div
+          className="force-dark-card force-dark-border force-dark-text"
+          style={{
+            backgroundColor: c.bgPrimary,
+            borderBottomLeftRadius: "30px",
+            borderBottomRightRadius: "30px",
+            // No top/side borders here — the outer Container's
+            // border already paints those edges. Setting borders
+            // on a side that's already painted would double up
+            // visually in clients that anti-alias differently.
+            padding: "24px 0 40px",
           }}
         >
           {/* HEADER ---------------------------------------------------
@@ -398,14 +419,18 @@ export function DigestEmail({
               href={`${WEB_URL}/dashboard?repo=${encodeURIComponent(fullSlug)}`}
             />
           </div>
+        </div>
+        {/* End DIGEST PANEL — the rounded bottom corners above end
+            here. Whatever follows sits on the outer column's lighter
+            #121212 background, visible beneath the scoop. */}
 
-          {/* FOOTER block — sits INSIDE the same dark card as the
-              digest content, separated visually by the 40px top
-              padding rather than a divider line. The 175px wrap on
-              the inner block matches the Figma frame (left:33,
-              w:175) — keeps "You sent this to yourself..." on two
-              narrow lines as designed. */}
-          <div style={{ padding: "40px 34px 34px" }}>
+          {/* FOOTER block — outside the rounded-bottom digest panel,
+              inside the outer column, sitting on the column's
+              #121212 background per Figma 442:140. The 175px wrap
+              on the inner block matches the Figma frame
+              (left:33, w:175) — keeps "You sent this to
+              yourself..." on two narrow lines as designed. */}
+          <div style={{ padding: "33px 34px 40px" }}>
               <div style={{ width: "175px" }}>
               <Img
                 src={`${WEB_URL}/logo-white.svg`}
