@@ -1,37 +1,44 @@
 import { describe, it, expect } from "vitest";
 import { getUserId } from "../user-identity";
 
+// getUserId is intentionally id-only — see lib/user-identity.ts for the
+// reasoning (two GitHub accounts can share an email; the email fallback
+// silently cross-contaminated digests/settings/history before MED-1).
+// These tests pin that contract so the fallback can't be reintroduced
+// accidentally.
 describe("getUserId", () => {
   it("returns id when available", () => {
-    const session = { user: { id: "user123", email: "test@example.com" } };
+    const session = { user: { id: "user123" } };
     expect(getUserId(session)).toBe("user123");
   });
 
-  it("falls back to email when id is missing", () => {
-    const session = { user: { email: "test@example.com" } };
-    expect(getUserId(session)).toBe("test@example.com");
+  it("returns null when id is missing even if email is present", () => {
+    // The session type allows extra fields like email; the function
+    // ignores them. Cast through `unknown` to model what arrives at
+    // runtime from NextAuth without coupling the test to the typed
+    // contract (which deliberately excludes email).
+    const session = { user: { email: "test@example.com" } } as unknown as {
+      user?: { id?: string };
+    };
+    expect(getUserId(session)).toBeNull();
   });
 
-  it("returns null when both id and email are missing", () => {
-    const session = { user: {} };
-    expect(getUserId(session)).toBeNull();
+  it("returns null when user is an empty object", () => {
+    expect(getUserId({ user: {} })).toBeNull();
   });
 
   it("returns null when user is undefined", () => {
-    const session = {};
-    expect(getUserId(session)).toBeNull();
+    expect(getUserId({})).toBeNull();
   });
 
-  it("returns null for null email", () => {
-    const session = { user: { email: null } };
-    expect(getUserId(session)).toBeNull();
-  });
-
-  it("never returns 'unknown'", () => {
-    const cases = [{ user: {} }, { user: { email: null } }, {}, { user: undefined }];
+  it("never returns 'unknown' for any empty-shape input", () => {
+    const cases: Array<{ user?: { id?: string } }> = [
+      { user: {} },
+      {},
+      { user: undefined },
+    ];
     for (const session of cases) {
-      const result = getUserId(session);
-      expect(result).not.toBe("unknown");
+      expect(getUserId(session)).not.toBe("unknown");
     }
   });
 });

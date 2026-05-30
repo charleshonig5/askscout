@@ -337,6 +337,72 @@ export async function getTodaysDigest(
   return data as DigestRecord;
 }
 
+// ============================================
+// On-demand email send tracking
+// ============================================
+//
+// The "Email me this digest" button writes a timestamp on the
+// digest row so we can enforce a per-digest rate limit (one send
+// per digest per hour). This avoids spamming a user who clicks the
+// button repeatedly — and protects our Resend quota from a runaway
+// loop in the UI.
+//
+// Schema requirement (run once in the Supabase SQL editor before
+// deploying this code):
+//
+//   ALTER TABLE digests ADD COLUMN last_emailed_at timestamptz;
+//
+// The column is nullable — rows that have never been emailed read
+// as `null`. No backfill is needed.
+
+/** Fetch the last-emailed timestamp for a digest row. Returns null
+ *  when the column is unset (digest has never been emailed) or when
+ *  Supabase isn't configured. Used by the rate-limit check in
+ *  /api/email/digest. */
+export async function getDigestEmailedAt(digestId: string): Promise<Date | null> {
+  if (!supabase) return null;
+  const { data, error } = await supabase
+    .from("digests")
+    .select("last_emailed_at")
+    .eq("id", digestId)
+    .single();
+  if (error || !data) return null;
+  const ts = (data as Record<string, unknown>).last_emailed_at;
+  return typeof ts === "string" ? new Date(ts) : null;
+}
+
+/** Stamp `last_emailed_at = now()` on a digest row after a successful
+ *  Resend dispatch. Caller is responsible for verifying ownership
+ *  before invoking this (the API route does, via a userId+digestId
+ *  lookup). */
+export async function markDigestEmailed(digestId: string): Promise<void> {
+  if (!supabase) return;
+  await supabase
+    .from("digests")
+    .update({ last_emailed_at: new Date().toISOString() })
+    .eq("id", digestId);
+}
+
+/** Fetch a digest row by id, scoped to the requesting user. Returns
+ *  null when the digest doesn't exist or belongs to someone else —
+ *  the email API uses this both as an existence check and as the
+ *  authorization gate before sending. */
+export async function getDigestByIdForUser(
+  digestId: string,
+  userId: string,
+): Promise<DigestRecord | null> {
+  if (!supabase) return null;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { data, error } = await supabase
+    .from("digests")
+    .select("*")
+    .eq("id", digestId)
+    .eq("user_id", userId)
+    .single();
+  if (error || !data) return null;
+  return data as DigestRecord;
+}
+
 /** Get digest history for a user+repo (last 30 days) */
 export async function getDigestHistory(userId: string, repo: string): Promise<DigestRecord[]> {
   if (!supabase) return [];

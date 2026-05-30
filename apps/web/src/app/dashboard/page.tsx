@@ -872,6 +872,13 @@ export default function DashboardPage() {
                     text={currentRawContent}
                     stats={currentStats}
                     repoName={repoName}
+                    repoFullName={selectedRepo}
+                    // When viewing a history entry, the email API needs
+                    // the exact row id (today's-digest fallback would
+                    // otherwise email the wrong day's content). On the
+                    // live "today" view we leave this null and let the
+                    // server resolve via repo+mode+tz.
+                    digestId={isViewingHistory ? activeHistoryId : null}
                     visibleSections={digestSectionPrefs ?? undefined}
                   />
                 </div>

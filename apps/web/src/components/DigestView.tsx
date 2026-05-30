@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import { useToast } from "@/components/Toast";
 import type { MouseEvent as ReactMouseEvent, ReactNode } from "react";
 import {
   Copy,
@@ -375,18 +376,115 @@ function ShareBtn({ items }: { items: string[] }) {
   );
 }
 
-function EmailBtn() {
-  const [sent, setSent] = useState(false);
-  const handleEmail = useCallback(() => {
-    setSent(true);
-    setTimeout(() => setSent(false), 3000);
-  }, []);
+/**
+ * On-demand "Email me this digest" button. Posts to /api/email/digest
+ * which renders the DigestEmail React Email template server-side and
+ * dispatches via Resend to the GitHub primary email captured during
+ * OAuth (user:email scope).
+ *
+ * Identifier resolution: when a `digestId` is provided (history view
+ * passes one), we email that exact row. Otherwise we fall back to
+ * (repo, mode, tzOffset) so today's view emails today's digest.
+ *
+ * UI states: idle ("Email") → sending (spinner-less "Sending…") →
+ * success ("Sent" + green-flash, mirrors the Copy button's pattern) →
+ * idle after 3s. Failures surface through the global Toast so the
+ * button can stay reusable without inventing inline error chrome.
+ *
+ * Re-auth handling: the API returns `missing_email_scope` for sessions
+ * issued before the `user:email` scope was added; we surface a clear
+ * toast asking the user to sign out and back in. They only have to
+ * do this once.
+ */
+function EmailBtn({
+  digestId,
+  repoFullName,
+  mode = "digest",
+}: {
+  digestId?: string | null;
+  repoFullName?: string;
+  mode?: string;
+}) {
+  const [state, setState] = useState<"idle" | "sending" | "sent">("idle");
+  const { showError } = useToast();
+
+  const handleEmail = useCallback(async () => {
+    if (state !== "idle") return;
+    setState("sending");
+    try {
+      const body: Record<string, unknown> = {};
+      if (digestId) {
+        body.digestId = digestId;
+      } else if (repoFullName) {
+        body.repo = repoFullName;
+        body.mode = mode;
+        // tzOffset matches the convention used by /api/digest/today —
+        // minutes WEST of UTC, the value Date.getTimezoneOffset returns.
+        body.tzOffset = new Date().getTimezoneOffset();
+      } else {
+        showError("Can't email this view — no digest is loaded yet.");
+        setState("idle");
+        return;
+      }
+
+      const res = await fetch("/api/email/digest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const json = (await res.json().catch(() => null)) as
+        | {
+            ok?: boolean;
+            skipped?: boolean;
+            reason?: string;
+            error?: string;
+            message?: string;
+          }
+        | null;
+
+      if (!res.ok) {
+        if (res.status === 403 && json?.error === "missing_email_scope") {
+          showError(
+            json.message ??
+              "Sign out and back in to grant email permission, then try again.",
+          );
+        } else if (res.status === 429) {
+          showError(json?.message ?? "Already emailed in the last hour.");
+        } else {
+          showError(json?.error ?? "Couldn't send the email. Try again in a bit.");
+        }
+        setState("idle");
+        return;
+      }
+
+      // dev_disabled — API returns 200 with `skipped: true`. Don't pretend we sent.
+      if (json?.skipped) {
+        showError(json.reason ?? "Email sending is disabled in this environment.");
+        setState("idle");
+        return;
+      }
+
+      setState("sent");
+      setTimeout(() => setState("idle"), 3000);
+    } catch {
+      showError("Network error — couldn't reach the email service.");
+      setState("idle");
+    }
+  }, [state, digestId, repoFullName, mode, showError]);
 
   return (
-    <button className={`action-btn ${sent ? "copied" : ""}`} onClick={handleEmail}>
-      {sent ? (
+    <button
+      className={`action-btn ${state === "sent" ? "copied" : ""}`}
+      onClick={() => void handleEmail()}
+      disabled={state !== "idle"}
+    >
+      {state === "sent" ? (
         <>
           <Check size={18} strokeWidth={1} /> Sent
+        </>
+      ) : state === "sending" ? (
+        <>
+          <Send size={18} strokeWidth={1} /> Sending…
         </>
       ) : (
         <>
@@ -401,11 +499,24 @@ export function DigestActions({
   text,
   stats,
   repoName,
+  repoFullName,
+  digestId,
+  mode = "digest",
   visibleSections,
 }: {
   text: string;
   stats?: DigestViewStats | null;
   repoName?: string;
+  /** Full "owner/repo" slug needed by the email API to look up
+   *  today's digest server-side when no explicit digestId is passed. */
+  repoFullName?: string;
+  /** Id of the exact digest row being viewed. Required when the user
+   *  is looking at a history entry; optional for today's view (the
+   *  API falls back to today's digest by repo+mode+tz). */
+  digestId?: string | null;
+  /** Digest mode key — almost always "digest"; threaded through for
+   *  future modes. */
+  mode?: string;
   visibleSections?: Record<string, boolean>;
 }) {
   return (
@@ -420,7 +531,7 @@ export function DigestActions({
         repoName={repoName}
         visibleSections={visibleSections}
       />
-      <EmailBtn />
+      <EmailBtn digestId={digestId} repoFullName={repoFullName} mode={mode} />
     </div>
   );
 }

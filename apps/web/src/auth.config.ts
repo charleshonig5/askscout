@@ -6,7 +6,17 @@ const authConfig: NextAuthConfig = {
     GitHub({
       clientId: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      authorization: { params: { scope: "read:user repo" } },
+      // `user:email` lets us read the GitHub primary email server-side so
+      // the on-demand "Email me this digest" button can deliver to the
+      // user's real inbox without us having to ask for a recipient. The
+      // scope only grants read access to verified emails; GitHub never
+      // exposes the user's email to other users through this scope.
+      //
+      // NOTE: existing sessions issued before this scope was added will
+      // not have `email` populated until the user signs out and back in.
+      // The /api/email/digest route returns a clear "re-auth needed"
+      // error in that case so the UI can prompt.
+      authorization: { params: { scope: "read:user repo user:email" } },
     }),
   ],
   callbacks: {
@@ -42,6 +52,13 @@ const authConfig: NextAuthConfig = {
       if (profile && typeof (profile as { login?: unknown }).login === "string") {
         token.login = (profile as { login: string }).login;
       }
+      // Capture the GitHub primary email so the on-demand digest-email
+      // route can deliver without asking the user for an address. The
+      // OAuth `user:email` scope (declared above) is required for this
+      // field to be present in the profile payload.
+      if (profile && typeof (profile as { email?: unknown }).email === "string") {
+        token.email = (profile as { email: string }).email;
+      }
       return token;
     },
     session({ session, token }) {
@@ -54,6 +71,14 @@ const authConfig: NextAuthConfig = {
       // Expose GitHub login so the sidebar profile row can show @username.
       if (session.user && typeof token.login === "string") {
         session.user.login = token.login;
+      }
+      // Surface the GitHub email server-side so /api/email/digest can
+      // route the on-demand send. NextAuth already places email on
+      // `session.user.email` automatically when present on the token,
+      // but the explicit assignment guards against type-narrowing
+      // regressions if the upstream callback contract shifts.
+      if (session.user && typeof token.email === "string") {
+        session.user.email = token.email;
       }
       // Token is needed server-side for GitHub API calls via auth().
       session.accessToken = token.accessToken as string;
