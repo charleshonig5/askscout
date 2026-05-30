@@ -237,6 +237,15 @@ export function DigestEmail({
           className="force-dark-card force-dark-border force-dark-text"
           style={{
             backgroundColor: c.bgSecondary,
+            // Gmail iOS/Android force-inverts background-color on
+            // "too dark" surfaces, rewriting them to white. It
+            // leaves background-image alone (might be a photo it
+            // can't safely invert), so painting the same color as
+            // a 1-stop gradient survives that pass and keeps the
+            // dark surface dark. Same trick applied to every dark
+            // surface in the template — see RepoChip, VibeCheckCard,
+            // CTAButton, the digest panel.
+            backgroundImage: `linear-gradient(${c.bgSecondary}, ${c.bgSecondary})`,
             border: `1px solid ${c.border}`,
             maxWidth: "600px",
             width: "600px",
@@ -255,6 +264,9 @@ export function DigestEmail({
           className="force-dark-card force-dark-border force-dark-text"
           style={{
             backgroundColor: c.bgPrimary,
+            // Gmail mobile dark-mode invert protection — see outer
+            // Container above for the full rationale.
+            backgroundImage: `linear-gradient(${c.bgPrimary}, ${c.bgPrimary})`,
             borderBottomLeftRadius: "30px",
             borderBottomRightRadius: "30px",
             // No top/side borders here — the outer Container's
@@ -571,6 +583,8 @@ function RepoChip({
         padding: "4px 8px",
         borderRadius: "90px",
         backgroundColor: c.bgTertiary,
+        // Gmail mobile invert protection — see outer column.
+        backgroundImage: `linear-gradient(${c.bgTertiary}, ${c.bgTertiary})`,
         boxShadow: "inset 0 8px 20px 0 rgba(255, 255, 255, 0.04)",
         fontFamily: fonts.sans,
         fontWeight: 300,
@@ -615,6 +629,8 @@ function StreakChip({ days }: { days: number }) {
         padding: "4px 8px",
         borderRadius: "90px",
         backgroundColor: c.bgTertiary,
+        // Gmail mobile invert protection — see outer column.
+        backgroundImage: `linear-gradient(${c.bgTertiary}, ${c.bgTertiary})`,
         boxShadow: "inset 0 8px 20px 0 rgba(255, 255, 255, 0.04)",
         fontFamily: fonts.sans,
         fontWeight: 300,
@@ -652,6 +668,8 @@ function VibeCheckCard({ body }: { body: string }) {
     <Section
       style={{
         backgroundColor: c.bgSecondary,
+        // Gmail mobile invert protection — see outer column.
+        backgroundImage: `linear-gradient(${c.bgSecondary}, ${c.bgSecondary})`,
         border: `1px solid ${c.border}`,
         borderRadius: "8px",
         padding: "14px",
@@ -752,6 +770,8 @@ function BulletSection({
                   padding: "3px 6px",
                   borderRadius: "60px",
                   backgroundColor: c.bgTertiary,
+                  // Gmail mobile invert protection — see outer column.
+                  backgroundImage: `linear-gradient(${c.bgTertiary}, ${c.bgTertiary})`,
                   boxShadow: "inset 0 8px 20px 0 rgba(255, 255, 255, 0.04)",
                   fontFamily: fonts.sans,
                   fontWeight: 300,
@@ -1055,6 +1075,8 @@ function CTAButton({ href }: { href: string }) {
         display: "inline-block",
         padding: "10px 14px",
         backgroundColor: c.bgSecondary,
+        // Gmail mobile invert protection — see outer column.
+        backgroundImage: `linear-gradient(${c.bgSecondary}, ${c.bgSecondary})`,
         border: `1px solid ${c.border}`,
         borderRadius: "8px",
         boxShadow: "inset 0 0 20px 0 rgba(255, 255, 255, 0.04)",
