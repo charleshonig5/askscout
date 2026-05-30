@@ -44,6 +44,13 @@ const c = {
   textSecondary: "#a0a0a0",
   textTertiary: "#616161",
   border: "#252525",
+  // Page color OUTSIDE the dark card. Off-white that reads as
+  // "paper" in any client's light mode and is light-enough that
+  // dark-mode clients tend to leave it alone (or only mildly
+  // darken it) instead of force-inverting. Brand newsletters
+  // (Substack, Stripe Press, NYT briefings) all use a similar
+  // muted off-white for this slot.
+  pageBg: "#f5f5f5",
   // Stats colors per the design.
   green: "#57d32e",
   red: "#dd1d1d",
@@ -197,15 +204,14 @@ export function DigestEmail({
       </Head>
       <Preview>{previewText}</Preview>
       <Body
-        className="force-dark-bg force-dark-text"
         style={{
-          // Body bg is the lighter "page" shade (#121212). The
-          // 600px digest card below sits on top in the darker
-          // primary shade (#070707), so the card visibly pops
-          // against the surrounding page color — matching the
-          // Figma intent. When both were #070707 the card vanished
-          // into the body and only the 1px border was visible.
-          backgroundColor: c.bgSecondary,
+          // Body bg is intentionally a light off-white so the dark
+          // digest card pops against it like a postcard on a desk.
+          // No force-dark class on the body — the page is supposed
+          // to be light. The dark card below carries its own
+          // force-dark protection so client-side inverters leave it
+          // alone even when the email is rendered in dark mode.
+          backgroundColor: c.pageBg,
           fontFamily: fonts.sans,
           margin: 0,
           padding: "20px 0",
@@ -214,15 +220,14 @@ export function DigestEmail({
           MozOsxFontSmoothing: "grayscale",
         }}
       >
-        {/* TOP DIGEST CARD — 600px-wide centered card with a 1px
-            border and 30px rounded bottom corners, matching the
-            Figma mockup. Width is enforced both as the `width`
-            attribute on the underlying table AND as CSS so Gmail
-            web (which prefers HTML width attrs over inline styles
-            on tables) constrains the layout the same as everywhere
-            else. The earlier full-bleed-dark-section variant
-            stretched edge-to-edge in Gmail's wide message pane and
-            blew past the intended narrow column. */}
+        {/* SINGLE DIGEST CARD — 600px-wide centered, dark, 1px
+            border, fully rounded. Contains EVERYTHING: header, all
+            digest sections, the CTA button, and the footer (logo +
+            "you sent this to yourself" + copyright). Unifying both
+            blocks under one card matches the brief: "dark email and
+            dark footer with the border, the color outside the
+            border is super light off-white" — one continuous dark
+            surface surrounded by the off-white page. */}
         <Container
           width="600"
           className="force-dark-card force-dark-border force-dark-text"
@@ -233,8 +238,9 @@ export function DigestEmail({
             maxWidth: "600px",
             width: "600px",
             margin: "0 auto",
-            padding: "24px 0 40px",
+            padding: "24px 0 0",
             boxSizing: "border-box",
+            overflow: "hidden",
           }}
         >
           {/* HEADER ---------------------------------------------------
@@ -392,31 +398,14 @@ export function DigestEmail({
               href={`${WEB_URL}/dashboard?repo=${encodeURIComponent(fullSlug)}`}
             />
           </div>
-        </Container>
 
-        {/* FOOTER — sits OUTSIDE and below the 600px digest card on
-            the dark page background. Same 600px width as the card so
-            the wordmark + copy align flush with the card's left edge.
-            The 175px wrap on the inner block matches the Figma
-            frame (left:33, w:175) — keeps "You sent this to
-            yourself..." on two narrow lines as designed. */}
-        <Container
-          width="600"
-          style={{
-            maxWidth: "600px",
-            width: "600px",
-            margin: "0 auto",
-            padding: 0,
-          }}
-        >
-            {/* Horizontal padding lives on this inner div instead of
-                the Container, because <Container> renders as a
-                <table> and browsers don't reliably honor box-sizing
-                on table elements — padding gets added outside the
-                600px width, creating horizontal overflow. Putting
-                the inset on a div keeps the rendered width at
-                exactly 600px. */}
-            <div style={{ padding: "34px 34px 34px" }}>
+          {/* FOOTER block — sits INSIDE the same dark card as the
+              digest content, separated visually by the 40px top
+              padding rather than a divider line. The 175px wrap on
+              the inner block matches the Figma frame (left:33,
+              w:175) — keeps "You sent this to yourself..." on two
+              narrow lines as designed. */}
+          <div style={{ padding: "40px 34px 34px" }}>
               <div style={{ width: "175px" }}>
               <Img
                 src={`${WEB_URL}/logo-white.svg`}
