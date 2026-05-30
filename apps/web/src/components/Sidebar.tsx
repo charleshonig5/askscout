@@ -289,12 +289,21 @@ export function Sidebar({
                     <button
                       type="button"
                       className="modal-action-btn modal-action-btn--danger"
-                      // NextAuth v5 renamed `callbackUrl` to `redirectTo`.
-                      // With the v4 name, the option is silently dropped
-                      // and the client never navigates after clearing the
-                      // session — the button looked dead because the page
-                      // didn't move. Same fix applied in settings/page.tsx.
-                      onClick={() => void signOut({ redirectTo: "/" })}
+                      // We deliberately do not let NextAuth handle the
+                      // post-signout navigation. v5's client signOut does
+                      // a soft router push to redirectTo, which on "/"
+                      // re-runs the RSC for the root page — and that page
+                      // calls `auth()` which can still see the just-cleared
+                      // session due to in-flight cache, immediately
+                      // bouncing the user back to /dashboard. A hard
+                      // window.location reload after `redirect: false`
+                      // forces a brand-new request with the cleared
+                      // cookie, so the auth check sees an anonymous
+                      // user and renders the marketing home.
+                      onClick={async () => {
+                        await signOut({ redirect: false });
+                        window.location.href = "/";
+                      }}
                     >
                       Sign out
                     </button>

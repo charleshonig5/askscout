@@ -287,10 +287,15 @@ export default function SettingsPage() {
     // would land in a logged-in-but-no-data state on next render. Hard
     // navigate as a fallback so they always end up on a clean page.
     try {
-      // NextAuth v5 option name is `redirectTo`; passing the v4
-       // `callbackUrl` is silently ignored and the client never
-       // navigates, leaving the user on the (now-empty) settings page.
-      await signOut({ redirectTo: "/" });
+      // Hard navigation after the cookie clear is intentional — see
+       // Sidebar.tsx for the long-form rationale. Short version: the
+       // root page does its own `auth()` check server-side and will
+       // bounce a still-authenticated session back to /dashboard. Doing
+       // signOut({ redirect: false }) + window.location.href forces a
+       // fresh request with the cleared cookie and lands the user on
+       // the marketing home as intended.
+      await signOut({ redirect: false });
+      window.location.href = "/";
     } catch {
       window.location.href = "/";
     }
