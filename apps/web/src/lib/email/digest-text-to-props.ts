@@ -41,23 +41,33 @@ const SECTION_MARKERS = [
 type SectionKey = (typeof SECTION_MARKERS)[number]["key"];
 
 function parseSections(text: string): Map<SectionKey, string> {
+  // The LLM emits a digest as our 8 emoji-prefixed sections, then
+  // sometimes tacks on private sections marked with ---STANDUP---,
+  // ---PLAN---, ---AI_CONTEXT---, ---SUMMARY--- (consumed by the
+  // dashboard's standup/plan/ai-context modals and never rendered in
+  // the digest body). Truncating at the first `---FOO---` style
+  // marker stops those payloads from leaking into Key Takeaways,
+  // which otherwise grabs everything from 🔑 to end-of-text.
+  const privateMarkerIdx = text.search(/\n\s*---[A-Z_]+---/);
+  const publicText = privateMarkerIdx === -1 ? text : text.slice(0, privateMarkerIdx);
+
   const out = new Map<SectionKey, string>();
   for (let i = 0; i < SECTION_MARKERS.length; i++) {
     const marker = SECTION_MARKERS[i]!;
     const needle = `${marker.emoji} ${marker.label}`;
-    const startIdx = text.indexOf(needle);
+    const startIdx = publicText.indexOf(needle);
     if (startIdx === -1) continue;
     const contentStart = startIdx + needle.length;
-    let endIdx = text.length;
+    let endIdx = publicText.length;
     for (let j = i + 1; j < SECTION_MARKERS.length; j++) {
       const nextNeedle = `${SECTION_MARKERS[j]!.emoji} ${SECTION_MARKERS[j]!.label}`;
-      const nextIdx = text.indexOf(nextNeedle, contentStart);
+      const nextIdx = publicText.indexOf(nextNeedle, contentStart);
       if (nextIdx !== -1) {
         endIdx = nextIdx;
         break;
       }
     }
-    out.set(marker.key, text.slice(contentStart, endIdx).trim());
+    out.set(marker.key, publicText.slice(contentStart, endIdx).trim());
   }
   return out;
 }

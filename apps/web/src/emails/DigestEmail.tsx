@@ -145,50 +145,42 @@ export function DigestEmail({
       <Preview>{previewText}</Preview>
       <Body
         style={{
-          // Body bg is the lighter #121212 ("page" color). The dark
-          // digest area sits on top and fills the email-pane width
-          // edge-to-edge, so the lighter color is only visible BELOW
-          // the digest where the footer lives, never on the sides.
-          backgroundColor: c.bgSecondary,
+          // Body bg is the page color (#070707) so the area surrounding
+          // the 600px-wide email card matches what the Figma mockups
+          // show: a dark page with a single centered card. The card
+          // itself uses #121212 ("secondary") for visible contrast
+          // against this page background.
+          backgroundColor: c.bgPrimary,
           fontFamily: fonts.sans,
           margin: 0,
-          padding: 0,
+          padding: "20px 0",
           color: c.textPrimary,
           WebkitFontSmoothing: "antialiased",
           MozOsxFontSmoothing: "grayscale",
         }}
       >
-        {/* TOP DIGEST SECTION — full pane width, bg #070707, rounded
-            BOTTOM corners only. Renders as a 100%-wide table with the
-            dark fill, so the email-pane edges are dark with no lighter
-            color visible on the sides. The 30px rounded-bottom corners
-            "scoop" into the lighter body bg below, giving the visual
-            transition from digest to footer. Sides have no border (a
-            border at the email pane edge looks awkward in most
-            clients); the rounded curve + color contrast does the
-            visual separation work. */}
-        <Section
+        {/* TOP DIGEST CARD — 600px-wide centered card with a 1px
+            border and 30px rounded bottom corners, matching the
+            Figma mockup. Width is enforced both as the `width`
+            attribute on the underlying table AND as CSS so Gmail
+            web (which prefers HTML width attrs over inline styles
+            on tables) constrains the layout the same as everywhere
+            else. The earlier full-bleed-dark-section variant
+            stretched edge-to-edge in Gmail's wide message pane and
+            blew past the intended narrow column. */}
+        <Container
+          width="600"
           style={{
             backgroundColor: c.bgPrimary,
-            borderBottomLeftRadius: "30px",
-            borderBottomRightRadius: "30px",
-            margin: 0,
+            border: `1px solid ${c.border}`,
+            borderRadius: "30px",
+            maxWidth: "600px",
+            width: "600px",
+            margin: "0 auto",
+            padding: "24px 0 40px",
+            boxSizing: "border-box",
           }}
         >
-          {/* Inner Container holds the 600px-centered digest content.
-              boxSizing: border-box ensures padding is included inside
-              the 600px width rather than added to it, so the rendered
-              element is exactly 600px wide and never overflows the
-              email pane. */}
-          <Container
-            style={{
-              maxWidth: "600px",
-              width: "600px",
-              margin: "0 auto",
-              padding: "24px 0 40px",
-              boxSizing: "border-box",
-            }}
-          >
           {/* HEADER ---------------------------------------------------
               Header inset is 33px sides + 23px top from container.
               paddingBottom is sized so the divider lands at the
@@ -345,31 +337,22 @@ export function DigestEmail({
             />
           </div>
         </Container>
-        </Section>
 
-        {/* FOOTER SECTION — full pane width, bg #121212. Sits directly
-            below the rounded-bottom of the digest section so the
-            lighter surface is visible only here, never on the sides
-            of the digest. Inner Container holds 600px-centered
-            content; inside that, the footer block is left-aligned at
-            33px in a narrow 175px column matching the Figma frame
-            (left:33, w:175). The 175px constraint wraps the
-            "You sent this to yourself..." line to two narrow lines
-            intentionally per the design. */}
-        <Section
+        {/* FOOTER — sits OUTSIDE and below the 600px digest card on
+            the dark page background. Same 600px width as the card so
+            the wordmark + copy align flush with the card's left edge.
+            The 175px wrap on the inner block matches the Figma
+            frame (left:33, w:175) — keeps "You sent this to
+            yourself..." on two narrow lines as designed. */}
+        <Container
+          width="600"
           style={{
-            backgroundColor: c.bgSecondary,
-            margin: 0,
+            maxWidth: "600px",
+            width: "600px",
+            margin: "0 auto",
+            padding: 0,
           }}
         >
-          <Container
-            style={{
-              maxWidth: "600px",
-              width: "600px",
-              margin: "0 auto",
-              padding: 0,
-            }}
-          >
             {/* Horizontal padding lives on this inner div instead of
                 the Container, because <Container> renders as a
                 <table> and browsers don't reliably honor box-sizing
@@ -414,8 +397,7 @@ export function DigestEmail({
               </Text>
               </div>
             </div>
-          </Container>
-        </Section>
+        </Container>
       </Body>
     </Html>
   );
@@ -491,8 +473,10 @@ function SectionEmoji({ name }: { name: keyof typeof FLUENT_EMOJI }) {
  *
  *  Lucide `SquareArrowUpRight` icon at 20×20 — same glyph the
  *  dashboard's "View Last Digest" / open-digest buttons use. */
-const SVG_FORWARD =
-  '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 0 1 4-4h12"/></svg>';
+// SVG_FORWARD used to live here for the repo chip's trailing arrow,
+// but Gmail strips inline <svg> via dangerouslySetInnerHTML so the
+// glyph never rendered in inbox. The chip now uses a Unicode "→"
+// character instead — see RepoChip below.
 const SVG_SQUARE_ARROW_UP_RIGHT =
   '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M8 8h8v8"/><path d="m8 16 8-8"/></svg>';
 
@@ -519,17 +503,23 @@ function RepoChip({ repoName }: { repoName: string }) {
       }}
     >
       {repoName}
+      {/* Use the Unicode rightward arrow rather than the inline-SVG
+          glyph we use elsewhere. Gmail web (and Outlook) strip
+          dangerouslySetInnerHTML-injected <svg> elements wholesale,
+          so the SVG never rendered in the inbox — the chip showed
+          just the repo name with no trailing arrow. A real character
+          survives every email client and styles like any other text. */}
       <span
         style={{
-          display: "inline-block",
-          width: "10px",
-          height: "10px",
-          marginLeft: "4px",
-          verticalAlign: "middle",
+          marginLeft: "6px",
+          fontSize: "12px",
+          lineHeight: "1",
           color: c.textPrimary,
+          verticalAlign: "middle",
         }}
-        dangerouslySetInnerHTML={{ __html: SVG_FORWARD }}
-      />
+      >
+        →
+      </span>
     </Link>
   );
 }
