@@ -66,6 +66,15 @@ export function Sidebar({
   const router = useRouter();
   const [signOutOpen, setSignOutOpen] = useState(false);
   const footerRef = useRef<HTMLDivElement>(null);
+  // Ref on the confirm dialog itself. The dialog is rendered into
+  // document.body via createPortal so it can escape the sidebar's
+  // CSS transform and behave like a true viewport-anchored modal.
+  // That portal placement means it lives OUTSIDE footerRef in the
+  // DOM — so the outside-click handler below has to check this ref
+  // too, otherwise every click inside the dialog (including the
+  // Sign out button) is treated as "outside" and dismisses the
+  // dialog before the click can do its actual job.
+  const confirmRef = useRef<HTMLDivElement>(null);
 
   // Body scroll lock + backdrop overlay are mobile-only ergonomics
   // for the sign-out confirm. The hook itself is viewport-agnostic
@@ -110,7 +119,18 @@ export function Sidebar({
   useEffect(() => {
     if (!signOutOpen) return;
     const clickHandler = (e: MouseEvent) => {
-      if (footerRef.current && !footerRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      // The confirm dialog is in a portal, so it's NOT inside
+      // footerRef. Check both refs — only close on clicks that
+      // are outside both. Without the confirmRef check, every
+      // mousedown inside the dialog (Sign out button included)
+      // ran setSignOutOpen(false) BEFORE the click could trigger
+      // form submission — the form unmounted mid-submit and no
+      // signout request ever went out. That's why the button
+      // looked like it just dismissed the modal.
+      const insideFooter = footerRef.current?.contains(target) ?? false;
+      const insideConfirm = confirmRef.current?.contains(target) ?? false;
+      if (!insideFooter && !insideConfirm) {
         setSignOutOpen(false);
       }
     };
@@ -255,6 +275,7 @@ export function Sidebar({
                   onClick={() => setSignOutOpen(false)}
                 />
                 <div
+                  ref={confirmRef}
                   className="sidebar-signout-confirm"
                   role="dialog"
                   aria-modal="true"
