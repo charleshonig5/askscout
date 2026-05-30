@@ -427,7 +427,15 @@ function EmailBtn({
         return;
       }
 
-      const res = await fetch("/api/email/digest", {
+      // Forward the page URL's ?force=1 flag through to the API so
+      // template iteration on a dev / preview deploy can bypass the
+      // per-digest hourly rate limit. The API itself only honors the
+      // flag in non-prod environments, so wiring it through here is
+      // safe.
+      const force =
+        typeof window !== "undefined" &&
+        new URLSearchParams(window.location.search).get("force") === "1";
+      const res = await fetch(`/api/email/digest${force ? "?force=1" : ""}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),

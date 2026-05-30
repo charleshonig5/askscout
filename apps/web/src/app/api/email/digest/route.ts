@@ -112,8 +112,18 @@ export async function POST(req: Request) {
   // wrong or clicked repeatedly while in flight. The window is
   // intentionally generous — this is on-demand UX, not a marketing
   // blast, so accidental repeat-clicks are the only realistic threat.
+  //
+  // Bypass: pass `?force=1` to skip the rate limit when iterating on
+  // the template. Gated to non-production (local dev OR Vercel preview
+  // deploys) so it's safe to hardcode in browser dev/preview without
+  // worrying about shipping a bypass to prod.
+  const forceParam = url.searchParams.get("force") === "1";
+  const isNonProd =
+    process.env.VERCEL_ENV !== "production" || process.env.NODE_ENV !== "production";
+  const skipRateLimit = forceParam && isNonProd;
+
   const lastEmailed = await getDigestEmailedAt(digest.id);
-  if (lastEmailed && Date.now() - lastEmailed.getTime() < ONE_HOUR_MS) {
+  if (!skipRateLimit && lastEmailed && Date.now() - lastEmailed.getTime() < ONE_HOUR_MS) {
     return Response.json(
       {
         error: "rate_limited",

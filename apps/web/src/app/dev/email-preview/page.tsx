@@ -94,14 +94,16 @@ export default async function EmailPreviewPage() {
           '"Work Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       }}
     >
-      <div style={{ maxWidth: "880px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
         <header style={{ paddingBottom: "16px", color: "#a0a0a0" }}>
           <h1 style={{ margin: 0, fontSize: "20px", fontWeight: 600, color: "#ededed" }}>
             Email preview — Digest
           </h1>
           <p style={{ margin: "4px 0 0", fontSize: "13px", lineHeight: "1.5" }}>
-            Staging surface for the on-demand Email button template. Renders the same
-            DigestEmail component the production send pipeline will use. Edit{" "}
+            Staging surface for the on-demand Email button template. The iframe
+            below is sized like a desktop Gmail reading pane so the email&apos;s
+            off-white page bg + centered dark card render the way an inbox
+            shows them. Edit{" "}
             <code style={{ background: "#222", padding: "2px 4px", borderRadius: "3px" }}>
               apps/web/src/emails/DigestEmail.tsx
             </code>{" "}
@@ -109,31 +111,35 @@ export default async function EmailPreviewPage() {
           </p>
         </header>
 
-        {/* iframe constrained to exactly 600px wide so the email's
-            actual canvas is what's visible — no surrounding page bg
-            on the sides. Matches the email's `maxWidth: 600px`
-            container width. */}
-        {/* scrolling="no" suppresses both axes inside the iframe so
-            no scrollbar artifacts appear — the iframe is sized to
-            fit the email's full height (1500px) and matches the
-            email's exact 600px canvas width, so neither axis ever
-            actually needs to scroll. Without this, webkit reserves
-            ~17px for a phantom vertical scrollbar which then
-            triggers a horizontal scrollbar; the email visibly
-            shifted when the user scrolled the parent page. */}
+        {/*
+         * Gmail-pane-shaped iframe — full container width (capped at
+         * 1200px) and tall enough to render the whole email without
+         * scroll. The earlier 600px iframe clipped to the card width
+         * and hid the page bg entirely, which is exactly why layout
+         * regressions (full-bleed dark section vs centered card)
+         * only ever surfaced in production. Now the page background
+         * IS visible around the card here too, so any future change
+         * to the body bg / card width / footer placement is caught
+         * before send.
+         *
+         * scrolling="no" suppresses both axes inside the iframe so
+         * no scrollbar artifacts appear — the iframe is sized to
+         * fit the email's full height. Without this, webkit reserves
+         * ~17px for a phantom vertical scrollbar which then triggers
+         * a horizontal scrollbar.
+         */}
         <iframe
           title="Digest email preview"
           srcDoc={html}
           scrolling="no"
           style={{
-            width: "600px",
-            maxWidth: "100%",
-            height: "1500px",
+            width: "100%",
+            maxWidth: "1200px",
+            height: "1800px",
             display: "block",
             margin: "0 auto",
             border: "1px solid #222",
             borderRadius: "8px",
-            backgroundColor: "#121212",
           }}
         />
       </div>
