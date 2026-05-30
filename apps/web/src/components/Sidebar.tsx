@@ -300,9 +300,11 @@ export function Sidebar({
                       // forces a brand-new request with the cleared
                       // cookie, so the auth check sees an anonymous
                       // user and renders the marketing home.
-                      onClick={async () => {
-                        await signOut({ redirect: false });
-                        window.location.href = "/";
+                      onClick={() => {
+                        void (async () => {
+                          await signOut({ redirect: false });
+                          window.location.href = "/";
+                        })();
                       }}
                     >
                       Sign out
