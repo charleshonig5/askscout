@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { signOutAction } from "@/app/actions/sign-out";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
@@ -286,29 +287,22 @@ export function Sidebar({
                     >
                       Cancel
                     </button>
-                    <button
-                      type="button"
-                      className="modal-action-btn modal-action-btn--danger"
-                      // We deliberately do not let NextAuth handle the
-                      // post-signout navigation. v5's client signOut does
-                      // a soft router push to redirectTo, which on "/"
-                      // re-runs the RSC for the root page — and that page
-                      // calls `auth()` which can still see the just-cleared
-                      // session due to in-flight cache, immediately
-                      // bouncing the user back to /dashboard. A hard
-                      // window.location reload after `redirect: false`
-                      // forces a brand-new request with the cleared
-                      // cookie, so the auth check sees an anonymous
-                      // user and renders the marketing home.
-                      onClick={() => {
-                        void (async () => {
-                          await signOut({ redirect: false });
-                          window.location.href = "/";
-                        })();
-                      }}
-                    >
-                      Sign out
-                    </button>
+                    {/* Server-action signOut. The form submits to the
+                        signOutAction server function, which calls the
+                        server-side Auth.js signOut and emits a redirect
+                        response with the Set-Cookie max-age=0 header
+                        attached in the same response. This avoids the
+                        client-side cookie/CSRF/SessionProvider race that
+                        was leaving the session cookie alive on "/" and
+                        bouncing the user straight back to /dashboard. */}
+                    <form action={signOutAction} style={{ display: "contents" }}>
+                      <button
+                        type="submit"
+                        className="modal-action-btn modal-action-btn--danger"
+                      >
+                        Sign out
+                      </button>
+                    </form>
                   </div>
                 </div>
               </>,

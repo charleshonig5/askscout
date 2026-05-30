@@ -1,8 +1,8 @@
 "use client";
 
 import { Fragment, useState, useEffect, useCallback } from "react";
-import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { signOutAction } from "@/app/actions/sign-out";
 import { ArrowLeft, CircleX, Trash2, ShieldCheck, ShieldX } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
 import { Header } from "@/components/Header";
@@ -287,15 +287,14 @@ export default function SettingsPage() {
     // would land in a logged-in-but-no-data state on next render. Hard
     // navigate as a fallback so they always end up on a clean page.
     try {
-      // Hard navigation after the cookie clear is intentional — see
-       // Sidebar.tsx for the long-form rationale. Short version: the
-       // root page does its own `auth()` check server-side and will
-       // bounce a still-authenticated session back to /dashboard. Doing
-       // signOut({ redirect: false }) + window.location.href forces a
-       // fresh request with the cleared cookie and lands the user on
-       // the marketing home as intended.
-      await signOut({ redirect: false });
-      window.location.href = "/";
+      // Server-action signOut — see app/actions/sign-out.ts for the
+      // full rationale. Short version: client-side signOut left the
+      // session cookie alive in prod and the root page's server-side
+      // auth() bounced the user back to /dashboard. The server action
+      // clears the cookie and emits the redirect in a single response,
+      // so by the time the browser navigates the user is genuinely
+      // signed out.
+      await signOutAction();
     } catch {
       window.location.href = "/";
     }
