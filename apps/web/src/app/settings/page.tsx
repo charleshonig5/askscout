@@ -2,7 +2,6 @@
 
 import { Fragment, useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { signOutAction } from "@/app/actions/sign-out";
 import { ArrowLeft, CircleX, Trash2, ShieldCheck, ShieldX } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
 import { Header } from "@/components/Header";
@@ -287,14 +286,31 @@ export default function SettingsPage() {
     // would land in a logged-in-but-no-data state on next render. Hard
     // navigate as a fallback so they always end up on a clean page.
     try {
-      // Server-action signOut — see app/actions/sign-out.ts for the
-      // full rationale. Short version: client-side signOut left the
-      // session cookie alive in prod and the root page's server-side
-      // auth() bounced the user back to /dashboard. The server action
-      // clears the cookie and emits the redirect in a single response,
-      // so by the time the browser navigates the user is genuinely
-      // signed out.
-      await signOutAction();
+      // Sign out via a plain HTML form POST to /api/auth/signout — the
+      // ONLY signout path we've found that actually clears the session
+      // cookie reliably in production. See components/SignOutForm.tsx
+      // for the long history; short version: client-side signOut and
+      // a server-action signOut both did soft router navigation that
+      // re-rendered "/" from a stale RSC cache and bounced the user
+      // back to /dashboard. The 302 response from /api/auth/signout
+      // forces a hard browser navigation with the cleared cookie.
+      const csrfRes = await fetch("/api/auth/csrf");
+      const { csrfToken } = (await csrfRes.json()) as { csrfToken: string };
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = "/api/auth/signout";
+      const csrf = document.createElement("input");
+      csrf.type = "hidden";
+      csrf.name = "csrfToken";
+      csrf.value = csrfToken;
+      const cb = document.createElement("input");
+      cb.type = "hidden";
+      cb.name = "callbackUrl";
+      cb.value = "/";
+      form.appendChild(csrf);
+      form.appendChild(cb);
+      document.body.appendChild(form);
+      form.submit();
     } catch {
       window.location.href = "/";
     }

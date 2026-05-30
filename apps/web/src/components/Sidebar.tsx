@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useSession } from "next-auth/react";
-import { signOutAction } from "@/app/actions/sign-out";
+import { SignOutForm } from "@/components/SignOutForm";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
@@ -287,22 +287,28 @@ export function Sidebar({
                     >
                       Cancel
                     </button>
-                    {/* Server-action signOut. The form submits to the
-                        signOutAction server function, which calls the
-                        server-side Auth.js signOut and emits a redirect
-                        response with the Set-Cookie max-age=0 header
-                        attached in the same response. This avoids the
-                        client-side cookie/CSRF/SessionProvider race that
-                        was leaving the session cookie alive on "/" and
-                        bouncing the user straight back to /dashboard. */}
-                    <form action={signOutAction} style={{ display: "contents" }}>
-                      <button
-                        type="submit"
-                        className="modal-action-btn modal-action-btn--danger"
-                      >
-                        Sign out
-                      </button>
-                    </form>
+                    {/* Plain-form signOut. POSTs directly to Auth.js's
+                        /api/auth/signout endpoint, which responds with
+                        a 302 redirect carrying Set-Cookie max-age=0 in
+                        the same HTTP response — the browser hard-
+                        navigates with the cookie already cleared. The
+                        previous attempts (client signOut + window.location
+                        and a server action) both did soft navigation
+                        that hit a cached RSC payload for "/" rendered
+                        while signed in, bouncing the user back to
+                        /dashboard. See SignOutForm.tsx for the full
+                        history. */}
+                    <SignOutForm callbackUrl="/">
+                      {(disabled) => (
+                        <button
+                          type="submit"
+                          className="modal-action-btn modal-action-btn--danger"
+                          disabled={disabled}
+                        >
+                          Sign out
+                        </button>
+                      )}
+                    </SignOutForm>
                   </div>
                 </div>
               </>,
