@@ -152,9 +152,52 @@ export function DigestEmail({
         <meta name="x-apple-disable-message-reformatting" />
         <meta name="color-scheme" content="dark" />
         <meta name="supported-color-schemes" content="dark" />
+        {/*
+         * Force-dark stylesheet. Email clients implement dark/light
+         * mode wildly inconsistently:
+         *
+         *   - Apple Mail (iOS + macOS) reads the meta tags above and
+         *     leaves a dark-mode email alone. No further work needed.
+         *   - Gmail web respects the meta tags.
+         *   - Gmail mobile (iOS app especially) IGNORES the meta tags
+         *     and force-inverts emails it decides are "dark on light,"
+         *     producing the broken-contrast look the user saw.
+         *   - Outlook.com uses [data-ogsc] / [data-ogsb] attributes
+         *     on the body in dark mode.
+         *
+         * Belt-and-braces: declare color-scheme at :root, hard-pin
+         * the body/card backgrounds with !important inside a
+         * prefers-color-scheme: light media query, and add Outlook
+         * data-* overrides. Combined, this keeps the dark palette in
+         * every client we care about — including light-mode Outlook
+         * and most Gmail mobile cases. The Gmail iOS app's
+         * auto-inverter is buggy enough that NO solution makes it
+         * perfect, but this stops the worst contrast failures.
+         */}
+        <style>{`
+          :root {
+            color-scheme: dark;
+            supported-color-schemes: dark;
+          }
+          @media (prefers-color-scheme: light) {
+            .force-dark-bg { background-color: ${c.bgSecondary} !important; }
+            .force-dark-card { background-color: ${c.bgPrimary} !important; }
+            .force-dark-chip { background-color: ${c.bgTertiary} !important; }
+            .force-dark-text { color: ${c.textPrimary} !important; }
+            .force-dark-text-muted { color: ${c.textSecondary} !important; }
+            .force-dark-border { border-color: ${c.border} !important; }
+          }
+          /* Outlook.com / Outlook Web — apply on the body via attribute. */
+          [data-ogsc] .force-dark-text { color: ${c.textPrimary} !important; }
+          [data-ogsc] .force-dark-text-muted { color: ${c.textSecondary} !important; }
+          [data-ogsb] .force-dark-bg { background-color: ${c.bgSecondary} !important; }
+          [data-ogsb] .force-dark-card { background-color: ${c.bgPrimary} !important; }
+          [data-ogsb] .force-dark-chip { background-color: ${c.bgTertiary} !important; }
+        `}</style>
       </Head>
       <Preview>{previewText}</Preview>
       <Body
+        className="force-dark-bg force-dark-text"
         style={{
           // Body bg is the lighter "page" shade (#121212). The
           // 600px digest card below sits on top in the darker
@@ -182,6 +225,7 @@ export function DigestEmail({
             blew past the intended narrow column. */}
         <Container
           width="600"
+          className="force-dark-card force-dark-border force-dark-text"
           style={{
             backgroundColor: c.bgPrimary,
             border: `1px solid ${c.border}`,
@@ -505,6 +549,7 @@ function RepoChip({
   return (
     <Link
       href={`https://github.com/${repoFullName}`}
+      className="force-dark-chip force-dark-text"
       style={{
         display: "inline-block",
         padding: "4px 8px",
@@ -548,6 +593,7 @@ function RepoChip({
 function StreakChip({ days }: { days: number }) {
   return (
     <span
+      className="force-dark-chip force-dark-text"
       style={{
         display: "inline-block",
         padding: "4px 8px",
