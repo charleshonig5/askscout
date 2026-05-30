@@ -635,7 +635,23 @@ export default function DashboardPage() {
   let displayDate = todayStr;
   let pageTitle = "Today\u2019s Digest";
 
-  if (noNewCommits && showLatestFromQuietDay) {
+  // isViewingHistory MUST be checked before noNewCommits \u2014 same
+  // render-priority rule the <DigestView> render at the bottom of
+  // this file follows. On a non-default repo with a quiet day today,
+  // the user can click a sidebar history entry while noNewCommits is
+  // still true. The DigestView body switches to the historic digest,
+  // but before this guard the title/date stayed pinned to the
+  // quiet-day defaults ("Nothing on the Horizon" / today's date) \u2014
+  // header chrome disagreed with body.
+  if (isViewingHistory && activeHistoryEntry) {
+    displayDate = new Date(activeHistoryEntry.created_at).toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+    pageTitle = formatDigestTitle(activeHistoryEntry.created_at);
+  } else if (noNewCommits && showLatestFromQuietDay) {
     displayDate = noNewCommits.dateDisplay;
     pageTitle = formatDigestTitle(noNewCommits.date);
   } else if (noNewCommits) {
@@ -646,15 +662,11 @@ export default function DashboardPage() {
   } else if (emptyRepo) {
     // First-run / dormant repo — no commits in 90d AND no prior digests.
     pageTitle = "No Activity Yet";
-  } else if (isViewingHistory && activeHistoryEntry) {
-    displayDate = new Date(activeHistoryEntry.created_at).toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
-    pageTitle = formatDigestTitle(activeHistoryEntry.created_at);
   }
+  // isViewingHistory branch lives at the TOP of this chain — see the
+  // comment above the first `if`. It used to live here at the bottom
+  // and never fired when both noNewCommits and isViewingHistory were
+  // true on the same repo.
 
   // Compute per-repo streak AND personal best from history records + check-ins.
   // A day counts as "active" if a digest was generated OR a check-in recorded.
@@ -721,11 +733,13 @@ export default function DashboardPage() {
     return { streak: current, personalBest: Math.max(longest, current) };
   })();
 
-  // Determine the raw content for the current view (unified text with section markers)
-  const currentRawContent = noNewCommits
-    ? noNewCommits.content
-    : isViewingHistory
-      ? (viewingHistoryContent ?? "")
+  // Determine the raw content for the current view (unified text with
+  // section markers). isViewingHistory wins over noNewCommits — see
+  // the title/date if-chain above for why the priority matters.
+  const currentRawContent = isViewingHistory
+    ? (viewingHistoryContent ?? "")
+    : noNewCommits
+      ? noNewCommits.content
       : digestStream.text || cachedDigests[`${selectedRepo}:digest`]?.content || "";
 
   // Parse sections from whatever content source is active
@@ -734,22 +748,24 @@ export default function DashboardPage() {
   // Stats for the currently-displayed digest (streaming, cached, history, or
   // quiet-day preview). Mirrors the stats prop passed into DigestView so the
   // header's copy/download/email sees the same numbers the page is rendering.
-  const currentStats = noNewCommits
-    ? (noNewCommits.stats as DigestViewStats | null)
-    : isViewingHistory
-      ? (viewingHistoryStats as DigestViewStats | null)
+  const currentStats = isViewingHistory
+    ? (viewingHistoryStats as DigestViewStats | null)
+    : noNewCommits
+      ? (noNewCommits.stats as DigestViewStats | null)
       : digestStream.stats ||
         (cachedDigests[`${selectedRepo}:digest`]?.stats as DigestViewStats | null) ||
         null;
 
   // Show Copy/Download/Email in the header only when there's something to act
   // on: we have content, we're not mid-stream, and we're not sitting on the
-  // quiet-day empty state (which has no digest to copy).
+  // quiet-day empty state (which has no digest to copy). The quiet-day
+  // suppression is itself suppressed when isViewingHistory is true — clicking
+  // a sidebar history entry on a quiet-day repo IS something to act on.
   const showHeaderActions =
     currentRawContent !== "" &&
     !digestStream.isStreaming &&
     !emptyRepo &&
-    !(noNewCommits && !showLatestFromQuietDay);
+    (isViewingHistory || !(noNewCommits && !showLatestFromQuietDay));
 
   // True while the dashboard is still bootstrapping after a remount
   // (e.g. returning from /settings or /insights) and hasn't resolved
