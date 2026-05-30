@@ -287,7 +287,10 @@ export default function SettingsPage() {
     // would land in a logged-in-but-no-data state on next render. Hard
     // navigate as a fallback so they always end up on a clean page.
     try {
-      await signOut({ callbackUrl: "/" });
+      // NextAuth v5 option name is `redirectTo`; passing the v4
+       // `callbackUrl` is silently ignored and the client never
+       // navigates, leaving the user on the (now-empty) settings page.
+      await signOut({ redirectTo: "/" });
     } catch {
       window.location.href = "/";
     }

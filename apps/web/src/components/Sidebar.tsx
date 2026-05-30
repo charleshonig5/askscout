@@ -289,7 +289,12 @@ export function Sidebar({
                     <button
                       type="button"
                       className="modal-action-btn modal-action-btn--danger"
-                      onClick={() => void signOut({ callbackUrl: "/" })}
+                      // NextAuth v5 renamed `callbackUrl` to `redirectTo`.
+                      // With the v4 name, the option is silently dropped
+                      // and the client never navigates after clearing the
+                      // session — the button looked dead because the page
+                      // didn't move. Same fix applied in settings/page.tsx.
+                      onClick={() => void signOut({ redirectTo: "/" })}
                     >
                       Sign out
                     </button>
