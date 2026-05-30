@@ -50,12 +50,12 @@ const c = {
   // darken it) instead of force-inverting. Brand newsletters
   // (Substack, Stripe Press, NYT briefings) all use a similar
   // muted off-white for this slot.
-  // Page color OUTSIDE the 600px column. Pure white per Figma 442:2
-  // — the centered dark column reads like a postcard on a sheet of
-  // paper. White is also what email clients fall back to in most
-  // dark-mode inverters, so leaving it pure white minimizes the
-  // chance of muddy mid-grays in unusual rendering modes.
-  pageBg: "#ffffff",
+  // Page color OUTSIDE the 600px column. Off-white #fafafa — the
+  // same value the dashboard's light-mode `--color-bg-secondary`
+  // uses, so the email's page tone matches the web app instead of
+  // being pure white. Subtle enough to keep dark-mode inverters
+  // from muddying it but visibly warmer than #ffffff.
+  pageBg: "#fafafa",
   // Stats colors per the design.
   green: "#57d32e",
   red: "#dd1d1d",
@@ -547,8 +547,10 @@ function SectionEmoji({ name }: { name: keyof typeof FLUENT_EMOJI }) {
 // but Gmail strips inline <svg> via dangerouslySetInnerHTML so the
 // glyph never rendered in inbox. The chip now uses a Unicode "→"
 // character instead — see RepoChip below.
-const SVG_SQUARE_ARROW_UP_RIGHT =
-  '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M8 8h8v8"/><path d="m8 16 8-8"/></svg>';
+// SVG_SQUARE_ARROW_UP_RIGHT used to live here for the CTA button's
+// leading icon, but Gmail strips inline <svg> injected via
+// dangerouslySetInnerHTML so the glyph never rendered in inbox.
+// The button now uses a Unicode "↗" character — see CTAButton.
 
 /** Repo chip — bg-tertiary pill with the repo slug + Lucide Forward
  *  glyph (10×10). Wraps in an <a> that opens the repo on GitHub in
@@ -1085,15 +1087,26 @@ function CTAButton({ href }: { href: string }) {
                 lineHeight: 0,
               }}
             >
+              {/* Unicode "↗" (north-east arrow) instead of the
+                  inline Lucide SquareArrowUpRight SVG — Gmail web
+                  and Outlook strip any <svg> injected via
+                  dangerouslySetInnerHTML, so the icon disappeared
+                  in inbox. A text character survives every client
+                  and inherits color like any glyph. Same fix
+                  pattern we used on the repo chip's "→". */}
               <span
                 style={{
                   display: "block",
                   width: "20px",
                   height: "20px",
+                  fontSize: "18px",
+                  lineHeight: "20px",
+                  textAlign: "center",
                   color: c.textPrimary,
                 }}
-                dangerouslySetInnerHTML={{ __html: SVG_SQUARE_ARROW_UP_RIGHT }}
-              />
+              >
+                ↗
+              </span>
             </td>
             <td
               style={{
