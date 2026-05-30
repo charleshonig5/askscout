@@ -39,7 +39,11 @@ export interface SendDigestInput {
 }
 
 function defaultSubject(props: DigestEmailProps): string {
-  return `Your AskScout digest, ${props.repoName}`;
+  // Matches the wordmark casing ("askScout") used in the email
+  // footer and the marketing logo lockup. The "AskScout" capital-A
+  // form is for prose; the wordmark form is for places that
+  // visually behave like the logo (subject lines, headers).
+  return `Your askScout digest, ${props.repoName}`;
 }
 
 export async function sendDigestEmail(input: SendDigestInput): Promise<SendDigestResult> {
