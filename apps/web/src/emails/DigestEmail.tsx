@@ -205,6 +205,24 @@ export function DigestEmail({
           [data-ogsb] .force-dark-bg { background-color: ${c.bgSecondary} !important; }
           [data-ogsb] .force-dark-card { background-color: ${c.bgPrimary} !important; }
           [data-ogsb] .force-dark-chip { background-color: ${c.bgTertiary} !important; }
+
+          /* Gmail iOS / Android dark-mode "comfort" pass dims white
+             text on dark surfaces even with color-scheme: dark set.
+             Gmail injects data-ogsc / data-ogsb on the body when it
+             runs that pass, so selectors anchored to those attributes
+             execute AFTER Gmail's rewrites and pin every text element
+             back to white. The wildcard is intentional in a fully
+             dark template — every text element IS supposed to be
+             white. The three exemptions below preserve the stats
+             row's semantic +lines (green) / -lines (red) and the
+             stats-icon (muted grey) which are intentionally non-white.
+             Selectors only match inside Gmail mobile, so dev preview,
+             Outlook, Apple Mail, and every other client are
+             unaffected. */
+          [data-ogsc] *, [data-ogsb] * { color: ${c.textPrimary} !important; }
+          [data-ogsc] .stats-added, [data-ogsb] .stats-added { color: ${c.green} !important; }
+          [data-ogsc] .stats-removed, [data-ogsb] .stats-removed { color: ${c.red} !important; }
+          [data-ogsc] .stats-icon, [data-ogsb] .stats-icon { color: ${c.textSecondary} !important; }
         `}</style>
       </Head>
       <Preview>{previewText}</Preview>
@@ -960,8 +978,12 @@ const SVG_FILE_TEXT =
  *  the labels next to them. SVGs use stroke="currentColor" so the
  *  span's color attribute drives the stroke color. */
 function StatsIcon({ svg }: { svg: string }) {
+  // className=stats-icon lets the Gmail-mobile color-rewrite rules
+  // (see <style> in <Head>) preserve textSecondary on the icon
+  // instead of forcing white. Invisible to every other client.
   return (
     <span
+      className="stats-icon"
       style={{
         display: "inline-block",
         width: "16px",
@@ -999,7 +1021,12 @@ function StatsLine({ stats }: { stats: NonNullable<DigestEmailProps["stats"]> })
       <tbody>
         <tr>
           <td style={{ padding: 0, verticalAlign: "middle", whiteSpace: "nowrap" }}>
+            {/* className=stats-added/removed lets the Gmail-mobile
+                color-rewrite exempt rules (see <style> in <Head>)
+                preserve the semantic green/red instead of forcing
+                white. The class is invisible to every other client. */}
             <span
+              className="stats-added"
               style={{
                 fontFamily: fonts.sans,
                 fontWeight: 400,
@@ -1012,6 +1039,7 @@ function StatsLine({ stats }: { stats: NonNullable<DigestEmailProps["stats"]> })
               +{fmt(stats.linesAdded ?? 0)} lines
             </span>
             <span
+              className="stats-removed"
               style={{
                 fontFamily: fonts.sans,
                 fontWeight: 400,
