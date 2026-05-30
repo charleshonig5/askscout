@@ -2778,13 +2778,14 @@ a:hover {
     visibility 0s linear 0s;
 }
 
-/* First row has nothing above it inside the scroll area, so its
-   tooltip flips back below the stat. All other rows keep the default
-   above-the-stat anchor so the bottom of the list never clips. */
-.sidebar-item:first-child .sidebar-item-stat-tooltip {
-  bottom: auto;
-  top: calc(100% + 6px);
-}
+/* The first row used to flip its tooltip BELOW because "above" would
+   have clipped against the scroll box's top edge. The .sidebar-list
+   now has 30px padding-top (with negative margin to keep the visual
+   layout) so "above" has room to render for every row, including the
+   first. Keeping the default anchor matches the rest of the rows AND
+   fixes a regression where single-entry repos (one historic digest)
+   had the tooltip flip below into zero remaining scroll-box height
+   and clip out of view. */
 
 /* Repo picker row: label above trigger with 8px gap. */
 .sidebar-section--repo {
@@ -2827,6 +2828,17 @@ a:hover {
      sidesteps the phantom-scrollbar issue tooltips trigger when an
      absolute child's bounding box extends past the visible content. */
   scrollbar-width: none;
+  /* Room above the first row for the "tooltip above" anchor to render
+     without clipping against the scroll box's top edge. Negative
+     margin-top cancels the visual offset so the list still looks
+     flush with the History label above. Without this, single-entry
+     repos (the only repo's user has, or a non-default repo with one
+     historic digest) had no scroll-box height to anchor tooltips into
+     and the icon hover tooltips clipped completely. Default-repo
+     multi-entry case already had room because other rows below the
+     first provided box height. */
+  padding-top: 30px;
+  margin-top: -30px;
 }
 
 .sidebar-list::-webkit-scrollbar {
