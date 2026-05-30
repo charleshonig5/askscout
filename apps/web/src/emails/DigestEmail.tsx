@@ -156,12 +156,13 @@ export function DigestEmail({
       <Preview>{previewText}</Preview>
       <Body
         style={{
-          // Body bg is the page color (#070707) so the area surrounding
-          // the 600px-wide email card matches what the Figma mockups
-          // show: a dark page with a single centered card. The card
-          // itself uses #121212 ("secondary") for visible contrast
-          // against this page background.
-          backgroundColor: c.bgPrimary,
+          // Body bg is the lighter "page" shade (#121212). The
+          // 600px digest card below sits on top in the darker
+          // primary shade (#070707), so the card visibly pops
+          // against the surrounding page color — matching the
+          // Figma intent. When both were #070707 the card vanished
+          // into the body and only the 1px border was visible.
+          backgroundColor: c.bgSecondary,
           fontFamily: fonts.sans,
           margin: 0,
           padding: "20px 0",
