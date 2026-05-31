@@ -8355,11 +8355,45 @@ a:hover {
   overflow: hidden;
 }
 
-/* Non-active tab panels stay in the DOM (so AI search crawlers
-   read all 15 Q&As without executing JS) but are removed from
-   layout via display:none + hidden attribute. */
-.home-faq-card--hidden {
-  display: none;
+/* FAQ tab slider — viewport + track. All panels stay in the
+   horizontal flex track and slide into view by translating the
+   track on tab change. Inactive panels are still in the DOM (SEO
+   + AI crawlers see all Q&As without JS) but are pushed offscreen
+   and made non-interactive via the `inert` attribute on the
+   panel itself (handles focus + screen-reader skip in one). */
+.home-faq-viewport {
+  overflow: hidden;
+  /* Match .home-faq-card's radius so the slide doesn't visibly
+     clip past a sharp rectangle while the track is in motion. */
+  border-radius: 8px;
+}
+
+.home-faq-track {
+  display: flex;
+  align-items: stretch;
+  /* Snappy but settled — 400ms cubic-bezier(0.4, 0, 0.2, 1) is
+     the same ease-out the dashboard's history-pop animation uses,
+     so motion across the marketing + app surfaces reads as one
+     coherent feel. will-change hints the compositor to keep the
+     track on its own layer so the slide never jank-paints the
+     surrounding marketing chrome. */
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.home-faq-track > .home-faq-card {
+  /* Each panel occupies the full viewport width and never shrinks
+     below it, so the track is exactly N viewport-widths wide and
+     translateX(-N*100%) lines panel N up with the viewport. */
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-faq-track {
+    transition: none;
+  }
 }
 
 /* ============================================
