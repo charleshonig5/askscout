@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { MarketingNav } from "@/components/MarketingNav";
-import { TrackOptionsMatrix } from "@/components/TrackOptionsMatrix";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
 import { ArticleFAQ } from "@/components/ArticleFAQ";
@@ -243,12 +242,6 @@ export default function TrackWhatYouShippedPage() {
 
         <section className="public-section">
           <h2 className="public-section-title">How to pick</h2>
-          {/* Glanceable comparison matrix — lets a reader who's
-              already half-decided skip the four prose options and
-              jump straight to the side-by-side. The decision-tree
-              paragraphs below still cover the reasoning for readers
-              who want it. See TrackOptionsMatrix.tsx for the chrome. */}
-          <TrackOptionsMatrix />
           <p className="public-text">
             If your week is small and your messages are good, git log is fine. Stop reading.
           </p>
