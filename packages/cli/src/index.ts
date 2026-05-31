@@ -4,6 +4,11 @@ import type { OutputMode } from "askscout-core";
 import { scan } from "./commands/scan.js";
 import { runSetup } from "./setup.js";
 
+// Injected at build time by tsup `define` (see tsup.config.ts) so
+// `askscout --version` reports the actual published version without
+// the bin having to read package.json at runtime.
+declare const __ASKSCOUT_VERSION__: string;
+
 interface CliArgs {
   setup: boolean;
   resume: boolean;
@@ -65,7 +70,8 @@ async function main(): Promise<void> {
     .example("$0 --week", "Review the past 7 days")
     .example("$0 --setup", "Set up your API key (first time)")
     .help()
-    .version(false)
+    .version(__ASKSCOUT_VERSION__)
+    .alias("v", "version")
     .strict()
     .parse()) as CliArgs;
 

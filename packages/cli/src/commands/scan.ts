@@ -34,7 +34,7 @@ export interface ScanOptions {
 }
 
 /** Walk up from cwd to find the nearest .git directory */
-async function findProjectRoot(): Promise<string> {
+export async function findProjectRoot(): Promise<string> {
   let dir = process.cwd();
   const root = path.parse(dir).root;
 
@@ -51,8 +51,36 @@ async function findProjectRoot(): Promise<string> {
   throw new Error("Not a git repository (no .git found).");
 }
 
+/** Check that the `git` binary is callable on PATH. Without this
+ *  guard the first execFile("git", ...) inside getCommits throws
+ *  "spawn git ENOENT" which surfaces to the user as a cryptic
+ *  trace. With it, they get a single actionable line. */
+async function assertGitInstalled(): Promise<void> {
+  const { execFile } = await import("node:child_process");
+  const { promisify } = await import("node:util");
+  const exec = promisify(execFile);
+  try {
+    await exec("git", ["--version"]);
+  } catch (err) {
+    const code = (err as NodeJS.ErrnoException).code;
+    if (code === "ENOENT") {
+      throw new Error(
+        "git not found on PATH. askScout reads from git locally — install git from https://git-scm.com/downloads and try again.",
+      );
+    }
+    // Some other failure (permissions, broken install). Re-throw
+    // with context so the user has a starting point.
+    throw new Error(
+      `git is installed but failed to run: ${(err as Error).message}. Verify "git --version" works in your shell.`,
+    );
+  }
+}
+
 /** Calculate the "since" date — smart default based on state */
-function getSinceDate(timeRange: ScanOptions["timeRange"], state: ProjectState | null): Date {
+export function getSinceDate(
+  timeRange: ScanOptions["timeRange"],
+  state: ProjectState | null,
+): Date {
   if (timeRange === "week") {
     return new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
   }
@@ -68,7 +96,7 @@ function getSinceDate(timeRange: ScanOptions["timeRange"], state: ProjectState |
 }
 
 /** Format a human-readable time label from a since date */
-function formatTimeLabel(since: Date): string {
+export function formatTimeLabel(since: Date): string {
   const now = new Date();
   const diffMs = now.getTime() - since.getTime();
   const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
@@ -85,6 +113,12 @@ function formatTimeLabel(since: Date): string {
 
 /** Main scan command — reads git history and generates a digest */
 export async function scan(options: ScanOptions): Promise<void> {
+  // 0. Make sure git is on PATH before doing anything else. Without
+  //    this the first child_process spawn inside getCommits throws
+  //    "spawn git ENOENT" which surfaces as a stack trace to the
+  //    user. Friendlier to fail loudly with one actionable line.
+  await assertGitInstalled();
+
   // 1. Find project root
   const projectRoot = await findProjectRoot();
 

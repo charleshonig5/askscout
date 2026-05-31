@@ -77,8 +77,10 @@ async function promptForKey(): Promise<CliConfig | null> {
 
 /** Standalone setup — run via `askscout --setup` */
 export async function runSetup(): Promise<void> {
-  console.error("\naskscout setup\n");
-  console.error("askscout supports two LLM providers. Bring an API key from either one.");
+  console.error("\naskScout setup\n");
+  console.error("askScout uses Anthropic (Claude) or OpenAI. Bring an API key from either:");
+  console.error("  • sk-ant-…  →  Anthropic (https://console.anthropic.com/settings/keys)");
+  console.error("  • sk-…      →  OpenAI    (https://platform.openai.com/api-keys)\n");
   console.error(
     "Your key stays on this machine and is never sent anywhere except your chosen provider.\n",
   );
@@ -95,9 +97,13 @@ export async function runSetup(): Promise<void> {
 /** Inline setup — called during first run when no key exists. Returns config or null. */
 export async function inlineSetup(): Promise<CliConfig | null> {
   console.error("Hey! Scout here. Your daily digest for what's happening in your repo.\n");
-  console.error("   I need an LLM API key to get started. Two providers are supported:\n");
-  console.error("   • Keys starting with sk-ant-  →  one provider (typically slightly cheaper)");
-  console.error("   • Keys starting with sk-      →  the other provider\n");
+  console.error("   I need an LLM API key to get started. askScout supports two providers:\n");
+  console.error(
+    "   • sk-ant-…  →  Anthropic (Claude)   — https://console.anthropic.com/settings/keys",
+  );
+  console.error(
+    "   • sk-…      →  OpenAI              — https://platform.openai.com/api-keys\n",
+  );
   console.error("   Either works. Paste your key when prompted.");
   console.error(
     "   Your key stays on this machine and is never sent anywhere except your chosen provider.\n",
