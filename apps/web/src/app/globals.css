@@ -10003,6 +10003,35 @@ a:hover {
   margin-bottom: 0;
 }
 
+/* Bulleted + ordered lists inside an article section. Inherits
+   the .public-text typography (16px / 1.7 / weight 300 / primary
+   color) so list items read identically to surrounding prose.
+   24px padding-inline-start sits the bullet markers inside the
+   720px reading column on desktop AND inside the 20px page
+   padding on mobile — no list ever bleeds past article margins.
+   8px li margin gives items breathing room without breaking the
+   block from surrounding paragraphs. */
+.public-section ul,
+.public-section ol {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--color-text-primary);
+  margin: 0 0 18px;
+  padding-inline-start: 24px;
+}
+
+.public-section ul li,
+.public-section ol li {
+  margin-bottom: 8px;
+}
+
+.public-section ul li:last-child,
+.public-section ol li:last-child {
+  margin-bottom: 0;
+}
+
 /* Bulleted list inside a public-section. Same type treatment as
    .public-text so prose and list items read as one voice. Used on
    the Privacy page for itemized "what we collect / your rights"

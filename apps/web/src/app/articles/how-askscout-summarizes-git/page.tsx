@@ -145,7 +145,7 @@ export default function HowAskScoutSummarizesGitPage() {
           <p className="public-text">
             What gets read on the web app:
           </p>
-          <ul className="public-text">
+          <ul>
             <li>Commit messages, timestamps, authors, file paths.</li>
             <li>
               The actual diff patches (the lines added and removed in each commit).
