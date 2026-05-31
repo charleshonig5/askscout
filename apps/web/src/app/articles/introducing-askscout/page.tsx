@@ -7,7 +7,10 @@ import { ReadyCTA } from "@/components/ReadyCTA";
 import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
-  title: "Introducing AskScout: your vibe coding companion | AskScout",
+  // Brand suffix dropped — "AskScout" already appears in the headline,
+  // so " | AskScout" double-printed it and ate characters in the SERP
+  // snippet without adding signal.
+  title: "Introducing AskScout: your vibe coding companion",
   description:
     "AskScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex.",
   alternates: {
@@ -34,7 +37,7 @@ const FAQ_PLAIN: { q: string; a: string }[] = [
   },
   {
     q: "Is AskScout free to use?",
-    a: "Yes. The web app is free with a soft cap of 30 digests per day. The CLI is free open-source software under MIT, with you bringing your own LLM API key (about $0.001 to $0.003 per digest). No paid tier, no upsell.",
+    a: "Yes. The web app is free with a soft cap of 30 digests per day. The CLI is free open-source software under MIT, with you bringing your own LLM API key (a fraction of a cent per run). No paid tier, no upsell.",
   },
   {
     q: "Does AskScout work with Claude Code, Cursor, and Codex?",
@@ -95,7 +98,7 @@ export default function IntroducingAskScoutPage() {
         <p className="public-text article-tldr">
           <strong>TLDR:</strong> AskScout is a daily digest tool for developers who code with AI
           assistance. Claude Code, Cursor, and Codex help you write code. AskScout reads what
-          you wrote and writes you back a 10-second summary covering what shipped, what changed,
+          you wrote and writes you back a quick summary covering what shipped, what changed,
           what kept getting reworked, and what you left off. The web app runs in your browser,
           signed in with GitHub. The CLI runs in any local git repo with your own LLM key. Both
           are free, both are open source.
@@ -104,9 +107,8 @@ export default function IntroducingAskScoutPage() {
         <section className="public-section">
           <h2 className="public-section-title">The problem AI coding tools created</h2>
           <p className="public-text">
-            Two years ago a productive developer wrote ten commits a day. Today the same person
-            ships fifty. The AI tools made the typing fast. They did not make the
-            remembering fast.
+            Output per developer has gone up sharply since AI coding tools landed. The typing
+            got fast. The remembering did not.
           </p>
           <p className="public-text">
             Friday afternoon you close your laptop and you cannot account for half of what your
@@ -136,12 +138,20 @@ export default function IntroducingAskScoutPage() {
             progress when work stopped).
           </p>
           <p className="public-text">
-            Then it adds two computed signals: Codebase Health (Growth, Focus, Churn) and Pace
-            Check (today versus your recent average). Both come from raw git data, not the LLM.
+            Two more numbers come along for the ride: Codebase Health (Growth, Focus, Churn) and
+            Pace Check (today versus your recent average). Both come from raw git data, not the
+            LLM. (More on how the digest gets assembled in{" "}
+            <Link
+              href="/articles/how-askscout-summarizes-git"
+              className="home-prose-link"
+            >
+              How AskScout turns a noisy git log into a 10-second digest
+            </Link>
+            .)
           </p>
           <p className="public-text">
-            The whole digest is short enough to read in 10 seconds. That is the constraint we
-            built around. If it takes longer than that to read, you will skip it.
+            The whole digest is short enough to skim in about a minute. That is the constraint
+            we built around. If it takes longer than that to read, you will skip it.
           </p>
         </section>
 
@@ -151,11 +161,12 @@ export default function IntroducingAskScoutPage() {
             AskScout runs in two places. The web app at askscout.dev signs in with GitHub, picks
             a repo, and starts streaming. Your digest history saves under your account. The CLI
             installs with <code className="inline-code">npm install -g askscout</code>, lives
-            in any local repo, and uses your own Anthropic or OpenAI API key.
+            in any local repo, and uses your own Anthropic or OpenAI API key. Full install
+            steps are in the <Link href="/docs" className="home-prose-link">CLI docs</Link>.
           </p>
           <p className="public-text">
-            Same digest format, different fits. Web is for hosted history and instant setup. CLI
-            is for local-only workflows, CI integration, and developers who want full control of
+            Same digest format, different fits. Web is for hosted history and a 10-second
+            sign-in. CLI is for local-only workflows and developers who want full control of
             their data.
           </p>
         </section>
@@ -163,9 +174,16 @@ export default function IntroducingAskScoutPage() {
         <section className="public-section">
           <h2 className="public-section-title">What it is not</h2>
           <p className="public-text">
-            AskScout is not a code generator. It will not write your features, refactor your
-            modules, or autocomplete your typing. Claude Code, Cursor, Codex, GitHub Copilot,
-            and Aider already do that, and they do it well.
+            AskScout is not a code generator. It will not write your features or refactor your
+            modules. Claude Code, Cursor, and Codex already do that, and they do it well. (If
+            you're choosing between those, we wrote about that in{" "}
+            <Link
+              href="/articles/best-ai-coding-tools-for-solo-developers"
+              className="home-prose-link"
+            >
+              Best AI Coding Tools for Solo Developers
+            </Link>
+            .)
           </p>
           <p className="public-text">
             AskScout sits one layer above those tools. They write code. AskScout reads what you
@@ -181,8 +199,16 @@ export default function IntroducingAskScoutPage() {
             run <code className="inline-code">askscout</code> in any git repo.
           </p>
           <p className="public-text">
-            Both surfaces are free. The CLI is open source under MIT. We hope this becomes the
-            default companion next to whatever AI coding tool you already use.
+            Both surfaces are free. The CLI is open source under the{" "}
+            <a
+              href="https://opensource.org/license/mit/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="home-prose-link"
+            >
+              MIT license
+            </a>
+            . Use it next to whatever AI coding tool already lives in your day.
           </p>
         </section>
 
