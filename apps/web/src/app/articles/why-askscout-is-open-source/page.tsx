@@ -7,7 +7,9 @@ import { ReadyCTA } from "@/components/ReadyCTA";
 import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
-  title: "Why we made AskScout open source | AskScout",
+  // Brand suffix dropped — "AskScout" already appears in the
+  // headline, so the trailing " | AskScout" was redundant.
+  title: "Why we made AskScout open source",
   description:
     "Why AskScout is MIT licensed: trust matters more than moat for a tool that reads your code. Plus the BYOK story for the CLI.",
   alternates: {
@@ -104,8 +106,8 @@ export default function WhyAskScoutOpenSourcePage() {
           <h2 className="public-section-title">The problem with closed-source AI tools that read your code</h2>
           <p className="public-text">
             Most of the AI tooling shipping right now is closed source. The code that decides
-            what data leaves your machine, what gets sent to an LLM, what gets logged, what gets
-            stored, all of that lives behind a binary you can&apos;t inspect.
+            what data leaves your machine and what an LLM ends up seeing lives behind a binary
+            you can&apos;t inspect.
           </p>
           <p className="public-text">
             For a code editor or a chat assistant, that is a tradeoff people have decided they
@@ -134,10 +136,35 @@ export default function WhyAskScoutOpenSourcePage() {
             >
               github.com/charleshonig5/askscout
             </a>
-            . The web app, the CLI, the shared core library, the LLM prompt that decides what
-            the digest sounds like, all of it. If you want to see what gets sent to your LLM
-            provider, the call sites are right there in the repo. If you want to fork it and run
-            your own version, MIT lets you do that with no restrictions.
+            . That includes the web app, the CLI, and the{" "}
+            <a
+              href="https://github.com/charleshonig5/askscout/blob/main/packages/core/src/summarize.ts"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="home-prose-link"
+            >
+              LLM prompt
+            </a>{" "}
+            that decides what every digest sounds like. If you want to see what gets sent to
+            your LLM provider, the call sites are right there in the repo. If you want to fork
+            it and run your own version, the{" "}
+            <a
+              href="https://github.com/charleshonig5/askscout/blob/main/LICENSE"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="home-prose-link"
+            >
+              MIT license
+            </a>{" "}
+            lets you do that with no restrictions. (For a tour of the pipeline that prompt
+            sits inside, see{" "}
+            <Link
+              href="/articles/how-askscout-summarizes-git"
+              className="home-prose-link"
+            >
+              How AskScout turns a noisy git log into a 10-second digest
+            </Link>
+            .)
           </p>
           <p className="public-text">
             We thought about a stricter license. Permissive open source can be copied by larger
@@ -157,7 +184,9 @@ export default function WhyAskScoutOpenSourcePage() {
             The CLI stores nothing online. Your config (with the key at{" "}
             <code className="inline-code">chmod 600</code> in your home folder) and per-project
             state file live on disk only. There is no telemetry, no analytics, no opt-out flag
-            because there is nothing to opt out of.
+            because there is nothing to opt out of. (Our full data-handling policy lives on
+            the <Link href="/privacy" className="home-prose-link">privacy page</Link> if you
+            want it spelled out.)
           </p>
           <p className="public-text">
             For developers who care about where their code goes, the CLI is the version we
@@ -207,7 +236,14 @@ export default function WhyAskScoutOpenSourcePage() {
             >
               The Hidden Cost of Vibe Coding
             </Link>{" "}
-            covers the why.)
+            covers the why, and{" "}
+            <Link
+              href="/articles/introducing-askscout"
+              className="home-prose-link"
+            >
+              Introducing AskScout
+            </Link>{" "}
+            covers the what.)
           </p>
         </section>
 
