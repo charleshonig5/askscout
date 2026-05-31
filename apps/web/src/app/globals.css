@@ -8818,13 +8818,13 @@ a:hover {
   color: var(--color-text-primary);
 }
 
-/* "Read more" CTA below the Articles column when the catalog grows
-   past what the column shows. Pattern mirrors .articles-card-read
-   (label + SquareArrowUpRight icon, 8px gap) but tuned to the
-   footer's 14px scale and the muted-grey link color so it reads
-   as one tier above the article-title links rather than a
-   primary action. 14px top-margin gives it visual separation
-   from the last link row without inventing a new section. */
+/* "Read more" CTA below the Articles column. 1:1 mirror of the
+   .articles-card-read pattern (label + SquareArrowUpRight icon)
+   so the footer's CTA reads exactly the same as the article-card
+   CTA: 12px Work Sans Light, white label, muted-tertiary icon
+   that brightens to white on hover. 14px top-margin provides
+   the visual separation from the last link row above; everything
+   else (size, gap, colors, hover) is identical to the card. */
 .home-footer-col-cta {
   display: inline-flex;
   align-items: center;
@@ -8832,19 +8832,17 @@ a:hover {
   margin-top: 14px;
   font-family: var(--font-sans);
   font-weight: 300;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.2;
-  color: #616161;
+  color: var(--color-text-primary);
   text-decoration: none;
-  transition: color 0.15s ease;
 }
 
 .home-footer-col-cta svg {
-  color: #616161;
+  color: var(--color-text-tertiary);
   transition: color 0.15s ease;
 }
 
-.home-footer-col-cta:hover,
 .home-footer-col-cta:hover svg {
   color: var(--color-text-primary);
 }
