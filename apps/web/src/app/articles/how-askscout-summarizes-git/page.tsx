@@ -256,29 +256,43 @@ export default function HowAskScoutSummarizesGitPage() {
           <p className="public-text">
             Raw git log:
           </p>
-          <div className="resource-code-block">
-            <code>
-              {`a1b2c3d wip
+          {/* <pre> instead of <div> preserves the leading
+              whitespace + line breaks the template literal carries,
+              so the bulleted "Shipped" / "Left Off" sections in the
+              askScout output don't collapse into a single run-on
+              paragraph. Same change applied to the raw git log
+              below for consistency, even though it's single lines. */}
+          <pre className="resource-code-block">
+{`a1b2c3d wip
 b4c5d6e fix
 c7d8e9f update auth
 d0e1f2a wip again
 e3f4a5b add tests
 f6a7b8c fix tests`}
-            </code>
-          </div>
+          </pre>
           <p className="public-text">
             askScout output for the same window:
           </p>
-          <div className="resource-code-block">
-            <code>
-              {`🚀 Shipped  2
-  • Auth flow lands - Users can sign in with email + password. Sessions persist across reloads, and the rate-limit banner finally renders correctly.
-  • Test harness for auth - Six new integration tests cover sign-in, sign-out, and token refresh. CI is now blocking on auth regressions.
+          <pre className="resource-code-block">
+{`🚀  Shipped  2
 
-📍 Left Off  1
-  • Edge case in token refresh - Refresh works on long-lived sessions but throws when the token has been revoked server-side. Next step is wiring up the 401 path to a clean re-auth.`}
-            </code>
-          </div>
+  •  Auth flow lands
+     Users can sign in with email + password. Sessions persist
+     across reloads, and the rate-limit banner finally renders
+     correctly.
+
+  •  Test harness for auth
+     Six new integration tests cover sign-in, sign-out, and
+     token refresh. CI is now blocking on auth regressions.
+
+
+📍  Left Off  1
+
+  •  Edge case in token refresh
+     Refresh works on long-lived sessions but throws when the
+     token has been revoked server-side. Next step is wiring up
+     the 401 path to a clean re-auth.`}
+          </pre>
           <p className="public-text">
             Both views describe the same six commits. One is illegible at scale. The other you
             can read on your phone in a coffee line.

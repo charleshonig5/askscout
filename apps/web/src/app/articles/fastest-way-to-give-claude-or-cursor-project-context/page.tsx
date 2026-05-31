@@ -165,9 +165,12 @@ export default function FastestWayToContextPage() {
           <p className="public-text">
             You can write this block by hand. The format that works:
           </p>
-          <div className="resource-code-block">
-            <code>
-              {`Tech Stack
+          {/* <pre> preserves the multi-line structure so the
+              5-section format renders as it actually appears, not
+              as a collapsed paragraph. See the matching change in
+              how-askscout-summarizes-git's before/after section. */}
+          <pre className="resource-code-block">
+{`Tech Stack
 Next.js 15 App Router, TypeScript, Tailwind, Supabase auth.
 
 Recent Work
@@ -183,8 +186,7 @@ Key Files
 
 Heads Up
 useAuth was just refactored. Don't suggest changes to its session-state code without checking the new BroadcastChannel implementation.`}
-            </code>
-          </div>
+          </pre>
           <p className="public-text">
             Paste this at the start of a Claude Code, Cursor, or Codex session and the next response
             will be sharper than starting cold. The downside is that writing it takes a few
@@ -201,9 +203,7 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
             thing in one command (install steps are in the{" "}
             <Link href="/docs" className="home-prose-link">CLI docs</Link>):
           </p>
-          <div className="resource-code-block">
-            <code>askscout --resume</code>
-          </div>
+          <pre className="resource-code-block">askscout --resume</pre>
           <p className="public-text">
             askScout reads your recent git history (commits, diffs, file paths), runs it
             through the same LLM you configured for digests, and produces a context block in
@@ -220,12 +220,8 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
           <p className="public-text">
             Pipe it straight into your clipboard:
           </p>
-          <div className="resource-code-block">
-            <code>askscout --resume | pbcopy   # macOS</code>
-          </div>
-          <div className="resource-code-block">
-            <code>askscout --resume | xclip    # Linux</code>
-          </div>
+          <pre className="resource-code-block">askscout --resume | pbcopy   # macOS</pre>
+          <pre className="resource-code-block">askscout --resume | xclip    # Linux</pre>
           <p className="public-text">
             Then paste at the start of any AI coding session.
           </p>

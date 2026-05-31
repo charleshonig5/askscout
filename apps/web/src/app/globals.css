@@ -10163,14 +10163,29 @@ a:hover {
 }
 
 .resource-code-block {
+  /* Used as <pre> in article bodies so multi-line content (raw git
+     logs, CLI command examples, sample askScout output) keeps its
+     line breaks + leading whitespace. white-space: pre-wrap lets
+     long lines wrap on narrow viewports instead of triggering
+     horizontal scroll. overflow-x: auto is the safety net for
+     content that genuinely can't wrap (long unbroken hashes,
+     wide CLI commands). margin reset overrides <pre>'s default
+     top + bottom margins so spacing is owned by us.
+
+     font-family explicitly pinned to var(--font-sans) so the
+     element matches the brand's no-monospace rule even though
+     <pre>'s user-agent default is monospace. */
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: var(--space-md);
+  margin: 0 0 var(--space-md);
   font-family: var(--font-sans);
   font-size: 14px;
+  line-height: 1.6;
   color: var(--color-text-primary);
-  margin-bottom: var(--space-md);
+  white-space: pre-wrap;
+  overflow-x: auto;
 }
 
 .inline-code {
