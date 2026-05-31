@@ -8803,6 +8803,49 @@ a:hover {
   white-space: nowrap;
 }
 
+/* "All systems operational" pill — sits below the copyright in the
+   footer brand block. Pattern follows Resend's footer status
+   indicator but tuned to our visual system: bg-secondary surface
+   inside a 1px border-color pill, Work Sans Light 12 muted label,
+   leading green dot that pulses on the same .repo-badge-pulse
+   keyframe the dashboard's repo dropdown uses (so motion across
+   marketing + app reads as one signal language). Currently static
+   — wire to a real status feed when one exists. */
+.home-footer-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 9999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.home-footer-status-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--color-success);
+  box-shadow: 0 0 6px 0 color-mix(in srgb, var(--color-success) 45%, transparent);
+  /* Reuses the same keyframe the dashboard's .repo-combobox-item-badge
+     uses — see ~line 911. Centralizing on one keyframe means future
+     tuning to the "I'm alive" pulse rhythm hits both surfaces. */
+  animation: repo-badge-pulse 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-footer-status-dot {
+    animation: none;
+  }
+}
+
 .home-footer-cols {
   display: flex;
   align-items: flex-start;

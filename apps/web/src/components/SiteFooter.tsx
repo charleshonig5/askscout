@@ -28,6 +28,20 @@ export function SiteFooter() {
             <Logo height={20} />
           </Link>
           <p className="home-footer-copy">© 2026 askScout</p>
+          {/* Always-on status indicator. Reuses the .repo-combobox-
+              item-badge pulse pattern from the web app (6px green
+              dot, soft halo, 2.4s gentle pulse) so the marketing
+              site and the app share one motion language for "live
+              / healthy" signals. Static for now — wired to a real
+              status source if/when we have one. */}
+          <span
+            className="home-footer-status"
+            role="status"
+            aria-label="All systems operational"
+          >
+            <span className="home-footer-status-dot" aria-hidden />
+            All systems operational
+          </span>
         </div>
         <div className="home-footer-cols">
           <div className="home-footer-col">
