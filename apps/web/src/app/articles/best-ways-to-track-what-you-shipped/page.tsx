@@ -7,7 +7,10 @@ import { ReadyCTA } from "@/components/ReadyCTA";
 import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
-  title: "Best Ways to Track What You Shipped as a Developer | AskScout",
+  // Brand suffix dropped — "AskScout" already appears in the
+  // breadcrumb and OG chrome; the title was 62 chars + 11 with
+  // the suffix, which truncated in the SERP snippet.
+  title: "Best Ways to Track What You Shipped as a Developer",
   description:
     "An honest comparison of git log, GitHub Insights, dev journals, and automated digests for tracking what you actually built each week.",
   alternates: {
@@ -42,7 +45,7 @@ const FAQ_PLAIN: { q: string; a: string }[] = [
   },
   {
     q: "Is there a free way to summarize my git activity?",
-    a: "Yes. The git CLI ships with git shortlog, git log --stat, and git log -p for a structured view at no cost. AskScout's CLI is also free open source software under MIT, with you bringing your own LLM API key (about $0.001 to $0.003 per digest).",
+    a: "Yes. The git CLI ships with git shortlog, git log --stat, and git log -p for a structured view at no cost. AskScout's CLI is also free open source software under MIT, with you bringing your own LLM API key (a fraction of a cent per run).",
   },
 ];
 
@@ -103,15 +106,14 @@ export default function TrackWhatYouShippedPage() {
 
         <section className="public-section">
           <p className="public-text">
-            Tracking what you shipped used to be a low-stakes problem. You wrote ten commits a
-            day, the messages were yours, and you remembered the work because you typed it. That
-            is not the world most developers live in anymore.
+            Tracking what you shipped used to be a low-stakes problem. You wrote a handful of
+            clean commits a day, the messages were yours, and you remembered the work because
+            you typed it. That is not the world most developers live in anymore.
           </p>
           <p className="public-text">
-            With AI coding tools, the same person can land fifty commits in an afternoon. The
-            volume is bigger. The mental ownership is smaller. And by Friday you are looking at
-            your own git history wondering what half of it does. (I wrote about why this happens
-            in{" "}
+            AI coding tools push the daily volume up sharply. The mental ownership doesn&apos;t
+            keep pace. And by Friday you&apos;re looking at your own git history wondering what
+            half of it does. (For the longer argument about why this happens, see{" "}
             <Link
               href="/articles/the-hidden-cost-of-vibe-coding"
               className="home-prose-link"
@@ -133,20 +135,30 @@ export default function TrackWhatYouShippedPage() {
             <code className="inline-code">git log --since=&quot;1 week ago&quot; --oneline</code>{" "}
             and you get a flat list of every commit from the past seven days, one per line. Add{" "}
             <code className="inline-code">--stat</code> if you want file change counts. Add{" "}
-            <code className="inline-code">-p</code> if you want the actual diffs.
+            <code className="inline-code">-p</code> if you want the actual diffs. Full options
+            in the{" "}
+            <a
+              href="https://git-scm.com/docs/git-log"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="home-prose-link"
+            >
+              git-log documentation
+            </a>
+            .
           </p>
           <p className="public-text">
             The good case: it costs nothing, it lives next to your code, and you can pipe it
             anywhere.
           </p>
           <p className="public-text">
-            The bad case: at fifty commits a day with messages like{" "}
+            The bad case: at AI-assisted volume with messages like{" "}
             <code className="inline-code">fix</code>, <code className="inline-code">wip</code>,
             and <code className="inline-code">update</code>, the log is illegible. You can scan
             it. You cannot understand it.
           </p>
           <p className="public-text">
-            Use this when you have ten or fewer commits in the window and the messages are real.
+            Use this when the week is small and the messages are real.
           </p>
         </section>
 
@@ -196,19 +208,34 @@ export default function TrackWhatYouShippedPage() {
           <h2 className="public-section-title">Option 4: An automated digest</h2>
           <p className="public-text">
             The newest option is to read what your repo did and turn it into a daily summary
-            automatically. AskScout is one of these. So is anything you build yourself by piping
-            git diffs into a ChatGPT or Claude prompt.
+            automatically.{" "}
+            <Link
+              href="/articles/introducing-askscout"
+              className="home-prose-link"
+            >
+              AskScout
+            </Link>{" "}
+            is one of these. So is anything you build yourself by piping git diffs into a
+            ChatGPT or Claude prompt.
           </p>
           <p className="public-text">
-            What you get is a written digest with sections: what shipped, what changed, what kept
-            getting reworked, and where you left off. The output is short enough to read in 10
-            seconds. The data is grounded in your actual commits, not your memory.
+            What you get is a written digest with sections: what shipped, what changed, what
+            kept getting reworked, and where you left off. The output is short enough to skim
+            in about a minute. The data is grounded in your actual commits, not your memory.
+            (For a tour of how that grounding works,{" "}
+            <Link
+              href="/articles/how-askscout-summarizes-git"
+              className="home-prose-link"
+            >
+              How AskScout turns a noisy git log into a 10-second digest
+            </Link>{" "}
+            walks through the pipeline.)
           </p>
           <p className="public-text">
             What you give up is some control. The summary is the model&apos;s read of your
-            diffs, not yours. If the model misreads a commit, the digest reflects that. You also
-            pay a tiny LLM cost per run if you bring your own key (around $0.001 to $0.003 per
-            digest at default models). The hosted web app is free.
+            diffs, not yours. If the model misreads a commit, the digest reflects that. You
+            also pay a small LLM cost per run if you bring your own key (a fraction of a cent
+            at default models). The hosted web app is free.
           </p>
           <p className="public-text">
             Use this when the volume is too high for the other options. For most AI-assisted
@@ -229,10 +256,10 @@ export default function TrackWhatYouShippedPage() {
             Just be honest about whether you will actually do it for more than two weeks.
           </p>
           <p className="public-text">
-            If your week is fifty commits a day with messy messages, the only option that scales
-            is automation. Either build the prompt yourself or use a tool like AskScout. The
-            point is that something is reading your repo for you, because at this volume you are
-            not going to.
+            If your week is AI-assisted-volume with messy auto-generated messages, the only
+            option that scales is automation. Either build the prompt yourself or use a tool
+            like AskScout. The point is that something is reading your repo for you, because
+            at this volume you are not going to.
           </p>
           <p className="public-text">
             The honest answer is that most developers will end up using two of these together. A
