@@ -8874,13 +8874,16 @@ a:hover {
   gap: 14px;
 }
 
-/* "Read more" CTA below the Articles column. 1:1 mirror of the
-   .articles-card-read pattern (label + SquareArrowUpRight icon)
-   so the footer's CTA reads exactly the same as the article-card
-   CTA: 12px Work Sans Light, white label, muted-tertiary icon
-   that brightens to white on hover. Vertical spacing from the
-   list above is handled by the .home-footer-col-articles wrapper
-   (gap: 14px), not by margin on the link itself. */
+/* "Read more" CTA below the Articles column. Visual layout mirrors
+   .articles-card-read (label + SquareArrowUpRight icon, 12px Work
+   Sans Light), but the hover behavior mirrors .article-hero-link
+   ("Back to Articles" / "Copy URL" on the article-page hero) —
+   the LABEL fades from white to text-secondary on hover; the icon
+   stays muted-tertiary throughout. That treatment was preferred
+   over the article-card's icon-brightens-on-hover because it
+   reads as a subtle "dim" rather than a foreground-shift.
+   Vertical spacing from the list above is handled by the
+   .home-footer-col-articles wrapper (gap: 14px). */
 .home-footer-col-cta {
   display: inline-flex;
   align-items: center;
@@ -8891,15 +8894,15 @@ a:hover {
   line-height: 1.2;
   color: var(--color-text-primary);
   text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.home-footer-col-cta:hover {
+  color: var(--color-text-secondary);
 }
 
 .home-footer-col-cta svg {
   color: var(--color-text-tertiary);
-  transition: color 0.15s ease;
-}
-
-.home-footer-col-cta:hover svg {
-  color: var(--color-text-primary);
 }
 
 /* ---------- RESPONSIVE ---------- */
