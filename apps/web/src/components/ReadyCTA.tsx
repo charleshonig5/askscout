@@ -1,5 +1,6 @@
 import { Forward } from "lucide-react";
 import { signIn } from "@/auth";
+import { GitHubMark } from "@/components/GitHubMark";
 import { ReadyCTAInstall } from "@/components/ReadyCTAInstall";
 
 /**
@@ -49,8 +50,13 @@ export function ReadyCTA() {
                 await signIn("github", { redirectTo: "/dashboard" });
               }}
             >
+              {/* Figma 442:178 — icon-left CTA, matches the hero CTA's
+                  pattern so the marketing site's two sign-in entry
+                  points read identically. See MarketingHome.tsx for
+                  the longer rationale. */}
               <button type="submit" className="home-readycta-btn">
-                Try AskScout free
+                <GitHubMark />
+                Continue with GitHub
               </button>
             </form>
             <ReadyCTAInstall />

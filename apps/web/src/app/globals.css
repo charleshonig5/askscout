@@ -4154,6 +4154,8 @@ a:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  /* 14px gap between the GitHub mark and the label, per Figma 442:178. */
+  gap: 14px;
   height: 54px;
   padding: 15px 24px;
   border-radius: 6px;
@@ -8304,6 +8306,8 @@ a:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  /* 14px gap between the GitHub mark and the label, per Figma 442:178. */
+  gap: 14px;
   height: 54px;
   padding: 15px 24px;
   border-radius: 6px;

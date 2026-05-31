@@ -20,6 +20,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { signIn } from "@/auth";
+import { GitHubMark } from "@/components/GitHubMark";
 import { InstallChip } from "@/components/InstallChip";
 import { ReadyCTA } from "@/components/ReadyCTA";
 import { FeaturesMotion } from "@/components/FeaturesMotion";
@@ -268,8 +269,15 @@ export default function MarketingHome() {
                 await signIn("github", { redirectTo: "/dashboard" });
               }}
             >
+              {/* Figma 442:178 — icon-left CTA. The official GitHub mark
+                  to the left of "Continue with GitHub" sets the
+                  expectation that the click routes to GitHub OAuth, so
+                  users aren't surprised when the consent screen appears.
+                  Replaces the previous value-led "Try AskScout free"
+                  copy which read like an in-app trial flow. */}
               <button type="submit" className="home-cta">
-                Try AskScout free
+                <GitHubMark />
+                Continue with GitHub
               </button>
             </form>
             {/* Secondary CTA: install command chip. One click copies
