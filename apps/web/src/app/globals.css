@@ -4158,6 +4158,11 @@ a:hover {
    radius. Work Sans Light 16 label. */
 .home-cta {
   position: relative;
+  /* Establish a stacking context so the comet-border ::before
+     pseudo-element stays contained within the button's painting
+     layer. Without this, z-indexed children inside the button
+     (none today, but defensive) could weave around the pseudo. */
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -4166,7 +4171,12 @@ a:hover {
   height: 54px;
   padding: 15px 24px;
   border-radius: 6px;
-  border: 1px solid var(--color-border);
+  /* No static border here — the ::before comet-border ring (see
+     .home-cta::before below) paints a 1px ring around the button
+     with var(--color-border) as its base color, indistinguishable
+     from a solid border when the comet is on the far side of the
+     loop. The pseudo-element approach lets the comet animation
+     coexist with the border without needing extra DOM. */
   background: var(--color-bg-secondary);
   box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
   font-family: var(--font-sans);
@@ -4263,6 +4273,116 @@ a:hover {
     /* Park the star at the top-left so it's still visible as
        a static highlight even with motion off. */
     offset-distance: 0%;
+  }
+}
+
+/* ============================================================
+   COMET-BORDER ANIMATION — shared by .home-cta + .home-readycta-btn
+   ============================================================
+
+   Pattern lifted from Raycast's hero "Try the new Raycast" pill:
+   a conic-gradient painted on a ::before pseudo-element, clipped
+   to a 1px ring via mask-composite, then animated by tweening two
+   CSS custom properties (the gradient's center X position and its
+   starting rotation). The bright stop in the gradient reads as a
+   "comet" tracing the button's perimeter; the rest of the ring
+   shows --color-border (visually identical to a solid border) so
+   the button still has a clean static state when the comet is
+   on the far side of the loop.
+
+   Why this technique (vs. offset-path on a separate dot element):
+     - Zero JSX changes — pure CSS, applies the moment the rules
+       cascade onto an existing button.
+     - The comet perfectly hugs the button's actual shape
+       (including the 6px corner radius) because the gradient is
+       painted onto the shape itself, not following a separate
+       path that has to be sized/positioned to match.
+     - GPU-composited; no JS animation loop or RAF work.
+
+   The @property registrations are the critical enabler — without
+   them, `var(--cta-r)` and `var(--cta-x)` inside the gradient
+   can only swap discretely between keyframe values, never tween.
+   With them, both values interpolate smoothly. Supported in all
+   current browsers (Chrome 85+, Safari 16.4+, Firefox 128+). */
+
+@property --cta-r {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@property --cta-x {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 10%;
+}
+
+/* Horizontal sweep + 180° rotation pauses, run in lockstep so the
+   comet glides along the top edge, wraps the right end, glides
+   back along the bottom, and wraps the left end — one continuous
+   orbit per cycle. Using percentages (not px) keeps the animation
+   robust across both button widths. */
+@keyframes cta-comet-x {
+  0%,
+  100% {
+    --cta-x: 10%;
+  }
+  33%,
+  50% {
+    --cta-x: 90%;
+  }
+  83% {
+    --cta-x: 10%;
+  }
+}
+@keyframes cta-comet-r {
+  0%,
+  33% {
+    --cta-r: 0deg;
+  }
+  50%,
+  83% {
+    --cta-r: 180deg;
+  }
+  100% {
+    --cta-r: 360deg;
+  }
+}
+
+.home-cta::before,
+.home-readycta-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* `padding: 1px` is what defines the ring thickness. The mask
+     trick below clips the gradient to the area between the
+     padding-box and the border-box — i.e., the 1px ring. */
+  padding: 1px;
+  border-radius: inherit;
+  background:
+    conic-gradient(
+      from calc(var(--cta-r) - 80deg) at var(--cta-x) 50%,
+      transparent 0,
+      rgba(255, 255, 255, 0.85) 20%,
+      transparent 25%
+    ),
+    var(--color-border);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  /* 2s settle delay so the page can render before motion starts;
+     4s linear loop is slow enough to feel deliberate, not jittery. */
+  animation:
+    cta-comet-r 4s linear 2s infinite,
+    cta-comet-x 4s linear 2s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-cta::before,
+  .home-readycta-btn::before {
+    animation: none;
   }
 }
 
@@ -8310,6 +8430,11 @@ a:hover {
   appearance: none;
   border: 0;
   margin: 0;
+  /* Position + isolation give the ::before comet-border ring a
+     proper containing block + stacking context. Mirrors .home-cta
+     above so both CTAs share the same comet treatment. */
+  position: relative;
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -8319,9 +8444,10 @@ a:hover {
   padding: 15px 24px;
   border-radius: 6px;
   background: var(--color-bg-secondary);
-  box-shadow:
-    inset 0 0 0 1px var(--color-border),
-    inset 0 0 40px 0 var(--color-inner-glow);
+  /* Static 1px inset border removed — the ::before comet-border
+     ring (see below) paints the perimeter with var(--color-border)
+     as the base under the moving comet stop. */
+  box-shadow: inset 0 0 40px 0 var(--color-inner-glow);
   font-family: var(--font-sans);
   font-weight: 300;
   font-size: 16px;
