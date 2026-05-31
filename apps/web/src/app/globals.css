@@ -10090,101 +10090,133 @@ a:hover {
    .articles-card, .home-bento-card, etc.
    ============================================================ */
 
-/* --- Comparison matrix (TrackOptionsMatrix) --------------- */
-.article-compare-card {
-  /* Block-level card. 18px bottom margin matches .public-text
-     paragraph rhythm so it interleaves cleanly with surrounding
-     prose. overflow-x: auto so the table can scroll horizontally
-     on phones without breaking the 720px reading column. */
+/* --- Comparison matrix (TrackOptionsMatrix) ---------------
+   Four ELEVATED option cards stacked in the article body. Each
+   card is its own surface using the site's card chrome (same as
+   .home-faq-card / .articles-card) so the matrix reads as "four
+   surfaces in conversation," not "one flat spreadsheet." */
+.article-compare {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  /* 18px bottom matches .public-text paragraph rhythm so the
+     block interleaves cleanly with the prose above and below. */
   margin: 0 0 18px;
+}
+
+.article-compare-option {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg);
   border-radius: var(--radius-md);
   background: var(--color-bg-secondary);
   box-shadow:
     inset 0 0 0 1px var(--color-border),
     inset 0 0 40px 0 var(--color-inner-glow);
-  overflow-x: auto;
 }
 
-.article-compare-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: var(--font-sans);
+.article-compare-option-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
 }
 
-/* Header row — option names with small lucide icons. Smaller,
-   muted-secondary text + 1px bottom divider gives the column
-   labels a chrome feel without competing with the data cells
-   below. */
-.article-compare-table thead th {
-  padding: 14px 12px;
-  text-align: left;
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 1.3;
-  color: var(--color-text-secondary);
-  border-bottom: 1px solid var(--color-border);
-  vertical-align: bottom;
-  white-space: nowrap;
+/* Icon well — bg-tertiary squircle matching .docs-webapp-card's
+   icon treatment so the icon reads as a real "slot" instead of
+   a floating glyph. */
+.article-compare-option-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  flex-shrink: 0;
 }
 
-.article-compare-th-inner {
+.article-compare-option-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+
+/* Criterion chips row. Wraps to multiple lines on narrow
+   viewports so chips never overflow the article column. */
+.article-compare-option-chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+/* Each chip mirrors .home-readycta-badge's shape (4px radius,
+   inset 1px outline, 4/8 padding) — passive on a transparent
+   surface so the row scans as data, not buttons. Label is the
+   muted-tertiary criterion name; value is the primary-text
+   answer. */
+.article-compare-chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
-/* Row labels (leftmost column) — quiet uppercase tracking. Same
-   visual register as .home-bento-eyebrow so the matrix's row
-   tags read like section markers, not data. */
-.article-compare-table tbody th {
-  padding: 14px 12px;
-  text-align: left;
+.article-compare-chip-label {
   font-weight: 500;
-  font-size: 11px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-text-tertiary);
-  border-bottom: 1px solid var(--color-border);
-  white-space: nowrap;
-  width: 1%; /* squeeze the label column tight against its content */
-  vertical-align: middle;
 }
 
-.article-compare-table tbody td {
-  padding: 14px 12px;
-  font-weight: 300;
-  font-size: 14px;
-  line-height: 1.4;
-  color: var(--color-text-primary);
-  border-bottom: 1px solid var(--color-border);
-  vertical-align: middle;
-}
-
-/* Drop the trailing divider on the last row so the card edge
-   looks intentional. */
-.article-compare-table tbody tr:last-child th,
-.article-compare-table tbody tr:last-child td {
-  border-bottom: 0;
-}
-
-/* Rating cells in the final row — semantic color so the eye
-   lands on the visual punch line of the table (only the
-   automated digest scales). Tokens: --color-success /
-   --color-warning / --color-danger (defined in :root). */
-.article-compare-rating {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+.article-compare-chip-value {
   font-weight: 400;
+  color: var(--color-text-primary);
 }
 
-.article-compare-rating--good {
+/* Verdict chip — the punch line. Filled background in semantic
+   color so it lifts off the row visually. Reuses the same
+   token-driven success / warning / danger palette as the rest of
+   the site (Pace Check pills, error toasts, etc.). */
+.article-compare-chip--verdict {
+  box-shadow: none;
+}
+
+.article-compare-chip--good {
+  background: color-mix(in srgb, var(--color-success) 16%, transparent);
   color: var(--color-success);
 }
-.article-compare-rating--partial {
+.article-compare-chip--good .article-compare-chip-value {
+  color: var(--color-success);
+}
+
+.article-compare-chip--partial {
+  background: color-mix(in srgb, var(--color-warning) 16%, transparent);
   color: var(--color-warning);
 }
-.article-compare-rating--bad {
+.article-compare-chip--partial .article-compare-chip-value {
+  color: var(--color-warning);
+}
+
+.article-compare-chip--bad {
+  background: color-mix(in srgb, var(--color-danger) 16%, transparent);
+  color: var(--color-danger);
+}
+.article-compare-chip--bad .article-compare-chip-value {
   color: var(--color-danger);
 }
 
