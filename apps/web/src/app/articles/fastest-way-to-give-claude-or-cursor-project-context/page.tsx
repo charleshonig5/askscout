@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CommandChip } from "@/components/CommandChip";
 import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
@@ -203,7 +204,17 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
             thing in one command (install steps are in the{" "}
             <Link href="/docs" className="home-prose-link">CLI docs</Link>):
           </p>
-          <pre className="resource-code-block">askscout --resume</pre>
+          {/* CommandChip is the existing site pattern for
+              copy-on-click shell commands ($ prefix + Copy → Check
+              icon swap, inline-flex chip that hugs the command).
+              Replaces the prior wide <pre> block that filled the
+              article column without giving the user an obvious
+              click-to-copy affordance. .article-command-row wraps
+              the chip in a block container so it gets paragraph-
+              level vertical spacing in article flow. */}
+          <div className="article-command-row">
+            <CommandChip command="askscout --resume" />
+          </div>
           <p className="public-text">
             askScout reads your recent git history (commits, diffs, file paths), runs it
             through the same LLM you configured for digests, and produces a context block in
@@ -218,10 +229,17 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
             .)
           </p>
           <p className="public-text">
-            Pipe it straight into your clipboard:
+            Pipe it straight into your clipboard (macOS):
           </p>
-          <pre className="resource-code-block">askscout --resume | pbcopy   # macOS</pre>
-          <pre className="resource-code-block">askscout --resume | xclip    # Linux</pre>
+          <div className="article-command-row">
+            <CommandChip command="askscout --resume | pbcopy" />
+          </div>
+          <p className="public-text">
+            Or on Linux:
+          </p>
+          <div className="article-command-row">
+            <CommandChip command="askscout --resume | xclip" />
+          </div>
           <p className="public-text">
             Then paste at the start of any AI coding session.
           </p>

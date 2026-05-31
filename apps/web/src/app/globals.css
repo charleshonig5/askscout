@@ -10165,6 +10165,16 @@ a:hover {
   margin-bottom: var(--space-xs);
 }
 
+/* Block wrapper for inline-flex copy-on-click chips (CommandChip /
+   InstallChip) placed inside article bodies. Without a block
+   container the chip sits inline with the previous paragraph and
+   loses vertical breathing room. 18px bottom margin matches the
+   .public-text paragraph rhythm so chip rows interleave cleanly
+   with surrounding prose. */
+.article-command-row {
+  margin: 0 0 18px;
+}
+
 .resource-code-block {
   /* Used as <pre> in article bodies so multi-line content (raw git
      logs, CLI command examples, sample askScout output) keeps its
