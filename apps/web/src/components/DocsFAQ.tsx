@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useState } from "react";
+import { FAQTablist } from "@/components/FAQTablist";
 import { ChevronDown } from "lucide-react";
 
 /**
@@ -172,72 +173,53 @@ const TABS: DocsFAQTab[] = [
 
 export default function DocsFAQ() {
   const [active, setActive] = useState(TABS[0]!.id);
-  const activeIndex = TABS.findIndex((t) => t.id === active);
 
   return (
     <div className="home-faq-section">
       <div className="home-faq-header">
         <h2 className="home-faq-title">Frequently asked questions</h2>
+        <FAQTablist
+          tabs={TABS.map((t) => ({ id: t.id, label: t.label }))}
+          active={active}
+          onChange={setActive}
+          ariaLabel="Docs FAQ categories"
+          panelIdPrefix="docs-faq-panel"
+          tabIdPrefix="docs-faq-tab"
+        />
+      </div>
+      {/* Render every tab's panel into the initial HTML — only
+          the active one is visible (others hidden via
+          display:none + the hidden attribute). AI search
+          crawlers see all 10 Q&As without executing JS. */}
+      {TABS.map((tab) => (
         <div
-          className="home-faq-tabs"
-          role="tablist"
-          aria-label="Docs FAQ categories"
+          key={tab.id}
+          className={`home-faq-card${tab.id === active ? "" : " home-faq-card--hidden"}`}
+          role="tabpanel"
+          id={`docs-faq-panel-${tab.id}`}
+          aria-labelledby={`docs-faq-tab-${tab.id}`}
+          aria-hidden={tab.id !== active}
+          hidden={tab.id !== active ? true : undefined}
         >
-          {TABS.map((t) => (
-            <button
-              key={t.id}
-              role="tab"
-              type="button"
-              aria-selected={t.id === active}
-              aria-controls={`docs-faq-panel-${t.id}`}
-              id={`docs-faq-tab-${t.id}`}
-              className={`home-faq-tab${t.id === active ? " home-faq-tab--active" : ""}`}
-              onClick={() => setActive(t.id)}
-            >
-              {t.label}
-            </button>
+          {tab.items.map((item, i) => (
+            <Fragment key={`${tab.id}-${i}`}>
+              {i > 0 ? <div className="home-faq-divider" aria-hidden /> : null}
+              <details className="home-faq-item">
+                <summary className="home-faq-question">
+                  <span>{item.q}</span>
+                  <ChevronDown
+                    size={28}
+                    strokeWidth={1.25}
+                    className="home-faq-chevron"
+                    aria-hidden
+                  />
+                </summary>
+                <div className="home-faq-answer">{item.a}</div>
+              </details>
+            </Fragment>
           ))}
         </div>
-      </div>
-      {/* Slider — see FAQTabs.tsx for the long-form rationale. All
-          panels stay in the DOM so crawlers see the full Q&A set;
-          inactive panels carry `inert` so they're not focusable
-          or screen-reader visible. */}
-      <div className="home-faq-viewport">
-        <div
-          className="home-faq-track"
-          style={{ transform: `translateX(-${activeIndex * 100}%)` }}
-        >
-          {TABS.map((tab) => (
-            <div
-              key={tab.id}
-              className="home-faq-card"
-              role="tabpanel"
-              id={`docs-faq-panel-${tab.id}`}
-              aria-labelledby={`docs-faq-tab-${tab.id}`}
-              inert={tab.id !== active}
-            >
-              {tab.items.map((item, i) => (
-                <Fragment key={`${tab.id}-${i}`}>
-                  {i > 0 ? <div className="home-faq-divider" aria-hidden /> : null}
-                  <details className="home-faq-item">
-                    <summary className="home-faq-question">
-                      <span>{item.q}</span>
-                      <ChevronDown
-                        size={28}
-                        strokeWidth={1.25}
-                        className="home-faq-chevron"
-                        aria-hidden
-                      />
-                    </summary>
-                    <div className="home-faq-answer">{item.a}</div>
-                  </details>
-                </Fragment>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
+      ))}
     </div>
   );
 }

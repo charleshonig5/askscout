@@ -3,6 +3,7 @@
 import { Fragment, useState } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
+import { FAQTablist } from "@/components/FAQTablist";
 
 /**
  * FAQ section per Figma 244:2605.
@@ -242,77 +243,56 @@ const TABS: FAQTab[] = [
 
 export default function FAQTabs() {
   const [active, setActive] = useState(TABS[0]!.id);
-  const activeIndex = TABS.findIndex((t) => t.id === active);
 
   return (
     <div className="home-faq-section">
       <div className="home-faq-header">
         <h2 className="home-faq-title">Frequently asked questions</h2>
+        <FAQTablist
+          tabs={TABS.map((t) => ({ id: t.id, label: t.label }))}
+          active={active}
+          onChange={setActive}
+          ariaLabel="FAQ categories"
+          panelIdPrefix="faq-panel"
+          tabIdPrefix="faq-tab"
+        />
+      </div>
+      {/* Render every tab's panel into the initial HTML — only the
+          active one is visible (others get display:none via the
+          hidden modifier). Trade-off: a few extra hidden DOM nodes
+          in exchange for AI search bots / LLM crawlers seeing all
+          15 Q&As without needing to execute JS to switch tabs. The
+          FAQPage JSON-LD already covers the schema side; this
+          covers the plain-DOM side. */}
+      {TABS.map((tab) => (
         <div
-          className="home-faq-tabs"
-          role="tablist"
-          aria-label="FAQ categories"
+          key={tab.id}
+          className={`home-faq-card${tab.id === active ? "" : " home-faq-card--hidden"}`}
+          role="tabpanel"
+          id={`faq-panel-${tab.id}`}
+          aria-labelledby={`faq-tab-${tab.id}`}
+          aria-hidden={tab.id !== active}
+          hidden={tab.id !== active ? true : undefined}
         >
-          {TABS.map((t) => (
-            <button
-              key={t.id}
-              role="tab"
-              type="button"
-              aria-selected={t.id === active}
-              aria-controls={`faq-panel-${t.id}`}
-              id={`faq-tab-${t.id}`}
-              className={`home-faq-tab${t.id === active ? " home-faq-tab--active" : ""}`}
-              onClick={() => setActive(t.id)}
-            >
-              {t.label}
-            </button>
+          {tab.items.map((item, i) => (
+            <Fragment key={`${tab.id}-${i}`}>
+              {i > 0 ? <div className="home-faq-divider" aria-hidden /> : null}
+              <details className="home-faq-item">
+                <summary className="home-faq-question">
+                  <span>{item.q}</span>
+                  <ChevronDown
+                    size={28}
+                    strokeWidth={1.25}
+                    className="home-faq-chevron"
+                    aria-hidden
+                  />
+                </summary>
+                <div className="home-faq-answer">{item.a}</div>
+              </details>
+            </Fragment>
           ))}
         </div>
-      </div>
-      {/* Slider — all panels live in a horizontal flex track and
-          the active one is brought into view by translating the
-          track. Every panel is still in the DOM so AI crawlers /
-          search bots can read all 15 Q&As without executing JS;
-          the FAQPage JSON-LD covers the schema side. Inactive
-          panels carry `inert` to keep them out of focus order
-          and hidden from screen readers (one attribute does both
-          jobs). The viewport clips overflow so off-screen panels
-          don't peek into the next section. */}
-      <div className="home-faq-viewport">
-        <div
-          className="home-faq-track"
-          style={{ transform: `translateX(-${activeIndex * 100}%)` }}
-        >
-          {TABS.map((tab) => (
-            <div
-              key={tab.id}
-              className="home-faq-card"
-              role="tabpanel"
-              id={`faq-panel-${tab.id}`}
-              aria-labelledby={`faq-tab-${tab.id}`}
-              inert={tab.id !== active}
-            >
-              {tab.items.map((item, i) => (
-                <Fragment key={`${tab.id}-${i}`}>
-                  {i > 0 ? <div className="home-faq-divider" aria-hidden /> : null}
-                  <details className="home-faq-item">
-                    <summary className="home-faq-question">
-                      <span>{item.q}</span>
-                      <ChevronDown
-                        size={28}
-                        strokeWidth={1.25}
-                        className="home-faq-chevron"
-                        aria-hidden
-                      />
-                    </summary>
-                    <div className="home-faq-answer">{item.a}</div>
-                  </details>
-                </Fragment>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
+      ))}
     </div>
   );
 }

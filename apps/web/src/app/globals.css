@@ -8280,6 +8280,10 @@ a:hover {
 /* Segmented tab control — 386 wide, 8px padding, bg-primary
    with an inset border + glow. Inner gap-8 between tabs. */
 .home-faq-tabs {
+  /* position: relative containing block for the absolutely-
+     positioned .home-faq-tab-indicator which slides between tab
+     buttons on active change. */
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -8293,6 +8297,42 @@ a:hover {
     inset 0 0 20px 0 var(--color-inner-glow);
 }
 
+/* The moving pill behind the active tab. Position + size driven
+   by useLayoutEffect in <FAQTablist /> measuring each tab
+   button's bounding rect on active change. The two animatable
+   props (left + width) transition smoothly; the rest of the
+   styling matches what .home-faq-tab--active used to apply
+   directly to the button. Z-index 0 keeps it under the tab
+   button text (which is implicitly z-index: auto, rendered
+   after this sibling).
+
+   Top/bottom match the 8px container padding so the pill
+   exactly fills the row height; height: auto + top:8 + bottom:8
+   means it stretches to the row's natural height regardless of
+   button padding. */
+.home-faq-tab-indicator {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 8px;
+  background: var(--color-bg-secondary);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    inset 0 0 20px 0 var(--color-inner-glow);
+  transition:
+    left 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.15s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-faq-tab-indicator {
+    transition: opacity 0.15s ease;
+  }
+}
+
 /* The docs FAQ has only two tabs; the 386px width is sized for the
    home page's three. Hug the content so the two tabs aren't adrift
    in empty space. */
@@ -8301,6 +8341,10 @@ a:hover {
 }
 
 .home-faq-tab {
+  /* position: relative so the button stacks above the
+     absolutely-positioned indicator below it in source order. */
+  position: relative;
+  z-index: 1;
   appearance: none;
   border: 0;
   margin: 0;
@@ -8324,12 +8368,11 @@ a:hover {
   color: var(--color-text-primary);
 }
 
+/* Active tab now ONLY carries the text color — the moving pill
+   background lives on .home-faq-tab-indicator above so it can
+   slide between tabs instead of snapping. */
 .home-faq-tab--active {
   color: var(--color-text-primary);
-  background: var(--color-bg-secondary);
-  box-shadow:
-    inset 0 0 0 1px var(--color-border),
-    inset 0 0 20px 0 var(--color-inner-glow);
 }
 
 /* FAQ card — single rounded surface (976 wide implicitly via
@@ -8355,45 +8398,11 @@ a:hover {
   overflow: hidden;
 }
 
-/* FAQ tab slider — viewport + track. All panels stay in the
-   horizontal flex track and slide into view by translating the
-   track on tab change. Inactive panels are still in the DOM (SEO
-   + AI crawlers see all Q&As without JS) but are pushed offscreen
-   and made non-interactive via the `inert` attribute on the
-   panel itself (handles focus + screen-reader skip in one). */
-.home-faq-viewport {
-  overflow: hidden;
-  /* Match .home-faq-card's radius so the slide doesn't visibly
-     clip past a sharp rectangle while the track is in motion. */
-  border-radius: 8px;
-}
-
-.home-faq-track {
-  display: flex;
-  align-items: stretch;
-  /* Snappy but settled — 400ms cubic-bezier(0.4, 0, 0.2, 1) is
-     the same ease-out the dashboard's history-pop animation uses,
-     so motion across the marketing + app surfaces reads as one
-     coherent feel. will-change hints the compositor to keep the
-     track on its own layer so the slide never jank-paints the
-     surrounding marketing chrome. */
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
-}
-
-.home-faq-track > .home-faq-card {
-  /* Each panel occupies the full viewport width and never shrinks
-     below it, so the track is exactly N viewport-widths wide and
-     translateX(-N*100%) lines panel N up with the viewport. */
-  flex: 0 0 100%;
-  width: 100%;
-  min-width: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .home-faq-track {
-    transition: none;
-  }
+/* Non-active tab panels stay in the DOM (so AI search crawlers
+   read all 15 Q&As without executing JS) but are removed from
+   layout via display:none + hidden attribute. */
+.home-faq-card--hidden {
+  display: none;
 }
 
 /* ============================================
