@@ -8818,6 +8818,37 @@ a:hover {
   color: var(--color-text-primary);
 }
 
+/* "Read more" CTA below the Articles column when the catalog grows
+   past what the column shows. Pattern mirrors .articles-card-read
+   (label + SquareArrowUpRight icon, 8px gap) but tuned to the
+   footer's 14px scale and the muted-grey link color so it reads
+   as one tier above the article-title links rather than a
+   primary action. 14px top-margin gives it visual separation
+   from the last link row without inventing a new section. */
+.home-footer-col-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 1.2;
+  color: #616161;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.home-footer-col-cta svg {
+  color: #616161;
+  transition: color 0.15s ease;
+}
+
+.home-footer-col-cta:hover,
+.home-footer-col-cta:hover svg {
+  color: var(--color-text-primary);
+}
+
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 880px) {
   .home-hero-title {
