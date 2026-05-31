@@ -8,7 +8,7 @@ import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
   // Brand suffix dropped — consistent with the rest of the cluster.
-  // "AskScout" already appears in the breadcrumb chrome + OG meta.
+  // "askScout" already appears in the breadcrumb chrome + OG meta.
   title: "The Hidden Cost of Vibe Coding",
   description:
     "AI coding tools sped us up. They also made it harder to remember what we actually built. Why I think the next big workflow problem is digesting your own code.",
@@ -192,7 +192,7 @@ export default function HiddenCostPage() {
           <p className="public-text">
             That&apos;s{" "}
             <Link href="/articles/introducing-askscout" className="home-prose-link">
-              AskScout
+              askScout
             </Link>
             . Sign in to the web app at <Link href="/">askscout.dev</Link>, or run it as a CLI
             in any local repo with your own LLM key. It reads your commits, diffs, and a small

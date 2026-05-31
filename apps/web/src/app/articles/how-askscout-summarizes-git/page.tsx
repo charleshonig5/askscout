@@ -7,35 +7,35 @@ import { ReadyCTA } from "@/components/ReadyCTA";
 import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
-  // Brand suffix dropped — "AskScout" already appears in the
-  // headline, so " | AskScout" was redundant + ate SERP chars.
-  title: "How AskScout turns a noisy git log into a 10-second digest",
+  // Brand suffix dropped — "askScout" already appears in the
+  // headline, so " | askScout" was redundant + ate SERP chars.
+  title: "How askScout turns a noisy git log into a 10-second digest",
   description:
-    "A walkthrough of how AskScout reads commits and diffs, computes structural signals, and uses a tuned LLM prompt to produce a readable digest.",
+    "A walkthrough of how askScout reads commits and diffs, computes structural signals, and uses a tuned LLM prompt to produce a readable digest.",
   alternates: {
     canonical: "/articles/how-askscout-summarizes-git",
   },
   openGraph: {
-    title: "How AskScout turns a noisy git log into a 10-second digest",
+    title: "How askScout turns a noisy git log into a 10-second digest",
     description:
-      "How AskScout reads commits and diffs, computes structural signals, and renders a readable digest.",
+      "How askScout reads commits and diffs, computes structural signals, and renders a readable digest.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: "How AskScout turns a noisy git log into a 10-second digest",
+    title: "How askScout turns a noisy git log into a 10-second digest",
     description:
-      "A walkthrough of how AskScout reads your repo and produces a readable digest.",
+      "A walkthrough of how askScout reads your repo and produces a readable digest.",
   },
 };
 
 const FAQ_PLAIN: { q: string; a: string }[] = [
   {
-    q: "How does AskScout read my git history?",
-    a: "On the web app, AskScout pulls commits and diffs through the GitHub API after you grant read access. On the CLI, it shells out to git in your local repo to fetch the same data. The web app also reads pull request descriptions, linked issue bodies, ~15 lines of source code around each changed hunk (capped at 8 files per digest), and the repo's README plus one package manifest like package.json. Those extras ground the digest in the project's actual intent and context. Lock files, node_modules, environment variables, secrets, and build artifacts are never read.",
+    q: "How does askScout read my git history?",
+    a: "On the web app, askScout pulls commits and diffs through the GitHub API after you grant read access. On the CLI, it shells out to git in your local repo to fetch the same data. The web app also reads pull request descriptions, linked issue bodies, ~15 lines of source code around each changed hunk (capped at 8 files per digest), and the repo's README plus one package manifest like package.json. Those extras ground the digest in the project's actual intent and context. Lock files, node_modules, environment variables, secrets, and build artifacts are never read.",
   },
   {
-    q: "What LLM does AskScout use?",
+    q: "What LLM does askScout use?",
     a: "Defaults to Claude Haiku 4.5 on Anthropic and gpt-4o-mini on OpenAI, with the provider auto-detected from your API key prefix. You can override the model in ~/.askscout/config.json. The defaults are picked for speed and cost. Larger models work but run slower.",
   },
   {
@@ -43,8 +43,8 @@ const FAQ_PLAIN: { q: string; a: string }[] = [
     a: "Most digests stream in well under a minute end to end. The bottleneck is the LLM round trip. Reading commits and computing structural signals (Codebase Health, Pace Check) takes well under a second on typical repos.",
   },
   {
-    q: "Can I see the prompt AskScout uses?",
-    a: "Yes. AskScout is open source under MIT, so the system prompt lives at packages/core/src/summarize.ts in the public repo. You can read every editorial constraint we put on the model: the banned phrases list, the format rules, the section definitions. (See the article for the broader argument behind why prompts matter.)",
+    q: "Can I see the prompt askScout uses?",
+    a: "Yes. askScout is open source under MIT, so the system prompt lives at packages/core/src/summarize.ts in the public repo. You can read every editorial constraint we put on the model: the banned phrases list, the format rules, the section definitions. (See the article for the broader argument behind why prompts matter.)",
   },
 ];
 
@@ -60,14 +60,14 @@ const FAQ_SCHEMA = {
 
 const ARTICLE_SCHEMA = articleJsonLd({
   slug: "how-askscout-summarizes-git",
-  headline: "How AskScout turns a noisy git log into a 10-second digest",
+  headline: "How askScout turns a noisy git log into a 10-second digest",
   description:
-    "A walkthrough of how AskScout reads commits and diffs, computes structural signals, and uses a tuned LLM prompt to produce a readable digest.",
+    "A walkthrough of how askScout reads commits and diffs, computes structural signals, and uses a tuned LLM prompt to produce a readable digest.",
 });
 
 const BREADCRUMB_SCHEMA = articleBreadcrumbJsonLd({
   slug: "how-askscout-summarizes-git",
-  title: "How AskScout turns a noisy git log into a 10-second digest",
+  title: "How askScout turns a noisy git log into a 10-second digest",
 });
 
 export default function HowAskScoutSummarizesGitPage() {
@@ -89,13 +89,13 @@ export default function HowAskScoutSummarizesGitPage() {
 
       <ArticleHero
         slug="how-askscout-summarizes-git"
-        title="How AskScout turns a noisy git log into a 10-second digest"
+        title="How askScout turns a noisy git log into a 10-second digest"
         deck="A walkthrough of the four steps between your messy git history and a digest you can actually read."
       />
 
       <article className="page-body page-body--reading article article--has-hero">
         <p className="public-text article-tldr">
-          <strong>TLDR:</strong> AskScout reads your commits and diffs through git, groups them
+          <strong>TLDR:</strong> askScout reads your commits and diffs through git, groups them
           into four sections (Shipped, Changed, Still Shifting, Left Off), computes two
           structural signals (Codebase Health, Pace Check), and feeds the whole package into a
           tuned LLM prompt that renders the result in plain English. Each step exists for a
@@ -113,13 +113,13 @@ export default function HowAskScoutSummarizesGitPage() {
           </p>
           <p className="public-text">
             The fix isn't a better git command. It's a layer on top of git that does what
-            humans used to do at lower volume: read it and summarize it. AskScout is that layer.
+            humans used to do at lower volume: read it and summarize it. askScout is that layer.
             Here's how it works. (For the bigger argument behind why this layer matters now,{" "}
             <Link
               href="/articles/introducing-askscout"
               className="home-prose-link"
             >
-              Introducing AskScout
+              Introducing askScout
             </Link>{" "}
             sets the table.)
           </p>
@@ -128,7 +128,7 @@ export default function HowAskScoutSummarizesGitPage() {
         <section className="public-section">
           <h2 className="public-section-title">Step 1: Read commits and diffs</h2>
           <p className="public-text">
-            On the web app, AskScout pulls commits and diffs through the{" "}
+            On the web app, askScout pulls commits and diffs through the{" "}
             <a
               href="https://docs.github.com/en/rest"
               target="_blank"
@@ -181,7 +181,7 @@ export default function HowAskScoutSummarizesGitPage() {
         <section className="public-section">
           <h2 className="public-section-title">Step 2: Compute structural signals</h2>
           <p className="public-text">
-            Before any LLM gets involved, AskScout computes two things from the raw data: the
+            Before any LLM gets involved, askScout computes two things from the raw data: the
             Codebase Health card and the Pace Check.
           </p>
           <p className="public-text">
@@ -222,7 +222,7 @@ export default function HowAskScoutSummarizesGitPage() {
               href="/articles/why-askscout-is-open-source"
               className="home-prose-link"
             >
-              Why we made AskScout open source
+              Why we made askScout open source
             </Link>{" "}
             for why we publish it.
           </p>
@@ -267,7 +267,7 @@ f6a7b8c fix tests`}
             </code>
           </div>
           <p className="public-text">
-            AskScout output for the same window:
+            askScout output for the same window:
           </p>
           <div className="resource-code-block">
             <code>

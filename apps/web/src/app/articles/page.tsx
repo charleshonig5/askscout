@@ -6,25 +6,25 @@ import { ArticlesUtils } from "@/components/ArticlesUtils";
 import { ARTICLES } from "@/lib/articles-data";
 
 export const metadata = {
-  title: "Articles | AskScout",
-  description: "Long-form writing from the AskScout team.",
+  title: "Articles | askScout",
+  description: "Long-form writing from the askScout team.",
   alternates: {
     canonical: "/articles",
     types: {
-      "application/atom+xml": [{ url: "/dispatch", title: "AskScout Articles" }],
+      "application/atom+xml": [{ url: "/dispatch", title: "askScout Articles" }],
     },
   },
   openGraph: {
-    title: "Articles | AskScout",
-    description: "Long-form writing from the AskScout team.",
+    title: "Articles | askScout",
+    description: "Long-form writing from the askScout team.",
     url: "/articles",
-    siteName: "AskScout",
+    siteName: "askScout",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Articles | AskScout",
-    description: "Long-form writing from the AskScout team.",
+    title: "Articles | askScout",
+    description: "Long-form writing from the askScout team.",
   },
 };
 
@@ -34,13 +34,13 @@ export const metadata = {
 const BLOG_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "Blog",
-  name: "AskScout Articles",
-  description: "Long-form writing from the AskScout team.",
+  name: "askScout Articles",
+  description: "Long-form writing from the askScout team.",
   url: "https://askscout.dev/articles",
   inLanguage: "en",
   publisher: {
     "@type": "Organization",
-    name: "AskScout",
+    name: "askScout",
     url: "https://askscout.dev",
   },
   blogPost: ARTICLES.map((a) => ({
@@ -50,7 +50,7 @@ const BLOG_SCHEMA = {
     url: `https://askscout.dev/articles/${a.slug}`,
     datePublished: a.date,
     keywords: a.tag,
-    author: { "@type": "Organization", name: "AskScout" },
+    author: { "@type": "Organization", name: "askScout" },
   })),
 };
 
@@ -84,7 +84,7 @@ export default function ArticlesIndexPage() {
               <ArticlesUtils articles={ARTICLES} variant="hero" />
             </div>
             <p className="articles-hero-deck">
-              Long-form writing from the AskScout team.
+              Long-form writing from the askScout team.
             </p>
           </div>
           <ArticlesIndexInteractive articles={ARTICLES} />

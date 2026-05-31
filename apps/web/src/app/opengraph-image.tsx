@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-/* Dynamic Open Graph image for AskScout.
+/* Dynamic Open Graph image for askScout.
  *
  * Next 15 file convention — placing this at app/opengraph-image.tsx
  * automatically emits <meta property="og:image"> + Twitter card image
@@ -17,7 +17,7 @@ import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
 
-export const alt = "AskScout — the daily digest for vibe coders";
+export const alt = "askScout — the daily digest for vibe coders";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

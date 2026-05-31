@@ -7,23 +7,23 @@ import { ReadyCTA } from "@/components/ReadyCTA";
 import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
-  // Brand suffix dropped — "AskScout" already appears in the
-  // headline, so the trailing " | AskScout" was redundant.
-  title: "Why we made AskScout open source",
+  // Brand suffix dropped — "askScout" already appears in the
+  // headline, so the trailing " | askScout" was redundant.
+  title: "Why we made askScout open source",
   description:
-    "Why AskScout is MIT licensed: trust matters more than moat for a tool that reads your code. Plus the BYOK story for the CLI.",
+    "Why askScout is MIT licensed: trust matters more than moat for a tool that reads your code. Plus the BYOK story for the CLI.",
   alternates: {
     canonical: "/articles/why-askscout-is-open-source",
   },
   openGraph: {
-    title: "Why we made AskScout open source",
+    title: "Why we made askScout open source",
     description:
-      "Trust matters more than moat for a tool that reads your code. Why AskScout is fully MIT.",
+      "Trust matters more than moat for a tool that reads your code. Why askScout is fully MIT.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Why we made AskScout open source",
+    title: "Why we made askScout open source",
     description:
       "Trust matters more than moat for a tool that reads your code.",
   },
@@ -31,19 +31,19 @@ export const metadata = {
 
 const FAQ_PLAIN: { q: string; a: string }[] = [
   {
-    q: "Is AskScout really fully open source?",
+    q: "Is askScout really fully open source?",
     a: "Yes. The web app, the CLI, and the shared core library are all public on GitHub under the MIT license. Every line, including the LLM prompt, is auditable. Nothing is closed-source or hidden behind a server-only fork.",
   },
   {
-    q: "What license is AskScout under?",
-    a: "MIT. You can read, fork, modify, redistribute, and build commercial products on top of AskScout with no restrictions beyond preserving the copyright notice. Same license used by most modern developer tools.",
+    q: "What license is askScout under?",
+    a: "MIT. You can read, fork, modify, redistribute, and build commercial products on top of askScout with no restrictions beyond preserving the copyright notice. Same license used by most modern developer tools.",
   },
   {
-    q: "Can I self-host AskScout?",
+    q: "Can I self-host askScout?",
     a: "Yes. The CLI runs entirely on your machine by design, so it's already self-hosted. The web app can be deployed to your own infrastructure since the code is public, though we maintain the hosted version at askscout.dev as the easiest path for most users.",
   },
   {
-    q: "How does AskScout make money?",
+    q: "How does askScout make money?",
     a: "Right now it does not. The CLI is free open source software with you bringing your own LLM API key. The web app is free with a soft cap of 30 digests per day. We're focused on building the right product. A paid tier might come later for teams or higher limits, but the core will always be free.",
   },
 ];
@@ -60,14 +60,14 @@ const FAQ_SCHEMA = {
 
 const ARTICLE_SCHEMA = articleJsonLd({
   slug: "why-askscout-is-open-source",
-  headline: "Why we made AskScout open source",
+  headline: "Why we made askScout open source",
   description:
-    "Why AskScout is MIT licensed: trust matters more than moat for a tool that reads your code. Plus the BYOK story for the CLI.",
+    "Why askScout is MIT licensed: trust matters more than moat for a tool that reads your code. Plus the BYOK story for the CLI.",
 });
 
 const BREADCRUMB_SCHEMA = articleBreadcrumbJsonLd({
   slug: "why-askscout-is-open-source",
-  title: "Why we made AskScout open source",
+  title: "Why we made askScout open source",
 });
 
 export default function WhyAskScoutOpenSourcePage() {
@@ -89,13 +89,13 @@ export default function WhyAskScoutOpenSourcePage() {
 
       <ArticleHero
         slug="why-askscout-is-open-source"
-        title="Why we made AskScout open source"
-        deck="Trust matters more than moat for a tool that reads your code. Why AskScout is fully MIT, including the prompt."
+        title="Why we made askScout open source"
+        deck="Trust matters more than moat for a tool that reads your code. Why askScout is fully MIT, including the prompt."
       />
 
       <article className="page-body page-body--reading article article--has-hero">
         <p className="public-text article-tldr">
-          <strong>TLDR:</strong> AskScout is MIT licensed because trust matters more than moat
+          <strong>TLDR:</strong> askScout is MIT licensed because trust matters more than moat
           for a tool that reads your code. Every line is on GitHub, including the LLM prompt and
           the way we handle your data. The CLI uses your own API key, so on the local surface
           your data never touches our servers. Open source is the baseline, not a marketing
@@ -123,7 +123,7 @@ export default function WhyAskScoutOpenSourcePage() {
         <section className="public-section">
           <h2 className="public-section-title">Open source as the baseline</h2>
           <p className="public-text">
-            From day one, the assumption was that AskScout would be open source. Not as a
+            From day one, the assumption was that askScout would be open source. Not as a
             growth tactic. As the only honest way to ship a tool in this category.
           </p>
           <p className="public-text">
@@ -162,7 +162,7 @@ export default function WhyAskScoutOpenSourcePage() {
               href="/articles/how-askscout-summarizes-git"
               className="home-prose-link"
             >
-              How AskScout turns a noisy git log into a 10-second digest
+              How askScout turns a noisy git log into a 10-second digest
             </Link>
             .)
           </p>
@@ -178,7 +178,7 @@ export default function WhyAskScoutOpenSourcePage() {
           <p className="public-text">
             The CLI takes the trust story one layer further. You bring your own LLM API key.
             That means your diffs go from your machine straight to your chosen provider. No
-            proxy. No middleman. No AskScout server in the path.
+            proxy. No middleman. No askScout server in the path.
           </p>
           <p className="public-text">
             The CLI stores nothing online. Your config (with the key at{" "}
@@ -224,7 +224,7 @@ export default function WhyAskScoutOpenSourcePage() {
             most trusted version of this tool is worth more than being the only version of it.
           </p>
           <p className="public-text">
-            If a company forks AskScout and ships a paid product on top, that is fine. We&apos;d
+            If a company forks askScout and ships a paid product on top, that is fine. We&apos;d
             rather have an honest open codebase than a moat that depends on developers not
             being able to look inside.
           </p>
@@ -241,7 +241,7 @@ export default function WhyAskScoutOpenSourcePage() {
               href="/articles/introducing-askscout"
               className="home-prose-link"
             >
-              Introducing AskScout
+              Introducing askScout
             </Link>{" "}
             covers the what.)
           </p>

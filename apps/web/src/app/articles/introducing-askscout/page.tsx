@@ -7,45 +7,45 @@ import { ReadyCTA } from "@/components/ReadyCTA";
 import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
-  // Brand suffix dropped — "AskScout" already appears in the headline,
-  // so " | AskScout" double-printed it and ate characters in the SERP
+  // Brand suffix dropped — "askScout" already appears in the headline,
+  // so " | askScout" double-printed it and ate characters in the SERP
   // snippet without adding signal.
-  title: "Introducing AskScout: your vibe coding companion",
+  title: "Introducing askScout: your vibe coding companion",
   description:
-    "AskScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex.",
+    "askScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex.",
   alternates: {
     canonical: "/articles/introducing-askscout",
   },
   openGraph: {
-    title: "Introducing AskScout: your vibe coding companion",
+    title: "Introducing askScout: your vibe coding companion",
     description:
       "The companion tool for developers using Claude Code, Cursor, and Codex. Reads your repo, writes your digest.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Introducing AskScout: your vibe coding companion",
+    title: "Introducing askScout: your vibe coding companion",
     description:
-      "AskScout reads your repo and writes you a daily digest of what you shipped.",
+      "askScout reads your repo and writes you a daily digest of what you shipped.",
   },
 };
 
 const FAQ_PLAIN: { q: string; a: string }[] = [
   {
     q: "What is a vibe coding companion?",
-    a: "A vibe coding companion is a tool that supports the way most developers code now: describe what you want, accept AI patches, ship volume. AskScout reads what you actually shipped each day and summarizes it in plain English so you can keep up with your own repo.",
+    a: "A vibe coding companion is a tool that supports the way most developers code now: describe what you want, accept AI patches, ship volume. askScout reads what you actually shipped each day and summarizes it in plain English so you can keep up with your own repo.",
   },
   {
-    q: "Is AskScout free to use?",
+    q: "Is askScout free to use?",
     a: "Yes. The web app is free with a soft cap of 30 digests per day. The CLI is free open-source software under MIT, with you bringing your own LLM API key (a fraction of a cent per run). No paid tier, no upsell.",
   },
   {
-    q: "Does AskScout work with Claude Code, Cursor, and Codex?",
-    a: "Yes. AskScout does not replace Claude Code, Cursor, or Codex. It runs after them. They write code; AskScout reads what you wrote and produces a daily digest. Most users run one of the AI coding tools all day and read AskScout once at the end.",
+    q: "Does askScout work with Claude Code, Cursor, and Codex?",
+    a: "Yes. askScout does not replace Claude Code, Cursor, or Codex. It runs after them. They write code; askScout reads what you wrote and produces a daily digest. Most users run one of the AI coding tools all day and read askScout once at the end.",
   },
   {
-    q: "How is AskScout different from Claude Code, Cursor, or Codex?",
-    a: "Those tools write code. AskScout does not write code at all. It reads your git history (commits and diffs) and writes a plain-English summary of what shipped, what changed, and what you left off. Different layer, different job.",
+    q: "How is askScout different from Claude Code, Cursor, or Codex?",
+    a: "Those tools write code. askScout does not write code at all. It reads your git history (commits and diffs) and writes a plain-English summary of what shipped, what changed, and what you left off. Different layer, different job.",
   },
 ];
 
@@ -61,14 +61,14 @@ const FAQ_SCHEMA = {
 
 const ARTICLE_SCHEMA = articleJsonLd({
   slug: "introducing-askscout",
-  headline: "Introducing AskScout: your vibe coding companion",
+  headline: "Introducing askScout: your vibe coding companion",
   description:
-    "AskScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex.",
+    "askScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex.",
 });
 
 const BREADCRUMB_SCHEMA = articleBreadcrumbJsonLd({
   slug: "introducing-askscout",
-  title: "Introducing AskScout: your vibe coding companion",
+  title: "Introducing askScout: your vibe coding companion",
 });
 
 export default function IntroducingAskScoutPage() {
@@ -90,14 +90,14 @@ export default function IntroducingAskScoutPage() {
 
       <ArticleHero
         slug="introducing-askscout"
-        title="Introducing AskScout: your vibe coding companion"
-        deck="AskScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex."
+        title="Introducing askScout: your vibe coding companion"
+        deck="askScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex."
       />
 
       <article className="page-body page-body--reading article article--has-hero">
         <p className="public-text article-tldr">
-          <strong>TLDR:</strong> AskScout is a daily digest tool for developers who code with AI
-          assistance. Claude Code, Cursor, and Codex help you write code. AskScout reads what
+          <strong>TLDR:</strong> askScout is a daily digest tool for developers who code with AI
+          assistance. Claude Code, Cursor, and Codex help you write code. askScout reads what
           you wrote and writes you back a quick summary covering what shipped, what changed,
           what kept getting reworked, and what you left off. The web app runs in your browser,
           signed in with GitHub. The CLI runs in any local git repo with your own LLM key. Both
@@ -123,15 +123,15 @@ export default function IntroducingAskScoutPage() {
             .)
           </p>
           <p className="public-text">
-            AskScout exists because that gap kept getting wider, and nothing in the existing
+            askScout exists because that gap kept getting wider, and nothing in the existing
             tooling closed it.
           </p>
         </section>
 
         <section className="public-section">
-          <h2 className="public-section-title">What AskScout actually does</h2>
+          <h2 className="public-section-title">What askScout actually does</h2>
           <p className="public-text">
-            Run AskScout in any git repo and it reads your commits and diffs since your last
+            Run askScout in any git repo and it reads your commits and diffs since your last
             run. It groups what it finds into four sections: Shipped (things that went from not
             existing to working), Changed (things that already existed and got modified), Still
             Shifting (areas reworked 3+ times in the window), and Left Off (anything in
@@ -145,7 +145,7 @@ export default function IntroducingAskScoutPage() {
               href="/articles/how-askscout-summarizes-git"
               className="home-prose-link"
             >
-              How AskScout turns a noisy git log into a 10-second digest
+              How askScout turns a noisy git log into a 10-second digest
             </Link>
             .)
           </p>
@@ -158,7 +158,7 @@ export default function IntroducingAskScoutPage() {
         <section className="public-section">
           <h2 className="public-section-title">Two surfaces, one product</h2>
           <p className="public-text">
-            AskScout runs in two places. The web app at askscout.dev signs in with GitHub, picks
+            askScout runs in two places. The web app at askscout.dev signs in with GitHub, picks
             a repo, and starts streaming. Your digest history saves under your account. The CLI
             installs with <code className="inline-code">npm install -g askscout</code>, lives
             in any local repo, and uses your own Anthropic or OpenAI API key. Full install
@@ -174,7 +174,7 @@ export default function IntroducingAskScoutPage() {
         <section className="public-section">
           <h2 className="public-section-title">What it is not</h2>
           <p className="public-text">
-            AskScout is not a code generator. It will not write your features or refactor your
+            askScout is not a code generator. It will not write your features or refactor your
             modules. Claude Code, Cursor, and Codex already do that, and they do it well. (If
             you're choosing between those, we wrote about that in{" "}
             <Link
@@ -186,7 +186,7 @@ export default function IntroducingAskScoutPage() {
             .)
           </p>
           <p className="public-text">
-            AskScout sits one layer above those tools. They write code. AskScout reads what you
+            askScout sits one layer above those tools. They write code. askScout reads what you
             wrote. The two are companions, not competitors.
           </p>
         </section>

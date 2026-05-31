@@ -10,7 +10,7 @@ export const metadata = {
   // SERP-friendly title (~60 chars). Body H1 stays long-form for
   // in-page voice; metadata title is shorter and keeps the three
   // brand names visible in Google's snippet without truncating.
-  // Brand suffix dropped — "AskScout" already appears in the H1
+  // Brand suffix dropped — "askScout" already appears in the H1
   // and the breadcrumb chrome.
   title: "Give Claude Code, Cursor, or Codex project context fast",
   description:
@@ -35,19 +35,19 @@ export const metadata = {
 const FAQ_PLAIN: { q: string; a: string }[] = [
   {
     q: "How do you give Claude Code project context?",
-    a: "Paste a structured block at the start of a session covering tech stack, recent work, current focus, key files, and any warnings. Claude Code uses that to ground its first responses, then reads the actual files as it works. You can write this block by hand or generate it from your git history with AskScout's --resume command.",
+    a: "Paste a structured block at the start of a session covering tech stack, recent work, current focus, key files, and any warnings. Claude Code uses that to ground its first responses, then reads the actual files as it works. You can write this block by hand or generate it from your git history with askScout's --resume command.",
   },
   {
     q: "What is the best prompt to start a Cursor session?",
-    a: "Cursor benefits most from project-level context that names recent work and the current focus. A good starter prompt is a one-paragraph summary of the project plus what you're trying to do this session. AskScout's --resume generates this from real commits, so the context reflects what your codebase actually looks like, not an outdated description.",
+    a: "Cursor benefits most from project-level context that names recent work and the current focus. A good starter prompt is a one-paragraph summary of the project plus what you're trying to do this session. askScout's --resume generates this from real commits, so the context reflects what your codebase actually looks like, not an outdated description.",
   },
   {
     q: "Does Claude Code remember my project between sessions?",
-    a: "Not by default. Each Claude Code session starts fresh, so anything you explained yesterday has to be re-established today. The fix is a context block you paste at the start of each session. AskScout's --resume keeps that block up to date by regenerating it from your latest git history.",
+    a: "Not by default. Each Claude Code session starts fresh, so anything you explained yesterday has to be re-established today. The fix is a context block you paste at the start of each session. askScout's --resume keeps that block up to date by regenerating it from your latest git history.",
   },
   {
     q: "How often should I refresh my AI's project context?",
-    a: "At the start of any new session, or after a meaningful chunk of work has landed. The point is that the context reflects the current state of the codebase. Daily is plenty for most solo developers. AskScout regenerates the --resume block on demand, so refreshing is one command.",
+    a: "At the start of any new session, or after a meaningful chunk of work has landed. The point is that the context reflects the current state of the codebase. Daily is plenty for most solo developers. askScout regenerates the --resume block on demand, so refreshing is one command.",
   },
 ];
 
@@ -102,10 +102,10 @@ export default function FastestWayToContextPage() {
           <strong>TLDR:</strong> Claude Code, Cursor, and Codex work best when they understand
           your project. The fastest way to give them context is to paste a structured block at
           the start of a session covering tech stack, recent work, current focus, key files,
-          and any warnings. The AskScout web app has an <strong>AI Resume Prompt</strong> button
+          and any warnings. The askScout web app has an <strong>AI Resume Prompt</strong> button
           that assembles this block from your latest digest. The CLI does the same thing with{" "}
           <code className="inline-code">askscout --resume</code>. Below is what good context
-          looks like and how to assemble it whether you use AskScout or not.
+          looks like and how to assemble it whether you use askScout or not.
         </p>
 
         <section className="public-section">
@@ -195,7 +195,7 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
         <section className="public-section">
           <h2 className="public-section-title">The automated way</h2>
           <p className="public-text">
-            On the AskScout web app, generate this block by clicking the{" "}
+            On the askScout web app, generate this block by clicking the{" "}
             <strong>AI Resume Prompt</strong> button at the bottom of any digest. It opens a
             modal with the same five-section context, ready to copy. The CLI does the same
             thing in one command (install steps are in the{" "}
@@ -205,7 +205,7 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
             <code>askscout --resume</code>
           </div>
           <p className="public-text">
-            AskScout reads your recent git history (commits, diffs, file paths), runs it
+            askScout reads your recent git history (commits, diffs, file paths), runs it
             through the same LLM you configured for digests, and produces a context block in
             exactly the format above. Every section is grounded in your real activity, not a
             stale description of the project. (For the full pipeline this builds on, see{" "}
@@ -213,7 +213,7 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
               href="/articles/how-askscout-summarizes-git"
               className="home-prose-link"
             >
-              How AskScout turns a noisy git log into a 10-second digest
+              How askScout turns a noisy git log into a 10-second digest
             </Link>
             .)
           </p>
@@ -264,12 +264,12 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
               here&apos;s an honest read on Claude Code, Cursor, Codex, and the other AI
               coding tools
             </Link>
-            . For the origin story of AskScout itself,{" "}
+            . For the origin story of askScout itself,{" "}
             <Link
               href="/articles/introducing-askscout"
               className="home-prose-link"
             >
-              Introducing AskScout
+              Introducing askScout
             </Link>{" "}
             sets the table.)
           </p>

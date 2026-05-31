@@ -24,10 +24,10 @@ export function SiteFooter() {
     <footer className="home-footer">
       <div className="home-footer-inner">
         <div className="home-footer-brand">
-          <Link href="/" className="home-footer-logo" aria-label="AskScout home">
+          <Link href="/" className="home-footer-logo" aria-label="askScout home">
             <Logo height={20} />
           </Link>
-          <p className="home-footer-copy">© 2026 AskScout</p>
+          <p className="home-footer-copy">© 2026 askScout</p>
         </div>
         <div className="home-footer-cols">
           <div className="home-footer-col">

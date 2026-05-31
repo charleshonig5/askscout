@@ -321,7 +321,7 @@ a:hover {
    ============================================ */
 
 /* Minimal top bar. Mobile only — shows the hamburger to open the sidebar
-   plus the AskScout logo and the two primary nav icons (Insights +
+   plus the askScout logo and the two primary nav icons (Insights +
    Settings). Hidden on desktop since the sidebar owns all navigation.
    Layout mirrors Figma node 287:3361: 68px tall, hamburger at 24px in
    on the left, logo lockup next to it, action icons flush right.
@@ -3354,7 +3354,7 @@ a:hover {
   color: var(--color-text-primary);
 }
 
-/* AskScout logo lockup. Two <img> elements per <Logo>, one per
+/* askScout logo lockup. Two <img> elements per <Logo>, one per
    theme. Default flow shows the dark-on-light variant
    (logo-black.svg). When [data-theme="dark"] is set on <html>,
    the rule below hides logo-black and shows logo-white. The theme
@@ -9403,7 +9403,7 @@ a:hover {
      FINAL CTA — Figma 405:6194 (mobile)
      ============================================
      Single-column stack: trust badges, a Pridi headline, then
-     one "Try AskScout free" button. The npm install pill is
+     one "Try askScout free" button. The npm install pill is
      dropped on mobile (a phone can't run the CLI install) —
      same call as the hero CTA. */
 

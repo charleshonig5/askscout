@@ -40,7 +40,7 @@ function GithubLink() {
       target="_blank"
       rel="noopener noreferrer"
       className="home-nav-github"
-      aria-label="AskScout on GitHub"
+      aria-label="askScout on GitHub"
     >
       <GithubMark />
     </a>
@@ -123,7 +123,7 @@ export function MarketingNav() {
         aria-label="Site"
       >
         <ForceDarkTheme />
-        <Link href="/home" className="home-nav-logo" aria-label="AskScout home">
+        <Link href="/home" className="home-nav-logo" aria-label="askScout home">
           <Logo height={20} />
         </Link>
 

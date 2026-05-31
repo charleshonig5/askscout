@@ -39,17 +39,17 @@ const TABS: DocsFAQTab[] = [
           <p>
             Use the repo selector at the top of the sidebar in the dashboard. Picking a
             different repo loads its digest history immediately. To change which repo loads
-            when you open AskScout, go to Settings and set a Default Repository there.
+            when you open askScout, go to Settings and set a Default Repository there.
           </p>
         ),
       },
       {
-        q: "Why does AskScout need GitHub authorization?",
+        q: "Why does askScout need GitHub authorization?",
         a: (
           <p>
-            Two reasons. The <code>read:user</code> scope identifies you to AskScout so your
+            Two reasons. The <code>read:user</code> scope identifies you to askScout so your
             digests save under your GitHub account. The <code>repo</code> scope is what lets
-            AskScout fetch commits and diffs from your repos through the GitHub API. GitHub
+            askScout fetch commits and diffs from your repos through the GitHub API. GitHub
             does not offer a finer-grained read-only repo scope, so granting{" "}
             <code>repo</code> necessarily includes write capabilities our code never uses. You
             can revoke access any time at{" "}
@@ -71,18 +71,18 @@ const TABS: DocsFAQTab[] = [
           <p>
             The hosted web app uses our own LLM API key, and the cap keeps API costs
             predictable. 30 digests per day per account covers daily standup and end-of-day
-            reviews. If you need more, the CLI has no AskScout-imposed cap. You bring your
+            reviews. If you need more, the CLI has no askScout-imposed cap. You bring your
             own API key and pay your provider directly.
           </p>
         ),
       },
       {
-        q: "How do I delete my AskScout account and data?",
+        q: "How do I delete my askScout account and data?",
         a: (
           <p>
             Settings, then Danger Zone, then Delete Account. The action removes every record
             tied to your user ID from our database: digests, project summaries, settings, and
-            check-ins. You will need to sign in with GitHub again to use AskScout afterwards.
+            check-ins. You will need to sign in with GitHub again to use askScout afterwards.
             To clear individual repo histories without deleting your account, use Settings,
             then Clear History instead.
           </p>
@@ -107,7 +107,7 @@ const TABS: DocsFAQTab[] = [
     label: "CLI",
     items: [
       {
-        q: "Does the AskScout CLI work in a monorepo?",
+        q: "Does the askScout CLI work in a monorepo?",
         a: (
           <p>
             Yes. The CLI walks up from your current directory to find the nearest{" "}
@@ -144,7 +144,7 @@ const TABS: DocsFAQTab[] = [
         ),
       },
       {
-        q: "Can I run the AskScout CLI in CI or cron?",
+        q: "Can I run the askScout CLI in CI or cron?",
         a: (
           <p>
             Yes. When the CLI runs without a TTY (piped to a file, in CI logs, or cron

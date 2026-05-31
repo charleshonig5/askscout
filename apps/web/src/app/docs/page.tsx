@@ -24,25 +24,25 @@ const DOCS_LAST_UPDATED_ISO = "2026-05-04";
 const DOCS_LAST_UPDATED_HUMAN = "May 4, 2026";
 
 export const metadata = {
-  title: "Docs | AskScout",
+  title: "Docs | askScout",
   description:
-    "AskScout docs. How to use the web app, the CLI, and answers to common questions.",
+    "askScout docs. How to use the web app, the CLI, and answers to common questions.",
   alternates: {
     canonical: "/docs",
   },
   openGraph: {
-    title: "AskScout docs",
+    title: "askScout docs",
     description:
-      "How to use the AskScout web app and CLI, plus answers to common questions.",
+      "How to use the askScout web app and CLI, plus answers to common questions.",
     url: "/docs",
-    siteName: "AskScout",
+    siteName: "askScout",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: "AskScout docs",
+    title: "askScout docs",
     description:
-      "How to use the AskScout web app and CLI, plus answers to common questions.",
+      "How to use the askScout web app and CLI, plus answers to common questions.",
   },
 };
 
@@ -72,32 +72,32 @@ const FAQ_SCHEMA = {
 const ARTICLE_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "TechArticle",
-  headline: "AskScout documentation",
+  headline: "askScout documentation",
   description:
-    "How to use the AskScout web app and CLI, plus answers to common questions.",
+    "How to use the askScout web app and CLI, plus answers to common questions.",
   url: "https://askscout.dev/docs",
   inLanguage: "en",
   dateModified: DOCS_LAST_UPDATED_ISO,
-  author: { "@type": "Organization", name: "AskScout" },
+  author: { "@type": "Organization", name: "askScout" },
   publisher: {
     "@type": "Organization",
-    name: "AskScout",
+    name: "askScout",
     url: "https://askscout.dev",
     logo: {
       "@type": "ImageObject",
       url: "https://askscout.dev/logo-white.svg",
     },
   },
-  about: { "@type": "SoftwareApplication", name: "AskScout" },
+  about: { "@type": "SoftwareApplication", name: "askScout" },
   mainEntityOfPage: { "@type": "WebPage", "@id": "https://askscout.dev/docs" },
 };
 
 const HOWTO_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "HowTo",
-  name: "Install the AskScout CLI",
+  name: "Install the askScout CLI",
   description:
-    "Three steps to install AskScout locally and run your first digest in any git repo.",
+    "Three steps to install askScout locally and run your first digest in any git repo.",
   totalTime: "PT2M",
   estimatedCost: { "@type": "MonetaryAmount", currency: "USD", value: "0" },
   tool: [
@@ -109,7 +109,7 @@ const HOWTO_SCHEMA = {
       "@type": "HowToStep",
       position: 1,
       name: "Install",
-      text: "Install AskScout globally with npm.",
+      text: "Install askScout globally with npm.",
       itemListElement: [
         { "@type": "HowToDirection", text: "npm install -g askscout" },
       ],
@@ -127,7 +127,7 @@ const HOWTO_SCHEMA = {
       "@type": "HowToStep",
       position: 3,
       name: "Run",
-      text: "Run AskScout in any git repo. Your first digest covers today, and every run after picks up from there.",
+      text: "Run askScout in any git repo. Your first digest covers today, and every run after picks up from there.",
       itemListElement: [{ "@type": "HowToDirection", text: "askscout" }],
     },
   ],
@@ -181,7 +181,7 @@ export default function DocsPage() {
       <section className="docs-hero">
         <div className="docs-hero-inner">
           <div className="docs-hero-headblock">
-            <h1 className="docs-hero-title">AskScout documentation</h1>
+            <h1 className="docs-hero-title">askScout documentation</h1>
             <p className="docs-hero-updated">
               Last updated{" "}
               <time dateTime={DOCS_LAST_UPDATED_ISO}>
@@ -191,7 +191,7 @@ export default function DocsPage() {
           </div>
           <div className="docs-hero-body">
             <p className="docs-hero-deck">
-              AskScout is an open source daily digest tool for developers and
+              askScout is an open source daily digest tool for developers and
               vibe coders. It reads your git activity and writes a digestible,
               plain-English summary of what you worked on each day. Use the
               web app or run the CLI locally on your device.
@@ -220,7 +220,7 @@ export default function DocsPage() {
           <div className="docs-section-heading">
             <h2 className="docs-section-title">Web app</h2>
             <p className="docs-section-deck">
-              Run AskScout right in your browser with the app, no install
+              Run askScout right in your browser with the app, no install
               required. Sign in with GitHub and get your first digest
               immediately.
             </p>
@@ -296,7 +296,7 @@ export default function DocsPage() {
           <div className="docs-section-heading">
             <h2 className="docs-section-title">CLI</h2>
             <p className="docs-section-deck">
-              Run AskScout locally on your machine, with your own LLM key.
+              Run askScout locally on your machine, with your own LLM key.
               Works in any local git repo, including private ones and
               self-hosted git.
             </p>
@@ -312,7 +312,7 @@ export default function DocsPage() {
                   <h3>Install</h3>
                   <p>
                     Copy the command below into your terminal to install
-                    AskScout globally.
+                    askScout globally.
                   </p>
                 </div>
               </div>
@@ -342,7 +342,7 @@ export default function DocsPage() {
                 <div className="docs-cli-step-text">
                   <h3>Run</h3>
                   <p>
-                    Run AskScout in any git repo. Your first digest covers
+                    Run askScout in any git repo. Your first digest covers
                     today, and every run after picks up from there.
                   </p>
                 </div>
@@ -357,7 +357,7 @@ export default function DocsPage() {
             <div className="docs-cli-commands-head">
               <h3>Commands</h3>
               <p>
-                Every command AskScout supports, with a quick note on when
+                Every command askScout supports, with a quick note on when
                 to use each one.
               </p>
             </div>
@@ -389,7 +389,7 @@ export default function DocsPage() {
                 },
                 {
                   cmd: "askscout --dry-run",
-                  desc: "Preview which commits AskScout would include, without calling the LLM. No cost and nothing gets saved.",
+                  desc: "Preview which commits askScout would include, without calling the LLM. No cost and nothing gets saved.",
                 },
               ].map((row) => (
                 <div key={row.cmd}>
@@ -410,7 +410,7 @@ export default function DocsPage() {
             <p>
               The CLI is free open source software. You bring your own
               Anthropic or OpenAI API key, paid directly to your provider.
-              AskScout is designed to be cost-effective. A single API call
+              askScout is designed to be cost-effective. A single API call
               per digest covers everything, which keeps token usage low and
               avoids the repeated round trips most LLM products rack up.
             </p>

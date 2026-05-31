@@ -41,7 +41,7 @@ interface SidebarProps {
  *
  * Pixel-mapped from the Figma frame (node 127:2411):
  *   - 372px total width, 24px internal padding.
- *   - Logo row (25×25 mark + "AskScout" in Pridi 24) + theme & settings icons.
+ *   - Logo row (25×25 mark + "askScout" in Pridi 24) + theme & settings icons.
  *   - Repo picker block (label + 44px combobox).
  *   - History block (label + scrolling list; active row is an elevated card
  *     with a top inner-glow; each row shows +lines / -lines / commits / files

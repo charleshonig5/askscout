@@ -137,16 +137,16 @@ const FAQ_SCHEMA = {
 /* SoftwareApplication schema lives on the homepage (the canonical
    product surface) so AI search models — ChatGPT, Perplexity,
    Claude, Google's AI Overviews — get a structured answer to
-   "what is AskScout, how much does it cost, where does it run."
+   "what is askScout, how much does it cost, where does it run."
    Other pages reference this entity by name via `about` in their
    own schemas. Kept conservative: no aggregateRating (no real
    review pool to claim) and no fabricated metrics. */
 const SOFTWARE_APP_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  name: "AskScout",
+  name: "askScout",
   description:
-    "AskScout is an open source daily digest tool for developers and vibe coders. It reads your git activity and writes a plain-English summary of what you shipped each day. Run it in the browser or as a local CLI.",
+    "askScout is an open source daily digest tool for developers and vibe coders. It reads your git activity and writes a plain-English summary of what you shipped each day. Run it in the browser or as a local CLI.",
   applicationCategory: "DeveloperApplication",
   applicationSubCategory: "Developer productivity",
   operatingSystem: "Web, macOS, Linux, Windows",
@@ -171,12 +171,12 @@ const SOFTWARE_APP_SCHEMA = {
   },
   author: {
     "@type": "Organization",
-    name: "AskScout",
+    name: "askScout",
     url: "https://askscout.dev",
   },
   publisher: {
     "@type": "Organization",
-    name: "AskScout",
+    name: "askScout",
     url: "https://askscout.dev",
   },
 };
@@ -273,7 +273,7 @@ export default function MarketingHome() {
                   to the left of "Continue with GitHub" sets the
                   expectation that the click routes to GitHub OAuth, so
                   users aren't surprised when the consent screen appears.
-                  Replaces the previous value-led "Try AskScout free"
+                  Replaces the previous value-led "Try askScout free"
                   copy which read like an in-app trial flow. */}
               <button type="submit" className="home-cta">
                 <GitHubMark />
@@ -1452,19 +1452,19 @@ export default function MarketingHome() {
               {
                 icon: <SearchX size={28} strokeWidth={1.25} aria-hidden />,
                 title: "We don’t read your code",
-                body: "AskScout only looks at what ‘s changed in your repo. Never your full codebase or your config.",
+                body: "askScout only looks at what ‘s changed in your repo. Never your full codebase or your config.",
                 bodyWidth: 259,
               },
               {
                 icon: <ShieldCheck size={28} strokeWidth={1.25} aria-hidden />,
                 title: "Your data stays safe",
-                body: "AskScout can never write to your repo. No tracking, ever. Your keys stay private on your machine.",
+                body: "askScout can never write to your repo. No tracking, ever. Your keys stay private on your machine.",
                 bodyWidth: 268,
               },
               {
                 icon: <PackageOpen size={28} strokeWidth={1.25} aria-hidden />,
                 title: "Fully open source",
-                body: "Every line of AskScout is public on GitHub. Free to read, fork, or build on.",
+                body: "Every line of askScout is public on GitHub. Free to read, fork, or build on.",
                 bodyWidth: 244,
               },
             ].map((card) => (

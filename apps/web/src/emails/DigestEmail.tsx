@@ -151,7 +151,7 @@ export function DigestEmail({
   const fullSlug = repoFullName ?? repoName;
   const previewText = vibeCheck
     ? collapseNewlines(vibeCheck).slice(0, 120)
-    : `Your AskScout digest for ${repoName}`;
+    : `Your askScout digest for ${repoName}`;
 
   const showStats =
     !!stats && isVisible(visibility, "statistics") && stats.commits != null;
@@ -434,7 +434,7 @@ export function DigestEmail({
               <div style={{ width: "175px" }}>
               <Img
                 src={`${WEB_URL}/logo-white.svg`}
-                alt="AskScout"
+                alt="askScout"
                 width="112"
                 height="20"
                 style={{ display: "block", border: 0, outline: "none" }}
@@ -450,7 +450,7 @@ export function DigestEmail({
                   width: "175px",
                 }}
               >
-                You sent this to yourself from your AskScout digest.
+                You sent this to yourself from your askScout digest.
               </Text>
               <Text
                 style={{
@@ -463,7 +463,7 @@ export function DigestEmail({
                   whiteSpace: "nowrap",
                 }}
               >
-                © 2026 AskScout
+                © 2026 askScout
               </Text>
               </div>
             </div>

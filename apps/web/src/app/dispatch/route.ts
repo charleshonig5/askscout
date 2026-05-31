@@ -1,5 +1,5 @@
 /**
- * Atom feed for AskScout articles. Served at /dispatch.
+ * Atom feed for askScout articles. Served at /dispatch.
  *
  * Subscribers paste this URL (or the /articles URL — feed readers
  * auto-discover via the <link rel="alternate"> tag in that page's
@@ -18,10 +18,10 @@
 import { ARTICLES } from "@/lib/articles-data";
 
 const SITE_URL = "https://askscout.com";
-const FEED_TITLE = "AskScout Articles";
+const FEED_TITLE = "askScout Articles";
 const FEED_DESCRIPTION =
   "Writing on vibe coding, AI-assisted development, and the daily-digest workflow.";
-const AUTHOR_NAME = "AskScout";
+const AUTHOR_NAME = "askScout";
 
 const escapeXml = (s: string): string =>
   s

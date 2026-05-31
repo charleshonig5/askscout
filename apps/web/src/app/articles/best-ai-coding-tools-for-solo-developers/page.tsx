@@ -7,7 +7,7 @@ import { ReadyCTA } from "@/components/ReadyCTA";
 import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
-  // Brand suffix dropped — "AskScout" already appears in the
+  // Brand suffix dropped — "askScout" already appears in the
   // breadcrumb + OG chrome; the title was 56 chars with suffix,
   // right at the SERP truncation edge.
   title: "Best AI Coding Tools for Solo Developers",
@@ -41,7 +41,7 @@ const FAQ_PLAIN: { q: string; a: string }[] = [
   },
   {
     q: "Do AI coding tools track what they wrote for me?",
-    a: "Mostly no. Claude Code, Cursor, Codex, GitHub Copilot, and Aider write code. They do not summarize what shipped at the end of the day. Tracking what you actually built across an AI-assisted session is the layer that AskScout fills next to these tools.",
+    a: "Mostly no. Claude Code, Cursor, Codex, GitHub Copilot, and Aider write code. They do not summarize what shipped at the end of the day. Tracking what you actually built across an AI-assisted session is the layer that askScout fills next to these tools.",
   },
   {
     q: "Are AI coding tools worth it for indie hackers?",
@@ -100,7 +100,7 @@ export default function BestAICodingToolsPage() {
           Code for agent-style multi-file work, Cursor for everyday editing, Codex as
           OpenAI&apos;s equivalent agent CLI, GitHub Copilot for autocomplete inside any editor,
           and Aider for terminal-driven workflows. They all write code. None of them tell you
-          what you wrote. That last layer is missing, which is why tools like AskScout exist
+          what you wrote. That last layer is missing, which is why tools like askScout exist
           next to them.
         </p>
 
@@ -294,7 +294,7 @@ export default function BestAICodingToolsPage() {
               href="/articles/introducing-askscout"
               className="home-prose-link"
             >
-              AskScout
+              askScout
             </Link>{" "}
             fills. It reads your git history and writes a daily digest in plain English.
             Sections cover what shipped, what changed, what kept getting reworked, and where
@@ -312,7 +312,7 @@ export default function BestAICodingToolsPage() {
           </p>
           <p className="public-text">
             The pattern that works for most solo developers I know: one of these tools for
-            writing code, AskScout for keeping track of what you wrote.
+            writing code, askScout for keeping track of what you wrote.
           </p>
         </section>
 

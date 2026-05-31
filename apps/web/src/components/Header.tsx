@@ -24,7 +24,7 @@ interface HeaderProps {
  * Matches the digest-page mobile header exactly:
  *   - 68px tall, full width, dark bg, 1px bottom border.
  *   - Bordered 40×40 hamburger button on the left at 24px inset.
- *   - AskScout logo lockup centered horizontally to the left of the
+ *   - askScout logo lockup centered horizontally to the left of the
  *     right-side action cluster (logo + 14px gap + 2 icons).
  *   - Two icon buttons on the right (Insights + Settings) with 14px
  *     between them, mirroring the top of the desktop sidebar's
@@ -56,7 +56,7 @@ export function Header({ onMenuToggle, isOpen = false, showMenu = true }: Header
           )}
         </button>
       )}
-      <Link href="/dashboard" className="header-logo" aria-label="AskScout home">
+      <Link href="/dashboard" className="header-logo" aria-label="askScout home">
         <Logo height={21} />
       </Link>
       <div className="header-actions">

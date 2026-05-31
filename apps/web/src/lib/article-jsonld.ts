@@ -35,10 +35,10 @@ export function articleJsonLd(opts: { slug: string; headline: string; descriptio
      * the article); keywords is the broader hint many crawlers
      * (and Google's articleSection autodetection) look at too. */
     ...(tag ? { articleSection: tag, keywords: tag } : {}),
-    author: { "@type": "Organization", name: "AskScout" },
+    author: { "@type": "Organization", name: "askScout" },
     publisher: {
       "@type": "Organization",
-      name: "AskScout",
+      name: "askScout",
       url: SITE,
       logo: {
         "@type": "ImageObject",

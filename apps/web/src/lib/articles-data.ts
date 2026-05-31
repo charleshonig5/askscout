@@ -42,27 +42,27 @@ export interface ArticleListing {
 export const ARTICLES: ArticleListing[] = [
   {
     slug: "introducing-askscout",
-    title: "Introducing AskScout: your vibe coding companion",
+    title: "Introducing askScout: your vibe coding companion",
     description:
-      "AskScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Cursor, Claude Code, and Copilot.",
+      "askScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Cursor, Claude Code, and Copilot.",
     date: "2026-05-08",
     tag: "Company",
     readTime: 5,
   },
   {
     slug: "how-askscout-summarizes-git",
-    title: "How AskScout turns a noisy git log into a 10-second digest",
+    title: "How askScout turns a noisy git log into a 10-second digest",
     description:
-      "A walkthrough of how AskScout reads commits and diffs, computes structural signals, and uses a tuned LLM prompt to produce a readable digest.",
+      "A walkthrough of how askScout reads commits and diffs, computes structural signals, and uses a tuned LLM prompt to produce a readable digest.",
     date: "2026-05-07",
     tag: "Company",
     readTime: 2,
   },
   {
     slug: "why-askscout-is-open-source",
-    title: "Why we made AskScout open source",
+    title: "Why we made askScout open source",
     description:
-      "Trust matters more than moat for a tool that reads your code. Why AskScout is fully MIT, including the prompt.",
+      "Trust matters more than moat for a tool that reads your code. Why askScout is fully MIT, including the prompt.",
     date: "2026-05-06",
     tag: "Company",
     readTime: 3,

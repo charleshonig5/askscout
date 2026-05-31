@@ -10,7 +10,7 @@
  * Config:
  *   RESEND_API_KEY  – required. Created in https://resend.com → API Keys.
  *   EMAIL_FROM      – required. RFC 5322 form, e.g.
- *                     "AskScout <digest@askscout.dev>". Must match a
+ *                     "askScout <digest@askscout.dev>". Must match a
  *                     domain verified in the Resend dashboard.
  *
  * Dev gating: we deliberately refuse to send when running locally
@@ -34,13 +34,13 @@ export interface SendDigestInput {
   to: string;
   /** Props for the DigestEmail React component. */
   props: DigestEmailProps;
-  /** Optional subject override. Defaults to "Your AskScout digest — {repo}". */
+  /** Optional subject override. Defaults to "Your askScout digest — {repo}". */
   subject?: string;
 }
 
 function defaultSubject(props: DigestEmailProps): string {
   // Matches the wordmark casing ("askScout") used in the email
-  // footer and the marketing logo lockup. The "AskScout" capital-A
+  // footer and the marketing logo lockup. The "askScout" capital-A
   // form is for prose; the wordmark form is for places that
   // visually behave like the logo (subject lines, headers).
   return `Your askScout digest, ${props.repoName}`;

@@ -9,26 +9,26 @@
 export const DOCS_FAQ_PLAIN: { q: string; a: string }[] = [
   {
     q: "How do I switch repos in the web app?",
-    a: "Use the repo selector at the top of the sidebar in the dashboard. Picking a different repo loads its digest history immediately. To change which repo loads when you open AskScout, go to Settings and set a Default Repository there.",
+    a: "Use the repo selector at the top of the sidebar in the dashboard. Picking a different repo loads its digest history immediately. To change which repo loads when you open askScout, go to Settings and set a Default Repository there.",
   },
   {
-    q: "Why does AskScout need GitHub authorization?",
-    a: "Two reasons. The read:user scope identifies you to AskScout so your digests save under your GitHub account. The repo scope is what lets AskScout fetch commits and diffs from your repos through the GitHub API. GitHub does not offer a finer-grained read-only repo scope, so granting repo necessarily includes write capabilities our code never uses. You can revoke access any time at github.com/settings/applications.",
+    q: "Why does askScout need GitHub authorization?",
+    a: "Two reasons. The read:user scope identifies you to askScout so your digests save under your GitHub account. The repo scope is what lets askScout fetch commits and diffs from your repos through the GitHub API. GitHub does not offer a finer-grained read-only repo scope, so granting repo necessarily includes write capabilities our code never uses. You can revoke access any time at github.com/settings/applications.",
   },
   {
     q: "Why is there a 30-digest-per-day cap?",
-    a: "The hosted web app uses our own LLM API key, and the cap keeps API costs predictable. 30 digests per day per account covers daily standup and end-of-day reviews. If you need more, the CLI has no AskScout-imposed cap. You bring your own API key and pay your provider directly.",
+    a: "The hosted web app uses our own LLM API key, and the cap keeps API costs predictable. 30 digests per day per account covers daily standup and end-of-day reviews. If you need more, the CLI has no askScout-imposed cap. You bring your own API key and pay your provider directly.",
   },
   {
-    q: "How do I delete my AskScout account and data?",
-    a: "Settings, then Danger Zone, then Delete Account. The action removes every record tied to your user ID from our database: digests, project summaries, settings, and check-ins. You will need to sign in with GitHub again to use AskScout afterwards. To clear individual repo histories without deleting your account, use Settings, then Clear History instead.",
+    q: "How do I delete my askScout account and data?",
+    a: "Settings, then Danger Zone, then Delete Account. The action removes every record tied to your user ID from our database: digests, project summaries, settings, and check-ins. You will need to sign in with GitHub again to use askScout afterwards. To clear individual repo histories without deleting your account, use Settings, then Clear History instead.",
   },
   {
     q: "How do I share or export a digest?",
     a: "Every digest in the dashboard has three share actions in the header. Copy puts the digest on your clipboard as markdown, ready to paste into Slack or any markdown-aware tool. Download saves the same markdown as a .md file named after the repo and date. Email sends the digest to the address tied to your account.",
   },
   {
-    q: "Does the AskScout CLI work in a monorepo?",
+    q: "Does the askScout CLI work in a monorepo?",
     a: "Yes. The CLI walks up from your current directory to find the nearest .git root and reads every commit in that repo. It does not filter by subdirectory, so a digest from a monorepo covers every package and workspace inside. To scope a digest to one package, run the CLI from a separate clone of just that package.",
   },
   {
@@ -40,7 +40,7 @@ export const DOCS_FAQ_PLAIN: { q: string; a: string }[] = [
     a: "Three reasons setup will reject a key. The key is shorter than 20 characters. The key contains characters outside letters, numbers, hyphens, or underscores. Or the prefix is not sk-ant- (Anthropic) or sk- (OpenAI). To replace a stored key, run askscout --setup again. The existing config is overwritten in place.",
   },
   {
-    q: "Can I run the AskScout CLI in CI or cron?",
+    q: "Can I run the askScout CLI in CI or cron?",
     a: "Yes. When the CLI runs without a TTY (piped to a file, in CI logs, or cron emails), it automatically suppresses the spinner and swaps emoji headers and unicode bullets for bracketed plain text and ASCII characters. For machine-readable output, use askscout --json. Setting NO_COLOR=1 also forces plain-text mode.",
   },
   {

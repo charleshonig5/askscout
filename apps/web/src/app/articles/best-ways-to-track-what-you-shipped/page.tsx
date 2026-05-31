@@ -7,7 +7,7 @@ import { ReadyCTA } from "@/components/ReadyCTA";
 import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
-  // Brand suffix dropped — "AskScout" already appears in the
+  // Brand suffix dropped — "askScout" already appears in the
   // breadcrumb and OG chrome; the title was 62 chars + 11 with
   // the suffix, which truncated in the SERP snippet.
   title: "Best Ways to Track What You Shipped as a Developer",
@@ -33,7 +33,7 @@ export const metadata = {
 const FAQ_PLAIN: { q: string; a: string }[] = [
   {
     q: "What is the easiest way to track what I built this week?",
-    a: "The fastest path is git log --since=\"1 week ago\" --oneline for a flat list of recent commits. If you want it summarized into plain English with sections for what shipped, what changed, and what you left off, an automated tool like AskScout reads the same data and writes a digest.",
+    a: "The fastest path is git log --since=\"1 week ago\" --oneline for a flat list of recent commits. If you want it summarized into plain English with sections for what shipped, what changed, and what you left off, an automated tool like askScout reads the same data and writes a digest.",
   },
   {
     q: "Does GitHub have a way to summarize my work?",
@@ -45,7 +45,7 @@ const FAQ_PLAIN: { q: string; a: string }[] = [
   },
   {
     q: "Is there a free way to summarize my git activity?",
-    a: "Yes. The git CLI ships with git shortlog, git log --stat, and git log -p for a structured view at no cost. AskScout's CLI is also free open source software under MIT, with you bringing your own LLM API key (a fraction of a cent per run).",
+    a: "Yes. The git CLI ships with git shortlog, git log --stat, and git log -p for a structured view at no cost. askScout's CLI is also free open source software under MIT, with you bringing your own LLM API key (a fraction of a cent per run).",
   },
 ];
 
@@ -213,7 +213,7 @@ export default function TrackWhatYouShippedPage() {
               href="/articles/introducing-askscout"
               className="home-prose-link"
             >
-              AskScout
+              askScout
             </Link>{" "}
             is one of these. So is anything you build yourself by piping git diffs into a
             ChatGPT or Claude prompt.
@@ -227,7 +227,7 @@ export default function TrackWhatYouShippedPage() {
               href="/articles/how-askscout-summarizes-git"
               className="home-prose-link"
             >
-              How AskScout turns a noisy git log into a 10-second digest
+              How askScout turns a noisy git log into a 10-second digest
             </Link>{" "}
             walks through the pipeline.)
           </p>
@@ -258,7 +258,7 @@ export default function TrackWhatYouShippedPage() {
           <p className="public-text">
             If your week is AI-assisted-volume with messy auto-generated messages, the only
             option that scales is automation. Either build the prompt yourself or use a tool
-            like AskScout. The point is that something is reading your repo for you, because
+            like askScout. The point is that something is reading your repo for you, because
             at this volume you are not going to.
           </p>
           <p className="public-text">

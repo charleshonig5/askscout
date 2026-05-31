@@ -1,5 +1,5 @@
 /**
- * AskScout brand logo (icon + wordmark lockup).
+ * askScout brand logo (icon + wordmark lockup).
  *
  * Renders both color variants and shows the right one based on the
  * current theme via CSS rules keyed off `[data-theme="dark"]` on the
@@ -33,14 +33,14 @@ export interface LogoProps {
    *  (e.g. the giant footer wordmark) where height comes from CSS
    *  rather than a fixed pixel value. */
   className?: string;
-  /** Override the alt text. Defaults to "AskScout" since this is
+  /** Override the alt text. Defaults to "askScout" since this is
    *  the brand wordmark. Pass an empty string when the logo sits
    *  next to a redundant brand label and screen readers should
    *  ignore it. */
   alt?: string;
 }
 
-export function Logo({ height = 20, className, alt = "AskScout" }: LogoProps) {
+export function Logo({ height = 20, className, alt = "askScout" }: LogoProps) {
   const width = Math.round(height * ASPECT_RATIO);
   const cls = ["brand-logo", className].filter(Boolean).join(" ");
   return (

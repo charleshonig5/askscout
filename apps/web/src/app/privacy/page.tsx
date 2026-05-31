@@ -11,23 +11,23 @@ const PRIVACY_LAST_UPDATED_ISO = "2026-05-04";
 const PRIVACY_LAST_UPDATED_HUMAN = "May 4, 2026";
 
 export const metadata = {
-  title: "Privacy | AskScout",
+  title: "Privacy | askScout",
   description:
-    "What data AskScout collects, where it's stored, who it's shared with, and how to delete it.",
+    "What data askScout collects, where it's stored, who it's shared with, and how to delete it.",
   alternates: { canonical: "/privacy" },
   openGraph: {
-    title: "Privacy | AskScout",
+    title: "Privacy | askScout",
     description:
-      "What data AskScout collects, where it's stored, who it's shared with, and how to delete it.",
+      "What data askScout collects, where it's stored, who it's shared with, and how to delete it.",
     url: "/privacy",
-    siteName: "AskScout",
+    siteName: "askScout",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Privacy | AskScout",
+    title: "Privacy | askScout",
     description:
-      "What data AskScout collects, where it's stored, who it's shared with, and how to delete it.",
+      "What data askScout collects, where it's stored, who it's shared with, and how to delete it.",
   },
 };
 
@@ -39,20 +39,20 @@ export const metadata = {
 const PAGE_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "AskScout privacy policy",
+  name: "askScout privacy policy",
   description:
-    "What data AskScout collects, where it's stored, who it's shared with, and how to delete it.",
+    "What data askScout collects, where it's stored, who it's shared with, and how to delete it.",
   url: "https://askscout.dev/privacy",
   inLanguage: "en",
   dateModified: PRIVACY_LAST_UPDATED_ISO,
   isPartOf: {
     "@type": "WebSite",
-    name: "AskScout",
+    name: "askScout",
     url: "https://askscout.dev",
   },
   publisher: {
     "@type": "Organization",
-    name: "AskScout",
+    name: "askScout",
     url: "https://askscout.dev",
   },
 };
@@ -93,7 +93,7 @@ export default function PrivacyPage() {
               </h2>
               <div className="privacy-body">
                 <p>
-                  Sign-in uses GitHub OAuth. When you authorize AskScout,
+                  Sign-in uses GitHub OAuth. When you authorize askScout,
                   GitHub returns your user ID, username, display name, email,
                   avatar URL, and a scoped access token.
                 </p>
@@ -108,7 +108,7 @@ export default function PrivacyPage() {
                   The <code>repo</code> portion of that scope is broad. GitHub
                   doesn&apos;t offer a read-only repository scope, so granting
                   access necessarily includes permissions we don&apos;t use
-                  (like writing to repos). AskScout only ever reads commits
+                  (like writing to repos). askScout only ever reads commits
                   and diffs. It does not create, modify, or delete anything in
                   your repos.
                 </p>
@@ -168,7 +168,7 @@ export default function PrivacyPage() {
               </h2>
               <div className="privacy-body">
                 <p>
-                  To generate a digest, AskScout reads commits and diffs from
+                  To generate a digest, askScout reads commits and diffs from
                   your repository through the GitHub API and sends them to a
                   large language model to summarize. Specifically:
                 </p>
@@ -225,7 +225,7 @@ export default function PrivacyPage() {
                 </ul>
                 <p>
                   The LLM provider processes this content to produce the
-                  digest text. Treat AskScout the same way you would any tool
+                  digest text. Treat askScout the same way you would any tool
                   that shares code with an LLM. Do not use it on repositories
                   that contain credentials, secrets, or content you would not
                   paste into an AI chat.
@@ -267,10 +267,10 @@ export default function PrivacyPage() {
               </h2>
               <div className="privacy-body">
                 <p>
-                  AskScout is hosted on Vercel and uses Supabase for database
+                  askScout is hosted on Vercel and uses Supabase for database
                   storage, both US-headquartered providers. If you sign up
                   from outside the United States, your data is transferred to
-                  and processed in the United States. By using AskScout you
+                  and processed in the United States. By using askScout you
                   consent to that transfer. We do not currently offer regional
                   data residency.
                 </p>
@@ -310,7 +310,7 @@ export default function PrivacyPage() {
               <h2 className="privacy-section-title">Third parties</h2>
               <div className="privacy-body">
                 <p>
-                  AskScout uses the following services to operate. Each has
+                  askScout uses the following services to operate. Each has
                   its own privacy policy:
                 </p>
                 <ul className="privacy-list">
@@ -344,7 +344,7 @@ export default function PrivacyPage() {
               <h2 className="privacy-section-title">Cookies</h2>
               <div className="privacy-body">
                 <p>
-                  AskScout sets one essential cookie, the NextAuth session
+                  askScout sets one essential cookie, the NextAuth session
                   cookie, used solely to keep you signed in. It is HTTP-only
                   and Secure-flagged. We do not set marketing or analytics
                   cookies.
@@ -372,7 +372,7 @@ export default function PrivacyPage() {
                     <strong>Delete your account:</strong> Settings → Danger
                     Zone → Delete Account. This removes every record tied to
                     your user ID from our database. You&apos;ll need to sign
-                    in with GitHub again to use AskScout afterwards
+                    in with GitHub again to use askScout afterwards
                   </li>
                   <li>
                     <strong>Revoke GitHub access:</strong> at{" "}
@@ -438,7 +438,7 @@ export default function PrivacyPage() {
                   the equivalent rights under GDPR and CCPA. We do not sell or
                   share personal data within the meaning of CCPA. Our legal
                   basis for processing under GDPR is performance of contract
-                  (running the AskScout service for you) and your consent at
+                  (running the askScout service for you) and your consent at
                   sign-in.
                 </p>
               </div>
@@ -449,7 +449,7 @@ export default function PrivacyPage() {
               <h2 className="privacy-section-title">Children</h2>
               <div className="privacy-body">
                 <p>
-                  AskScout is not directed at children under 13 and we do not
+                  askScout is not directed at children under 13 and we do not
                   knowingly collect data from them. If you believe a child has
                   signed up, contact us and we will delete the account.
                 </p>

@@ -33,16 +33,16 @@ export function GET() {
     .map((a) => `- [${a.title}](${SITE}/articles/${a.slug}): ${a.description}`)
     .join("\n");
 
-  const body = `# AskScout
+  const body = `# askScout
 
-> AskScout reads your git activity and writes a plain-English daily digest of what you actually shipped. Built for developers and vibe coders using Claude Code, Cursor, and Codex.
+> askScout reads your git activity and writes a plain-English daily digest of what you actually shipped. Built for developers and vibe coders using Claude Code, Cursor, and Codex.
 
-AskScout is an open-source daily digest tool for developers. It runs as a web app at askscout.dev or as a CLI installed via \`npm install -g askscout\`. The CLI runs locally and uses your own Anthropic or OpenAI API key — nothing leaves your machine except the LLM call you authorize. AskScout only reads commits and diffs; it never writes to your repos.
+askScout is an open-source daily digest tool for developers. It runs as a web app at askscout.dev or as a CLI installed via \`npm install -g askscout\`. The CLI runs locally and uses your own Anthropic or OpenAI API key — nothing leaves your machine except the LLM call you authorize. askScout only reads commits and diffs; it never writes to your repos.
 
 ## Docs
 
 - [Documentation](${SITE}/docs): How to use the web app and the CLI, full command reference, pricing, and installation steps.
-- [Privacy Policy](${SITE}/privacy): What data AskScout collects, where it's stored, who it's shared with, and how to delete it.
+- [Privacy Policy](${SITE}/privacy): What data askScout collects, where it's stored, who it's shared with, and how to delete it.
 
 ## Articles
 

@@ -7,14 +7,14 @@ import { ReadyCTAInstall } from "@/components/ReadyCTAInstall";
  * Reusable end-of-page CTA per Figma 244:2673. Renders the full
  * section: trust badges row (Open Source + Read Only) on top,
  * then a row with a mixed-weight Pridi headline on the left and
- * two action buttons (Try AskScout Free + npm install pill) on
+ * two action buttons (Try askScout Free + npm install pill) on
  * the right.
  *
  * Drop this into any marketing page right before the footer.
  * Section wraps itself in `.home-section` so the standard 104px
  * vertical rhythm + top divider apply automatically.
  *
- * The "Try AskScout Free" button is a real GitHub sign-in via
+ * The "Try askScout Free" button is a real GitHub sign-in via
  * server action. The install pill is a client-side copy button
  * (see <ReadyCTAInstall />).
  */

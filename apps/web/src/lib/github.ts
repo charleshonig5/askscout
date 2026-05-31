@@ -555,7 +555,7 @@ export async function fetchFileContextForHunks(
    ------------------------------------------------------------
    Lightweight repo-level context that tells the LLM what the
    project IS before it reads the diffs. Without this, the model
-   has to infer "this is a Next.js Supabase app called AskScout
+   has to infer "this is a Next.js Supabase app called askScout
    that summarises git history" from filenames; with it, every
    diff is read against an explicit framing and the digest gets
    sharper language ("Next.js App Router routes" vs "the web
