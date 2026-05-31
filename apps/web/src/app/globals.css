@@ -4096,6 +4096,13 @@ a:hover {
     align-items: center;
     gap: 14px;
   }
+  /* Match the site-wide mobile CTA height (48px) used by
+     .home-readycta-btn and .docs-webapp-card-btn. The hero CTA was
+     the only marketing primary action staying at the desktop 54px
+     on mobile, which made it visually heavier than the other two. */
+  .home-cta {
+    height: 48px;
+  }
 }
 
 /* Trust chips row — sits ABOVE the title per Figma 244:2429.
