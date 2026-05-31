@@ -1,6 +1,6 @@
 # askscout-core
 
-> Shared library powering askscout — git reading, LLM digest summarization, output formatting, and project state management.
+> Shared library powering askScout — git reading, LLM digest summarization, output formatting, and project state management.
 
 [![npm version](https://img.shields.io/npm/v/askscout-core.svg)](https://www.npmjs.com/package/askscout-core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/charleshonig5/askscout/blob/main/LICENSE)
