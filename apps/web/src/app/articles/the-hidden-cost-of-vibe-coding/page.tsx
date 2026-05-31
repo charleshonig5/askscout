@@ -7,7 +7,9 @@ import { ReadyCTA } from "@/components/ReadyCTA";
 import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
-  title: "The Hidden Cost of Vibe Coding | AskScout",
+  // Brand suffix dropped — consistent with the rest of the cluster.
+  // "AskScout" already appears in the breadcrumb chrome + OG meta.
+  title: "The Hidden Cost of Vibe Coding",
   description:
     "AI coding tools sped us up. They also made it harder to remember what we actually built. Why I think the next big workflow problem is digesting your own code.",
   alternates: {
@@ -38,11 +40,11 @@ const FAQ_PLAIN: { q: string; a: string }[] = [
   },
   {
     q: "Can I just read my git log to remember what I shipped?",
-    a: "Probably not at AI-coding pace. Git log was built for slow, deliberate commits. A normal week of vibe coding produces fifty commits a day, often with auto-generated messages like 'fix' or 'wip.' Skimming that is not the same as understanding what changed.",
+    a: "Probably not at AI-coding pace. Git log was built for slow, deliberate commits. A normal week of vibe coding produces a flood of commits, often with auto-generated messages like 'fix' or 'wip.' Skimming that is not the same as understanding what changed.",
   },
   {
     q: "What is a daily code digest?",
-    a: "A short, plain-English summary of what changed in your repo today. Sections cover what shipped, what changed, what kept getting reworked, and where you left off. The point is to be readable in 10 seconds, not to replace your git log.",
+    a: "A short, plain-English summary of what changed in your repo today. Sections cover what shipped, what changed, what kept getting reworked, and where you left off. The point is to be quick to skim, not to replace your git log.",
   },
 ];
 
@@ -95,14 +97,14 @@ export default function HiddenCostPage() {
         <p className="public-text article-tldr">
           <strong>TLDR:</strong> The way most of us code now produces more output than our
           brains can hold. AI tools took the friction out of writing code. They did not take the
-          friction out of remembering it. By Friday afternoon you have shipped two hundred
+          friction out of remembering it. By Friday afternoon you&apos;ve shipped a stack of
           commits and you cannot account for half of them. The fix is a daily digest of what
           your repo actually did.
         </p>
 
         <section className="public-section">
           <p className="public-text">
-            Friday, 5&nbsp;PM. You close your laptop. You shipped a lot this week. Two hundred
+            Friday, 5&nbsp;PM. You close your laptop. You shipped a lot this week. A stack of
             commits, a handful of features, a refactor or two. Feels like a productive run.
           </p>
           <p className="public-text">
@@ -142,8 +144,8 @@ export default function HiddenCostPage() {
             <strong>Your git log becomes static.</strong> Auto-generated commit messages like{" "}
             <code className="inline-code">wip</code>, <code className="inline-code">fix</code>, and{" "}
             <code className="inline-code">update X</code> don&apos;t tell you what happened. A
-            normal week now produces fifty illegible commits per day. You can&apos;t read your own
-            history.
+            normal week now produces a wall of nearly-illegible commits. You can&apos;t read
+            your own history.
           </p>
           <p className="public-text">
             <strong>Monday-morning amnesia.</strong> You sit down to keep building and you
@@ -165,7 +167,8 @@ export default function HiddenCostPage() {
           <h2 className="public-section-title">Why current tools don&apos;t fix it</h2>
           <p className="public-text">
             <code className="inline-code">git log</code> is unreadable at this volume. The format
-            was designed for slow, deliberate commits. We&apos;re producing fifty a day.
+            was designed for slow, deliberate commits. AI-assisted developers are producing
+            many times that volume.
           </p>
           <p className="public-text">
             Linear and Jira track plans. They have no way to see what the AI actually shipped, only
@@ -187,10 +190,30 @@ export default function HiddenCostPage() {
             changed, what kept shifting, where you left off.
           </p>
           <p className="public-text">
-            That&apos;s AskScout. Sign in to the web app at{" "}
-            <Link href="/">askscout.dev</Link>, or run it as a CLI in any local repo with your
-            own LLM key. It reads your repo, sends only the diffs to the LLM you choose, and
-            writes you a digest worth reading. Free. Sets up in about ten seconds.
+            That&apos;s{" "}
+            <Link href="/articles/introducing-askscout" className="home-prose-link">
+              AskScout
+            </Link>
+            . Sign in to the web app at <Link href="/">askscout.dev</Link>, or run it as a CLI
+            in any local repo with your own LLM key. It reads your commits, diffs, and a small
+            amount of project context (README plus a manifest like package.json) so the LLM you
+            choose has enough to write a digest worth reading. Source files outside the changed
+            regions, environment variables, secrets, and build artifacts are never read. Free.
+            Sets up in about ten seconds. (For the practical follow-up, see{" "}
+            <Link
+              href="/articles/best-ways-to-track-what-you-shipped"
+              className="home-prose-link"
+            >
+              the four real ways to track what you shipped
+            </Link>{" "}
+            and{" "}
+            <Link
+              href="/articles/best-ai-coding-tools-for-solo-developers"
+              className="home-prose-link"
+            >
+              the AI coding tools that create the volume problem in the first place
+            </Link>
+            .)
           </p>
         </section>
 
