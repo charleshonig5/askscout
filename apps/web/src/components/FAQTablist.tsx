@@ -1,32 +1,22 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useSliderIndicator } from "@/lib/use-slider-indicator";
 
 /**
  * Shared tablist used by FAQTabs (home) and DocsFAQ (docs). Renders
  * the segmented tab buttons inside the existing .home-faq-tabs
  * rounded container, plus a single absolutely-positioned indicator
- * element that animates its left/width to slide between the active
- * tab buttons.
+ * element that animates its left + width to slide between active
+ * tabs.
  *
- * Why a measured indicator instead of CSS-only:
- *   Tab labels have variable widths ("Getting started" vs "Product
- *   details" vs "Privacy & security"), so the buttons aren't equal-
- *   sized. A CSS-only approach using `calc(--active-index * width)`
- *   only works for equal tabs. Measuring each button's actual
- *   bounding rect after layout gives the indicator the right
- *   position for any label set.
- *
- * Re-measurement triggers:
- *   - Active tab change (most common — slide animation)
- *   - Tabs prop change (label/count edit during dev)
- *   - Window resize (font-rendering can shift tab widths)
- *   - First paint via useLayoutEffect (avoids a 1-frame flash at 0,0)
+ * Indicator positioning is handled by the useSliderIndicator hook
+ * (lib/use-slider-indicator) — same hook drives the articles-page
+ * filter chips for visual cohesion across the marketing site.
  *
  * The indicator carries the bg-secondary + border + glow visual
  * that .home-faq-tab--active used to apply directly. The active
  * tab's --active modifier now only flips the text color to white;
- * the moving background is owned by this single element.
+ * the moving background is owned by the single indicator element.
  */
 
 interface FAQTablistProps {
@@ -51,53 +41,18 @@ export function FAQTablist({
   panelIdPrefix,
   tabIdPrefix,
 }: FAQTablistProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(
-    null,
-  );
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const idx = tabs.findIndex((t) => t.id === active);
-    const btn = tabRefs.current[idx];
-    if (!container || !btn) return;
-    const cRect = container.getBoundingClientRect();
-    const bRect = btn.getBoundingClientRect();
-    setIndicator({ left: bRect.left - cRect.left, width: bRect.width });
-  }, [active, tabs]);
-
-  // Re-measure on window resize. Tab widths can shift if web fonts
-  // load after the initial measurement, or if the viewport changes
-  // (the container is fixed-width but content reflow elsewhere can
-  // still influence layout timing).
-  useLayoutEffect(() => {
-    const handler = () => {
-      const container = containerRef.current;
-      const idx = tabs.findIndex((t) => t.id === active);
-      const btn = tabRefs.current[idx];
-      if (!container || !btn) return;
-      const cRect = container.getBoundingClientRect();
-      const bRect = btn.getBoundingClientRect();
-      setIndicator({ left: bRect.left - cRect.left, width: bRect.width });
-    };
-    window.addEventListener("resize", handler);
-    return () => window.removeEventListener("resize", handler);
-  }, [active, tabs]);
+  const keys = tabs.map((t) => t.id);
+  const { containerRef, setItemRef, indicator } = useSliderIndicator(keys, active);
 
   return (
     <div
-      ref={containerRef}
+      ref={(el) => {
+        containerRef.current = el;
+      }}
       className="home-faq-tabs"
       role="tablist"
       aria-label={ariaLabel}
     >
-      {/* Indicator — the moving pill that carries the bg-secondary
-          + border + glow treatment under the active tab. Rendered
-          once and translated; CSS transitions on left + width do
-          the sliding. Hidden on the very first SSR paint (no
-          measurements yet); revealed once useLayoutEffect runs
-          immediately after first mount. */}
       <span
         className="home-faq-tab-indicator"
         aria-hidden
@@ -111,12 +66,10 @@ export function FAQTablist({
             : { opacity: 0 }
         }
       />
-      {tabs.map((t, i) => (
+      {tabs.map((t) => (
         <button
           key={t.id}
-          ref={(el) => {
-            tabRefs.current[i] = el;
-          }}
+          ref={setItemRef(t.id)}
           role="tab"
           type="button"
           aria-selected={t.id === active}

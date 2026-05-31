@@ -13941,12 +13941,47 @@ a:hover {
    the border + bg-primary + inset glow. Inactive chips are tertiary
    gray text on transparent. */
 .articles-filter {
+  /* position: relative containing block for the sliding
+     .articles-filter-indicator pill below. */
+  position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
+/* Sliding pill behind the active filter chip. left + width are
+   set inline by useSliderIndicator measuring the active chip's
+   bounding rect; CSS handles the smooth animation. Mirror of the
+   FAQ tabs' .home-faq-tab-indicator pattern so the marketing
+   site's two segmented controls move identically. */
+.articles-filter-indicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 8px;
+  background: var(--color-bg-secondary);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border),
+    inset 0 0 20px 0 var(--color-inner-glow);
+  transition:
+    left 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.15s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .articles-filter-indicator {
+    transition: opacity 0.15s ease;
+  }
+}
+
 .articles-filter-chip {
+  /* z-index 1 keeps the chip text above the absolutely-positioned
+     indicator pill rendered as a sibling below. */
+  position: relative;
+  z-index: 1;
   appearance: none;
   border: 0;
   margin: 0;
@@ -13970,16 +14005,11 @@ a:hover {
   color: var(--color-text-primary);
 }
 
+/* Active chip now ONLY carries the text color — the moving pill
+   background lives on .articles-filter-indicator above so it can
+   slide between chips instead of snapping. */
 .articles-filter-chip--active {
-  /* bg-secondary (#121212) — slightly lighter than the page bg —
-     matches the homepage FAQ active tab and the Figma comp.
-     Pairing it with the page-bg-primary Shuffle/RSS buttons next
-     to it creates a subtle layered hierarchy. */
   color: var(--color-text-primary);
-  background: var(--color-bg-secondary);
-  box-shadow:
-    inset 0 0 0 1px var(--color-border),
-    inset 0 0 20px 0 var(--color-inner-glow);
 }
 
 /* Utility buttons (right side of controls row). The Shuffle button

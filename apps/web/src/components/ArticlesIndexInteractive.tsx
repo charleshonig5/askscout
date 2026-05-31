@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Clock, SquareArrowUpRight } from "lucide-react";
 import { ArticlesUtils } from "@/components/ArticlesUtils";
+import { useSliderIndicator } from "@/lib/use-slider-indicator";
 import type { ArticleListing, ArticleTag } from "@/lib/articles-data";
 
 /**
@@ -46,6 +47,12 @@ export function ArticlesIndexInteractive({
   articles: ArticleListing[];
 }) {
   const [filter, setFilter] = useState<FilterValue>("all");
+  // Sliding-pill indicator — same useSliderIndicator hook that
+  // powers the FAQ tabs' active-pill slide, so motion across the
+  // marketing site (filter chips + FAQ tabs) reads as one
+  // coherent pattern.
+  const filterKeys = FILTERS.map((f) => f.value);
+  const indicatorData = useSliderIndicator(filterKeys, filter);
 
   return (
     <div className="articles-index">
@@ -54,15 +61,35 @@ export function ArticlesIndexInteractive({
           one active at a time, click to switch. */}
       <div className="articles-controls">
         <div
+          ref={(el) => {
+            indicatorData.containerRef.current = el;
+          }}
           className="articles-filter"
           role="tablist"
           aria-label="Filter articles by tag"
         >
+          {/* Indicator pill — see .articles-filter-indicator in
+              globals.css and the matching .home-faq-tab-indicator
+              for the shared pattern. */}
+          <span
+            className="articles-filter-indicator"
+            aria-hidden
+            style={
+              indicatorData.indicator
+                ? {
+                    left: `${indicatorData.indicator.left}px`,
+                    width: `${indicatorData.indicator.width}px`,
+                    opacity: 1,
+                  }
+                : { opacity: 0 }
+            }
+          />
           {FILTERS.map((f) => {
             const isActive = filter === f.value;
             return (
               <button
                 key={f.value}
+                ref={indicatorData.setItemRef(f.value)}
                 role="tab"
                 type="button"
                 aria-selected={isActive}
