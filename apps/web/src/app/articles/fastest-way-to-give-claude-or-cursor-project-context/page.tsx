@@ -7,8 +7,12 @@ import { ReadyCTA } from "@/components/ReadyCTA";
 import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
-  title:
-    "The fastest way to bring Claude Code, Cursor, or Codex up to speed on your project | AskScout",
+  // SERP-friendly title (~60 chars). Body H1 stays long-form for
+  // in-page voice; metadata title is shorter and keeps the three
+  // brand names visible in Google's snippet without truncating.
+  // Brand suffix dropped — "AskScout" already appears in the H1
+  // and the breadcrumb chrome.
+  title: "Give Claude Code, Cursor, or Codex project context fast",
   description:
     "How to give Claude Code, Cursor, or Codex a one-shot context block covering tech stack, recent work, current focus, and key files, so the AI is useful from the first message.",
   alternates: {
@@ -99,7 +103,7 @@ export default function FastestWayToContextPage() {
           your project. The fastest way to give them context is to paste a structured block at
           the start of a session covering tech stack, recent work, current focus, key files,
           and any warnings. The AskScout web app has an <strong>AI Resume Prompt</strong> button
-          that generates this block from your latest digest; the CLI does the same thing with{" "}
+          that assembles this block from your latest digest. The CLI does the same thing with{" "}
           <code className="inline-code">askscout --resume</code>. Below is what good context
           looks like and how to assemble it whether you use AskScout or not.
         </p>
@@ -107,22 +111,30 @@ export default function FastestWayToContextPage() {
         <section className="public-section">
           <h2 className="public-section-title">The catch-up problem</h2>
           <p className="public-text">
-            Every Claude Code or Codex session starts cold. Cursor remembers a little more
-            across files but still loses thread between long breaks. The first ten minutes of
-            any session tend to look like this: you explain what the project is, what you were
-            doing yesterday, and where the current work fits.
+            Every{" "}
+            <a
+              href="https://docs.claude.com/en/docs/claude-code/overview"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="home-prose-link"
+            >
+              Claude Code
+            </a>{" "}
+            or Codex session starts cold. Cursor remembers a little more across files but still
+            loses thread between long breaks. The first ten minutes of any session tend to look
+            the same: you explain the project and what you&apos;re doing right now.
           </p>
           <p className="public-text">
-            That is wasted typing. The information already exists. It is in your git history,
-            your file structure, and your last few sessions of work. The only reason you are
-            re-explaining is that the AI does not know how to read it without your help.
+            That is wasted typing. The information already exists in your git history and your
+            recent sessions of work. The only reason you are re-explaining is that the AI
+            doesn&apos;t know how to read it without your help.
           </p>
         </section>
 
         <section className="public-section">
           <h2 className="public-section-title">What good context actually looks like</h2>
           <p className="public-text">
-            From running thousands of digest sessions, the context block that consistently
+            After working this pattern into real repos, the context block that consistently
             produces useful first responses has five parts.
           </p>
           <p className="public-text">
@@ -162,7 +174,7 @@ Recent Work
 Shipped the new billing flow at apps/web/src/app/billing. Added Stripe webhook handling at apps/api/src/webhooks/stripe.ts. Migrated user table indexes for the new search query.
 
 Current Focus
-Wiring the team-invitations email template. The render works; the org-name lookup is returning null on a few test cases.
+Wiring the team-invitations email template. The render works. The org-name lookup is returning null on a few test cases.
 
 Key Files
 - apps/web/src/app/billing/page.tsx
@@ -184,9 +196,10 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
           <h2 className="public-section-title">The automated way</h2>
           <p className="public-text">
             On the AskScout web app, generate this block by clicking the{" "}
-            <strong>AI Resume Prompt</strong> button on the Left Off section of any digest. It
-            opens a modal with the same five-section context, ready to copy. The CLI does the
-            same thing in one command:
+            <strong>AI Resume Prompt</strong> button at the bottom of any digest. It opens a
+            modal with the same five-section context, ready to copy. The CLI does the same
+            thing in one command (install steps are in the{" "}
+            <Link href="/docs" className="home-prose-link">CLI docs</Link>):
           </p>
           <div className="resource-code-block">
             <code>askscout --resume</code>
@@ -194,9 +207,15 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
           <p className="public-text">
             AskScout reads your recent git history (commits, diffs, file paths), runs it
             through the same LLM you configured for digests, and produces a context block in
-            exactly the format above. Tech stack inferred from your files. Recent work pulled
-            from your real commits. Current focus inferred from the most recent activity. Key
-            files surfaced from the most-touched paths. Warnings extracted from churn data.
+            exactly the format above. Every section is grounded in your real activity, not a
+            stale description of the project. (For the full pipeline this builds on, see{" "}
+            <Link
+              href="/articles/how-askscout-summarizes-git"
+              className="home-prose-link"
+            >
+              How AskScout turns a noisy git log into a 10-second digest
+            </Link>
+            .)
           </p>
           <p className="public-text">
             Pipe it straight into your clipboard:
@@ -217,7 +236,7 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
           <p className="public-text">
             The block goes stale as you ship. The fix is to regenerate it whenever you start a
             new session. <code className="inline-code">askscout --resume</code> is fast enough
-            to run on demand (the same 10-second budget as a regular digest).
+            to run on demand (well under a minute, same as a regular digest).
           </p>
           <p className="public-text">
             For most solo developers the rhythm that works is: regenerate at the top of every
@@ -236,8 +255,8 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
           </p>
           <p className="public-text">
             The difference is bigger than most developers expect. Once you start every session
-            with a real context block, going back to cold sessions feels noticeably worse. (If
-            you want the broader picture of where AI coding tools fit,{" "}
+            with a real context block, going back to cold sessions feels noticeably worse. (For
+            the broader picture of where AI coding tools fit,{" "}
             <Link
               href="/articles/best-ai-coding-tools-for-solo-developers"
               className="home-prose-link"
@@ -245,7 +264,14 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
               here&apos;s an honest read on Claude Code, Cursor, Codex, and the other AI
               coding tools
             </Link>
-            .)
+            . For the origin story of AskScout itself,{" "}
+            <Link
+              href="/articles/introducing-askscout"
+              className="home-prose-link"
+            >
+              Introducing AskScout
+            </Link>{" "}
+            sets the table.)
           </p>
         </section>
 
