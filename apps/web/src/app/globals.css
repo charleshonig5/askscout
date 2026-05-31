@@ -8818,18 +8818,30 @@ a:hover {
   color: var(--color-text-primary);
 }
 
+/* Wrapper around the Articles column's <ul> and "Read more" link.
+   Owns the 14px vertical spacing between the list and the link so
+   it matches the article-to-article gap inside the list. The
+   parent column's 24px gap still applies between the title and
+   this wrapper — that gap is for section-level breathing room,
+   not row-to-row spacing. */
+.home-footer-col-articles {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
 /* "Read more" CTA below the Articles column. 1:1 mirror of the
    .articles-card-read pattern (label + SquareArrowUpRight icon)
    so the footer's CTA reads exactly the same as the article-card
    CTA: 12px Work Sans Light, white label, muted-tertiary icon
-   that brightens to white on hover. 14px top-margin provides
-   the visual separation from the last link row above; everything
-   else (size, gap, colors, hover) is identical to the card. */
+   that brightens to white on hover. Vertical spacing from the
+   list above is handled by the .home-footer-col-articles wrapper
+   (gap: 14px), not by margin on the link itself. */
 .home-footer-col-cta {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-top: 14px;
   font-family: var(--font-sans);
   font-weight: 300;
   font-size: 12px;

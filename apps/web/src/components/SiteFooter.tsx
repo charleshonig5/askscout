@@ -65,27 +65,32 @@ export function SiteFooter() {
                 (previously hardcoded four titles by URL — drifted
                 whenever a new article shipped). When the catalog
                 holds more than N, the "Read more" link below
-                provides the path to the full index. */}
-            <ul className="home-footer-col-list">
-              {ARTICLES.slice(0, FOOTER_ARTICLE_COUNT).map((article) => (
-                <li key={article.slug}>
-                  <Link href={`/articles/${article.slug}`}>{article.title}</Link>
-                </li>
-              ))}
-            </ul>
-            {/* "Read more" CTA mirrors the article-card pattern
-                (<ArticlesIndexInteractive /> .articles-card-read) —
-                same label-then-SquareArrowUpRight icon construction
-                at the same 16px size + 1.5 stroke. Only renders
-                when there are more articles than the footer shows,
-                so we don't surface a redundant link on a complete
-                catalog list. */}
-            {ARTICLES.length > FOOTER_ARTICLE_COUNT && (
-              <Link href="/articles" className="home-footer-col-cta">
-                <span>Read more</span>
-                <SquareArrowUpRight size={16} strokeWidth={1.5} aria-hidden />
-              </Link>
-            )}
+                provides the path to the full index.
+
+                The list + the "Read more" link share a single
+                wrapping div with the same 14px gap the article
+                <li>s already use, so the spacing between the last
+                article row and the "Read more" link matches the
+                article-to-article spacing exactly. Without this
+                wrapper the parent column's 24px gap stacked with
+                the CTA's margin to produce ~38px instead. */}
+            <div className="home-footer-col-articles">
+              <ul className="home-footer-col-list">
+                {ARTICLES.slice(0, FOOTER_ARTICLE_COUNT).map((article) => (
+                  <li key={article.slug}>
+                    <Link href={`/articles/${article.slug}`}>{article.title}</Link>
+                  </li>
+                ))}
+              </ul>
+              {/* "Read more" mirrors .articles-card-read 1:1 — see
+                  globals.css for the rationale. */}
+              {ARTICLES.length > FOOTER_ARTICLE_COUNT && (
+                <Link href="/articles" className="home-footer-col-cta">
+                  <span>Read more</span>
+                  <SquareArrowUpRight size={16} strokeWidth={1.5} aria-hidden />
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       </div>
