@@ -7324,6 +7324,11 @@ a:hover {
   line-height: 1.2;
   color: var(--color-text-primary);
   text-decoration: none;
+  /* Hover: label dims from white to text-secondary; icon stays
+     muted. Matches .docs-hero-github, .home-footer-col-cta, and
+     .article-hero-link so every marketing-site secondary text
+     link with a trailing arrow feels the same. */
+  transition: color 0.15s ease;
 }
 
 /* The bracketed-arrow icon next to "Documentation" sits in
@@ -7335,11 +7340,7 @@ a:hover {
 }
 
 .home-runlocal-doclink:hover {
-  text-decoration: underline;
-}
-
-.home-runlocal-doclink:hover svg {
-  color: var(--color-text-primary);
+  color: var(--color-text-secondary);
 }
 
 /* ---------- Right column: 519 wide, 382 tall ----------
