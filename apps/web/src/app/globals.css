@@ -8748,7 +8748,12 @@ a:hover {
   margin: 0;
   font-family: var(--font-sans);
   font-weight: 300;
-  font-size: 12px;
+  /* 16px footer text — intentional bump above the 12px site-wide
+     body standard. Footer carries less visual weight than card
+     copy, so pulling it up to a comfortably readable size doesn't
+     compete with content above. Same size used by the column
+     titles and link items below for one consistent footer scale. */
+  font-size: 16px;
   line-height: 1.2;
   color: #616161;
   white-space: nowrap;
@@ -8772,7 +8777,11 @@ a:hover {
   margin: 0;
   font-family: var(--font-sans);
   font-weight: 300;
-  font-size: 12px;
+  /* See .home-footer-copy above for the 16px rationale. Column
+     titles match the copyright + link items at one consistent
+     footer scale; hierarchy comes from color (white vs grey),
+     not size. */
+  font-size: 16px;
   line-height: 1.2;
   color: var(--color-text-primary);
   white-space: nowrap;
@@ -8795,7 +8804,9 @@ a:hover {
 .home-footer-col-list a {
   font-family: var(--font-sans);
   font-weight: 300;
-  font-size: 12px;
+  /* 16px to match the rest of the footer. See .home-footer-copy
+     above for the rationale. */
+  font-size: 16px;
   line-height: 1.2;
   color: #616161;
   text-decoration: none;
