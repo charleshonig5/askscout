@@ -8821,7 +8821,10 @@ a:hover {
   padding: 4px 8px;
   border-radius: 4px;
   box-shadow: inset 0 0 0 1px var(--color-border);
-  background: transparent;
+  /* bg-secondary fill matches the marketing-site primary buttons
+     (.home-cta, .home-readycta-btn) — keeps the chip readable as
+     a "surfaced" element rather than a transparent badge. */
+  background: var(--color-bg-secondary);
   font-family: var(--font-sans);
   font-weight: 300;
   font-size: 12px;
