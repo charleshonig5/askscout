@@ -12926,15 +12926,20 @@ a:hover {
   line-height: 1.2;
   color: var(--color-text-primary);
   text-decoration: none;
+  /* Hover: label dims from white to text-secondary; icon stays
+     muted. Mirrors .article-hero-link (Back to Articles / Copy
+     URL) and .home-footer-col-cta (Read more) so the docs hero
+     secondary link feels the same to interact with as the other
+     secondary text links on the marketing site. */
+  transition: color 0.15s ease;
+}
+
+.docs-hero-github:hover {
+  color: var(--color-text-secondary);
 }
 
 .docs-hero-github svg {
   color: var(--color-text-tertiary);
-  transition: color 0.15s ease;
-}
-
-.docs-hero-github:hover svg {
-  color: var(--color-text-primary);
 }
 
 /* Mobile pattern alignment for the entire /docs page lives in a
