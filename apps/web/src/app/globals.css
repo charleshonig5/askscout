@@ -4380,11 +4380,12 @@ a:hover {
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
-  /* 2s settle delay so the page can render before motion starts;
+  /* No settle delay — the comet starts orbiting on first paint
+     so the motion is present the moment the CTA enters view.
      4s linear loop is slow enough to feel deliberate, not jittery. */
   animation:
-    cta-comet-r 4s linear 2s infinite,
-    cta-comet-x 4s linear 2s infinite;
+    cta-comet-r 4s linear infinite,
+    cta-comet-x 4s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
