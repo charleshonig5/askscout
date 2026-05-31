@@ -1,6 +1,6 @@
 {
   "name": "askscout",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "The daily digest for vibe coders. Scout reads through your repo and tells you what you built, what changed, and where you left off.",
   "license": "MIT",
   "author": "Charles Honig <charleshonigdesign@gmail.com>",
@@ -42,10 +42,10 @@
     "prepublishOnly": "pnpm clean && pnpm build && pnpm test"
   },
   "dependencies": {
-    "askscout-core": "workspace:*",
     "yargs": "^18.0.0"
   },
   "devDependencies": {
+    "askscout-core": "workspace:*",
     "@types/node": "25.5.0",
     "@types/yargs": "^17.0.35"
   }
