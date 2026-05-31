@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { MarketingNav } from "@/components/MarketingNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ArticleHero } from "@/components/ArticleHero";
@@ -6,7 +7,9 @@ import { ReadyCTA } from "@/components/ReadyCTA";
 import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
-  title: "How AskScout turns a noisy git log into a 10-second digest | AskScout",
+  // Brand suffix dropped — "AskScout" already appears in the
+  // headline, so " | AskScout" was redundant + ate SERP chars.
+  title: "How AskScout turns a noisy git log into a 10-second digest",
   description:
     "A walkthrough of how AskScout reads commits and diffs, computes structural signals, and uses a tuned LLM prompt to produce a readable digest.",
   alternates: {
@@ -29,15 +32,15 @@ export const metadata = {
 const FAQ_PLAIN: { q: string; a: string }[] = [
   {
     q: "How does AskScout read my git history?",
-    a: "On the web app, AskScout pulls commits and diffs through the GitHub API after you grant read access. On the CLI, it shells out to git in your local repo to fetch the same data. The web app also reads pull request descriptions, linked issue bodies, ~15 lines of source code around each changed hunk (capped at 8 files per digest), and the repo's README plus one package manifest like package.json — these ground the digest in the project's actual intent and context. Lock files, node_modules, environment variables, secrets, and build artifacts are never read.",
+    a: "On the web app, AskScout pulls commits and diffs through the GitHub API after you grant read access. On the CLI, it shells out to git in your local repo to fetch the same data. The web app also reads pull request descriptions, linked issue bodies, ~15 lines of source code around each changed hunk (capped at 8 files per digest), and the repo's README plus one package manifest like package.json. Those extras ground the digest in the project's actual intent and context. Lock files, node_modules, environment variables, secrets, and build artifacts are never read.",
   },
   {
     q: "What LLM does AskScout use?",
-    a: "Defaults to Claude Haiku 4.5 on Anthropic and gpt-4o-mini on OpenAI, with the provider auto-detected from your API key prefix. You can override the model in ~/.askscout/config.json. The defaults are picked for speed and cost; larger models work but run slower.",
+    a: "Defaults to Claude Haiku 4.5 on Anthropic and gpt-4o-mini on OpenAI, with the provider auto-detected from your API key prefix. You can override the model in ~/.askscout/config.json. The defaults are picked for speed and cost. Larger models work but run slower.",
   },
   {
     q: "How long does it take to generate a digest?",
-    a: "Most digests stream in under 10 seconds end to end. The bottleneck is the LLM round trip; reading commits and computing structural signals (Codebase Health, Pace Check) takes well under a second on typical repos.",
+    a: "Most digests stream in well under a minute end to end. The bottleneck is the LLM round trip. Reading commits and computing structural signals (Codebase Health, Pace Check) takes well under a second on typical repos.",
   },
   {
     q: "Can I see the prompt AskScout uses?",
@@ -102,46 +105,76 @@ export default function HowAskScoutSummarizesGitPage() {
         <section className="public-section">
           <h2 className="public-section-title">Why git log fails at AI-coding pace</h2>
           <p className="public-text">
-            <code className="inline-code">git log</code> works fine when you write ten clean
-            commits a day with messages you wrote yourself. At fifty commits a day with
+            <code className="inline-code">git log</code> works fine when you write a handful of
+            clean commits a day with messages you wrote yourself. At AI-assisted pace, with
             auto-generated messages like <code className="inline-code">fix</code> and{" "}
-            <code className="inline-code">wip</code>, it stops being useful. The format does not
-            scale to the volume.
+            <code className="inline-code">wip</code>, the format stops being useful. The output
+            doesn't scale to the volume.
           </p>
           <p className="public-text">
-            The fix is not a better git command. It is a layer on top of git that does what
-            humans used to do at lower volume: read it, group it, summarize it. AskScout is that
-            layer. Here is how it works.
+            The fix isn't a better git command. It's a layer on top of git that does what
+            humans used to do at lower volume: read it and summarize it. AskScout is that layer.
+            Here's how it works. (For the bigger argument behind why this layer matters now,{" "}
+            <Link
+              href="/articles/introducing-askscout"
+              className="home-prose-link"
+            >
+              Introducing AskScout
+            </Link>{" "}
+            sets the table.)
           </p>
         </section>
 
         <section className="public-section">
           <h2 className="public-section-title">Step 1: Read commits and diffs</h2>
           <p className="public-text">
-            On the web app, AskScout pulls commits and diffs through the GitHub API after you
-            grant read-only access. On the CLI, it calls git directly in your local repo to
-            pull the same data, with{" "}
+            On the web app, AskScout pulls commits and diffs through the{" "}
+            <a
+              href="https://docs.github.com/en/rest"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="home-prose-link"
+            >
+              GitHub REST API
+            </a>{" "}
+            after you grant read-only access. On the CLI, it calls git directly in your local
+            repo to pull the same data, with{" "}
             <code className="inline-code">--week</code> for the past 7 days. Either path
             fetches commits since your last run by default.
           </p>
           <p className="public-text">
-            What gets read on the web app: commit messages, timestamps, authors, file paths,
-            and the actual diff patches (the lines added and removed in each commit). Pull
-            request titles and descriptions, plus the titles and bodies of any GitHub issues
-            those PRs reference, so the digest can ground itself in the stated intent behind
-            each change. For up to the 8 most-changed files, ~15 lines of surrounding source
-            code around each changed hunk so refactors and sparse edits can be read in
-            context. The repository&apos;s README and a single project manifest (one of{" "}
-            <code className="inline-code">package.json</code>,{" "}
-            <code className="inline-code">pyproject.toml</code>,{" "}
-            <code className="inline-code">Cargo.toml</code>,{" "}
-            <code className="inline-code">go.mod</code>,{" "}
-            <code className="inline-code">composer.json</code>, or{" "}
-            <code className="inline-code">Gemfile</code>), so the model can frame every diff
-            against the actual project. What does not get read: full source files outside
-            the changed regions, environment variables, secrets, lock files, build
-            artifacts, and untracked files. The CLI reads the same data minus the
-            PR/issue context — git itself doesn&apos;t store that.
+            What gets read on the web app:
+          </p>
+          <ul className="public-text">
+            <li>Commit messages, timestamps, authors, file paths.</li>
+            <li>
+              The actual diff patches (the lines added and removed in each commit).
+            </li>
+            <li>
+              Pull request titles and descriptions, plus the titles and bodies of any GitHub
+              issues those PRs reference, so the digest can ground itself in the stated
+              intent behind each change.
+            </li>
+            <li>
+              For up to the 8 most-changed files, ~15 lines of surrounding source code around
+              each changed hunk so refactors and sparse edits can be read in context.
+            </li>
+            <li>
+              The repository&apos;s README and a single project manifest (one of{" "}
+              <code className="inline-code">package.json</code>,{" "}
+              <code className="inline-code">pyproject.toml</code>,{" "}
+              <code className="inline-code">Cargo.toml</code>,{" "}
+              <code className="inline-code">go.mod</code>,{" "}
+              <code className="inline-code">composer.json</code>, or{" "}
+              <code className="inline-code">Gemfile</code>), so the model can frame every diff
+              against the actual project.
+            </li>
+          </ul>
+          <p className="public-text">
+            What doesn&apos;t get read: full source files outside the changed regions,
+            environment variables, secrets, lock files, build artifacts, and untracked files.
+            The CLI reads the same data minus the PR and issue context, because git itself
+            doesn&apos;t store that.
           </p>
         </section>
 
@@ -153,10 +186,10 @@ export default function HowAskScoutSummarizesGitPage() {
           </p>
           <p className="public-text">
             <strong>Codebase Health</strong> is three measurements. Growth is the ratio of
-            lines added to lines removed (Lean to Ballooning). Focus is the average files
-            touched per commit (Tight to Scattered). Churn is how many files were reworked
-            three or more times in the window (Clean to High). All three come from
-            arithmetic, not LLM judgment.
+            lines added to lines removed, classified from Lean up through Ballooning. Focus
+            looks at the average files touched per commit, running from Tight to Scattered.
+            Churn counts how many files were reworked three or more times in the window, on a
+            Clean-to-High scale. All three come from arithmetic, not LLM judgment.
           </p>
           <p className="public-text">
             <strong>Pace Check</strong> compares today&apos;s commit count to the average of
@@ -165,8 +198,8 @@ export default function HowAskScoutSummarizesGitPage() {
             <em>1.7x</em>) is straight division.
           </p>
           <p className="public-text">
-            Computing these structurally rather than asking the LLM means they are exact and
-            cheap to verify.
+            Doing the math instead of asking the model makes these numbers exact and easy to
+            audit.
           </p>
         </section>
 
@@ -183,12 +216,20 @@ export default function HowAskScoutSummarizesGitPage() {
             work&rdquo; and &ldquo;leveraged.&rdquo; A required format for bullets:{" "}
             <code className="inline-code">Title - body</code> with 2-5 plain-language words in
             the title. No file paths or function names in summaries (the model translates
-            everything to features and behaviors). No em dashes, no semicolons.
+            everything to features and behaviors). No em dashes, no semicolons. The full
+            constraint list is open source. See{" "}
+            <Link
+              href="/articles/why-askscout-is-open-source"
+              className="home-prose-link"
+            >
+              Why we made AskScout open source
+            </Link>{" "}
+            for why we publish it.
           </p>
           <p className="public-text">
             The point of the constraints is voice. Without them, the LLM defaults to changelog
-            English: passive, vague, lists of three. The constraints force it into the voice
-            of a sharp, warm friend who actually looked at the code.
+            English: passive and vague. The constraints force it into the voice of a sharp,
+            warm friend who actually looked at the code.
           </p>
         </section>
 
@@ -203,8 +244,10 @@ export default function HowAskScoutSummarizesGitPage() {
           </p>
           <p className="public-text">
             That is everything. Read commits, compute signals, prompt the LLM with real data
-            and tight constraints, render the output. The whole pipeline runs in under 10
-            seconds for typical repos.
+            and tight constraints, render the output. The whole pipeline runs in well under a
+            minute for typical repos, with most of that time spent waiting on the model.
+            Install the CLI in your own repo via the <Link href="/docs" className="home-prose-link">CLI docs</Link>{" "}
+            to watch it run end-to-end.
           </p>
         </section>
 
