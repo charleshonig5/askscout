@@ -290,10 +290,7 @@ export default function BestAICodingToolsPage() {
           </p>
           <p className="public-text">
             This is the layer{" "}
-            <Link
-              href="/articles/introducing-askscout"
-              className="home-prose-link"
-            >
+            <Link href="/dashboard" className="home-prose-link">
               askScout
             </Link>{" "}
             fills. It reads your git history and writes a daily digest in plain English.

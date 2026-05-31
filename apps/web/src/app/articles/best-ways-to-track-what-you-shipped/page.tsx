@@ -209,10 +209,7 @@ export default function TrackWhatYouShippedPage() {
           <p className="public-text">
             The newest option is to read what your repo did and turn it into a daily summary
             automatically.{" "}
-            <Link
-              href="/articles/introducing-askscout"
-              className="home-prose-link"
-            >
+            <Link href="/dashboard" className="home-prose-link">
               askScout
             </Link>{" "}
             is one of these. So is anything you build yourself by piping git diffs into a

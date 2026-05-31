@@ -198,7 +198,11 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
         <section className="public-section">
           <h2 className="public-section-title">The automated way</h2>
           <p className="public-text">
-            On the askScout web app, generate this block by clicking the{" "}
+            On the{" "}
+            <Link href="/dashboard" className="home-prose-link">
+              askScout web app
+            </Link>
+            , generate this block by clicking the{" "}
             <strong>AI Resume Prompt</strong> button at the bottom of any digest. It opens a
             modal with the same five-section context, ready to copy. The CLI does the same
             thing in one command (install steps are in the{" "}

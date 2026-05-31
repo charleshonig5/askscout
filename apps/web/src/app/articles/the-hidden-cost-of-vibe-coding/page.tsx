@@ -191,11 +191,11 @@ export default function HiddenCostPage() {
           </p>
           <p className="public-text">
             That&apos;s{" "}
-            <Link href="/articles/introducing-askscout" className="home-prose-link">
+            <Link href="/dashboard" className="home-prose-link">
               askScout
             </Link>
-            . Sign in to the web app at <Link href="/">askscout.dev</Link>, or run it as a CLI
-            in any local repo with your own LLM key. It reads your commits, diffs, and a small
+            . Sign in to the web app at <Link href="/dashboard">askscout.dev</Link>, or run it as
+            a CLI in any local repo with your own LLM key. It reads your commits, diffs, and a small
             amount of project context (README plus a manifest like package.json) so the LLM you
             choose has enough to write a digest worth reading. Source files outside the changed
             regions, environment variables, secrets, and build artifacts are never read. Free.

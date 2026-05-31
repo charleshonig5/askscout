@@ -158,8 +158,12 @@ export default function IntroducingAskScoutPage() {
         <section className="public-section">
           <h2 className="public-section-title">Two surfaces, one product</h2>
           <p className="public-text">
-            askScout runs in two places. The web app at askscout.dev signs in with GitHub, picks
-            a repo, and starts streaming. Your digest history saves under your account. The CLI
+            askScout runs in two places. The web app at{" "}
+            <Link href="/dashboard" className="home-prose-link">
+              askscout.dev
+            </Link>{" "}
+            signs in with GitHub, picks a repo, and starts streaming. Your digest history saves
+            under your account. The CLI
             installs with <code className="inline-code">npm install -g askscout</code>, lives
             in any local repo, and uses your own Anthropic or OpenAI API key. Full install
             steps are in the <Link href="/docs" className="home-prose-link">CLI docs</Link>.

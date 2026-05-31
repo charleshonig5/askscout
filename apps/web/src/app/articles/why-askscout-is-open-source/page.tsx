@@ -224,9 +224,12 @@ export default function WhyAskScoutOpenSourcePage() {
             most trusted version of this tool is worth more than being the only version of it.
           </p>
           <p className="public-text">
-            If a company forks askScout and ships a paid product on top, that is fine. We&apos;d
-            rather have an honest open codebase than a moat that depends on developers not
-            being able to look inside.
+            If a company forks{" "}
+            <Link href="/dashboard" className="home-prose-link">
+              askScout
+            </Link>{" "}
+            and ships a paid product on top, that is fine. We&apos;d rather have an honest open
+            codebase than a moat that depends on developers not being able to look inside.
           </p>
           <p className="public-text">
             (For the longer argument about why a tool like this needs to exist at all,{" "}
