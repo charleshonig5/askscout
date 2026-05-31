@@ -4158,6 +4158,14 @@ a:hover {
    radius. Work Sans Light 16 label. */
 .home-cta {
   position: relative;
+  /* Reset the browser's default <button> styling — without these
+     three, the native user-agent border bleeds through under the
+     comet-border ::before and reads as a second, mismatched
+     outline. The bottom .home-readycta-btn never had this issue
+     because it carried the reset from the start. */
+  appearance: none;
+  border: 0;
+  margin: 0;
   /* Establish a stacking context so the comet-border ::before
      pseudo-element stays contained within the button's painting
      layer. Without this, z-indexed children inside the button
