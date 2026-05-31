@@ -12801,6 +12801,9 @@ a:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  /* 14px gap between the GitHub mark and the label, per Figma 442:178
+     and matching the marketing-home .home-cta / .home-readycta-btn. */
+  gap: 14px;
   height: 54px;
   padding: 15px 24px;
   border-radius: 6px;

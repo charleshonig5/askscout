@@ -7,6 +7,7 @@ import {
   SquareArrowUpRight,
 } from "lucide-react";
 import { signIn } from "@/auth";
+import { GitHubMark } from "@/components/GitHubMark";
 import { MarketingNav } from "@/components/MarketingNav";
 import { CommandChip } from "@/components/CommandChip";
 import { DocsCliCmdInline } from "@/components/DocsCliCmdInline";
@@ -246,8 +247,13 @@ export default function DocsPage() {
                   await signIn("github", { redirectTo: "/dashboard" });
                 }}
               >
+                {/* Match the marketing-home hero + ReadyCTA pattern
+                    (Figma 442:178) — same icon, same label, same
+                    rationale: set the GitHub-OAuth expectation before
+                    the click so the consent screen isn't a surprise. */}
                 <button type="submit" className="docs-webapp-card-btn">
-                  Sign in with GitHub
+                  <GitHubMark />
+                  Continue with GitHub
                 </button>
               </form>
             </div>
