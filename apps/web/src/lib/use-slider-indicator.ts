@@ -17,9 +17,15 @@ import { useLayoutEffect, useRef, useState } from "react";
  *
  * Re-measures when:
  *   - `activeKey` changes (the common case — driving the slide)
- *   - `keys` array changes (label/count edited during dev iteration)
  *   - Window resize (font-load shifts, viewport changes)
  *   - First layout via useLayoutEffect (no 1-frame flash at 0,0)
+ *
+ * Earlier version of this hook also took a `keys` array in its
+ * dep list. That caused an infinite render loop because consumers
+ * recreated the array on every render: new reference → effect
+ * fired → setIndicator → re-render → new reference, etc. The
+ * effect only needs activeKey to look up the item ref, so the
+ * array param is gone.
  *
  * Returns:
  *   - `containerRef` — attach to the wrapping element
@@ -29,19 +35,13 @@ import { useLayoutEffect, useRef, useState } from "react";
  *     Consumer can use `null` to set opacity 0 so the indicator
  *     doesn't flash at the top-left corner before measure.
  */
-export function useSliderIndicator<TKey extends string>(
-  keys: TKey[],
-  activeKey: TKey,
-) {
+export function useSliderIndicator<TKey extends string>(activeKey: TKey) {
   const containerRef = useRef<HTMLElement | null>(null);
   const itemRefs = useRef<Map<TKey, HTMLElement>>(new Map());
   const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(
     null,
   );
 
-  // Effect body declares its own measure() so the closure captures
-  // only the deps we care about (activeKey + keys) — avoids the
-  // exhaustive-deps trap that comes with an outer helper function.
   useLayoutEffect(() => {
     const measure = () => {
       const container = containerRef.current;
@@ -54,7 +54,7 @@ export function useSliderIndicator<TKey extends string>(
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
-  }, [activeKey, keys]);
+  }, [activeKey]);
 
   const setItemRef = (key: TKey) => (el: HTMLElement | null) => {
     if (el) itemRefs.current.set(key, el);

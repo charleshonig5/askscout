@@ -41,8 +41,7 @@ export function FAQTablist({
   panelIdPrefix,
   tabIdPrefix,
 }: FAQTablistProps) {
-  const keys = tabs.map((t) => t.id);
-  const { containerRef, setItemRef, indicator } = useSliderIndicator(keys, active);
+  const { containerRef, setItemRef, indicator } = useSliderIndicator(active);
 
   return (
     <div

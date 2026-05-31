@@ -51,8 +51,7 @@ export function ArticlesIndexInteractive({
   // powers the FAQ tabs' active-pill slide, so motion across the
   // marketing site (filter chips + FAQ tabs) reads as one
   // coherent pattern.
-  const filterKeys = FILTERS.map((f) => f.value);
-  const indicatorData = useSliderIndicator(filterKeys, filter);
+  const indicatorData = useSliderIndicator(filter);
 
   return (
     <div className="articles-index">
