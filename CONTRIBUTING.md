@@ -67,6 +67,41 @@ Cross-package dependencies use `workspace:*`. Build order is core → cli/web.
 - Run `pnpm format` before pushing
 - Follow ESLint warnings, they're tuned, not noise
 
+## Releases
+
+Versioning and publishing are automated through [Changesets](https://github.com/changesets/changesets). Maintainers do not edit `package.json` versions by hand. The full flow:
+
+1. **Author a changeset alongside your change.** From the repo root:
+
+   ```bash
+   pnpm changeset
+   ```
+
+   You will be asked which packages changed (`askscout`, `askscout-core`, or both), the kind of bump (`patch` for fixes, `minor` for additive features, `major` for breaking changes), and a one-line summary. The tool writes a small markdown file under `.changeset/` that you commit with your PR.
+
+   Skip the changeset only for changes that do not affect a published package — for example, docs in the repo root, internal plan files, or work confined to `apps/web` (the web app is not published to npm and is excluded from the Changesets config).
+
+2. **Merge the PR.** When the changeset lands on `main`, the Release workflow opens an auto-generated **"Version Packages"** pull request. It bumps versions in `package.json`, regenerates each package's `CHANGELOG.md`, and removes the consumed changeset file.
+
+3. **Merge the Version Packages PR.** This is the formal release step. As soon as it merges, the Release workflow:
+   - Runs the build and tests
+   - Publishes the bumped packages to npm
+   - Creates an annotated git tag per package (e.g. `askscout@0.2.3`)
+   - Opens a GitHub Release with the changelog notes
+
+   No manual `pnpm publish`, no manual tagging, no manual GitHub Release creation. Everything is wired up.
+
+### When the automation does not fit
+
+Manual publishes are reserved for emergencies — a tooling outage, a hotfix needed before the next merge cycle, or a one-off republish for a broken artifact. In those cases:
+
+```bash
+cd packages/cli   # or packages/core
+pnpm publish --no-git-checks
+```
+
+After a manual publish, immediately push a matching tag (`askscout@<version>`) and open a GitHub Release so the history stays consistent.
+
 ## Testing
 
 The project uses [vitest](https://vitest.dev/). Run the full suite with `pnpm test`. Run a single package's tests with `pnpm --filter askscout-core test`.
