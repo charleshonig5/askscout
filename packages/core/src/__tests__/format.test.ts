@@ -93,6 +93,7 @@ function makeDigest(overrides: Partial<Digest> = {}): Digest {
       timeSpan: { from: new Date("2026-04-30T09:00:00Z"), to: new Date("2026-04-30T17:00:00Z") },
     },
     health: null,
+    fieldNotes: "",
     keyTakeaways: "Keep the chunk small, the diffs honest.",
     resumeContext: {
       techStack: "TypeScript, Next.js",

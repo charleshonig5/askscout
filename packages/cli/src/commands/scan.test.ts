@@ -35,7 +35,7 @@ describe("getSinceDate", () => {
       version: 2,
       lastRunAt: twoHoursAgo.toISOString(),
       runCount: 5,
-      summary: null,
+      summary: "",
       digestHistory: [],
     };
     const got = getSinceDate("auto", state);
@@ -48,7 +48,7 @@ describe("getSinceDate", () => {
       version: 2,
       lastRunAt: fortyDaysAgo.toISOString(),
       runCount: 5,
-      summary: null,
+      summary: "",
       digestHistory: [],
     };
     const got = getSinceDate("auto", state);
@@ -66,7 +66,7 @@ describe("getSinceDate", () => {
       version: 2,
       lastRunAt: exactlyThirty.toISOString(),
       runCount: 5,
-      summary: null,
+      summary: "",
       digestHistory: [],
     };
     const got = getSinceDate("auto", state);
