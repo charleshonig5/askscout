@@ -15,7 +15,7 @@ import { Header } from "@/components/Header";
  * the same card-on-page rhythm without inventing a new layout system.
  *
  * Page contents are built section by section per the plan in
- * `ACTIVITY_DASHBOARD_PLAN.md`. This file holds the shell + section
+ * `docs/internal/ACTIVITY_DASHBOARD_PLAN.md`. This file holds the shell + section
  * scaffolding; each section's real content lands incrementally.
  */
 interface ActivityDay {

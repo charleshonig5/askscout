@@ -2,7 +2,7 @@
  * Personality computation for the Insights page.
  *
  * Implements the 21-archetype + 8-modifier system specced in
- * `ACTIVITY_DASHBOARD_PLAN.md`. Pure functions only — given the user's
+ * `docs/internal/ACTIVITY_DASHBOARD_PLAN.md`. Pure functions only — given the user's
  * digest + check-in rows, returns a `PersonalityResult` describing
  * which state to render (hidden / placeholder / real / dormant), the
  * primary archetype, its data-driven subheader, and a short row of

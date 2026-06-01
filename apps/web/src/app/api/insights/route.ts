@@ -4,7 +4,7 @@ import { computePersonality, type PersonalityResult } from "./personality";
 
 /**
  * Insights API — aggregates everything the /insights page needs into one
- * payload. Built incrementally per ACTIVITY_DASHBOARD_PLAN.md:
+ * payload. Built incrementally per docs/internal/ACTIVITY_DASHBOARD_PLAN.md:
  *
  *   Phase 1 (this commit): bestStreak + totalDigests
  *   Phase 2: activityDays for the calendar
