@@ -1,6 +1,13 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "web", "runtimeExecutable": "pnpm", "runtimeArgs": ["dev"], "port": 3788, "cwd": "apps/web", "env": { "PORT": "3788" } }
+    {
+      "name": "web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["dev"],
+      "port": 3788,
+      "cwd": "apps/web",
+      "env": { "PORT": "3788" }
+    }
   ]
 }

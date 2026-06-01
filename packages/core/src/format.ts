@@ -117,15 +117,12 @@ export function formatDigest(digest: Digest, options: FormatOptions): string {
     const stripAsterisks = (s: string) => s.replace(/\*([^*\n]+)\*/g, "$1");
     const cleaned = stripAsterisks(digest.fieldNotes.trim());
     const splitIdx = cleaned.indexOf("\n");
-    const subtitle =
-      splitIdx === -1 ? cleaned : cleaned.slice(0, splitIdx).trim();
-    const body =
-      splitIdx === -1 ? "" : cleaned.slice(splitIdx + 1).trim();
+    const subtitle = splitIdx === -1 ? cleaned : cleaned.slice(0, splitIdx).trim();
+    const body = splitIdx === -1 ? "" : cleaned.slice(splitIdx + 1).trim();
     if (subtitle || body) {
       const header = rich ? "\ud83e\udded Field Notes" : PLAIN_HEADERS.fieldNotes;
       const ESC = "\x1b";
-      const renderedSubtitle =
-        subtitle && rich ? `${ESC}[1m${subtitle}${ESC}[22m` : subtitle;
+      const renderedSubtitle = subtitle && rich ? `${ESC}[1m${subtitle}${ESC}[22m` : subtitle;
       const parts = [header];
       if (subtitle) parts.push(renderedSubtitle);
       if (body) parts.push(body);

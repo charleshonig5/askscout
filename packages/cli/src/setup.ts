@@ -101,9 +101,7 @@ export async function inlineSetup(): Promise<CliConfig | null> {
   console.error(
     "   • sk-ant-…  →  Anthropic (Claude)   — https://console.anthropic.com/settings/keys",
   );
-  console.error(
-    "   • sk-…      →  OpenAI              — https://platform.openai.com/api-keys\n",
-  );
+  console.error("   • sk-…      →  OpenAI              — https://platform.openai.com/api-keys\n");
   console.error("   Either works. Paste your key when prompted.");
   console.error(
     "   Your key stays on this machine and is never sent anywhere except your chosen provider.\n",

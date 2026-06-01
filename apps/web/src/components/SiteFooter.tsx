@@ -34,11 +34,7 @@ export function SiteFooter() {
               language for "live / healthy" signals. Static for
               now — wired to a real status source if/when we have
               one. */}
-          <span
-            className="home-footer-status"
-            role="status"
-            aria-label="All systems operational"
-          >
+          <span className="home-footer-status" role="status" aria-label="All systems operational">
             <span className="home-footer-status-dot" aria-hidden />
             All systems operational
           </span>

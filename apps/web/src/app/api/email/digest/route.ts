@@ -128,9 +128,7 @@ export async function POST(req: Request) {
       {
         error: "rate_limited",
         message: "You already emailed this digest in the last hour.",
-        retryAfter: Math.ceil(
-          (ONE_HOUR_MS - (Date.now() - lastEmailed.getTime())) / 1000,
-        ),
+        retryAfter: Math.ceil((ONE_HOUR_MS - (Date.now() - lastEmailed.getTime())) / 1000),
       },
       { status: 429 },
     );

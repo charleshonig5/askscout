@@ -66,11 +66,7 @@ export function SignOutForm({
   }, []);
 
   return (
-    <form
-      method="POST"
-      action="/api/auth/signout"
-      style={formStyle ?? { display: "contents" }}
-    >
+    <form method="POST" action="/api/auth/signout" style={formStyle ?? { display: "contents" }}>
       <input type="hidden" name="csrfToken" value={csrf ?? ""} />
       <input type="hidden" name="callbackUrl" value={callbackUrl} />
       {children(csrf === null)}

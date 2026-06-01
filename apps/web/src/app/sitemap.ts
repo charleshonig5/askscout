@@ -23,7 +23,9 @@ const DOCS_LAST_MODIFIED = new Date("2026-05-04");
 /* Newest article date powers the /articles index lastModified, so
    the index freshness reflects when new content actually arrives. */
 const ARTICLES_INDEX_LAST_MODIFIED = new Date(
-  ARTICLES.map((a) => a.date).sort().at(-1) ?? "2026-05-01",
+  ARTICLES.map((a) => a.date)
+    .sort()
+    .at(-1) ?? "2026-05-01",
 );
 
 export default function sitemap(): MetadataRoute.Sitemap {

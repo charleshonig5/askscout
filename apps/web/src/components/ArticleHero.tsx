@@ -76,9 +76,7 @@ export function ArticleHero({ slug, title, deck }: ArticleHeroProps) {
               </div>
             )}
           </div>
-          {listing && (
-            <span className="article-hero-date">{formatArticleDate(listing.date)}</span>
-          )}
+          {listing && <span className="article-hero-date">{formatArticleDate(listing.date)}</span>}
         </div>
       </div>
       <hr className="article-hero-rule" />

@@ -83,19 +83,22 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const showError = useCallback((title: string, description?: string) => {
-    const id = nextId.current++;
-    setToasts((prev) => [{ id, variant: "error", title, description }, ...prev]);
-    // Auto-dismiss after AUTO_DISMISS_MS. Cleanup happens through
-    // the dismiss call's normal state filter so manual dismissal
-    // (clicking the toast) and timer dismissal converge on the
-    // same code path.
-    const timerId = window.setTimeout(() => {
-      timers.current.delete(timerId);
-      dismiss(id);
-    }, AUTO_DISMISS_MS);
-    timers.current.add(timerId);
-  }, [dismiss]);
+  const showError = useCallback(
+    (title: string, description?: string) => {
+      const id = nextId.current++;
+      setToasts((prev) => [{ id, variant: "error", title, description }, ...prev]);
+      // Auto-dismiss after AUTO_DISMISS_MS. Cleanup happens through
+      // the dismiss call's normal state filter so manual dismissal
+      // (clicking the toast) and timer dismissal converge on the
+      // same code path.
+      const timerId = window.setTimeout(() => {
+        timers.current.delete(timerId);
+        dismiss(id);
+      }, AUTO_DISMISS_MS);
+      timers.current.add(timerId);
+    },
+    [dismiss],
+  );
 
   return (
     <ToastContext.Provider value={{ showError }}>
@@ -127,9 +130,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                 </span>
                 <span className="toast-body">
                   <span className="toast-title">{t.title}</span>
-                  {t.description && (
-                    <span className="toast-desc">{t.description}</span>
-                  )}
+                  {t.description && <span className="toast-desc">{t.description}</span>}
                 </span>
                 <span className="toast-close" aria-label="Dismiss">
                   <X size={14} strokeWidth={1.5} aria-hidden />

@@ -210,10 +210,7 @@ export interface FileHunkContext {
 /** Resolve a commit's first parent SHA, or null if it has none
  *  (initial commit, transient git error). Callers treat null as
  *  "skip the context-fetching feature for this run". */
-export async function getParentSha(
-  projectRoot: string,
-  sha: string,
-): Promise<string | null> {
+export async function getParentSha(projectRoot: string, sha: string): Promise<string | null> {
   try {
     const stdout = await execGit(projectRoot, ["rev-parse", `${sha}^`]);
     const trimmed = stdout.trim();

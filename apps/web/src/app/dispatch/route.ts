@@ -36,8 +36,7 @@ const toIso = (date: string): string => new Date(`${date}T00:00:00Z`).toISOStrin
 export const dynamic = "force-static";
 
 export function GET(): Response {
-  const updated =
-    ARTICLES.length > 0 ? toIso(ARTICLES[0]!.date) : new Date().toISOString();
+  const updated = ARTICLES.length > 0 ? toIso(ARTICLES[0]!.date) : new Date().toISOString();
 
   const entries = ARTICLES.map((a) => {
     const url = `${SITE_URL}/articles/${a.slug}`;

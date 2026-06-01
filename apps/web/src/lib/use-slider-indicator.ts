@@ -38,9 +38,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 export function useSliderIndicator<TKey extends string>(activeKey: TKey) {
   const containerRef = useRef<HTMLElement | null>(null);
   const itemRefs = useRef<Map<TKey, HTMLElement>>(new Map());
-  const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(
-    null,
-  );
+  const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(null);
 
   useLayoutEffect(() => {
     const measure = () => {

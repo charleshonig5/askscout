@@ -1,10 +1,4 @@
-export {
-  getCommits,
-  getDiffs,
-  getFileContextForHunks,
-  getParentSha,
-  getRepoName,
-} from "./git.js";
+export { getCommits, getDiffs, getFileContextForHunks, getParentSha, getRepoName } from "./git.js";
 export type { FileHunkContext } from "./git.js";
 export { getProjectFraming } from "./framing.js";
 export type { ProjectFraming } from "./framing.js";
@@ -19,11 +13,7 @@ export {
   formatDiffsForPrompt,
   computeStats,
 } from "./summarize.js";
-export {
-  detectStack,
-  formatDetectedStackBlock,
-  createLocalFilesReader,
-} from "./detect-stack.js";
+export { detectStack, formatDetectedStackBlock, createLocalFilesReader } from "./detect-stack.js";
 export type { DetectedStack, FilesReader } from "./detect-stack.js";
 export {
   extractTodosFromDiffs,

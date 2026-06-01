@@ -27,8 +27,7 @@ const SITE = "https://askscout.dev";
 export const dynamic = "force-static";
 
 export function GET() {
-  const articles = ARTICLES
-    .slice()
+  const articles = ARTICLES.slice()
     .sort((a, b) => b.date.localeCompare(a.date))
     .map((a) => `- [${a.title}](${SITE}/articles/${a.slug}): ${a.description}`)
     .join("\n");

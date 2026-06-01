@@ -122,10 +122,10 @@ API keys are stored in `~/.askscout/config.json` with file mode `0600` (owner re
 
 askScout supports two LLM providers, auto-detected from your API key format:
 
-| Prefix | Provider | Where to get a key |
-|---|---|---|
+| Prefix     | Provider           | Where to get a key                          |
+| ---------- | ------------------ | ------------------------------------------- |
 | `sk-ant-…` | Anthropic (Claude) | https://console.anthropic.com/settings/keys |
-| `sk-…` | OpenAI | https://platform.openai.com/api-keys |
+| `sk-…`     | OpenAI             | https://platform.openai.com/api-keys        |
 
 Run `askscout --setup` to paste your key. To switch providers later:
 

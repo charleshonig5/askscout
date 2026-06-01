@@ -46,9 +46,7 @@ export function FeaturesMotion({ children }: Props) {
   useEffect(() => {
     if (playedRef.current) return;
 
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion) {
       playedRef.current = true;
       // Stay in "done". No animation timeline.
@@ -84,11 +82,7 @@ export function FeaturesMotion({ children }: Props) {
 
   return (
     <FeaturesPhaseContext.Provider value={phase}>
-      <div
-        ref={rootRef}
-        data-features-phase={phase}
-        className="home-features-motion"
-      >
+      <div ref={rootRef} data-features-phase={phase} className="home-features-motion">
         {children}
       </div>
     </FeaturesPhaseContext.Provider>

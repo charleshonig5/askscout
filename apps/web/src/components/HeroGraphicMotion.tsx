@@ -63,9 +63,7 @@ export function HeroGraphicMotion({ children }: Props) {
   useEffect(() => {
     // Reduced-motion users: stay on "done" forever. No reset to
     // skeleton, no timeline. They get the static graphic.
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion) return;
 
     const el = ref.current;
@@ -120,11 +118,7 @@ export function HeroGraphicMotion({ children }: Props) {
 
   return (
     <GraphicPhaseContext.Provider value={phase}>
-      <div
-        ref={ref}
-        data-graphic-phase={phase}
-        className="home-hero-graphic-motion"
-      >
+      <div ref={ref} data-graphic-phase={phase} className="home-hero-graphic-motion">
         {children}
       </div>
     </GraphicPhaseContext.Provider>

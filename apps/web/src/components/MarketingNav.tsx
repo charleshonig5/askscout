@@ -118,10 +118,7 @@ export function MarketingNav() {
 
   return (
     <>
-      <nav
-        className={menuOpen ? "home-nav home-nav--menu-open" : "home-nav"}
-        aria-label="Site"
-      >
+      <nav className={menuOpen ? "home-nav home-nav--menu-open" : "home-nav"} aria-label="Site">
         <ForceDarkTheme />
         <Link href="/home" className="home-nav-logo" aria-label="askScout home">
           <Logo height={20} />

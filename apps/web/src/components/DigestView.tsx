@@ -178,9 +178,7 @@ function buildFullMarkdown(
   }
 
   const sidebarBlock =
-    statsBlocks.length > 0
-      ? `${h2("\u{1F4CA} Statistics")}\n\n${statsBlocks.join("\n\n")}`
-      : "";
+    statsBlocks.length > 0 ? `${h2("\u{1F4CA} Statistics")}\n\n${statsBlocks.join("\n\n")}` : "";
 
   // 4. Title + metadata header. In markdown mode the repo name is the
   //    H1 and the date is bold; in text mode they're just two plain
@@ -262,10 +260,8 @@ function formatNarrativeBody(
     const collapseNewlines = (s: string) => s.replace(/\s*\n+\s*/g, " ").trim();
     const cleaned = stripAsterisks(trimmed);
     const splitIdx = cleaned.indexOf("\n");
-    const subtitle =
-      splitIdx === -1 ? cleaned : cleaned.slice(0, splitIdx).trim();
-    const body =
-      splitIdx === -1 ? "" : collapseNewlines(cleaned.slice(splitIdx + 1));
+    const subtitle = splitIdx === -1 ? cleaned : cleaned.slice(0, splitIdx).trim();
+    const body = splitIdx === -1 ? "" : collapseNewlines(cleaned.slice(splitIdx + 1));
     const parts: string[] = [];
     if (subtitle) parts.push(bold(subtitle));
     if (body) parts.push(body);
@@ -440,21 +436,18 @@ function EmailBtn({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      const json = (await res.json().catch(() => null)) as
-        | {
-            ok?: boolean;
-            skipped?: boolean;
-            reason?: string;
-            error?: string;
-            message?: string;
-          }
-        | null;
+      const json = (await res.json().catch(() => null)) as {
+        ok?: boolean;
+        skipped?: boolean;
+        reason?: string;
+        error?: string;
+        message?: string;
+      } | null;
 
       if (!res.ok) {
         if (res.status === 403 && json?.error === "missing_email_scope") {
           showError(
-            json.message ??
-              "Sign out and back in to grant email permission, then try again.",
+            json.message ?? "Sign out and back in to grant email permission, then try again.",
           );
         } else if (res.status === 429) {
           showError(json?.message ?? "Already emailed in the last hour.");
@@ -652,7 +645,10 @@ function splitBulletTitle(item: string): { title: string | null; context: string
   }
   const words = item.trim().split(/\s+/);
   if (words.length >= 5) {
-    const title = words.slice(0, 4).join(" ").replace(/[,;:.!?]+$/, "");
+    const title = words
+      .slice(0, 4)
+      .join(" ")
+      .replace(/[,;:.!?]+$/, "");
     const context = capitalizeFirst(words.slice(4).join(" "));
     return { title, context };
   }
@@ -829,18 +825,14 @@ function StreamingDigest({
                 <div className="digest-fieldnotes-body-row">
                   <div className="digest-fieldnotes-rule" aria-hidden />
                   <div className="digest-fieldnotes-content">
-                    {subtitle && (
-                      <p className="digest-fieldnotes-subtitle">{subtitle}</p>
-                    )}
+                    {subtitle && <p className="digest-fieldnotes-subtitle">{subtitle}</p>}
                     {body && (
                       <p className="digest-fieldnotes-body">
                         {body}
                         {showCursor && cursor}
                       </p>
                     )}
-                    {!body && showCursor && (
-                      <p className="digest-fieldnotes-body">{cursor}</p>
-                    )}
+                    {!body && showCursor && <p className="digest-fieldnotes-body">{cursor}</p>}
                   </div>
                 </div>
               )}
@@ -890,9 +882,7 @@ function StreamingDigest({
               <div className="digest-bulleted-heading">
                 <Emoji name={section.key} size={20} />
                 <span className="digest-bulleted-label">{section.label}</span>
-                {items.length > 0 && (
-                  <BulletedCount count={items.length} animate={isStreaming} />
-                )}
+                {items.length > 0 && <BulletedCount count={items.length} animate={isStreaming} />}
                 {showCursor && <LiveBadge />}
                 {section.key === "shipped" && !isStreaming && items.length > 0 && (
                   <ShareBtn items={items} />
@@ -1084,9 +1074,7 @@ function TimelineBar({
         left: `${centerPct}%`,
         bottom: "14px",
         height: `${height}px`,
-        transition: animate
-          ? "height 800ms ease-out, opacity 0.15s ease"
-          : undefined,
+        transition: animate ? "height 800ms ease-out, opacity 0.15s ease" : undefined,
       }}
       onClick={onClick}
     >
@@ -1896,11 +1884,7 @@ function CodebaseHealth({ health, animate = true }: { health: HealthData; animat
   // numbers snap in) AND value > 0 (a static "0" is visually quieter than a
   // 0→0 no-op tween).
   const addedAnim = useCountUp(health.growth.added, 1000, animate && health.growth.added > 0);
-  const removedAnim = useCountUp(
-    health.growth.removed,
-    1000,
-    animate && health.growth.removed > 0,
-  );
+  const removedAnim = useCountUp(health.growth.removed, 1000, animate && health.growth.removed > 0);
   const filesPerCommitAnim = useCountUp(
     health.focus.filesPerCommit,
     1000,
@@ -2295,7 +2279,6 @@ export function DigestView({
                 visibleSections={visibleSections}
               />
             )}
-
           </div>
 
           {renderSidebar && (

@@ -39,11 +39,7 @@ export function ReadyCTAInstall() {
         {"  "}npm install -g askscout
       </span>
       <span className="home-readycta-install-icon" aria-hidden>
-        {copied ? (
-          <Check size={14} strokeWidth={2} />
-        ) : (
-          <Copy size={14} strokeWidth={1.5} />
-        )}
+        {copied ? <Check size={14} strokeWidth={2} /> : <Copy size={14} strokeWidth={1.5} />}
       </span>
     </button>
   );

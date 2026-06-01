@@ -96,19 +96,18 @@ export default function BestAICodingToolsPage() {
 
       <article className="page-body page-body--reading article article--has-hero">
         <p className="public-text article-tldr">
-          <strong>TLDR:</strong> The AI coding tools most solo developers use right now: Claude
-          Code for agent-style multi-file work, Cursor for everyday editing, Codex as
-          OpenAI&apos;s equivalent agent CLI, GitHub Copilot for autocomplete inside any editor,
-          and Aider for terminal-driven workflows. They all write code. None of them tell you
-          what you wrote. That last layer is missing, which is why tools like askScout exist
-          next to them.
+          <strong>TLDR:</strong> The AI coding tools most solo developers use right now: Claude Code
+          for agent-style multi-file work, Cursor for everyday editing, Codex as OpenAI&apos;s
+          equivalent agent CLI, GitHub Copilot for autocomplete inside any editor, and Aider for
+          terminal-driven workflows. They all write code. None of them tell you what you wrote. That
+          last layer is missing, which is why tools like askScout exist next to them.
         </p>
 
         <section className="public-section">
           <p className="public-text">
-            &ldquo;What AI coding tool should I use?&rdquo; is the wrong question if you ask it
-            in the abstract. The right framing is: where does the AI sit in your typing flow,
-            and how big is the task you need it for?
+            &ldquo;What AI coding tool should I use?&rdquo; is the wrong question if you ask it in
+            the abstract. The right framing is: where does the AI sit in your typing flow, and how
+            big is the task you need it for?
           </p>
           <p className="public-text">
             Below is the honest version of how five of the most-used tools stack up for a solo
@@ -127,9 +126,9 @@ export default function BestAICodingToolsPage() {
             >
               Cursor
             </a>{" "}
-            is a fork of VS Code with AI throughout the typing flow. Tab to accept, Cmd+K to
-            ask for an inline edit, Cmd+L to chat with the file. It indexes your whole project
-            so its suggestions are aware of your codebase, not just the file you have open.
+            is a fork of VS Code with AI throughout the typing flow. Tab to accept, Cmd+K to ask for
+            an inline edit, Cmd+L to chat with the file. It indexes your whole project so its
+            suggestions are aware of your codebase, not just the file you have open.
           </p>
           <p className="public-text">
             What it is good at: living inside your editor without slowing you down. The tab
@@ -137,8 +136,8 @@ export default function BestAICodingToolsPage() {
             workflow feels like pair programming with someone who has read your repo.
           </p>
           <p className="public-text">
-            What it is not great at: long agent-style tasks that span many files. Cursor will
-            do them, but Claude Code is purpose-built for that and tends to be more reliable.
+            What it is not great at: long agent-style tasks that span many files. Cursor will do
+            them, but Claude Code is purpose-built for that and tends to be more reliable.
           </p>
           <p className="public-text">
             Pick Cursor if you want one editor that handles 80% of your daily AI usage in the
@@ -157,9 +156,9 @@ export default function BestAICodingToolsPage() {
             >
               Claude Code
             </a>{" "}
-            is Anthropic&apos;s agent CLI. You point it at a task, it reads files, edits
-            them, runs commands, and reports back. The shape of the work is different from
-            Cursor: instead of editing while you type, Claude Code goes off and runs.
+            is Anthropic&apos;s agent CLI. You point it at a task, it reads files, edits them, runs
+            commands, and reports back. The shape of the work is different from Cursor: instead of
+            editing while you type, Claude Code goes off and runs.
           </p>
           <p className="public-text">
             What it is good at: bigger tasks. &ldquo;Refactor this module to use the new auth
@@ -167,13 +166,13 @@ export default function BestAICodingToolsPage() {
             reading your codebase context before making changes.
           </p>
           <p className="public-text">
-            What it is not great at: live typing flow. If you want suggestions as you type,
-            Cursor or Copilot win. Claude Code is for tasks you&apos;d normally hand to a
-            coworker, not the keystroke-by-keystroke loop.
+            What it is not great at: live typing flow. If you want suggestions as you type, Cursor
+            or Copilot win. Claude Code is for tasks you&apos;d normally hand to a coworker, not the
+            keystroke-by-keystroke loop.
           </p>
           <p className="public-text">
-            Pick Claude Code for multi-file work, refactors, and tasks where you would otherwise
-            be typing for an hour straight.
+            Pick Claude Code for multi-file work, refactors, and tasks where you would otherwise be
+            typing for an hour straight.
           </p>
         </section>
 
@@ -188,14 +187,14 @@ export default function BestAICodingToolsPage() {
             >
               Codex
             </a>{" "}
-            is OpenAI&apos;s agent CLI, the closest counterpart to Claude Code on the OpenAI
-            side. You point it at a task, it edits files and runs commands, then reports back.
-            Same shape of work, different model family.
+            is OpenAI&apos;s agent CLI, the closest counterpart to Claude Code on the OpenAI side.
+            You point it at a task, it edits files and runs commands, then reports back. Same shape
+            of work, different model family.
           </p>
           <p className="public-text">
-            What it is good at: bigger tasks, like Claude Code. If you already have an OpenAI
-            API key and prefer that ecosystem (or want to compare model behavior on the same
-            task), Codex is the obvious pick.
+            What it is good at: bigger tasks, like Claude Code. If you already have an OpenAI API
+            key and prefer that ecosystem (or want to compare model behavior on the same task),
+            Codex is the obvious pick.
           </p>
           <p className="public-text">
             What it is not great at: live typing flow, again. Codex is task-driven, not
@@ -217,21 +216,21 @@ export default function BestAICodingToolsPage() {
             >
               Copilot
             </a>{" "}
-            is the most-used AI coding tool by raw numbers, mostly because it works inside
-            almost every editor. VS Code, JetBrains, Neovim, plus a chat panel and a
-            command-line companion.
+            is the most-used AI coding tool by raw numbers, mostly because it works inside almost
+            every editor. VS Code, JetBrains, Neovim, plus a chat panel and a command-line
+            companion.
           </p>
           <p className="public-text">
-            What it is good at: ubiquity. If you do not want to switch editors, Copilot meets
-            you where you already are. The completions are good enough for most boilerplate.
+            What it is good at: ubiquity. If you do not want to switch editors, Copilot meets you
+            where you already are. The completions are good enough for most boilerplate.
           </p>
           <p className="public-text">
             What it is not great at: depth. Cursor&apos;s codebase awareness is sharper. Claude
             Code&apos;s agent mode is more capable. Copilot is a strong default and a weak peak.
           </p>
           <p className="public-text">
-            Pick Copilot if you want the lowest-friction option that works everywhere you
-            already work.
+            Pick Copilot if you want the lowest-friction option that works everywhere you already
+            work.
           </p>
         </section>
 
@@ -246,44 +245,38 @@ export default function BestAICodingToolsPage() {
             >
               Aider
             </a>{" "}
-            is a terminal-first AI coding tool. You run it in a directory, give it a task,
-            and it edits files, runs git, and shows diffs in your terminal. It supports many
-            providers (Anthropic, OpenAI, local models) and stays out of your editor entirely.
+            is a terminal-first AI coding tool. You run it in a directory, give it a task, and it
+            edits files, runs git, and shows diffs in your terminal. It supports many providers
+            (Anthropic, OpenAI, local models) and stays out of your editor entirely.
           </p>
           <p className="public-text">
-            What it is good at: minimalism and provider choice. If you want to bring your own
-            model and stay in the terminal, Aider is the cleanest option. The git integration
-            is genuinely useful: every change is committed automatically with a message
-            describing the edit.
+            What it is good at: minimalism and provider choice. If you want to bring your own model
+            and stay in the terminal, Aider is the cleanest option. The git integration is genuinely
+            useful: every change is committed automatically with a message describing the edit.
           </p>
           <p className="public-text">
             What it is not great at: live typing flow, again. Aider is task-driven, not
             keystroke-driven.
           </p>
           <p className="public-text">
-            Pick Aider if you live in a terminal, care about model choice, and like the idea of
-            an AI that commits as it works.
+            Pick Aider if you live in a terminal, care about model choice, and like the idea of an
+            AI that commits as it works.
           </p>
         </section>
 
         <section className="public-section">
           <h2 className="public-section-title">The layer none of them fill</h2>
           <p className="public-text">
-            Claude Code, Cursor, Codex, Copilot, and Aider all do the same fundamental thing:
-            they help you write code faster.
+            Claude Code, Cursor, Codex, Copilot, and Aider all do the same fundamental thing: they
+            help you write code faster.
           </p>
+          <p className="public-text">None of them help you remember what you wrote.</p>
           <p className="public-text">
-            None of them help you remember what you wrote.
-          </p>
-          <p className="public-text">
-            That gap is real. At AI-assisted volume with Claude Code, Cursor, or Codex, your
-            git log is unreadable by the next morning. Your standup is paralyzing because you
-            cannot account for what landed. Your Monday is an hour of re-reading your own
-            diffs to onboard yourself. (
-            <Link
-              href="/articles/the-hidden-cost-of-vibe-coding"
-              className="home-prose-link"
-            >
+            That gap is real. At AI-assisted volume with Claude Code, Cursor, or Codex, your git log
+            is unreadable by the next morning. Your standup is paralyzing because you cannot account
+            for what landed. Your Monday is an hour of re-reading your own diffs to onboard
+            yourself. (
+            <Link href="/articles/the-hidden-cost-of-vibe-coding" className="home-prose-link">
               I wrote the long version of this argument here.
             </Link>
             )
@@ -293,12 +286,11 @@ export default function BestAICodingToolsPage() {
             <Link href="/dashboard" className="home-prose-link">
               askScout
             </Link>{" "}
-            fills. It reads your git history and writes a daily digest in plain English.
-            Sections cover what shipped, what changed, what kept getting reworked, and where
-            you left off. It runs as a hosted web app you sign in with GitHub, or as a CLI in
-            any local repo with your own LLM key. Same digest, either way. It does not compete
-            with Claude Code, Cursor, Codex, Copilot, or Aider. It runs after them. (A related
-            workflow companion piece:{" "}
+            fills. It reads your git history and writes a daily digest in plain English. Sections
+            cover what shipped, what changed, what kept getting reworked, and where you left off. It
+            runs as a hosted web app you sign in with GitHub, or as a CLI in any local repo with
+            your own LLM key. Same digest, either way. It does not compete with Claude Code, Cursor,
+            Codex, Copilot, or Aider. It runs after them. (A related workflow companion piece:{" "}
             <Link
               href="/articles/fastest-way-to-give-claude-or-cursor-project-context"
               className="home-prose-link"
@@ -308,8 +300,8 @@ export default function BestAICodingToolsPage() {
             .)
           </p>
           <p className="public-text">
-            The pattern that works for most solo developers I know: one of these tools for
-            writing code, askScout for keeping track of what you wrote.
+            The pattern that works for most solo developers I know: one of these tools for writing
+            code, askScout for keeping track of what you wrote.
           </p>
         </section>
 

@@ -2,13 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  ArrowLeft,
-  ChartNoAxesCombined,
-  ChevronDown,
-  ChevronUp,
-  Forward,
-} from "lucide-react";
+import { ArrowLeft, ChartNoAxesCombined, ChevronDown, ChevronUp, Forward } from "lucide-react";
 import { Emoji } from "@/components/Emoji";
 import { Header } from "@/components/Header";
 

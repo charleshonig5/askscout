@@ -195,12 +195,7 @@
      flat --color-border so the gradient effect only reads at
      full-bleed scale where it was designed. App / dashboard
      borders are unaffected. */
-  --divider-gradient: linear-gradient(
-    270deg,
-    #252525 25%,
-    #616161 50%,
-    #252525 75%
-  );
+  --divider-gradient: linear-gradient(270deg, #252525 25%, #616161 50%, #252525 75%);
 
   /* Accent = pure White from the palette. Buttons and links use this for
      maximum contrast against the dark surfaces. accent-text inverts to
@@ -2907,8 +2902,7 @@ a:hover {
   }
   40% {
     box-shadow:
-      inset 0 8px 32px 0
-        color-mix(in srgb, var(--color-success) 35%, transparent),
+      inset 0 8px 32px 0 color-mix(in srgb, var(--color-success) 35%, transparent),
       0 0 0 1px color-mix(in srgb, var(--color-success) 40%, transparent);
   }
   100% {
@@ -3697,16 +3691,8 @@ a:hover {
      two layers reach full transparent / full bg-primary at the
      same vertical position, which is what makes the blend read
      as one continuous fade. */
-  -webkit-mask-image: linear-gradient(
-    to top,
-    transparent 0%,
-    black 23.695%
-  );
-  mask-image: linear-gradient(
-    to top,
-    transparent 0%,
-    black 23.695%
-  );
+  -webkit-mask-image: linear-gradient(to top, transparent 0%, black 23.695%);
+  mask-image: linear-gradient(to top, transparent 0%, black 23.695%);
 }
 
 /* Darken overlay — bg-primary at 60% sitting directly on top of
@@ -4879,7 +4865,6 @@ a:hover {
   gap: 8px;
 }
 
-
 .home-hero-card-section-title {
   display: inline-flex;
   align-items: center;
@@ -4999,8 +4984,12 @@ a:hover {
   line-height: 1;
 }
 
-.home-hero-card-stats-add { color: var(--color-success); }
-.home-hero-card-stats-rem { color: var(--color-danger); }
+.home-hero-card-stats-add {
+  color: var(--color-success);
+}
+.home-hero-card-stats-rem {
+  color: var(--color-danger);
+}
 
 .home-hero-card-stats-meta {
   display: flex;
@@ -5174,9 +5163,15 @@ a:hover {
   overflow: hidden;
 }
 
-.home-hero-card-health-card--danger .home-hero-card-health-bar { color: var(--color-danger); }
-.home-hero-card-health-card--warning .home-hero-card-health-bar { color: var(--color-warning); }
-.home-hero-card-health-card--success .home-hero-card-health-bar { color: var(--color-success); }
+.home-hero-card-health-card--danger .home-hero-card-health-bar {
+  color: var(--color-danger);
+}
+.home-hero-card-health-card--warning .home-hero-card-health-bar {
+  color: var(--color-warning);
+}
+.home-hero-card-health-card--success .home-hero-card-health-bar {
+  color: var(--color-success);
+}
 
 .home-hero-card-health-fill {
   height: 100%;
@@ -5395,7 +5390,9 @@ a:hover {
 }
 [data-graphic-phase="shipped"] [data-section="shipped"] .home-hero-card-bullet:nth-child(2),
 [data-graphic-phase="changed"] [data-section="changed"] .home-hero-card-bullet:nth-child(2),
-[data-graphic-phase="stillShifting"] [data-section="stillShifting"] .home-hero-card-bullet:nth-child(2),
+[data-graphic-phase="stillShifting"]
+  [data-section="stillShifting"]
+  .home-hero-card-bullet:nth-child(2),
 [data-graphic-phase="leftOff"] [data-section="leftOff"] .home-hero-card-bullet:nth-child(2) {
   animation-delay: 120ms;
 }
@@ -5545,8 +5542,7 @@ a:hover {
   12%,
   85% {
     box-shadow:
-      inset 0 8px 32px 0
-        color-mix(in srgb, var(--color-success) 35%, transparent),
+      inset 0 8px 32px 0 color-mix(in srgb, var(--color-success) 35%, transparent),
       0 0 0 1px color-mix(in srgb, var(--color-success) 40%, transparent);
   }
   100% {
@@ -7044,22 +7040,18 @@ a:hover {
 
 /* Idle: pin to 0 so the cascade starts from "freshly
    computed, not yet revealed." */
-.home-features-motion[data-features-phase="idle"]
-  .home-features-history-count {
+.home-features-motion[data-features-phase="idle"] .home-features-history-count {
   --count-num: 0;
 }
 
-.home-features-motion[data-features-phase="playing"]
-  .home-features-history-count {
-  animation: hgm-count-up 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94)
-    forwards;
+.home-features-motion[data-features-phase="playing"] .home-features-history-count {
+  animation: hgm-count-up 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
 /* Today active pill — soft inset green glow synced to the
    count-up (same 900ms / same hgm-today-glow keyframe used
    in the hero so both surfaces feel like one animation). */
-.home-features-motion[data-features-phase="playing"]
-  .home-features-history-active {
+.home-features-motion[data-features-phase="playing"] .home-features-history-active {
   animation: hgm-today-glow 900ms ease-out forwards;
 }
 
@@ -7076,9 +7068,7 @@ a:hover {
 /* Idle — flip the visual state of every toggle to its
    opposite so the "from" of each animation lines up with
    the resting state of "playing." */
-.home-features-motion[data-features-phase="idle"]
-  .home-features-toggles
-  .home-features-toggle--on {
+.home-features-motion[data-features-phase="idle"] .home-features-toggles .home-features-toggle--on {
   background: #ffffff;
 }
 .home-features-motion[data-features-phase="idle"]
@@ -7567,12 +7557,9 @@ a:hover {
 /* Idle — pre-set the stats line + every section heading +
    item to the animation's "from" state so the playing phase
    animates cleanly from there. */
-.home-runlocal-motion[data-runlocal-phase="idle"]
-  .home-runlocal-stream-stats,
-.home-runlocal-motion[data-runlocal-phase="idle"]
-  .home-runlocal-stream-heading,
-.home-runlocal-motion[data-runlocal-phase="idle"]
-  .home-runlocal-stream-item {
+.home-runlocal-motion[data-runlocal-phase="idle"] .home-runlocal-stream-stats,
+.home-runlocal-motion[data-runlocal-phase="idle"] .home-runlocal-stream-heading,
+.home-runlocal-motion[data-runlocal-phase="idle"] .home-runlocal-stream-item {
   opacity: 0;
   transform: translateY(4px);
 }
@@ -7581,18 +7568,15 @@ a:hover {
    heading + items, with widely-spaced delays so each
    element gets its own beat. fill-mode: both holds the
    "from" state during the delay so there's no flash. */
-.home-runlocal-motion[data-runlocal-phase="playing"]
-  .home-runlocal-stream-stats {
+.home-runlocal-motion[data-runlocal-phase="playing"] .home-runlocal-stream-stats {
   animation: runlocal-fade-up 300ms ease-out 700ms both;
 }
 
-.home-runlocal-motion[data-runlocal-phase="playing"]
-  .home-runlocal-stream-heading {
+.home-runlocal-motion[data-runlocal-phase="playing"] .home-runlocal-stream-heading {
   animation: runlocal-fade-up 250ms ease-out both;
 }
 
-.home-runlocal-motion[data-runlocal-phase="playing"]
-  .home-runlocal-stream-item {
+.home-runlocal-motion[data-runlocal-phase="playing"] .home-runlocal-stream-item {
   animation: runlocal-fade-up 300ms ease-out both;
 }
 
@@ -8648,7 +8632,9 @@ a:hover {
      gray used elsewhere in the Figma comp for dimmed UI. Open
      state animates up to text-primary white. */
   color: var(--color-text-tertiary);
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
 }
 
 .home-faq-item[open] .home-faq-chevron {
@@ -10081,7 +10067,6 @@ a:hover {
 .public-section ol li:last-child {
   margin-bottom: 0;
 }
-
 
 /* Bulleted list inside a public-section. Same type treatment as
    .public-text so prose and list items read as one voice. Used on
@@ -13855,8 +13840,12 @@ a:hover {
     animation: toast-fade 120ms ease-out both;
   }
   @keyframes toast-fade {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 }
 

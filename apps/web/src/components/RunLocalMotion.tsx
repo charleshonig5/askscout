@@ -36,9 +36,7 @@ export function RunLocalMotion({ children }: Props) {
   useEffect(() => {
     if (playedRef.current) return;
 
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion) {
       playedRef.current = true;
       return;
@@ -67,11 +65,7 @@ export function RunLocalMotion({ children }: Props) {
 
   return (
     <RunLocalPhaseContext.Provider value={phase}>
-      <div
-        ref={rootRef}
-        data-runlocal-phase={phase}
-        className="home-runlocal-motion"
-      >
+      <div ref={rootRef} data-runlocal-phase={phase} className="home-runlocal-motion">
         {children}
       </div>
     </RunLocalPhaseContext.Provider>

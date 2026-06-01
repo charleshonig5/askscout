@@ -43,11 +43,7 @@ export function DocsCliCmdInline({ command }: { command: string }) {
       </span>
       <span className="docs-cli-cmd-inline-text">{command}</span>
       <span className="docs-cli-cmd-inline-icon" aria-hidden>
-        {copied ? (
-          <Check size={16} strokeWidth={2} />
-        ) : (
-          <Copy size={16} strokeWidth={1.5} />
-        )}
+        {copied ? <Check size={16} strokeWidth={2} /> : <Copy size={16} strokeWidth={1.5} />}
       </span>
     </button>
   );

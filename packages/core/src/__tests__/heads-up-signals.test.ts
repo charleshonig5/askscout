@@ -158,9 +158,7 @@ describe("extractFlaggedCommits", () => {
   });
 
   it("does NOT flag a normal feature commit", () => {
-    expect(
-      extractFlaggedCommits([makeCommit("Add billing flow", 200, 50)]),
-    ).toEqual([]);
+    expect(extractFlaggedCommits([makeCommit("Add billing flow", 200, 50)])).toEqual([]);
   });
 
   it("caps results at 5 even when more would match", () => {

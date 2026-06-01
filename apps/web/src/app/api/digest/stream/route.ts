@@ -210,12 +210,7 @@ export async function POST(req: Request) {
     try {
       const oldestCommit = commits[commits.length - 1];
       if (oldestCommit) {
-        const parentSha = await fetchParentSha(
-          session.accessToken,
-          owner,
-          repo,
-          oldestCommit.hash,
-        );
+        const parentSha = await fetchParentSha(session.accessToken, owner, repo, oldestCommit.hash);
         if (parentSha) {
           fileHunkContexts = await fetchFileContextForHunks(
             session.accessToken,
@@ -623,18 +618,12 @@ export async function POST(req: Request) {
       if (pullRequests.length === 0 && linkedIssues.length === 0) return "";
       const prSection = pullRequests.length
         ? pullRequests
-            .map(
-              (p) =>
-                `### PR #${p.number}: ${p.title}\n${p.body || "(no description)"}`,
-            )
+            .map((p) => `### PR #${p.number}: ${p.title}\n${p.body || "(no description)"}`)
             .join("\n\n")
         : "";
       const issueSection = linkedIssues.length
         ? linkedIssues
-            .map(
-              (i) =>
-                `### Issue #${i.number}: ${i.title}\n${i.body || "(no description)"}`,
-            )
+            .map((i) => `### Issue #${i.number}: ${i.title}\n${i.body || "(no description)"}`)
             .join("\n\n")
         : "";
       return [

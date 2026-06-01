@@ -1,11 +1,4 @@
-import {
-  Cog,
-  Download,
-  LogIn,
-  PlaySquare,
-  ShieldCheck,
-  SquareArrowUpRight,
-} from "lucide-react";
+import { Cog, Download, LogIn, PlaySquare, ShieldCheck, SquareArrowUpRight } from "lucide-react";
 import { signIn } from "@/auth";
 import { GitHubMark } from "@/components/GitHubMark";
 import { MarketingNav } from "@/components/MarketingNav";
@@ -25,15 +18,13 @@ const DOCS_LAST_UPDATED_HUMAN = "May 4, 2026";
 
 export const metadata = {
   title: "Docs | askScout",
-  description:
-    "askScout docs. How to use the web app, the CLI, and answers to common questions.",
+  description: "askScout docs. How to use the web app, the CLI, and answers to common questions.",
   alternates: {
     canonical: "/docs",
   },
   openGraph: {
     title: "askScout docs",
-    description:
-      "How to use the askScout web app and CLI, plus answers to common questions.",
+    description: "How to use the askScout web app and CLI, plus answers to common questions.",
     url: "/docs",
     siteName: "askScout",
     type: "article",
@@ -41,8 +32,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "askScout docs",
-    description:
-      "How to use the askScout web app and CLI, plus answers to common questions.",
+    description: "How to use the askScout web app and CLI, plus answers to common questions.",
   },
 };
 
@@ -73,8 +63,7 @@ const ARTICLE_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "TechArticle",
   headline: "askScout documentation",
-  description:
-    "How to use the askScout web app and CLI, plus answers to common questions.",
+  description: "How to use the askScout web app and CLI, plus answers to common questions.",
   url: "https://askscout.dev/docs",
   inLanguage: "en",
   dateModified: DOCS_LAST_UPDATED_ISO,
@@ -96,8 +85,7 @@ const HOWTO_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "HowTo",
   name: "Install the askScout CLI",
-  description:
-    "Three steps to install askScout locally and run your first digest in any git repo.",
+  description: "Three steps to install askScout locally and run your first digest in any git repo.",
   totalTime: "PT2M",
   estimatedCost: { "@type": "MonetaryAmount", currency: "USD", value: "0" },
   tool: [
@@ -110,18 +98,14 @@ const HOWTO_SCHEMA = {
       position: 1,
       name: "Install",
       text: "Install askScout globally with npm.",
-      itemListElement: [
-        { "@type": "HowToDirection", text: "npm install -g askscout" },
-      ],
+      itemListElement: [{ "@type": "HowToDirection", text: "npm install -g askscout" }],
     },
     {
       "@type": "HowToStep",
       position: 2,
       name: "Setup",
       text: "Run setup once to save your Anthropic or OpenAI API key locally. The key stays on your machine and is only sent to the LLM provider you configured.",
-      itemListElement: [
-        { "@type": "HowToDirection", text: "askscout --setup" },
-      ],
+      itemListElement: [{ "@type": "HowToDirection", text: "askscout --setup" }],
     },
     {
       "@type": "HowToStep",
@@ -183,18 +167,14 @@ export default function DocsPage() {
           <div className="docs-hero-headblock">
             <h1 className="docs-hero-title">askScout documentation</h1>
             <p className="docs-hero-updated">
-              Last updated{" "}
-              <time dateTime={DOCS_LAST_UPDATED_ISO}>
-                {DOCS_LAST_UPDATED_HUMAN}
-              </time>
+              Last updated <time dateTime={DOCS_LAST_UPDATED_ISO}>{DOCS_LAST_UPDATED_HUMAN}</time>
             </p>
           </div>
           <div className="docs-hero-body">
             <p className="docs-hero-deck">
-              askScout is an open source daily digest tool for developers and
-              vibe coders. It reads your git activity and writes a digestible,
-              plain-English summary of what you worked on each day. Use the
-              web app or run the CLI locally on your device.
+              askScout is an open source daily digest tool for developers and vibe coders. It reads
+              your git activity and writes a digestible, plain-English summary of what you worked on
+              each day. Use the web app or run the CLI locally on your device.
             </p>
             <a
               href="https://github.com/charleshonig5/askscout"
@@ -220,9 +200,8 @@ export default function DocsPage() {
           <div className="docs-section-heading">
             <h2 className="docs-section-title">Web app</h2>
             <p className="docs-section-deck">
-              Run askScout right in your browser with the app, no install
-              required. Sign in with GitHub and get your first digest
-              immediately.
+              Run askScout right in your browser with the app, no install required. Sign in with
+              GitHub and get your first digest immediately.
             </p>
           </div>
           <div className="docs-webapp-cards">
@@ -232,12 +211,10 @@ export default function DocsPage() {
                   <LogIn size={28} strokeWidth={1.25} />
                 </span>
                 <div className="docs-webapp-card-text">
-                  <h3 className="docs-webapp-card-title">
-                    Sign in with GitHub
-                  </h3>
+                  <h3 className="docs-webapp-card-title">Sign in with GitHub</h3>
                   <p className="docs-webapp-card-body">
-                    Your account is created on the spot, and your first
-                    digest starts streaming automatically.
+                    Your account is created on the spot, and your first digest starts streaming
+                    automatically.
                   </p>
                 </div>
               </div>
@@ -263,12 +240,10 @@ export default function DocsPage() {
                   <ShieldCheck size={28} strokeWidth={1.25} />
                 </span>
                 <div className="docs-webapp-card-text">
-                  <h3 className="docs-webapp-card-title">
-                    Control your data
-                  </h3>
+                  <h3 className="docs-webapp-card-title">Control your data</h3>
                   <p className="docs-webapp-card-body">
-                    There is no setup step and no key to manage. You can
-                    revoke GitHub access any time at
+                    There is no setup step and no key to manage. You can revoke GitHub access any
+                    time at
                   </p>
                 </div>
               </div>
@@ -296,9 +271,8 @@ export default function DocsPage() {
           <div className="docs-section-heading">
             <h2 className="docs-section-title">CLI</h2>
             <p className="docs-section-deck">
-              Run askScout locally on your machine, with your own LLM key.
-              Works in any local git repo, including private ones and
-              self-hosted git.
+              Run askScout locally on your machine, with your own LLM key. Works in any local git
+              repo, including private ones and self-hosted git.
             </p>
           </div>
 
@@ -310,10 +284,7 @@ export default function DocsPage() {
                 </span>
                 <div className="docs-cli-step-text">
                   <h3>Install</h3>
-                  <p>
-                    Copy the command below into your terminal to install
-                    askScout globally.
-                  </p>
+                  <p>Copy the command below into your terminal to install askScout globally.</p>
                 </div>
               </div>
               <CommandChip command="npm install -g askscout" />
@@ -326,9 +297,8 @@ export default function DocsPage() {
                 <div className="docs-cli-step-text">
                   <h3>Setup</h3>
                   <p>
-                    Run setup once to save your Anthropic or OpenAI API key
-                    locally. The key stays on your machine and never goes
-                    anywhere except the LLM provider you configured.
+                    Run setup once to save your Anthropic or OpenAI API key locally. The key stays
+                    on your machine and never goes anywhere except the LLM provider you configured.
                   </p>
                 </div>
               </div>
@@ -342,8 +312,8 @@ export default function DocsPage() {
                 <div className="docs-cli-step-text">
                   <h3>Run</h3>
                   <p>
-                    Run askScout in any git repo. Your first digest covers
-                    today, and every run after picks up from there.
+                    Run askScout in any git repo. Your first digest covers today, and every run
+                    after picks up from there.
                   </p>
                 </div>
               </div>
@@ -356,10 +326,7 @@ export default function DocsPage() {
           <div className="docs-cli-commands">
             <div className="docs-cli-commands-head">
               <h3>Commands</h3>
-              <p>
-                Every command askScout supports, with a quick note on when
-                to use each one.
-              </p>
+              <p>Every command askScout supports, with a quick note on when to use each one.</p>
             </div>
             <div className="docs-cli-commands-list">
               {[
@@ -408,11 +375,10 @@ export default function DocsPage() {
             <h3>Pricing</h3>
             <p>A typical digest runs about $0.001 to $0.003.</p>
             <p>
-              The CLI is free open source software. You bring your own
-              Anthropic or OpenAI API key, paid directly to your provider.
-              askScout is designed to be cost-effective. A single API call
-              per digest covers everything, which keeps token usage low and
-              avoids the repeated round trips most LLM products rack up.
+              The CLI is free open source software. You bring your own Anthropic or OpenAI API key,
+              paid directly to your provider. askScout is designed to be cost-effective. A single
+              API call per digest covers everything, which keeps token usage low and avoids the
+              repeated round trips most LLM products rack up.
             </p>
           </div>
         </div>

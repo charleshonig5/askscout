@@ -39,9 +39,7 @@ export function ReadyCTA() {
         <div className="home-readycta-row">
           <h2 className="home-readycta-headline">
             <span className="home-readycta-headline-thin">Get your</span>
-            <span className="home-readycta-headline-bold">
-              {" first digest now"}
-            </span>
+            <span className="home-readycta-headline-bold">{" first digest now"}</span>
           </h2>
           <div className="home-readycta-actions">
             <form

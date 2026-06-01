@@ -83,9 +83,7 @@ export default function ArticlesIndexPage() {
               <h1 className="articles-hero-title">Articles</h1>
               <ArticlesUtils articles={ARTICLES} variant="hero" />
             </div>
-            <p className="articles-hero-deck">
-              Long-form writing from the askScout team.
-            </p>
+            <p className="articles-hero-deck">Long-form writing from the askScout team.</p>
           </div>
           <ArticlesIndexInteractive articles={ARTICLES} />
         </div>

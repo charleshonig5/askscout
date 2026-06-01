@@ -44,8 +44,9 @@ describe("getProjectFraming", () => {
     // Build a README > 3000 chars (MAX_README_CHARS) with clear
     // sentence-ending punctuation so the boundary detector can do
     // its job. 60 sentences of ~70 chars each ≈ 4200 chars.
-    const longReadme = Array.from({ length: 60 }, (_, i) =>
-      `Sentence number ${i + 1} explaining what this project does in some way.`,
+    const longReadme = Array.from(
+      { length: 60 },
+      (_, i) => `Sentence number ${i + 1} explaining what this project does in some way.`,
     ).join(" ");
     await fs.writeFile(path.join(tmpRoot, "README.md"), longReadme);
     const out = await getProjectFraming(tmpRoot);
@@ -100,10 +101,7 @@ version = "0.1.0"
   });
 
   it("picks package.json over pyproject.toml when both exist (priority order)", async () => {
-    await fs.writeFile(
-      path.join(tmpRoot, "package.json"),
-      JSON.stringify({ name: "node-app" }),
-    );
+    await fs.writeFile(path.join(tmpRoot, "package.json"), JSON.stringify({ name: "node-app" }));
     await fs.writeFile(path.join(tmpRoot, "pyproject.toml"), "[project]\nname = 'py-app'");
     const out = await getProjectFraming(tmpRoot);
     expect(out.manifest?.path).toBe("package.json");

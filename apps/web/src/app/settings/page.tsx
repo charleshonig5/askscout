@@ -165,26 +165,29 @@ export default function SettingsPage() {
     })();
   }, []);
 
-  const saveDefaultRepo = useCallback(async (repo: string) => {
-    // Optimistic update — capture the prior value first so we can
-    // roll the combobox back if the save fails. Without this, a
-    // network drop would leave the UI showing a default that didn't
-    // actually persist, and the user would only discover the mismatch
-    // on reload.
-    const previous = defaultRepo;
-    setDefaultRepo(repo);
-    try {
-      const res = await fetch("/api/settings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ default_repo: repo }),
-      });
-      if (!res.ok) throw new Error(`Server returned ${res.status}`);
-    } catch {
-      setDefaultRepo(previous);
-      showError("Couldn't save default repo", "Check your connection and try again.");
-    }
-  }, [defaultRepo, showError]);
+  const saveDefaultRepo = useCallback(
+    async (repo: string) => {
+      // Optimistic update — capture the prior value first so we can
+      // roll the combobox back if the save fails. Without this, a
+      // network drop would leave the UI showing a default that didn't
+      // actually persist, and the user would only discover the mismatch
+      // on reload.
+      const previous = defaultRepo;
+      setDefaultRepo(repo);
+      try {
+        const res = await fetch("/api/settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ default_repo: repo }),
+        });
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
+      } catch {
+        setDefaultRepo(previous);
+        showError("Couldn't save default repo", "Check your connection and try again.");
+      }
+    },
+    [defaultRepo, showError],
+  );
 
   const deleteRepoHistory = useCallback(
     async (repo: string) => {
@@ -200,10 +203,7 @@ export default function SettingsPage() {
         // sit there with a "Clear" button that does nothing.
         void refreshRepos();
       } catch {
-        showError(
-          `Couldn't clear ${repo}`,
-          "The history is still intact. Please try again.",
-        );
+        showError(`Couldn't clear ${repo}`, "The history is still intact. Please try again.");
       }
     },
     [refreshRepos, showError],
@@ -483,43 +483,43 @@ export default function SettingsPage() {
                   const slash = repo.lastIndexOf("/");
                   const repoLabel = slash === -1 ? repo : repo.slice(slash + 1);
                   return (
-                  <Fragment key={repo}>
-                    <div className="settings-repo-row">
-                      <span className="settings-repo-name" title={repo}>
-                        {repoLabel}
-                      </span>
-                      {confirmDelete === `repo:${repo}` ? (
-                        <span className="settings-repo-confirm">
-                          <button
-                            type="button"
-                            className="settings-clear-pill settings-clear-pill--confirm"
-                            onClick={() => void deleteRepoHistory(repo)}
-                          >
-                            Confirm
-                          </button>
+                    <Fragment key={repo}>
+                      <div className="settings-repo-row">
+                        <span className="settings-repo-name" title={repo}>
+                          {repoLabel}
+                        </span>
+                        {confirmDelete === `repo:${repo}` ? (
+                          <span className="settings-repo-confirm">
+                            <button
+                              type="button"
+                              className="settings-clear-pill settings-clear-pill--confirm"
+                              onClick={() => void deleteRepoHistory(repo)}
+                            >
+                              Confirm
+                            </button>
+                            <button
+                              type="button"
+                              className="settings-clear-pill"
+                              onClick={() => setConfirmDelete(null)}
+                            >
+                              Cancel
+                            </button>
+                          </span>
+                        ) : (
                           <button
                             type="button"
                             className="settings-clear-pill"
-                            onClick={() => setConfirmDelete(null)}
+                            onClick={() => setConfirmDelete(`repo:${repo}`)}
                           >
-                            Cancel
+                            Clear
+                            <Trash2 size={10} strokeWidth={1} aria-hidden />
                           </button>
-                        </span>
-                      ) : (
-                        <button
-                          type="button"
-                          className="settings-clear-pill"
-                          onClick={() => setConfirmDelete(`repo:${repo}`)}
-                        >
-                          Clear
-                          <Trash2 size={10} strokeWidth={1} aria-hidden />
-                        </button>
+                        )}
+                      </div>
+                      {i < activeRepos.length - 1 && (
+                        <hr className="settings-row-divider" aria-hidden />
                       )}
-                    </div>
-                    {i < activeRepos.length - 1 && (
-                      <hr className="settings-row-divider" aria-hidden />
-                    )}
-                  </Fragment>
+                    </Fragment>
                   );
                 })
               )}
@@ -755,9 +755,7 @@ function CustomizeSkeleton() {
             </div>
             <div className="insights-skel settings-skel-switch" />
           </div>
-          {i < SECTION_OPTIONS.length - 1 && (
-            <hr className="settings-row-divider" aria-hidden />
-          )}
+          {i < SECTION_OPTIONS.length - 1 && <hr className="settings-row-divider" aria-hidden />}
         </Fragment>
       ))}
     </div>

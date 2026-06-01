@@ -207,9 +207,7 @@ export async function scan(options: ScanOptions): Promise<void> {
     // so the LLM gets parsed facts (framework, language, db, deploy target)
     // instead of inferring them from diffs. .catch belt-and-suspenders: a
     // detection failure is never allowed to break the digest.
-    const detectedStack = await detectStack(createLocalFilesReader(projectRoot)).catch(
-      () => ({}),
-    );
+    const detectedStack = await detectStack(createLocalFilesReader(projectRoot)).catch(() => ({}));
 
     // Pull the same prompt-enrichment context the web app uses:
     //   - file hunk context (parent SHA + ~15 lines around each hunk)
@@ -219,7 +217,9 @@ export async function scan(options: ScanOptions): Promise<void> {
     // prompt without breaking the run. PR/issue context (web's #1) is
     // intentionally skipped here — git doesn't store that data.
     const oldest = commits[commits.length - 1];
-    const parentSha = oldest ? await getParentSha(projectRoot, oldest.hash).catch(() => null) : null;
+    const parentSha = oldest
+      ? await getParentSha(projectRoot, oldest.hash).catch(() => null)
+      : null;
     const fileHunkContexts = parentSha
       ? await getFileContextForHunks(projectRoot, parentSha, diffs).catch(() => [])
       : [];

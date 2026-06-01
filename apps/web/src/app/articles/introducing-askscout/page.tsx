@@ -25,8 +25,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Introducing askScout: your vibe coding companion",
-    description:
-      "askScout reads your repo and writes you a daily digest of what you shipped.",
+    description: "askScout reads your repo and writes you a daily digest of what you shipped.",
   },
 };
 
@@ -97,61 +96,54 @@ export default function IntroducingAskScoutPage() {
       <article className="page-body page-body--reading article article--has-hero">
         <p className="public-text article-tldr">
           <strong>TLDR:</strong> askScout is a daily digest tool for developers who code with AI
-          assistance. Claude Code, Cursor, and Codex help you write code. askScout reads what
-          you wrote and writes you back a quick summary covering what shipped, what changed,
-          what kept getting reworked, and what you left off. The web app runs in your browser,
-          signed in with GitHub. The CLI runs in any local git repo with your own LLM key. Both
-          are free, both are open source.
+          assistance. Claude Code, Cursor, and Codex help you write code. askScout reads what you
+          wrote and writes you back a quick summary covering what shipped, what changed, what kept
+          getting reworked, and what you left off. The web app runs in your browser, signed in with
+          GitHub. The CLI runs in any local git repo with your own LLM key. Both are free, both are
+          open source.
         </p>
 
         <section className="public-section">
           <h2 className="public-section-title">The problem AI coding tools created</h2>
           <p className="public-text">
-            Output per developer has gone up sharply since AI coding tools landed. The typing
-            got fast. The remembering did not.
+            Output per developer has gone up sharply since AI coding tools landed. The typing got
+            fast. The remembering did not.
           </p>
           <p className="public-text">
-            Friday afternoon you close your laptop and you cannot account for half of what your
-            repo does. Your git log is illegible. Your standup is a guess. Monday morning you
-            spend an hour reading your own diffs to onboard yourself. (We wrote about this in{" "}
-            <Link
-              href="/articles/the-hidden-cost-of-vibe-coding"
-              className="home-prose-link"
-            >
+            Friday afternoon you close your laptop and you cannot account for half of what your repo
+            does. Your git log is illegible. Your standup is a guess. Monday morning you spend an
+            hour reading your own diffs to onboard yourself. (We wrote about this in{" "}
+            <Link href="/articles/the-hidden-cost-of-vibe-coding" className="home-prose-link">
               The Hidden Cost of Vibe Coding
             </Link>
             .)
           </p>
           <p className="public-text">
-            askScout exists because that gap kept getting wider, and nothing in the existing
-            tooling closed it.
+            askScout exists because that gap kept getting wider, and nothing in the existing tooling
+            closed it.
           </p>
         </section>
 
         <section className="public-section">
           <h2 className="public-section-title">What askScout actually does</h2>
           <p className="public-text">
-            Run askScout in any git repo and it reads your commits and diffs since your last
-            run. It groups what it finds into four sections: Shipped (things that went from not
-            existing to working), Changed (things that already existed and got modified), Still
-            Shifting (areas reworked 3+ times in the window), and Left Off (anything in
-            progress when work stopped).
+            Run askScout in any git repo and it reads your commits and diffs since your last run. It
+            groups what it finds into four sections: Shipped (things that went from not existing to
+            working), Changed (things that already existed and got modified), Still Shifting (areas
+            reworked 3+ times in the window), and Left Off (anything in progress when work stopped).
           </p>
           <p className="public-text">
             Two more numbers come along for the ride: Codebase Health (Growth, Focus, Churn) and
-            Pace Check (today versus your recent average). Both come from raw git data, not the
-            LLM. (More on how the digest gets assembled in{" "}
-            <Link
-              href="/articles/how-askscout-summarizes-git"
-              className="home-prose-link"
-            >
+            Pace Check (today versus your recent average). Both come from raw git data, not the LLM.
+            (More on how the digest gets assembled in{" "}
+            <Link href="/articles/how-askscout-summarizes-git" className="home-prose-link">
               How askScout turns a noisy git log into a 10-second digest
             </Link>
             .)
           </p>
           <p className="public-text">
-            The whole digest is short enough to skim in about a minute. That is the constraint
-            we built around. If it takes longer than that to read, you will skip it.
+            The whole digest is short enough to skim in about a minute. That is the constraint we
+            built around. If it takes longer than that to read, you will skip it.
           </p>
         </section>
 
@@ -163,15 +155,17 @@ export default function IntroducingAskScoutPage() {
               askscout.dev
             </Link>{" "}
             signs in with GitHub, picks a repo, and starts streaming. Your digest history saves
-            under your account. The CLI
-            installs with <code className="inline-code">npm install -g askscout</code>, lives
-            in any local repo, and uses your own Anthropic or OpenAI API key. Full install
-            steps are in the <Link href="/docs" className="home-prose-link">CLI docs</Link>.
+            under your account. The CLI installs with{" "}
+            <code className="inline-code">npm install -g askscout</code>, lives in any local repo,
+            and uses your own Anthropic or OpenAI API key. Full install steps are in the{" "}
+            <Link href="/docs" className="home-prose-link">
+              CLI docs
+            </Link>
+            .
           </p>
           <p className="public-text">
-            Same digest format, different fits. Web is for hosted history and a 10-second
-            sign-in. CLI is for local-only workflows and developers who want full control of
-            their data.
+            Same digest format, different fits. Web is for hosted history and a 10-second sign-in.
+            CLI is for local-only workflows and developers who want full control of their data.
           </p>
         </section>
 
@@ -179,8 +173,8 @@ export default function IntroducingAskScoutPage() {
           <h2 className="public-section-title">What it is not</h2>
           <p className="public-text">
             askScout is not a code generator. It will not write your features or refactor your
-            modules. Claude Code, Cursor, and Codex already do that, and they do it well. (If
-            you're choosing between those, we wrote about that in{" "}
+            modules. Claude Code, Cursor, and Codex already do that, and they do it well. (If you're
+            choosing between those, we wrote about that in{" "}
             <Link
               href="/articles/best-ai-coding-tools-for-solo-developers"
               className="home-prose-link"
@@ -198,9 +192,9 @@ export default function IntroducingAskScoutPage() {
         <section className="public-section">
           <h2 className="public-section-title">Try it</h2>
           <p className="public-text">
-            The web app takes about ten seconds: sign in with GitHub, pick a repo, watch the
-            first digest stream in. The CLI takes about a minute: install, paste your API key,
-            run <code className="inline-code">askscout</code> in any git repo.
+            The web app takes about ten seconds: sign in with GitHub, pick a repo, watch the first
+            digest stream in. The CLI takes about a minute: install, paste your API key, run{" "}
+            <code className="inline-code">askscout</code> in any git repo.
           </p>
           <p className="public-text">
             Both surfaces are free. The CLI is open source under the{" "}

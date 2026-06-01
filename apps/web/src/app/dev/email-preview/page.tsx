@@ -100,10 +100,9 @@ export default async function EmailPreviewPage() {
             Email preview — Digest
           </h1>
           <p style={{ margin: "4px 0 0", fontSize: "13px", lineHeight: "1.5" }}>
-            Staging surface for the on-demand Email button template. The iframe
-            below is sized like a desktop Gmail reading pane so the email&apos;s
-            off-white page bg + centered dark card render the way an inbox
-            shows them. Edit{" "}
+            Staging surface for the on-demand Email button template. The iframe below is sized like
+            a desktop Gmail reading pane so the email&apos;s off-white page bg + centered dark card
+            render the way an inbox shows them. Edit{" "}
             <code style={{ background: "#222", padding: "2px 4px", borderRadius: "3px" }}>
               apps/web/src/emails/DigestEmail.tsx
             </code>{" "}

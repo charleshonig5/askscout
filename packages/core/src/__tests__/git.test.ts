@@ -68,11 +68,9 @@ describe("getRepoName", () => {
   });
 
   it("parses HTTPS URLs without the .git suffix", async () => {
-    await execFileAsync(
-      "git",
-      ["remote", "add", "origin", "https://gitlab.com/myorg/myrepo"],
-      { cwd: dir },
-    );
+    await execFileAsync("git", ["remote", "add", "origin", "https://gitlab.com/myorg/myrepo"], {
+      cwd: dir,
+    });
     expect(await getRepoName(dir)).toBe("myorg/myrepo");
   });
 

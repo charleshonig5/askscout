@@ -43,10 +43,7 @@ export function HeroCardOpener() {
         timer = setTimeout(tick, PER_CHAR_MS);
       }
     };
-    let timer: ReturnType<typeof setTimeout> | null = setTimeout(
-      tick,
-      PER_CHAR_MS,
-    );
+    let timer: ReturnType<typeof setTimeout> | null = setTimeout(tick, PER_CHAR_MS);
     return () => {
       cancelled = true;
       if (timer) clearTimeout(timer);

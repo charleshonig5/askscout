@@ -425,11 +425,11 @@ Insights page, entry point is always visible, page always renders. Each
 section degrades to a "zero" state rather than disappearing, so the user
 can see what they're working toward.
 
-| Section                | Empty-state behavior                                                                                                        |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Snapshot row           | Best streak shows `0 days` (no repo line). Total digests shows `0`.                                                         |
-| Activity calendar      | Full 365-day grid renders, every cell empty (no activity color). Hover still works ("No activity").                         |
-| Per-repo breakdown     | Table renders with the columns and a single empty row reading "No repos with digests yet."                                  |
+| Section                | Empty-state behavior                                                                                                       |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Snapshot row           | Best streak shows `0 days` (no repo line). Total digests shows `0`.                                                        |
+| Activity calendar      | Full 365-day grid renders, every cell empty (no activity color). Hover still works ("No activity").                        |
+| Per-repo breakdown     | Table renders with the columns and a single empty row reading "No repos with digests yet."                                 |
 | Engagement personality | Special "Just Getting Started" card, primary trait + subtitle "Generate your first digest to start your profile." No tags. |
 
 Critically: the user **must be able to navigate to and inspect this page
@@ -466,7 +466,7 @@ re-litigate them:
 - Compare to peers / leaderboards, kills the personal vibe.
 - "Most-used modal" / settings recap, boring, mildly creepy.
 - Coding stats (lines shipped, language distribution, pace trends, etc.)
- , those belong in the digest, not on this page.
+  , those belong in the digest, not on this page.
 
 ---
 

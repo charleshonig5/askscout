@@ -23,96 +23,93 @@ export const contentType = "image/png";
 
 export default function OpengraphImage() {
   return new ImageResponse(
-    (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        background: "#070707",
+        color: "#ededed",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        padding: "72px 80px",
+        fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
+      }}
+    >
+      {/* Wordmark row */}
       <div
         style={{
-          width: "100%",
-          height: "100%",
-          background: "#070707",
-          color: "#ededed",
           display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          padding: "72px 80px",
-          fontFamily:
-            "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
+          alignItems: "center",
+          gap: 18,
+          fontSize: 44,
+          fontWeight: 500,
+          letterSpacing: "-0.01em",
         }}
       >
-        {/* Wordmark row */}
         <div
           style={{
+            width: 36,
+            height: 36,
+            borderRadius: 999,
+            border: "2px solid #ededed",
             display: "flex",
-            alignItems: "center",
-            gap: 18,
-            fontSize: 44,
-            fontWeight: 500,
-            letterSpacing: "-0.01em",
           }}
-        >
-          <div
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: 999,
-              border: "2px solid #ededed",
-              display: "flex",
-            }}
-          />
-          askScout
-        </div>
+        />
+        askScout
+      </div>
 
-        {/* Headline + tagline stacked */}
+      {/* Headline + tagline stacked */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 28,
+        }}
+      >
         <div
           style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 28,
+            fontSize: 84,
+            fontWeight: 400,
+            lineHeight: 1.05,
+            letterSpacing: "-0.02em",
+            maxWidth: 1040,
           }}
         >
-          <div
-            style={{
-              fontSize: 84,
-              fontWeight: 400,
-              lineHeight: 1.05,
-              letterSpacing: "-0.02em",
-              maxWidth: 1040,
-            }}
-          >
-            The daily digest for vibe coders.
-          </div>
-          <div
-            style={{
-              fontSize: 32,
-              fontWeight: 300,
-              lineHeight: 1.35,
-              color: "#a0a0a0",
-              maxWidth: 980,
-            }}
-          >
-            Reads your repo. Writes a plain-English summary of what you
-            actually shipped. Open source. Bring your own LLM key.
-          </div>
+          The daily digest for vibe coders.
         </div>
-
-        {/* Footer URL */}
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            fontSize: 24,
-            color: "#616161",
+            fontSize: 32,
+            fontWeight: 300,
+            lineHeight: 1.35,
+            color: "#a0a0a0",
+            maxWidth: 980,
           }}
         >
-          <span>askscout.dev</span>
-          <span style={{ display: "flex", gap: 32 }}>
-            <span>Web app</span>
-            <span>CLI</span>
-            <span>MIT licensed</span>
-          </span>
+          Reads your repo. Writes a plain-English summary of what you actually shipped. Open source.
+          Bring your own LLM key.
         </div>
       </div>
-    ),
+
+      {/* Footer URL */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          fontSize: 24,
+          color: "#616161",
+        }}
+      >
+        <span>askscout.dev</span>
+        <span style={{ display: "flex", gap: 32 }}>
+          <span>Web app</span>
+          <span>CLI</span>
+          <span>MIT licensed</span>
+        </span>
+      </div>
+    </div>,
     { ...size },
   );
 }

@@ -90,16 +90,16 @@ Always run `pnpm typecheck`, `pnpm format`, `pnpm lint` before committing. Build
 
 **8-color brand palette:**
 
-| Name            | Hex                                                          |
-| --------------- | ------------------------------------------------------------ |
-| Primary Black   | `#070707`                                                    |
-| Secondary Black | `#121212`                                                    |
-| Dark Grey       | `#252525`                                                    |
-| Light Grey      | `#616161`                                                    |
-| White           | `#FFFFFF`                                                    |
+| Name            | Hex                                                         |
+| --------------- | ----------------------------------------------------------- |
+| Primary Black   | `#070707`                                                   |
+| Secondary Black | `#121212`                                                   |
+| Dark Grey       | `#252525`                                                   |
+| Light Grey      | `#616161`                                                   |
+| White           | `#FFFFFF`                                                   |
 | Green           | `#57D32E` (`#4AC321` in light mode, darker for readability) |
-| Yellow          | `#F7C80B` (`#E2BB20` in light mode)                          |
-| Red             | `#DD1D1D` (`#C32020` in light mode)                          |
+| Yellow          | `#F7C80B` (`#E2BB20` in light mode)                         |
+| Red             | `#DD1D1D` (`#C32020` in light mode)                         |
 
 **Token system** (in `apps/web/src/app/globals.css`):
 
@@ -229,19 +229,19 @@ Plus computed stat sections (no LLM, rendered in stats sidebar): 📊 Statistics
 
 ## 5. Major components in `apps/web/src/components/`
 
-| Component            | Purpose                                                                                                                                                               |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Component            | Purpose                                                                                                                                                              |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Sidebar.tsx`        | Left nav: logo, settings, theme toggle, repo picker, history list, profile + sign out. **CURRENT FOCUS, about to be redesigned pixel-perfect from Figma using MCP.** |
-| `DigestView.tsx`     | Main content. Renders streaming + final digest. Owns the two-column layout, opener phase machine, sidebar gate logic. ~1400 lines.                                    |
-| `DigestOpener.tsx`   | Editorial typing line ("Scanning the horizon for commits…"). Self-contained lifecycle: wait → type → dwell → onComplete.                                              |
-| `PreGeneration.tsx`  | `SectionSkeleton` component + `SECTION_SKELETONS` / `SIDEBAR_SKELETONS` data arrays.                                                                                  |
-| `RepoSelector.tsx`   | Custom combobox replacing native `<select>`. Keyboard nav, search, smart sort.                                                                                        |
-| `ThemeToggle.tsx`    | Light/dark flip via `data-theme` attribute on `<html>`.                                                                                                               |
-| `Emoji.tsx`          | Microsoft Fluent 3D emoji wrapper (renders via `<img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/...">`).                                          |
-| `Header.tsx`         | Mobile-only top bar (hamburger + logo).                                                                                                                               |
-| `AIContextModal.tsx` | "Resume Prompt" output modal.                                                                                                                                         |
-| `StandupModal.tsx`   | Standup output modal.                                                                                                                                                 |
-| `PlanModal.tsx`      | To-Do List output modal.                                                                                                                                              |
+| `DigestView.tsx`     | Main content. Renders streaming + final digest. Owns the two-column layout, opener phase machine, sidebar gate logic. ~1400 lines.                                   |
+| `DigestOpener.tsx`   | Editorial typing line ("Scanning the horizon for commits…"). Self-contained lifecycle: wait → type → dwell → onComplete.                                             |
+| `PreGeneration.tsx`  | `SectionSkeleton` component + `SECTION_SKELETONS` / `SIDEBAR_SKELETONS` data arrays.                                                                                 |
+| `RepoSelector.tsx`   | Custom combobox replacing native `<select>`. Keyboard nav, search, smart sort.                                                                                       |
+| `ThemeToggle.tsx`    | Light/dark flip via `data-theme` attribute on `<html>`.                                                                                                              |
+| `Emoji.tsx`          | Microsoft Fluent 3D emoji wrapper (renders via `<img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/...">`).                                         |
+| `Header.tsx`         | Mobile-only top bar (hamburger + logo).                                                                                                                              |
+| `AIContextModal.tsx` | "Resume Prompt" output modal.                                                                                                                                        |
+| `StandupModal.tsx`   | Standup output modal.                                                                                                                                                |
+| `PlanModal.tsx`      | To-Do List output modal.                                                                                                                                             |
 | `HistoryList.tsx`    | Sidebar history rows (legacy, currently unused; sidebar inlines its own list).                                                                                       |
 
 ### Key files in `apps/web/src/`

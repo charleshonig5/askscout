@@ -24,8 +24,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "How askScout turns a noisy git log into a 10-second digest",
-    description:
-      "A walkthrough of how askScout reads your repo and produces a readable digest.",
+    description: "A walkthrough of how askScout reads your repo and produces a readable digest.",
   },
 };
 
@@ -95,11 +94,11 @@ export default function HowAskScoutSummarizesGitPage() {
 
       <article className="page-body page-body--reading article article--has-hero">
         <p className="public-text article-tldr">
-          <strong>TLDR:</strong> askScout reads your commits and diffs through git, groups them
-          into four sections (Shipped, Changed, Still Shifting, Left Off), computes two
-          structural signals (Codebase Health, Pace Check), and feeds the whole package into a
-          tuned LLM prompt that renders the result in plain English. Each step exists for a
-          specific reason. All of it is open source.
+          <strong>TLDR:</strong> askScout reads your commits and diffs through git, groups them into
+          four sections (Shipped, Changed, Still Shifting, Left Off), computes two structural
+          signals (Codebase Health, Pace Check), and feeds the whole package into a tuned LLM prompt
+          that renders the result in plain English. Each step exists for a specific reason. All of
+          it is open source.
         </p>
 
         <section className="public-section">
@@ -112,13 +111,10 @@ export default function HowAskScoutSummarizesGitPage() {
             doesn't scale to the volume.
           </p>
           <p className="public-text">
-            The fix isn't a better git command. It's a layer on top of git that does what
-            humans used to do at lower volume: read it and summarize it. askScout is that layer.
-            Here's how it works. (For the bigger argument behind why this layer matters now,{" "}
-            <Link
-              href="/articles/introducing-askscout"
-              className="home-prose-link"
-            >
+            The fix isn't a better git command. It's a layer on top of git that does what humans
+            used to do at lower volume: read it and summarize it. askScout is that layer. Here's how
+            it works. (For the bigger argument behind why this layer matters now,{" "}
+            <Link href="/articles/introducing-askscout" className="home-prose-link">
               Introducing askScout
             </Link>{" "}
             sets the table.)
@@ -137,27 +133,22 @@ export default function HowAskScoutSummarizesGitPage() {
             >
               GitHub REST API
             </a>{" "}
-            after you grant read-only access. On the CLI, it calls git directly in your local
-            repo to pull the same data, with{" "}
-            <code className="inline-code">--week</code> for the past 7 days. Either path
-            fetches commits since your last run by default.
+            after you grant read-only access. On the CLI, it calls git directly in your local repo
+            to pull the same data, with <code className="inline-code">--week</code> for the past 7
+            days. Either path fetches commits since your last run by default.
           </p>
-          <p className="public-text">
-            What gets read on the web app:
-          </p>
+          <p className="public-text">What gets read on the web app:</p>
           <ul>
             <li>Commit messages, timestamps, authors, file paths.</li>
+            <li>The actual diff patches (the lines added and removed in each commit).</li>
             <li>
-              The actual diff patches (the lines added and removed in each commit).
+              Pull request titles and descriptions, plus the titles and bodies of any GitHub issues
+              those PRs reference, so the digest can ground itself in the stated intent behind each
+              change.
             </li>
             <li>
-              Pull request titles and descriptions, plus the titles and bodies of any GitHub
-              issues those PRs reference, so the digest can ground itself in the stated
-              intent behind each change.
-            </li>
-            <li>
-              For up to the 8 most-changed files, ~15 lines of surrounding source code around
-              each changed hunk so refactors and sparse edits can be read in context.
+              For up to the 8 most-changed files, ~15 lines of surrounding source code around each
+              changed hunk so refactors and sparse edits can be read in context.
             </li>
             <li>
               The repository&apos;s README and a single project manifest (one of{" "}
@@ -171,10 +162,9 @@ export default function HowAskScoutSummarizesGitPage() {
             </li>
           </ul>
           <p className="public-text">
-            What doesn&apos;t get read: full source files outside the changed regions,
-            environment variables, secrets, lock files, build artifacts, and untracked files.
-            The CLI reads the same data minus the PR and issue context, because git itself
-            doesn&apos;t store that.
+            What doesn&apos;t get read: full source files outside the changed regions, environment
+            variables, secrets, lock files, build artifacts, and untracked files. The CLI reads the
+            same data minus the PR and issue context, because git itself doesn&apos;t store that.
           </p>
         </section>
 
@@ -185,21 +175,19 @@ export default function HowAskScoutSummarizesGitPage() {
             Codebase Health card and the Pace Check.
           </p>
           <p className="public-text">
-            <strong>Codebase Health</strong> is three measurements. Growth is the ratio of
-            lines added to lines removed, classified from Lean up through Ballooning. Focus
-            looks at the average files touched per commit, running from Tight to Scattered.
-            Churn counts how many files were reworked three or more times in the window, on a
-            Clean-to-High scale. All three come from arithmetic, not LLM judgment.
+            <strong>Codebase Health</strong> is three measurements. Growth is the ratio of lines
+            added to lines removed, classified from Lean up through Ballooning. Focus looks at the
+            average files touched per commit, running from Tight to Scattered. Churn counts how many
+            files were reworked three or more times in the window, on a Clean-to-High scale. All
+            three come from arithmetic, not LLM judgment.
           </p>
           <p className="public-text">
-            <strong>Pace Check</strong> compares today&apos;s commit count to the average of
-            your last three runs. It only renders after you have at least 3 prior digests, so
-            the baseline is real. The multiplier (e.g.{" "}
-            <em>1.7x</em>) is straight division.
+            <strong>Pace Check</strong> compares today&apos;s commit count to the average of your
+            last three runs. It only renders after you have at least 3 prior digests, so the
+            baseline is real. The multiplier (e.g. <em>1.7x</em>) is straight division.
           </p>
           <p className="public-text">
-            Doing the math instead of asking the model makes these numbers exact and easy to
-            audit.
+            Doing the math instead of asking the model makes these numbers exact and easy to audit.
           </p>
         </section>
 
@@ -207,55 +195,52 @@ export default function HowAskScoutSummarizesGitPage() {
           <h2 className="public-section-title">Step 3: Feed real data into a tuned prompt</h2>
           <p className="public-text">
             The LLM only writes the narrative parts: Vibe Check, the bullet sections, and Key
-            Takeaways. Everything structural is already done. The prompt grounds the model in
-            the actual commit messages and diffs, so it cannot invent work that did not
-            happen.
+            Takeaways. Everything structural is already done. The prompt grounds the model in the
+            actual commit messages and diffs, so it cannot invent work that did not happen.
           </p>
           <p className="public-text">
             The prompt has strict editorial constraints. Banned phrases like &ldquo;great
             work&rdquo; and &ldquo;leveraged.&rdquo; A required format for bullets:{" "}
-            <code className="inline-code">Title - body</code> with 2-5 plain-language words in
-            the title. No file paths or function names in summaries (the model translates
-            everything to features and behaviors). No em dashes, no semicolons. The full
-            constraint list is open source. See{" "}
-            <Link
-              href="/articles/why-askscout-is-open-source"
-              className="home-prose-link"
-            >
+            <code className="inline-code">Title - body</code> with 2-5 plain-language words in the
+            title. No file paths or function names in summaries (the model translates everything to
+            features and behaviors). No em dashes, no semicolons. The full constraint list is open
+            source. See{" "}
+            <Link href="/articles/why-askscout-is-open-source" className="home-prose-link">
               Why we made askScout open source
             </Link>{" "}
             for why we publish it.
           </p>
           <p className="public-text">
             The point of the constraints is voice. Without them, the LLM defaults to changelog
-            English: passive and vague. The constraints force it into the voice of a sharp,
-            warm friend who actually looked at the code.
+            English: passive and vague. The constraints force it into the voice of a sharp, warm
+            friend who actually looked at the code.
           </p>
         </section>
 
         <section className="public-section">
           <h2 className="public-section-title">Step 4: Render in plain English</h2>
           <p className="public-text">
-            The output gets rendered with emoji section headers (or bracketed plain text when
-            stdout is piped or <code className="inline-code">NO_COLOR</code> is set). Bullets
-            use the <code className="inline-code">•</code> character in rich mode and{" "}
+            The output gets rendered with emoji section headers (or bracketed plain text when stdout
+            is piped or <code className="inline-code">NO_COLOR</code> is set). Bullets use the{" "}
+            <code className="inline-code">•</code> character in rich mode and{" "}
             <code className="inline-code">-</code> in pipes. Stats lines use proper unicode
             separators.
           </p>
           <p className="public-text">
-            That is everything. Read commits, compute signals, prompt the LLM with real data
-            and tight constraints, render the output. The whole pipeline runs in well under a
-            minute for typical repos, with most of that time spent waiting on the model.
-            Install the CLI in your own repo via the <Link href="/docs" className="home-prose-link">CLI docs</Link>{" "}
+            That is everything. Read commits, compute signals, prompt the LLM with real data and
+            tight constraints, render the output. The whole pipeline runs in well under a minute for
+            typical repos, with most of that time spent waiting on the model. Install the CLI in
+            your own repo via the{" "}
+            <Link href="/docs" className="home-prose-link">
+              CLI docs
+            </Link>{" "}
             to watch it run end-to-end.
           </p>
         </section>
 
         <section className="public-section">
           <h2 className="public-section-title">Before and after</h2>
-          <p className="public-text">
-            Raw git log:
-          </p>
+          <p className="public-text">Raw git log:</p>
           {/* <pre> instead of <div> preserves the leading
               whitespace + line breaks the template literal carries,
               so the bulleted "Shipped" / "Left Off" sections in the
@@ -263,18 +248,16 @@ export default function HowAskScoutSummarizesGitPage() {
               paragraph. Same change applied to the raw git log
               below for consistency, even though it's single lines. */}
           <pre className="resource-code-block">
-{`a1b2c3d wip
+            {`a1b2c3d wip
 b4c5d6e fix
 c7d8e9f update auth
 d0e1f2a wip again
 e3f4a5b add tests
 f6a7b8c fix tests`}
           </pre>
-          <p className="public-text">
-            askScout output for the same window:
-          </p>
+          <p className="public-text">askScout output for the same window:</p>
           <pre className="resource-code-block">
-{`🚀  Shipped  2
+            {`🚀  Shipped  2
 
   •  Auth flow lands
      Users can sign in with email + password. Sessions persist
@@ -294,8 +277,8 @@ f6a7b8c fix tests`}
      the 401 path to a clean re-auth.`}
           </pre>
           <p className="public-text">
-            Both views describe the same six commits. One is illegible at scale. The other you
-            can read on your phone in a coffee line.
+            Both views describe the same six commits. One is illegible at scale. The other you can
+            read on your phone in a coffee line.
           </p>
         </section>
 

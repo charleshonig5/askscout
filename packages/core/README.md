@@ -59,7 +59,9 @@ import { getCommits, getDiffs, summarize, formatDigest, readState } from "asksco
 
 const apiKey = process.env.ANTHROPIC_API_KEY;
 if (!apiKey) {
-  throw new Error("Set ANTHROPIC_API_KEY (sk-ant-…) or use provider: 'openai' with OPENAI_API_KEY.");
+  throw new Error(
+    "Set ANTHROPIC_API_KEY (sk-ant-…) or use provider: 'openai' with OPENAI_API_KEY.",
+  );
 }
 
 const projectRoot = process.cwd();
@@ -85,10 +87,10 @@ console.log(
 
 `summarize()` defaults to a small, fast model per provider unless you override via `ai.model`:
 
-| Provider | Default model | Override via |
-|---|---|---|
+| Provider    | Default model               | Override via                                                    |
+| ----------- | --------------------------- | --------------------------------------------------------------- |
 | `anthropic` | `claude-haiku-4-5-20250414` | `{ provider: "anthropic", apiKey, model: "claude-sonnet-4-…" }` |
-| `openai` | `gpt-4o-mini` | `{ provider: "openai", apiKey, model: "gpt-4o" }` |
+| `openai`    | `gpt-4o-mini`               | `{ provider: "openai", apiKey, model: "gpt-4o" }`               |
 
 The defaults are tuned for speed + cost on typical commit volumes. Larger models work fine but cost more and take longer per digest.
 
@@ -96,13 +98,13 @@ The defaults are tuned for speed + cost on typical commit volumes. Larger models
 
 These bubble out of `summarize()` as `Error` instances. The message includes the HTTP status and the first 200 chars of the provider's response body so you can debug without re-issuing the call.
 
-| Pattern | Likely cause | Fix |
-|---|---|---|
-| `Anthropic API error (401): …` | Invalid or revoked Anthropic key | Re-issue at https://console.anthropic.com/settings/keys |
-| `Anthropic API error (429): …` | Rate limited or out of credit | Wait, top up credits, or switch model |
-| `OpenAI API error (401): …` | Invalid OpenAI key | Re-issue at https://platform.openai.com/api-keys |
-| `OpenAI API error (429): …` | Rate limited or quota exhausted | Check usage at https://platform.openai.com/usage |
-| `(Anthropic\|OpenAI) API returned an unexpected response structure.` | Provider changed response shape | File an issue at https://github.com/charleshonig5/askscout/issues, likely needs a version bump |
+| Pattern                                                              | Likely cause                     | Fix                                                                                            |
+| -------------------------------------------------------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `Anthropic API error (401): …`                                       | Invalid or revoked Anthropic key | Re-issue at https://console.anthropic.com/settings/keys                                        |
+| `Anthropic API error (429): …`                                       | Rate limited or out of credit    | Wait, top up credits, or switch model                                                          |
+| `OpenAI API error (401): …`                                          | Invalid OpenAI key               | Re-issue at https://platform.openai.com/api-keys                                               |
+| `OpenAI API error (429): …`                                          | Rate limited or quota exhausted  | Check usage at https://platform.openai.com/usage                                               |
+| `(Anthropic\|OpenAI) API returned an unexpected response structure.` | Provider changed response shape  | File an issue at https://github.com/charleshonig5/askscout/issues, likely needs a version bump |
 
 ## Stability
 

@@ -24,8 +24,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Why we made askScout open source",
-    description:
-      "Trust matters more than moat for a tool that reads your code.",
+    description: "Trust matters more than moat for a tool that reads your code.",
   },
 };
 
@@ -95,36 +94,34 @@ export default function WhyAskScoutOpenSourcePage() {
 
       <article className="page-body page-body--reading article article--has-hero">
         <p className="public-text article-tldr">
-          <strong>TLDR:</strong> askScout is MIT licensed because trust matters more than moat
-          for a tool that reads your code. Every line is on GitHub, including the LLM prompt and
-          the way we handle your data. The CLI uses your own API key, so on the local surface
-          your data never touches our servers. Open source is the baseline, not a marketing
-          feature.
+          <strong>TLDR:</strong> askScout is MIT licensed because trust matters more than moat for a
+          tool that reads your code. Every line is on GitHub, including the LLM prompt and the way
+          we handle your data. The CLI uses your own API key, so on the local surface your data
+          never touches our servers. Open source is the baseline, not a marketing feature.
         </p>
 
         <section className="public-section">
-          <h2 className="public-section-title">The problem with closed-source AI tools that read your code</h2>
+          <h2 className="public-section-title">
+            The problem with closed-source AI tools that read your code
+          </h2>
           <p className="public-text">
-            Most of the AI tooling shipping right now is closed source. The code that decides
-            what data leaves your machine and what an LLM ends up seeing lives behind a binary
-            you can&apos;t inspect.
+            Most of the AI tooling shipping right now is closed source. The code that decides what
+            data leaves your machine and what an LLM ends up seeing lives behind a binary you
+            can&apos;t inspect.
           </p>
           <p className="public-text">
-            For a code editor or a chat assistant, that is a tradeoff people have decided they
-            can live with. For a tool that reads your repository, it is a harder ask. You are
-            not just trusting the model. You are trusting whatever pipeline gets your diffs to
-            the model.
+            For a code editor or a chat assistant, that is a tradeoff people have decided they can
+            live with. For a tool that reads your repository, it is a harder ask. You are not just
+            trusting the model. You are trusting whatever pipeline gets your diffs to the model.
           </p>
-          <p className="public-text">
-            We didn&apos;t want to ask anyone to take that on faith.
-          </p>
+          <p className="public-text">We didn&apos;t want to ask anyone to take that on faith.</p>
         </section>
 
         <section className="public-section">
           <h2 className="public-section-title">Open source as the baseline</h2>
           <p className="public-text">
-            From day one, the assumption was that askScout would be open source. Not as a
-            growth tactic. As the only honest way to ship a tool in this category.
+            From day one, the assumption was that askScout would be open source. Not as a growth
+            tactic. As the only honest way to ship a tool in this category.
           </p>
           <p className="public-text">
             The whole codebase is public at{" "}
@@ -145,9 +142,9 @@ export default function WhyAskScoutOpenSourcePage() {
             >
               LLM prompt
             </a>{" "}
-            that decides what every digest sounds like. If you want to see what gets sent to
-            your LLM provider, the call sites are right there in the repo. If you want to fork
-            it and run your own version, the{" "}
+            that decides what every digest sounds like. If you want to see what gets sent to your
+            LLM provider, the call sites are right there in the repo. If you want to fork it and run
+            your own version, the{" "}
             <a
               href="https://github.com/charleshonig5/askscout/blob/main/LICENSE"
               target="_blank"
@@ -156,42 +153,41 @@ export default function WhyAskScoutOpenSourcePage() {
             >
               MIT license
             </a>{" "}
-            lets you do that with no restrictions. (For a tour of the pipeline that prompt
-            sits inside, see{" "}
-            <Link
-              href="/articles/how-askscout-summarizes-git"
-              className="home-prose-link"
-            >
+            lets you do that with no restrictions. (For a tour of the pipeline that prompt sits
+            inside, see{" "}
+            <Link href="/articles/how-askscout-summarizes-git" className="home-prose-link">
               How askScout turns a noisy git log into a 10-second digest
             </Link>
             .)
           </p>
           <p className="public-text">
             We thought about a stricter license. Permissive open source can be copied by larger
-            companies. We decided we cared more about being trusted than about being protected.
-            For a tool whose entire job is to read your repo, that felt like the only option.
+            companies. We decided we cared more about being trusted than about being protected. For
+            a tool whose entire job is to read your repo, that felt like the only option.
           </p>
         </section>
 
         <section className="public-section">
           <h2 className="public-section-title">BYOK on the CLI: control over data</h2>
           <p className="public-text">
-            The CLI takes the trust story one layer further. You bring your own LLM API key.
-            That means your diffs go from your machine straight to your chosen provider. No
-            proxy. No middleman. No askScout server in the path.
+            The CLI takes the trust story one layer further. You bring your own LLM API key. That
+            means your diffs go from your machine straight to your chosen provider. No proxy. No
+            middleman. No askScout server in the path.
           </p>
           <p className="public-text">
             The CLI stores nothing online. Your config (with the key at{" "}
             <code className="inline-code">chmod 600</code> in your home folder) and per-project
             state file live on disk only. There is no telemetry, no analytics, no opt-out flag
-            because there is nothing to opt out of. (Our full data-handling policy lives on
-            the <Link href="/privacy" className="home-prose-link">privacy page</Link> if you
-            want it spelled out.)
+            because there is nothing to opt out of. (Our full data-handling policy lives on the{" "}
+            <Link href="/privacy" className="home-prose-link">
+              privacy page
+            </Link>{" "}
+            if you want it spelled out.)
           </p>
           <p className="public-text">
             For developers who care about where their code goes, the CLI is the version we
-            recommend. The hosted web app is faster to start with, but the CLI is the version
-            that proves the trust story.
+            recommend. The hosted web app is faster to start with, but the CLI is the version that
+            proves the trust story.
           </p>
         </section>
 
@@ -207,8 +203,8 @@ export default function WhyAskScoutOpenSourcePage() {
             >
               read the source code
             </a>
-            . You can audit the network calls. You can verify that the only egress from the CLI
-            is to the LLM provider you configured. Whatever we say about privacy, you can check.
+            . You can audit the network calls. You can verify that the only egress from the CLI is
+            to the LLM provider you configured. Whatever we say about privacy, you can check.
           </p>
           <p className="public-text">
             That is the version of trust we wanted to ship. Not a privacy policy you have to
@@ -219,9 +215,9 @@ export default function WhyAskScoutOpenSourcePage() {
         <section className="public-section">
           <h2 className="public-section-title">What it means for our business</h2>
           <p className="public-text">
-            We don&apos;t pretend to have a perfect answer here. Open source under MIT means
-            anyone can take the code and run with it. We accept that. The bet is that being the
-            most trusted version of this tool is worth more than being the only version of it.
+            We don&apos;t pretend to have a perfect answer here. Open source under MIT means anyone
+            can take the code and run with it. We accept that. The bet is that being the most
+            trusted version of this tool is worth more than being the only version of it.
           </p>
           <p className="public-text">
             If a company forks{" "}
@@ -233,17 +229,11 @@ export default function WhyAskScoutOpenSourcePage() {
           </p>
           <p className="public-text">
             (For the longer argument about why a tool like this needs to exist at all,{" "}
-            <Link
-              href="/articles/the-hidden-cost-of-vibe-coding"
-              className="home-prose-link"
-            >
+            <Link href="/articles/the-hidden-cost-of-vibe-coding" className="home-prose-link">
               The Hidden Cost of Vibe Coding
             </Link>{" "}
             covers the why, and{" "}
-            <Link
-              href="/articles/introducing-askscout"
-              className="home-prose-link"
-            >
+            <Link href="/articles/introducing-askscout" className="home-prose-link">
               Introducing askScout
             </Link>{" "}
             covers the what.)

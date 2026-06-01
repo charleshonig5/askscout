@@ -95,11 +95,10 @@ export default function HiddenCostPage() {
 
       <article className="page-body page-body--reading article article--has-hero">
         <p className="public-text article-tldr">
-          <strong>TLDR:</strong> The way most of us code now produces more output than our
-          brains can hold. AI tools took the friction out of writing code. They did not take the
-          friction out of remembering it. By Friday afternoon you&apos;ve shipped a stack of
-          commits and you cannot account for half of them. The fix is a daily digest of what
-          your repo actually did.
+          <strong>TLDR:</strong> The way most of us code now produces more output than our brains
+          can hold. AI tools took the friction out of writing code. They did not take the friction
+          out of remembering it. By Friday afternoon you&apos;ve shipped a stack of commits and you
+          cannot account for half of them. The fix is a daily digest of what your repo actually did.
         </p>
 
         <section className="public-section">
@@ -144,8 +143,8 @@ export default function HiddenCostPage() {
             <strong>Your git log becomes static.</strong> Auto-generated commit messages like{" "}
             <code className="inline-code">wip</code>, <code className="inline-code">fix</code>, and{" "}
             <code className="inline-code">update X</code> don&apos;t tell you what happened. A
-            normal week now produces a wall of nearly-illegible commits. You can&apos;t read
-            your own history.
+            normal week now produces a wall of nearly-illegible commits. You can&apos;t read your
+            own history.
           </p>
           <p className="public-text">
             <strong>Monday-morning amnesia.</strong> You sit down to keep building and you
@@ -167,8 +166,8 @@ export default function HiddenCostPage() {
           <h2 className="public-section-title">Why current tools don&apos;t fix it</h2>
           <p className="public-text">
             <code className="inline-code">git log</code> is unreadable at this volume. The format
-            was designed for slow, deliberate commits. AI-assisted developers are producing
-            many times that volume.
+            was designed for slow, deliberate commits. AI-assisted developers are producing many
+            times that volume.
           </p>
           <p className="public-text">
             Linear and Jira track plans. They have no way to see what the AI actually shipped, only
@@ -194,16 +193,13 @@ export default function HiddenCostPage() {
             <Link href="/dashboard" className="home-prose-link">
               askScout
             </Link>
-            . Sign in to the web app at <Link href="/dashboard">askscout.dev</Link>, or run it as
-            a CLI in any local repo with your own LLM key. It reads your commits, diffs, and a small
+            . Sign in to the web app at <Link href="/dashboard">askscout.dev</Link>, or run it as a
+            CLI in any local repo with your own LLM key. It reads your commits, diffs, and a small
             amount of project context (README plus a manifest like package.json) so the LLM you
             choose has enough to write a digest worth reading. Source files outside the changed
-            regions, environment variables, secrets, and build artifacts are never read. Free.
-            Sets up in about ten seconds. (For the practical follow-up, see{" "}
-            <Link
-              href="/articles/best-ways-to-track-what-you-shipped"
-              className="home-prose-link"
-            >
+            regions, environment variables, secrets, and build artifacts are never read. Free. Sets
+            up in about ten seconds. (For the practical follow-up, see{" "}
+            <Link href="/articles/best-ways-to-track-what-you-shipped" className="home-prose-link">
               the four real ways to track what you shipped
             </Link>{" "}
             and{" "}

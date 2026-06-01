@@ -97,7 +97,10 @@ function splitBulletTitle(item: string): { title: string; context: string } {
   }
   const words = item.trim().split(/\s+/);
   if (words.length >= 5) {
-    const title = words.slice(0, 4).join(" ").replace(/[,;:.!?]+$/, "");
+    const title = words
+      .slice(0, 4)
+      .join(" ")
+      .replace(/[,;:.!?]+$/, "");
     const context = capitalizeFirst(words.slice(4).join(" "));
     return { title, context };
   }
@@ -175,7 +178,10 @@ function formatToday(): string {
   });
 }
 
-function pickNumber(stats: Record<string, unknown> | null | undefined, key: string): number | undefined {
+function pickNumber(
+  stats: Record<string, unknown> | null | undefined,
+  key: string,
+): number | undefined {
   if (!stats) return undefined;
   const v = stats[key];
   return typeof v === "number" && Number.isFinite(v) ? v : undefined;

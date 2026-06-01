@@ -153,8 +153,7 @@ export function DigestEmail({
     ? collapseNewlines(vibeCheck).slice(0, 120)
     : `Your askScout digest for ${repoName}`;
 
-  const showStats =
-    !!stats && isVisible(visibility, "statistics") && stats.commits != null;
+  const showStats = !!stats && isVisible(visibility, "statistics") && stats.commits != null;
 
   return (
     <Html>
@@ -245,26 +244,26 @@ export function DigestEmail({
             boxSizing: "border-box",
           }}
         >
-        {/* DIGEST PANEL — bg #070707, 1px border, rounded BOTTOM
+          {/* DIGEST PANEL — bg #070707, 1px border, rounded BOTTOM
             corners only (30px). Sits flush against the top edge of
             the outer column and "scoops" out at the bottom to
             reveal the lighter #121212 footer band below. Per Figma
             442:4 the panel's border continues the outer column's
             border seamlessly — same color, same width. */}
-        <div
-          className="force-dark-card force-dark-border force-dark-text"
-          style={{
-            backgroundColor: c.bgPrimary,
-            borderBottomLeftRadius: "30px",
-            borderBottomRightRadius: "30px",
-            // No top/side borders here — the outer Container's
-            // border already paints those edges. Setting borders
-            // on a side that's already painted would double up
-            // visually in clients that anti-alias differently.
-            padding: "24px 0 40px",
-          }}
-        >
-          {/* HEADER ---------------------------------------------------
+          <div
+            className="force-dark-card force-dark-border force-dark-text"
+            style={{
+              backgroundColor: c.bgPrimary,
+              borderBottomLeftRadius: "30px",
+              borderBottomRightRadius: "30px",
+              // No top/side borders here — the outer Container's
+              // border already paints those edges. Setting borders
+              // on a side that's already painted would double up
+              // visually in clients that anti-alias differently.
+              padding: "24px 0 40px",
+            }}
+          >
+            {/* HEADER ---------------------------------------------------
               Header inset is 33px sides + 23px top from container.
               paddingBottom is sized so the divider lands at the
               Figma's top:98. With a Pridi 24 title (~30px tall) +
@@ -278,149 +277,144 @@ export function DigestEmail({
               away from the title. Single cell + inline-blocks +
               explicit margins = chips sit exactly 14px and 8px from
               their neighbors. */}
-          <Section style={{ paddingLeft: "34px", paddingRight: "34px", paddingBottom: "24px" }}>
-            <table
-              cellPadding={0}
-              cellSpacing={0}
-              border={0}
-              role="presentation"
-              style={{ borderCollapse: "collapse" }}
-            >
-              <tbody>
-                <tr>
-                  <td style={{ padding: 0, verticalAlign: "middle", whiteSpace: "nowrap" }}>
-                    <span
-                      style={{
-                        fontFamily: fonts.display,
-                        fontWeight: 400,
-                        fontSize: "24px",
-                        lineHeight: "normal",
-                        color: c.textPrimary,
-                        verticalAlign: "middle",
-                        marginRight: "14px",
-                      }}
-                    >
-                      {digestTitle}
-                    </span>
-                    <RepoChip repoName={repoName} repoFullName={fullSlug} />
-                    {streak != null && streak > 0 && (
-                      <span style={{ marginLeft: "8px" }}>
-                        <StreakChip days={streak} />
+            <Section style={{ paddingLeft: "34px", paddingRight: "34px", paddingBottom: "24px" }}>
+              <table
+                cellPadding={0}
+                cellSpacing={0}
+                border={0}
+                role="presentation"
+                style={{ borderCollapse: "collapse" }}
+              >
+                <tbody>
+                  <tr>
+                    <td style={{ padding: 0, verticalAlign: "middle", whiteSpace: "nowrap" }}>
+                      <span
+                        style={{
+                          fontFamily: fonts.display,
+                          fontWeight: 400,
+                          fontSize: "24px",
+                          lineHeight: "normal",
+                          color: c.textPrimary,
+                          verticalAlign: "middle",
+                          marginRight: "14px",
+                        }}
+                      >
+                        {digestTitle}
                       </span>
-                    )}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            {/* Date below the title row — 4px margin-top per the
+                      <RepoChip repoName={repoName} repoFullName={fullSlug} />
+                      {streak != null && streak > 0 && (
+                        <span style={{ marginLeft: "8px" }}>
+                          <StreakChip days={streak} />
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              {/* Date below the title row — 4px margin-top per the
                 user's spec, slightly more breathing room than the
                 Figma's tight line-height-only stack. */}
-            <Text
-              style={{
-                margin: "4px 0 0",
-                fontFamily: fonts.sans,
-                fontWeight: 300,
-                fontSize: "12px",
-                lineHeight: "normal",
-                color: c.textPrimary,
-              }}
-            >
-              {dateLabel}
-            </Text>
-          </Section>
+              <Text
+                style={{
+                  margin: "4px 0 0",
+                  fontFamily: fonts.sans,
+                  fontWeight: 300,
+                  fontSize: "12px",
+                  lineHeight: "normal",
+                  color: c.textPrimary,
+                }}
+              >
+                {dateLabel}
+              </Text>
+            </Section>
 
-          {/* Divider — pixel-clean 1px line edge-to-edge. Implemented as
+            {/* Divider — pixel-clean 1px line edge-to-edge. Implemented as
               a <div> with explicit height + background-color rather
               than <Hr>, because <hr> elements render with browser-
               default anti-aliasing quirks (often visually thinner or
               thicker than a 1px css border). A solid-fill div at
               height:1 paints exactly 1px and matches the card's 1px
               #252525 border weight perfectly. */}
-          <div
-            style={{
-              height: "1px",
-              backgroundColor: c.border,
-              fontSize: 0,
-              lineHeight: 0,
-              margin: 0,
-            }}
-            aria-hidden
-          />
+            <div
+              style={{
+                height: "1px",
+                backgroundColor: c.border,
+                fontSize: 0,
+                lineHeight: 0,
+                margin: 0,
+              }}
+              aria-hidden
+            />
 
-          {/* CONTENT SECTIONS — 44px gap between sections in the inner
+            {/* CONTENT SECTIONS — 44px gap between sections in the inner
               column, then 34px gap before the CTA. Wrapped in a div
               that adds the 33px horizontal inset so content sits where
               the Figma frame placed it. */}
-          <div style={{ paddingTop: "24px", paddingLeft: "34px", paddingRight: "34px" }}>
-            {vibeCheck && isVisible(visibility, "vibeCheck") && (
-              <SectionWrapper marginBottom={34}>
-                <VibeCheckCard body={vibeCheck} />
-              </SectionWrapper>
-            )}
-
-            {shipped.length > 0 && isVisible(visibility, "shipped") && (
-              <SectionWrapper marginBottom={34}>
-                <BulletSection emojiKey="shipped" label="Shipped" items={shipped} />
-              </SectionWrapper>
-            )}
-
-            {changed.length > 0 && isVisible(visibility, "changed") && (
-              <SectionWrapper marginBottom={34}>
-                <BulletSection emojiKey="changed" label="Changed" items={changed} />
-              </SectionWrapper>
-            )}
-
-            {unstable.length > 0 && isVisible(visibility, "unstable") && (
-              <SectionWrapper marginBottom={34}>
-                <BulletSection emojiKey="unstable" label="Still Shifting" items={unstable} />
-              </SectionWrapper>
-            )}
-
-            {leftOff.length > 0 && isVisible(visibility, "leftOff") && (
-              <SectionWrapper marginBottom={34}>
-                <BulletSection emojiKey="leftOff" label="Left Off" items={leftOff} />
-              </SectionWrapper>
-            )}
-
-            {fieldNotes &&
-              (fieldNotes.subtitle || fieldNotes.body) &&
-              isVisible(visibility, "fieldNotes") && (
+            <div style={{ paddingTop: "24px", paddingLeft: "34px", paddingRight: "34px" }}>
+              {vibeCheck && isVisible(visibility, "vibeCheck") && (
                 <SectionWrapper marginBottom={34}>
-                  <FieldNotesSection
-                    subtitle={fieldNotes.subtitle}
-                    body={fieldNotes.body}
-                  />
+                  <VibeCheckCard body={vibeCheck} />
                 </SectionWrapper>
               )}
 
-            {keyTakeaways && isVisible(visibility, "oneTakeaway") && (
-              <SectionWrapper marginBottom={34}>
-                <ProseSection emojiKey="takeaway" label="Key Takeaways" body={keyTakeaways} />
-              </SectionWrapper>
-            )}
+              {shipped.length > 0 && isVisible(visibility, "shipped") && (
+                <SectionWrapper marginBottom={34}>
+                  <BulletSection emojiKey="shipped" label="Shipped" items={shipped} />
+                </SectionWrapper>
+              )}
 
-            {showStats && stats && (
-              // Stats line is the last item in the gap-44 section group.
-              // The gap between the stats line and the CTA below is
-              // 34px (the outer-column gap-34 in the Figma layout),
-              // not 44px — so this wrapper uses 34 instead of 44.
-              <SectionWrapper marginBottom={34}>
-                <StatsLine stats={stats} />
-              </SectionWrapper>
-            )}
+              {changed.length > 0 && isVisible(visibility, "changed") && (
+                <SectionWrapper marginBottom={34}>
+                  <BulletSection emojiKey="changed" label="Changed" items={changed} />
+                </SectionWrapper>
+              )}
 
-            {/* CTA — Open Full Digest button. Deep-links to the
+              {unstable.length > 0 && isVisible(visibility, "unstable") && (
+                <SectionWrapper marginBottom={34}>
+                  <BulletSection emojiKey="unstable" label="Still Shifting" items={unstable} />
+                </SectionWrapper>
+              )}
+
+              {leftOff.length > 0 && isVisible(visibility, "leftOff") && (
+                <SectionWrapper marginBottom={34}>
+                  <BulletSection emojiKey="leftOff" label="Left Off" items={leftOff} />
+                </SectionWrapper>
+              )}
+
+              {fieldNotes &&
+                (fieldNotes.subtitle || fieldNotes.body) &&
+                isVisible(visibility, "fieldNotes") && (
+                  <SectionWrapper marginBottom={34}>
+                    <FieldNotesSection subtitle={fieldNotes.subtitle} body={fieldNotes.body} />
+                  </SectionWrapper>
+                )}
+
+              {keyTakeaways && isVisible(visibility, "oneTakeaway") && (
+                <SectionWrapper marginBottom={34}>
+                  <ProseSection emojiKey="takeaway" label="Key Takeaways" body={keyTakeaways} />
+                </SectionWrapper>
+              )}
+
+              {showStats && stats && (
+                // Stats line is the last item in the gap-44 section group.
+                // The gap between the stats line and the CTA below is
+                // 34px (the outer-column gap-34 in the Figma layout),
+                // not 44px — so this wrapper uses 34 instead of 44.
+                <SectionWrapper marginBottom={34}>
+                  <StatsLine stats={stats} />
+                </SectionWrapper>
+              )}
+
+              {/* CTA — Open Full Digest button. Deep-links to the
                 dashboard with the specific repo selected via the
                 `?repo=` query param so the user lands on the exact
                 digest the email is for, regardless of whether it's
                 their default repo. The dashboard reads this param
                 on mount and selects the matching repo. */}
-            <CTAButton
-              href={`${WEB_URL}/dashboard?repo=${encodeURIComponent(fullSlug)}`}
-            />
+              <CTAButton href={`${WEB_URL}/dashboard?repo=${encodeURIComponent(fullSlug)}`} />
+            </div>
           </div>
-        </div>
-        {/* End DIGEST PANEL — the rounded bottom corners above end
+          {/* End DIGEST PANEL — the rounded bottom corners above end
             here. Whatever follows sits on the outer column's lighter
             #121212 background, visible beneath the scoop. */}
 
@@ -431,7 +425,7 @@ export function DigestEmail({
               (left:33, w:175) — keeps "You sent this to
               yourself..." on two narrow lines as designed. */}
           <div style={{ padding: "33px 34px 40px" }}>
-              <div style={{ width: "175px" }}>
+            <div style={{ width: "175px" }}>
               <Img
                 src={`${WEB_URL}/logo-white.svg`}
                 alt="askScout"
@@ -465,8 +459,8 @@ export function DigestEmail({
               >
                 © 2026 askScout
               </Text>
-              </div>
             </div>
+          </div>
         </Container>
       </Body>
     </Html>
@@ -495,8 +489,7 @@ function SectionWrapper({
  *  pointing at the same jsdelivr CDN so the rendered glyphs are
  *  identical to what the dashboard shows, instead of OS-default
  *  Unicode emoji which differ per platform. */
-const FLUENT_BASE =
-  "https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets";
+const FLUENT_BASE = "https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets";
 const FLUENT_EMOJI: Record<string, { folder: string; file: string }> = {
   vibe: { folder: "Megaphone", file: "megaphone_3d.png" },
   shipped: { folder: "Rocket", file: "rocket_3d.png" },
@@ -555,13 +548,7 @@ function SectionEmoji({ name }: { name: keyof typeof FLUENT_EMOJI }) {
 /** Repo chip — bg-tertiary pill with the repo slug + Lucide Forward
  *  glyph (10×10). Wraps in an <a> that opens the repo on GitHub in
  *  a new tab, matching the dashboard's .digest-repo-chip behavior. */
-function RepoChip({
-  repoName,
-  repoFullName,
-}: {
-  repoName: string;
-  repoFullName: string;
-}) {
+function RepoChip({ repoName, repoFullName }: { repoName: string; repoFullName: string }) {
   return (
     <Link
       href={`https://github.com/${repoFullName}`}
@@ -771,10 +758,7 @@ function BulletSection({
       {/* Bullet list — 14px gap below the header, 14px between items */}
       <div style={{ paddingTop: space.gap14 }}>
         {items.map((item, i) => (
-          <div
-            key={i}
-            style={{ paddingBottom: i === items.length - 1 ? 0 : space.gap14 }}
-          >
+          <div key={i} style={{ paddingBottom: i === items.length - 1 ? 0 : space.gap14 }}>
             <Row>
               <Column
                 style={{

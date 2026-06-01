@@ -94,14 +94,14 @@ After streaming, the web persists the digest into Supabase (`digests` table) and
 
 ### What's intentionally shared, what's not
 
-| Concern                                 | Shared in core?                            | Why                                                                                                                                    |
-| --------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Concern                                 | Shared in core?                           | Why                                                                                                                                    |
+| --------------------------------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | **System prompts** (tone, format rules) | ✅ Yes, `buildUnifiedSystemPrompt()` etc. | Identical brand voice on both surfaces                                                                                                 |
 | **User prompts** (input data + framing) | ❌ No, each surface builds its own        | Inputs differ structurally (local diffs vs GitHub API responses + Supabase context)                                                    |
 | **Type definitions**                    | ✅ Yes, `packages/core/src/types.ts`      | Both surfaces operate on the same `Digest`, `GitCommit`, `HealthIndicator` shapes                                                      |
-| **Output formatting**                   | Partial                                    | CLI uses core's `format*()` functions; web has its own React components in `DigestView.tsx`. Both target the same content semantically |
-| **State persistence**                   | Per-surface                                | CLI writes `.askscout/state.json`; web writes Supabase tables                                                                          |
-| **Git reading**                         | Core has the local-git path                | Web doesn't use it (no local repo); web has its own GitHub-API fetcher in `apps/web/src/lib/github.ts`                                 |
+| **Output formatting**                   | Partial                                   | CLI uses core's `format*()` functions; web has its own React components in `DigestView.tsx`. Both target the same content semantically |
+| **State persistence**                   | Per-surface                               | CLI writes `.askscout/state.json`; web writes Supabase tables                                                                          |
+| **Git reading**                         | Core has the local-git path               | Web doesn't use it (no local repo); web has its own GitHub-API fetcher in `apps/web/src/lib/github.ts`                                 |
 
 ---
 
@@ -111,12 +111,12 @@ The library exposes a single ESM/CJS entry point at `packages/core/src/index.ts`
 
 | File           | Responsibility                                                                                                                                                                                                                                                                                          |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `git.ts`       | Local-git access. `getCommits`, `getDiffs`, `getRepoName`. Uses `execFile` against the `git` binary, NUL-delimited record format, max-buffer + truncation safeguards. CLI-only in practice, the web doesn't call these                                                                                 |
+| `git.ts`       | Local-git access. `getCommits`, `getDiffs`, `getRepoName`. Uses `execFile` against the `git` binary, NUL-delimited record format, max-buffer + truncation safeguards. CLI-only in practice, the web doesn't call these                                                                                  |
 | `summarize.ts` | System and user prompts (`buildSystemPrompt`, `buildUnifiedSystemPrompt`, `buildAIContextSystemPrompt`, `buildStandupSystemPrompt`, `buildUserPrompt`); `summarize()` orchestrator that dispatches to the configured LLM provider and parses the JSON response into a `Digest`; `computeStats()` helper |
-| `format.ts`    | Terminal output renderers, `formatDigest`, `formatCodebaseHealth`, `formatCodingTimeline`, `formatPaceCheck`, `formatResume`, `formatStandup`. TTY/`NO_COLOR` aware                                                                                                                                    |
+| `format.ts`    | Terminal output renderers, `formatDigest`, `formatCodebaseHealth`, `formatCodingTimeline`, `formatPaceCheck`, `formatResume`, `formatStandup`. TTY/`NO_COLOR` aware                                                                                                                                     |
 | `state.ts`     | `.askscout/state.json` reader/writer with v1 → v2 migration, `appendDigestRun` helper, `STATE_HISTORY_CAP` constant                                                                                                                                                                                     |
-| `types.ts`     | All shared types, `Digest`, `DigestStats`, `DigestItem`, `UnstableItem`, `HealthIndicator`, `GitCommit`, `GitDiff`, `ProjectState`, `DigestRunSummary`, `AiConfig`, etc.                                                                                                                               |
-| `index.ts`     | Barrel, public surface area                                                                                                                                                                                                                                                                            |
+| `types.ts`     | All shared types, `Digest`, `DigestStats`, `DigestItem`, `UnstableItem`, `HealthIndicator`, `GitCommit`, `GitDiff`, `ProjectState`, `DigestRunSummary`, `AiConfig`, etc.                                                                                                                                |
+| `index.ts`     | Barrel, public surface area                                                                                                                                                                                                                                                                             |
 
 **Stability:** the library is pre-1.0. The barrel is the public API; anything not re-exported is internal and may move without notice.
 
@@ -155,12 +155,12 @@ Permissions: the directory is `0700`, the file is `0600` (set by `setup.ts` when
 
 ### Web: Supabase tables
 
-| Table               | Contains                                                                   | Scoped by         |
-| ------------------- | -------------------------------------------------------------------------- | ----------------- |
-| `user_settings`     | Default repo, per-section toggle preferences                               | `user_id`         |
-| `digests`           | Saved digest content + stats blob (JSONB) per run                          | `user_id`, `repo` |
+| Table               | Contains                                                                  | Scoped by         |
+| ------------------- | ------------------------------------------------------------------------- | ----------------- |
+| `user_settings`     | Default repo, per-section toggle preferences                              | `user_id`         |
+| `digests`           | Saved digest content + stats blob (JSONB) per run                         | `user_id`, `repo` |
 | `daily_checkins`    | Quiet-day check-in records (date + repo), keep streaks alive on rest days | `user_id`, `repo` |
-| `project_summaries` | AI-maintained rolling summary per repo                                     | `user_id`, `repo` |
+| `project_summaries` | AI-maintained rolling summary per repo                                    | `user_id`, `repo` |
 
 All Supabase queries are scoped by `user_id` (sourced from the NextAuth session). Cross-user reads aren't possible by routing, every `select`/`insert`/`delete` includes a `.eq("user_id", userId)` filter.
 

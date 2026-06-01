@@ -999,9 +999,7 @@ export default function DashboardPage() {
                     }
                     streamingText={currentSections?.digest ?? ""}
                     stats={
-                      digestStream.stats ||
-                      cachedDigests[`${selectedRepo}:digest`]?.stats ||
-                      null
+                      digestStream.stats || cachedDigests[`${selectedRepo}:digest`]?.stats || null
                     }
                     repoName={repoName}
                     repoFullName={selectedRepo}

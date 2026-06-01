@@ -41,11 +41,7 @@ function formatDate(iso: string): string {
   });
 }
 
-export function ArticlesIndexInteractive({
-  articles,
-}: {
-  articles: ArticleListing[];
-}) {
+export function ArticlesIndexInteractive({ articles }: { articles: ArticleListing[] }) {
   const [filter, setFilter] = useState<FilterValue>("all");
   // Sliding-pill indicator — same useSliderIndicator hook that
   // powers the FAQ tabs' active-pill slide, so motion across the
@@ -92,9 +88,7 @@ export function ArticlesIndexInteractive({
                 role="tab"
                 type="button"
                 aria-selected={isActive}
-                className={`articles-filter-chip${
-                  isActive ? " articles-filter-chip--active" : ""
-                }`}
+                className={`articles-filter-chip${isActive ? " articles-filter-chip--active" : ""}`}
                 onClick={() => setFilter(f.value)}
               >
                 {f.label}
@@ -115,9 +109,7 @@ export function ArticlesIndexInteractive({
           return (
             <li
               key={a.slug}
-              className={`articles-card-wrap${
-                visible ? "" : " articles-card-wrap--hidden"
-              }`}
+              className={`articles-card-wrap${visible ? "" : " articles-card-wrap--hidden"}`}
             >
               <Link href={`/articles/${a.slug}`} className="articles-card">
                 <div className="articles-card-body">
@@ -136,15 +128,9 @@ export function ArticlesIndexInteractive({
                 <div className="articles-card-footer">
                   <span className="articles-card-read">
                     <span>Read More</span>
-                    <SquareArrowUpRight
-                      size={16}
-                      strokeWidth={1.5}
-                      aria-hidden
-                    />
+                    <SquareArrowUpRight size={16} strokeWidth={1.5} aria-hidden />
                   </span>
-                  <span className="articles-card-date">
-                    {formatDate(a.date)}
-                  </span>
+                  <span className="articles-card-date">{formatDate(a.date)}</span>
                 </div>
               </Link>
             </li>

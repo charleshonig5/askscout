@@ -28,8 +28,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "The fastest way to bring Claude Code, Cursor, or Codex up to speed on your project",
-    description:
-      "How to give Claude Code, Cursor, or Codex instant project context.",
+    description: "How to give Claude Code, Cursor, or Codex instant project context.",
   },
 };
 
@@ -64,8 +63,7 @@ const FAQ_SCHEMA = {
 
 const ARTICLE_SCHEMA = articleJsonLd({
   slug: "fastest-way-to-give-claude-or-cursor-project-context",
-  headline:
-    "The fastest way to bring Claude Code, Cursor, or Codex up to speed on your project",
+  headline: "The fastest way to bring Claude Code, Cursor, or Codex up to speed on your project",
   description:
     "How to give Claude Code, Cursor, or Codex a one-shot context block covering tech stack, recent work, current focus, and key files, so the AI is useful from the first message.",
 });
@@ -100,13 +98,13 @@ export default function FastestWayToContextPage() {
 
       <article className="page-body page-body--reading article article--has-hero">
         <p className="public-text article-tldr">
-          <strong>TLDR:</strong> Claude Code, Cursor, and Codex work best when they understand
-          your project. The fastest way to give them context is to paste a structured block at
-          the start of a session covering tech stack, recent work, current focus, key files,
-          and any warnings. The askScout web app has an <strong>AI Resume Prompt</strong> button
-          that assembles this block from your latest digest. The CLI does the same thing with{" "}
-          <code className="inline-code">askscout --resume</code>. Below is what good context
-          looks like and how to assemble it whether you use askScout or not.
+          <strong>TLDR:</strong> Claude Code, Cursor, and Codex work best when they understand your
+          project. The fastest way to give them context is to paste a structured block at the start
+          of a session covering tech stack, recent work, current focus, key files, and any warnings.
+          The askScout web app has an <strong>AI Resume Prompt</strong> button that assembles this
+          block from your latest digest. The CLI does the same thing with{" "}
+          <code className="inline-code">askscout --resume</code>. Below is what good context looks
+          like and how to assemble it whether you use askScout or not.
         </p>
 
         <section className="public-section">
@@ -122,8 +120,8 @@ export default function FastestWayToContextPage() {
               Claude Code
             </a>{" "}
             or Codex session starts cold. Cursor remembers a little more across files but still
-            loses thread between long breaks. The first ten minutes of any session tend to look
-            the same: you explain the project and what you&apos;re doing right now.
+            loses thread between long breaks. The first ten minutes of any session tend to look the
+            same: you explain the project and what you&apos;re doing right now.
           </p>
           <p className="public-text">
             That is wasted typing. The information already exists in your git history and your
@@ -135,43 +133,41 @@ export default function FastestWayToContextPage() {
         <section className="public-section">
           <h2 className="public-section-title">What good context actually looks like</h2>
           <p className="public-text">
-            After working this pattern into real repos, the context block that consistently
-            produces useful first responses has five parts.
+            After working this pattern into real repos, the context block that consistently produces
+            useful first responses has five parts.
           </p>
           <p className="public-text">
-            <strong>Tech stack.</strong> A one-line summary of the languages, frameworks, and
-            major libraries. The AI uses this to know which idioms to reach for.
+            <strong>Tech stack.</strong> A one-line summary of the languages, frameworks, and major
+            libraries. The AI uses this to know which idioms to reach for.
           </p>
           <p className="public-text">
-            <strong>Recent work.</strong> Two or three sentences describing what shipped in the
-            last few days, with file paths. This anchors the model to the current state of the
-            code, not an outdated mental model.
+            <strong>Recent work.</strong> Two or three sentences describing what shipped in the last
+            few days, with file paths. This anchors the model to the current state of the code, not
+            an outdated mental model.
           </p>
           <p className="public-text">
-            <strong>Current focus.</strong> What you&apos;re actively working on this session.
-            One sentence. Tells the AI what is in scope and what is not.
+            <strong>Current focus.</strong> What you&apos;re actively working on this session. One
+            sentence. Tells the AI what is in scope and what is not.
           </p>
           <p className="public-text">
-            <strong>Key files.</strong> A list of file paths that matter for the current work.
-            Helps the AI prioritize which files to read first.
+            <strong>Key files.</strong> A list of file paths that matter for the current work. Helps
+            the AI prioritize which files to read first.
           </p>
           <p className="public-text">
-            <strong>Warnings.</strong> Anything brittle, in flight, or recently broken. Saves
-            the AI from suggesting changes to code that is already mid-refactor.
+            <strong>Warnings.</strong> Anything brittle, in flight, or recently broken. Saves the AI
+            from suggesting changes to code that is already mid-refactor.
           </p>
         </section>
 
         <section className="public-section">
           <h2 className="public-section-title">The manual way</h2>
-          <p className="public-text">
-            You can write this block by hand. The format that works:
-          </p>
+          <p className="public-text">You can write this block by hand. The format that works:</p>
           {/* <pre> preserves the multi-line structure so the
               5-section format renders as it actually appears, not
               as a collapsed paragraph. See the matching change in
               how-askscout-summarizes-git's before/after section. */}
           <pre className="resource-code-block">
-{`Tech Stack
+            {`Tech Stack
 Next.js 15 App Router, TypeScript, Tailwind, Supabase auth.
 
 Recent Work
@@ -190,8 +186,8 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
           </pre>
           <p className="public-text">
             Paste this at the start of a Claude Code, Cursor, or Codex session and the next response
-            will be sharper than starting cold. The downside is that writing it takes a few
-            minutes, and it goes stale fast.
+            will be sharper than starting cold. The downside is that writing it takes a few minutes,
+            and it goes stale fast.
           </p>
         </section>
 
@@ -202,11 +198,13 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
             <Link href="/dashboard" className="home-prose-link">
               askScout web app
             </Link>
-            , generate this block by clicking the{" "}
-            <strong>AI Resume Prompt</strong> button at the bottom of any digest. It opens a
-            modal with the same five-section context, ready to copy. The CLI does the same
-            thing in one command (install steps are in the{" "}
-            <Link href="/docs" className="home-prose-link">CLI docs</Link>):
+            , generate this block by clicking the <strong>AI Resume Prompt</strong> button at the
+            bottom of any digest. It opens a modal with the same five-section context, ready to
+            copy. The CLI does the same thing in one command (install steps are in the{" "}
+            <Link href="/docs" className="home-prose-link">
+              CLI docs
+            </Link>
+            ):
           </p>
           {/* CommandChip is the existing site pattern for
               copy-on-click shell commands ($ prefix + Copy → Check
@@ -220,73 +218,61 @@ useAuth was just refactored. Don't suggest changes to its session-state code wit
             <CommandChip command="askscout --resume" />
           </div>
           <p className="public-text">
-            askScout reads your recent git history (commits, diffs, file paths), runs it
-            through the same LLM you configured for digests, and produces a context block in
-            exactly the format above. Every section is grounded in your real activity, not a
-            stale description of the project. (For the full pipeline this builds on, see{" "}
-            <Link
-              href="/articles/how-askscout-summarizes-git"
-              className="home-prose-link"
-            >
+            askScout reads your recent git history (commits, diffs, file paths), runs it through the
+            same LLM you configured for digests, and produces a context block in exactly the format
+            above. Every section is grounded in your real activity, not a stale description of the
+            project. (For the full pipeline this builds on, see{" "}
+            <Link href="/articles/how-askscout-summarizes-git" className="home-prose-link">
               How askScout turns a noisy git log into a 10-second digest
             </Link>
             .)
           </p>
-          <p className="public-text">
-            Pipe it straight into your clipboard (macOS):
-          </p>
+          <p className="public-text">Pipe it straight into your clipboard (macOS):</p>
           <div className="article-command-row">
             <CommandChip command="askscout --resume | pbcopy" />
           </div>
-          <p className="public-text">
-            Or on Linux:
-          </p>
+          <p className="public-text">Or on Linux:</p>
           <div className="article-command-row">
             <CommandChip command="askscout --resume | xclip" />
           </div>
-          <p className="public-text">
-            Then paste at the start of any AI coding session.
-          </p>
+          <p className="public-text">Then paste at the start of any AI coding session.</p>
         </section>
 
         <section className="public-section">
           <h2 className="public-section-title">When to refresh</h2>
           <p className="public-text">
-            The block goes stale as you ship. The fix is to regenerate it whenever you start a
-            new session. <code className="inline-code">askscout --resume</code> is fast enough
-            to run on demand (well under a minute, same as a regular digest).
+            The block goes stale as you ship. The fix is to regenerate it whenever you start a new
+            session. <code className="inline-code">askscout --resume</code> is fast enough to run on
+            demand (well under a minute, same as a regular digest).
           </p>
           <p className="public-text">
-            For most solo developers the rhythm that works is: regenerate at the top of every
-            new Claude Code, Cursor, or Codex session. If you stay in the same session all day, the
-            initial paste is fine. The point is that the context the AI sees should reflect
-            what your codebase actually looks like right now, not what you remember it being.
+            For most solo developers the rhythm that works is: regenerate at the top of every new
+            Claude Code, Cursor, or Codex session. If you stay in the same session all day, the
+            initial paste is fine. The point is that the context the AI sees should reflect what
+            your codebase actually looks like right now, not what you remember it being.
           </p>
         </section>
 
         <section className="public-section">
           <h2 className="public-section-title">Why this matters</h2>
           <p className="public-text">
-            The quality of any AI coding session is set by the first message. A cold session
-            with no context produces generic suggestions. A session that opens with real
-            project context produces suggestions grounded in your actual code.
+            The quality of any AI coding session is set by the first message. A cold session with no
+            context produces generic suggestions. A session that opens with real project context
+            produces suggestions grounded in your actual code.
           </p>
           <p className="public-text">
-            The difference is bigger than most developers expect. Once you start every session
-            with a real context block, going back to cold sessions feels noticeably worse. (For
-            the broader picture of where AI coding tools fit,{" "}
+            The difference is bigger than most developers expect. Once you start every session with
+            a real context block, going back to cold sessions feels noticeably worse. (For the
+            broader picture of where AI coding tools fit,{" "}
             <Link
               href="/articles/best-ai-coding-tools-for-solo-developers"
               className="home-prose-link"
             >
-              here&apos;s an honest read on Claude Code, Cursor, Codex, and the other AI
-              coding tools
+              here&apos;s an honest read on Claude Code, Cursor, Codex, and the other AI coding
+              tools
             </Link>
             . For the origin story of askScout itself,{" "}
-            <Link
-              href="/articles/introducing-askscout"
-              className="home-prose-link"
-            >
+            <Link href="/articles/introducing-askscout" className="home-prose-link">
               Introducing askScout
             </Link>{" "}
             sets the table.)

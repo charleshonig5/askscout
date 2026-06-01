@@ -32,11 +32,7 @@ describe("getUserId", () => {
   });
 
   it("never returns 'unknown' for any empty-shape input", () => {
-    const cases: Array<{ user?: { id?: string } }> = [
-      { user: {} },
-      {},
-      { user: undefined },
-    ];
+    const cases: Array<{ user?: { id?: string } }> = [{ user: {} }, {}, { user: undefined }];
     for (const session of cases) {
       expect(getUserId(session)).not.toBe("unknown");
     }
