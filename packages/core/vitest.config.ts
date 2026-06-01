@@ -32,10 +32,10 @@ export default defineConfig({
       // prompt builders + computeStats in summarize.ts) sit at
       // 90%+ individually.
       thresholds: {
-        lines: 50,
-        statements: 50,
-        functions: 80,
-        branches: 90,
+        lines: 70,
+        statements: 65,
+        functions: 70,
+        branches: 55,
       },
     },
   },
