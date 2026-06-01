@@ -24,29 +24,32 @@ askscout            # daily digest
 ## Sample output
 
 ```
-askScout · myrepo · today
+🔍 Scout scanned myorg/myrepo
+   3 commits · 8 files · past 24 hours
 
 💬 Vibe Check
 You spent the afternoon untangling the search index migration
 and shipped two clean cleanup commits to finish it off. The
-fingerprint cache code is a little gnarly now — worth a pass
+fingerprint cache code is a little gnarly now, worth a pass
 before you stack more on top of it.
 
+   +312 lines · -147 lines · 3 commits · 8 files
+
 🚀 Shipped  2
-  • Search index migration lands — Switched the products
+  • Search index migration lands. Switched the products
     table to the new pg_trgm index. Every read path got
     re-pointed in one commit, no live-write window.
-  • Cleanup of legacy search helper — Removed the old
+  • Cleanup of legacy search helper. Removed the old
     raw-sql search() helper that the migration replaced.
     No callers left.
 
 🔧 Changed  1
-  • Fingerprint cache TTL — Bumped from 60s to 300s after
+  • Fingerprint cache TTL bumped from 60s to 300s after
     the cache-stampede on staging. Tied to a small refactor
     of the cache key shape.
 
 📍 Left Off  1
-  • Cache key shape feels fragile — The fingerprint cache
+  • Cache key shape feels fragile. The fingerprint cache
     now keys off a 3-tuple. Works but a 4th dimension is
     coming soon and the current shape won't extend cleanly.
 
@@ -55,18 +58,20 @@ The search migration was the day. Fingerprint cache TTL change
 solved the prod incident but the new key shape is the next
 thing to rethink before adding the fourth dimension.
 
-📊 Stats
-+312 / -147 lines · 3 commits · 8 files
+Most Active Files
+1. db/search.ts (+182 / -94, 2 commits)
+2. lib/cache.ts (+78 / -41, 1 commit)
+3. tests/search.test.ts (+52 / -12, 1 commit)
 
-🏥 Codebase Health
+Codebase Health
   Growth     Steady       +312 / -147
   Focus      Sharp        2.7 files touched per commit
   Churn      Minimal      1 file reworked
 
-⏱  Coding Timeline
-  10:42 ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔ 16:15
+Coding Timeline
+10:42 am to 4:15 pm · 3 commits
 
-📈 Pace Check
+Pace Check (after 3+ runs)
   Today    3 commits
   Avg      4.2 commits per recent run
   Pace     0.7× (a bit lighter than your run)
