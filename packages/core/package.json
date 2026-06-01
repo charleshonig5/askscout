@@ -55,7 +55,7 @@
     "prepublishOnly": "pnpm clean && pnpm build && pnpm test"
   },
   "devDependencies": {
-    "@types/node": "25.5.0",
+    "@types/node": "25.9.1",
     "@vitest/coverage-v8": "^4.1.7"
   }
 }
