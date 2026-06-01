@@ -13,8 +13,8 @@ import {
  */
 function mockReader(files: Record<string, string>): FilesReader {
   return {
-    async readText(p: string): Promise<string | null> {
-      return p in files ? (files[p] ?? null) : null;
+    readText(p: string): Promise<string | null> {
+      return Promise.resolve(p in files ? (files[p] ?? null) : null);
     },
   };
 }
@@ -39,9 +39,7 @@ describe("detectStack", () => {
     const pkg = {
       dependencies: { next: "^15.0.0", react: "^19.0.0" },
     };
-    const stack = await detectStack(
-      mockReader({ "package.json": JSON.stringify(pkg) }),
-    );
+    const stack = await detectStack(mockReader({ "package.json": JSON.stringify(pkg) }));
     expect(stack.framework).toMatch(/^Next\.js/);
     expect(stack.framework).toContain("15");
   });
@@ -92,7 +90,10 @@ describe("detectStack", () => {
   it("infers pnpm as package manager from pnpm-lock.yaml", async () => {
     const pkg = { dependencies: { react: "^19.0.0" } };
     const stack = await detectStack(
-      mockReader({ "package.json": JSON.stringify(pkg), "pnpm-lock.yaml": "lockfileVersion: '9.0'" }),
+      mockReader({
+        "package.json": JSON.stringify(pkg),
+        "pnpm-lock.yaml": "lockfileVersion: '9.0'",
+      }),
     );
     expect(stack.packageManager).toBe("pnpm");
   });

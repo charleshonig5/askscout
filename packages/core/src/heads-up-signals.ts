@@ -49,7 +49,7 @@ const TODO_MARKER_RE = /\b(TODO|FIXME|HACK|XXX|BUG)\b/;
 // and non-word chars (to handle JSX {/* TODO */} and similar).
 // Captures the marker and the trailing text.
 const TODO_LINE_RE =
-  /(?:^|[\s({[<])(?:\/\/|#|\/\*|\*)\s*(TODO|FIXME|HACK|XXX|BUG)\b\s*[:\-]?\s*(.*?)\s*(?:\*\/)?\s*$/;
+  /(?:^|[\s({[<])(?:\/\/|#|\/\*|\*)\s*(TODO|FIXME|HACK|XXX|BUG)\b\s*[:-]?\s*(.*?)\s*(?:\*\/)?\s*$/;
 
 const HUNK_HEADER_RE = /^@@\s+-\d+(?:,\d+)?\s+\+(\d+)(?:,\d+)?\s+@@/;
 
@@ -190,11 +190,11 @@ export function formatHeadsUpSignalsBlock(
   lines.push("## Heads Up Signals");
   if (hasSignals) {
     lines.push(
-      "The items below are extracted verbatim from the user's own code and commits. Surface EVERY one as a bullet in the AI Context \"Heads Up\" section, preserving file paths, line numbers, and commit hashes EXACTLY as written. Do NOT paraphrase or merge them. After the verbatim items, you may add at most ONE additional inferred bullet, only if it describes a specific code-level risk a coding agent would benefit from knowing. Do NOT pad to hit a count.",
+      'The items below are extracted verbatim from the user\'s own code and commits. Surface EVERY one as a bullet in the AI Context "Heads Up" section, preserving file paths, line numbers, and commit hashes EXACTLY as written. Do NOT paraphrase or merge them. After the verbatim items, you may add at most ONE additional inferred bullet, only if it describes a specific code-level risk a coding agent would benefit from knowing. Do NOT pad to hit a count.',
     );
   } else {
     lines.push(
-      "No deterministic signals were detected for this digest. In the AI Context \"Heads Up\" section, you may add up to 2 inferred bullets, but ONLY when each describes a specific, distinct code-level risk a coding agent would benefit from knowing. One bullet is fine. Zero is fine — if nothing specific applies, write a single bullet \"None right now.\" Do NOT pad to hit a count, and do NOT include generic CSS or layout warnings.",
+      'No deterministic signals were detected for this digest. In the AI Context "Heads Up" section, you may add up to 2 inferred bullets, but ONLY when each describes a specific, distinct code-level risk a coding agent would benefit from knowing. One bullet is fine. Zero is fine — if nothing specific applies, write a single bullet "None right now." Do NOT pad to hit a count, and do NOT include generic CSS or layout warnings.',
     );
   }
   if (todos.length > 0) {

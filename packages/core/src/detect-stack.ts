@@ -39,8 +39,7 @@ export interface FilesReader {
 }
 
 const MAX_FIELD_LEN = 200;
-const truncate = (s: string): string =>
-  s.length > MAX_FIELD_LEN ? s.slice(0, MAX_FIELD_LEN) : s;
+const truncate = (s: string): string => (s.length > MAX_FIELD_LEN ? s.slice(0, MAX_FIELD_LEN) : s);
 
 type PackageJson = {
   dependencies?: Record<string, string>;
@@ -50,7 +49,7 @@ type PackageJson = {
   scripts?: Record<string, string>;
 };
 
-async function readJson(reader: FilesReader, p: string): Promise<unknown | null> {
+async function readJson(reader: FilesReader, p: string): Promise<unknown> {
   const text = await reader.readText(p);
   if (text === null) return null;
   try {
@@ -62,7 +61,7 @@ async function readJson(reader: FilesReader, p: string): Promise<unknown | null>
 
 function asPackageJson(raw: unknown): PackageJson | null {
   if (!raw || typeof raw !== "object") return null;
-  return raw as PackageJson;
+  return raw;
 }
 
 /**
@@ -145,10 +144,7 @@ function detectFramework(pkg: PackageJson): string | undefined {
   return undefined;
 }
 
-async function detectLanguage(
-  reader: FilesReader,
-  pkg: PackageJson,
-): Promise<string | undefined> {
+async function detectLanguage(reader: FilesReader, pkg: PackageJson): Promise<string | undefined> {
   const tsconfig = await reader.readText("tsconfig.json");
   if (tsconfig !== null) {
     const v = depVersion(pkg, "typescript");
@@ -187,10 +183,7 @@ async function detectLockfiles(reader: FilesReader): Promise<LockfilePresence> {
   };
 }
 
-function detectPackageManager(
-  pkg: PackageJson,
-  lockfiles: LockfilePresence,
-): string | undefined {
+function detectPackageManager(pkg: PackageJson, lockfiles: LockfilePresence): string | undefined {
   if (typeof pkg.packageManager === "string" && pkg.packageManager.length > 0) {
     // Format is e.g. "pnpm@9.1.0"; keep concise.
     const pm = pkg.packageManager.split("+")[0]; // strip integrity hash
@@ -203,10 +196,7 @@ function detectPackageManager(
   return undefined;
 }
 
-async function detectDatabase(
-  reader: FilesReader,
-  pkg: PackageJson,
-): Promise<string | undefined> {
+async function detectDatabase(reader: FilesReader, pkg: PackageJson): Promise<string | undefined> {
   const schema = await reader.readText("prisma/schema.prisma");
   if (schema !== null) {
     const m = schema.match(/provider\s*=\s*"(\w+)"/);
@@ -223,7 +213,8 @@ async function detectDatabase(
     const provider = m ? (providerMap[m[1]!.toLowerCase()] ?? m[1]) : "Prisma";
     return v ? `${provider} via Prisma ${v}` : `${provider} via Prisma`;
   }
-  const drizzle = (await reader.readText("drizzle.config.ts")) ?? (await reader.readText("drizzle.config.js"));
+  const drizzle =
+    (await reader.readText("drizzle.config.ts")) ?? (await reader.readText("drizzle.config.js"));
   if (drizzle !== null) return "Drizzle ORM";
   if (hasDep(pkg, "@supabase/supabase-js")) return "Supabase";
   if (hasDep(pkg, "pg")) return "Postgres";
@@ -237,8 +228,7 @@ function detectAuth(pkg: PackageJson): string | undefined {
   if (hasAnyDep(pkg, ["next-auth", "@auth/core"])) return "NextAuth";
   if (hasAnyDep(pkg, ["@clerk/nextjs", "@clerk/clerk-sdk-node", "@clerk/clerk-react"]))
     return "Clerk";
-  if (hasAnyDep(pkg, ["@supabase/auth-helpers-nextjs", "@supabase/ssr"]))
-    return "Supabase Auth";
+  if (hasAnyDep(pkg, ["@supabase/auth-helpers-nextjs", "@supabase/ssr"])) return "Supabase Auth";
   if (hasDep(pkg, "lucia")) return "Lucia";
   if (hasDep(pkg, "@workos-inc/node")) return "WorkOS";
   if (hasDep(pkg, "@auth0/nextjs-auth0") || hasDep(pkg, "@auth0/auth0-react")) return "Auth0";
