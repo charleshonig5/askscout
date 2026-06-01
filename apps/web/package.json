@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@auth/core": "^0.34.3",
-    "@types/node": "25.5.0",
+    "@types/node": "25.9.1",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "react-email": "^6.1.1"
