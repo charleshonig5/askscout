@@ -80,7 +80,7 @@ Pace Check (after 3+ runs)
 ## Modes
 
 ```bash
-askscout            # default — daily digest of recent activity
+askscout            # default, daily digest of recent activity
 askscout --standup  # copy-paste standup formatted for Slack / Teams
 askscout --resume   # AI context for pasting into your coding tools
 askscout --week     # review the past 7 days
@@ -93,14 +93,14 @@ askscout --version  # print the installed version
 
 A typical digest includes:
 
-- **Vibe Check** — one-line read on the day's work
-- **Shipped / Changed / Still Shifting / Left Off** — narrative sections
-- **Key Takeaways** — what to remember
-- **Stats** — lines, commits, files
-- **Most Active Files** — top 3 with line counts
-- **Codebase Health** — Growth / Focus / Churn indicators
-- **Coding Timeline** — first to last commit of the session
-- **Pace Check** — today's pace vs your rolling average (after 3+ runs)
+- **Vibe Check**: one-line read on the day's work
+- **Shipped / Changed / Still Shifting / Left Off**: narrative sections
+- **Key Takeaways**: what to remember
+- **Stats**: lines, commits, files
+- **Most Active Files**: top 3 with line counts
+- **Codebase Health**: Growth / Focus / Churn indicators
+- **Coding Timeline**: first to last commit of the session
+- **Pace Check**: today's pace vs your rolling average (after 3+ runs)
 
 ## Privacy
 
@@ -146,7 +146,7 @@ Nothing in the state file leaves your machine. If you'd rather not track it in v
 
 ## Environment variables
 
-The CLI is config-file-driven, not env-var-driven — your API key lives in `~/.askscout/config.json`, not in env. The only environment variable askScout reads is the universal [`NO_COLOR`](https://no-color.org) standard:
+The CLI is config-file-driven, not env-var-driven. Your API key lives in `~/.askscout/config.json`, not in env. The only environment variable askScout reads is the universal [`NO_COLOR`](https://no-color.org) standard:
 
 - Set `NO_COLOR=1` (or any non-empty value) to force plain-text output without emoji or unicode block bars. Useful for piping into other tools or running in CI.
 

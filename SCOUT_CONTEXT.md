@@ -1,4 +1,4 @@
-# Scout — Project Context for New Sessions
+# Scout: Project Context for New Sessions
 
 Comprehensive briefing for any new agent or contributor continuing work on Scout. Read this before doing anything else. Captures product vision, architecture, brand system, recent decisions, and where we left off. Pairs with [`AGENTS.md`](./AGENTS.md) (which is the short version).
 
@@ -6,7 +6,7 @@ Comprehensive briefing for any new agent or contributor continuing work on Scout
 
 ## 1. Product
 
-**Scout** (`askscout.dev` web · `askscout` npm package) is **the daily digest for vibe coders**. It sniffs through your git repo and tells you what you built, what changed, and where you left off — read top to bottom like a daily report from a personal assistant who stayed up reading your commits.
+**Scout** (`askscout.dev` web · `askscout` npm package) is **the daily digest for vibe coders**. It sniffs through your git repo and tells you what you built, what changed, and where you left off, read top to bottom like a daily report from a personal assistant who stayed up reading your commits.
 
 ### Target user
 
@@ -15,7 +15,7 @@ Solo devs and small teams who want a clear daily summary of their progress witho
 ### Voice and tone
 
 - Warm, narrative, slightly editorial
-- **Telescope mascot** — "scout" as in surveying from afar
+- **Telescope mascot**: "scout" as in surveying from afar
 - Signature lines:
   - **"Scanning the horizon for commits…"** (streaming opener, italic serif)
   - **"Nothing on the Horizon"** (quiet-day title)
@@ -23,9 +23,9 @@ Solo devs and small teams who want a clear daily summary of their progress witho
 
 ### Three output modes
 
-1. **digest** (default) — daily report
-2. **resume prompt** (`--resume`) — pasteable AI context for continuing work
-3. **standup** (`--standup`) — yesterday/today/blockers format
+1. **digest** (default), daily report
+2. **resume prompt** (`--resume`), pasteable AI context for continuing work
+3. **standup** (`--standup`), yesterday/today/blockers format
 
 ### PRD
 
@@ -39,10 +39,10 @@ pnpm monorepo at `/Users/charleshonig/Desktop/askscout/`.
 
 ```
 packages/
-  core/          askscout-core — shared library
+  core/          askscout-core, shared library
                  git reading, LLM summarization, output formatting,
                  project state management
-  cli/           askscout npm package — thin CLI wrapper around core
+  cli/           askscout npm package, thin CLI wrapper around core
 apps/
   web/           Next.js app, deployed to Vercel at askscout.dev
                  GitHub OAuth, Supabase storage, hosted API key
@@ -51,14 +51,14 @@ apps/
 ### Tech stack
 
 - **pnpm** workspaces (monorepo manager)
-- **TypeScript strict** everywhere — no `any` unless justified
+- **TypeScript strict** everywhere, no `any` unless justified
 - **Next.js 15 App Router** + **React 19** (web app)
 - **next-auth v5 beta** (GitHub OAuth, JWT sessions)
 - **Supabase** (PostgreSQL) for persistence
 - **Server-Sent Events** for streaming digest generation
 - Cost-efficient model on each supported provider (auto-detected from key prefix)
 - **vitest** for tests · **eslint** + **prettier** for code quality
-- **lucide-react** for ALL utility icons (exclusively — no other icon libs)
+- **lucide-react** for ALL utility icons (exclusively, no other icon libs)
 - **Microsoft Fluent 3D emoji** for emoji rendering (via jsdelivr CDN)
 - **Vanilla CSS** with custom-property token system. **NO Tailwind.** A Tailwind v4 migration was tried today and reverted.
 
@@ -86,7 +86,7 @@ Always run `pnpm typecheck`, `pnpm format`, `pnpm lint` before committing. Build
 
 ## 3. Brand system
 
-### Colors — dark mode is the source of truth, light mode mirrors
+### Colors: dark mode is the source of truth, light mode mirrors
 
 **8-color brand palette:**
 
@@ -97,7 +97,7 @@ Always run `pnpm typecheck`, `pnpm format`, `pnpm lint` before committing. Build
 | Dark Grey       | `#252525`                                                    |
 | Light Grey      | `#616161`                                                    |
 | White           | `#FFFFFF`                                                    |
-| Green           | `#57D32E` (`#4AC321` in light mode — darker for readability) |
+| Green           | `#57D32E` (`#4AC321` in light mode, darker for readability) |
 | Yellow          | `#F7C80B` (`#E2BB20` in light mode)                          |
 | Red             | `#DD1D1D` (`#C32020` in light mode)                          |
 
@@ -123,14 +123,14 @@ Always run `pnpm typecheck`, `pnpm format`, `pnpm lint` before committing. Build
 
 Status colors drive: Codebase Health badges (success=strong, warning=moderate, danger=rough), live badge dot, +/- line counts, danger button.
 
-**No colored accent.** Scout uses white-on-black (dark) / black-on-white (light) for emphasis. No purple, no blue, no brand accent — discipline through monochrome + signal colors.
+**No colored accent.** Scout uses white-on-black (dark) / black-on-white (light) for emphasis. No purple, no blue, no brand accent, discipline through monochrome + signal colors.
 
 Theme switching: `[data-theme="dark"]` attribute on `<html>`, wired via `apps/web/src/components/ThemeToggle.tsx` and bootstrapped in `layout.tsx`.
 
-### Typography — exclusively two faces
+### Typography: exclusively two faces
 
-- **Pridi** (display serif) — used ONLY for digest page titles ("Today's Digest", "April 12th's Digest") and the **AskScout** logo wordmark
-- **Work Sans** (body sans) — everything else, including code, data, file paths, timestamps
+- **Pridi** (display serif), used ONLY for digest page titles ("Today's Digest", "April 12th's Digest") and the **AskScout** logo wordmark
+- **Work Sans** (body sans), everything else, including code, data, file paths, timestamps
 
 Loaded via `next/font/google` in `apps/web/src/app/layout.tsx`:
 
@@ -143,7 +143,7 @@ Aliased in globals.css:
 - `--font-display` → Pridi
 - No `--font-mono` token exists. Scout renders no monospace anywhere; use `var(--font-sans)` if you need a font-family.
 
-Editorial opener line ("Scanning the horizon…") uses `--font-sans` italic — **not** Pridi. Pridi reserved strictly for titles + logo.
+Editorial opener line ("Scanning the horizon…") uses `--font-sans` italic, **not** Pridi. Pridi reserved strictly for titles + logo.
 
 ### Iconography
 
@@ -181,7 +181,7 @@ The card itself uses **34px uniform interior padding** (header, narrative column
 2. API returns "no commits" error
 3. Hook (`use-digest-stream.ts`) keeps `isStreaming = true` for THIS error specifically, so the opener doesn't yank
 4. Dashboard schedules transition for ~4.1s after stream start (matches success-path opener total)
-5. Quiet-day view replaces the streaming view: **"Nothing on the Horizon"** title + coffee Fluent emoji + "Rest counts too — Scout will be here when you're back" + check-in (preserves streak)
+5. Quiet-day view replaces the streaming view: **"Nothing on the Horizon"** title + coffee Fluent emoji + "Rest counts too, Scout will be here when you're back" + check-in (preserves streak)
 
 ### Section markers (LLM output format)
 
@@ -196,7 +196,7 @@ The LLM outputs a structured response with emoji-prefixed section headers:
 | 📍    | Left Off       | yes (narrative col) |
 | 🔑    | Key Takeaways  | yes (narrative col) |
 
-After 🔑 the LLM emits `---STANDUP---`, `---PLAN---`, `---AI_CONTEXT---`, `---SUMMARY---` — these are private sections accessed via modals or invisible storage. The drip animation stops at `---STANDUP---`.
+After 🔑 the LLM emits `---STANDUP---`, `---PLAN---`, `---AI_CONTEXT---`, `---SUMMARY---`: these are private sections accessed via modals or invisible storage. The drip animation stops at `---STANDUP---`.
 
 Plus computed stat sections (no LLM, rendered in stats sidebar): 📊 Statistics · 📁 Most Active Files · 🕐 Coding Timeline · ⚡ Pace Check · 🩺 Codebase Health.
 
@@ -211,7 +211,7 @@ Plus computed stat sections (no LLM, rendered in stats sidebar): 📊 Statistics
 
 - Renders as **16 fixed-width bars** (14px each) on a horizontal track
 - One bin per time slot, distributed across the active commit time range
-- Bins respect midnight boundaries — no bin spans two calendar days
+- Bins respect midnight boundaries, no bin spans two calendar days
 - Bar height encodes total lines changed in that bin (height varies, width is fixed)
 - Tooltip shows "N commits · +X / -Y" + time range; falls back to total lines for old digests
 - **Only renders when `commitSpanHours <= 36`** (filtered at API level in `apps/web/src/app/api/digest/stream/route.ts`)
@@ -223,7 +223,7 @@ Plus computed stat sections (no LLM, rendered in stats sidebar): 📊 Statistics
 - **Sidebar** (left nav) is fixed-width on desktop, full-width with overlay on mobile (≤768px)
 - **Card** (`.app-main`) sits on body chrome with 24px margin all around (top/right/bottom + sidebar-width on left), 1px border, rounded corners (12px)
 - Card uses `--color-bg-primary` (darkest), body+sidebar use `--color-bg-secondary` (lighter chrome) → card visually elevated
-- Card scrolls naturally with the page (NOT locked to viewport — that approach was tried then reverted)
+- Card scrolls naturally with the page (NOT locked to viewport, that approach was tried then reverted)
 
 ---
 
@@ -231,7 +231,7 @@ Plus computed stat sections (no LLM, rendered in stats sidebar): 📊 Statistics
 
 | Component            | Purpose                                                                                                                                                               |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Sidebar.tsx`        | Left nav: logo, settings, theme toggle, repo picker, history list, profile + sign out. **CURRENT FOCUS — about to be redesigned pixel-perfect from Figma using MCP.** |
+| `Sidebar.tsx`        | Left nav: logo, settings, theme toggle, repo picker, history list, profile + sign out. **CURRENT FOCUS, about to be redesigned pixel-perfect from Figma using MCP.** |
 | `DigestView.tsx`     | Main content. Renders streaming + final digest. Owns the two-column layout, opener phase machine, sidebar gate logic. ~1400 lines.                                    |
 | `DigestOpener.tsx`   | Editorial typing line ("Scanning the horizon for commits…"). Self-contained lifecycle: wait → type → dwell → onComplete.                                              |
 | `PreGeneration.tsx`  | `SectionSkeleton` component + `SECTION_SKELETONS` / `SIDEBAR_SKELETONS` data arrays.                                                                                  |
@@ -242,7 +242,7 @@ Plus computed stat sections (no LLM, rendered in stats sidebar): 📊 Statistics
 | `AIContextModal.tsx` | "Resume Prompt" output modal.                                                                                                                                         |
 | `StandupModal.tsx`   | Standup output modal.                                                                                                                                                 |
 | `PlanModal.tsx`      | To-Do List output modal.                                                                                                                                              |
-| `HistoryList.tsx`    | Sidebar history rows (legacy — currently unused; sidebar inlines its own list).                                                                                       |
+| `HistoryList.tsx`    | Sidebar history rows (legacy, currently unused; sidebar inlines its own list).                                                                                       |
 
 ### Key files in `apps/web/src/`
 
@@ -259,8 +259,8 @@ Plus computed stat sections (no LLM, rendered in stats sidebar): 📊 Statistics
 
 ### Settings + auth
 
-- `apps/web/src/auth.config.ts` — NextAuth GitHub OAuth setup, captures GitHub `login` (handle) into the JWT
-- `apps/web/src/types/next-auth.d.ts` — extends `Session` type with `user.login`
+- `apps/web/src/auth.config.ts`: NextAuth GitHub OAuth setup, captures GitHub `login` (handle) into the JWT
+- `apps/web/src/types/next-auth.d.ts`: extends `Session` type with `user.login`
 - Settings stored in Supabase `user_settings` table; section-visibility prefs hide individual digest sections per user
 
 ---
@@ -268,15 +268,15 @@ Plus computed stat sections (no LLM, rendered in stats sidebar): 📊 Statistics
 ## 6. Conventions
 
 - All source code in `src/` directories
-- TypeScript strict mode — no `any` unless explicitly justified
+- TypeScript strict mode, no `any` unless explicitly justified
 - Cross-package deps use `workspace:*` protocol
 - BEM-style class names (`.sidebar-section`, `.digest-page-name`)
 - Comments explain **why**, not **what**
-- Code generally avoids unnecessary abstraction — readability over cleverness
-- Pridi reserved for digest titles + logo only — never elsewhere
+- Code generally avoids unnecessary abstraction, readability over cleverness
+- Pridi reserved for digest titles + logo only, never elsewhere
 - Work Sans is the only sans face in use
-- No hardcoded hex colors in code — always use tokens
-- No tailwind utility classes — vanilla CSS only
+- No hardcoded hex colors in code, always use tokens
+- No tailwind utility classes, vanilla CSS only
 
 ---
 
@@ -293,7 +293,7 @@ Plus computed stat sections (no LLM, rendered in stats sidebar): 📊 Statistics
 
 - Editorial opener ("Scanning the horizon for commits…") added with focus-pull and dwell timing
 - Replaced per-commit Coding Timeline columns with fixed-bin histogram (16 bins, 14px fixed-width bars)
-- Quiet-day transition holds for opener completion (~4.1s) — no interstitial
+- Quiet-day transition holds for opener completion (~4.1s), no interstitial
 - Page titles became date-aware ("April 12th's Digest")
 - Status colors aligned to brand palette
 - Removed Linear-style purple accent → white/black accent only
@@ -334,13 +334,13 @@ When the user shares a Figma URL or selects a frame:
 1. **Use the MCP tools, not Figma's code export.** Plugin output (HTML/Tailwind/React) is unusable as a starting point.
 2. Call `mcp__plugin_figma_figma__get_design_context` with the nodeId and fileKey to get raw design data (dimensions, colors, spacing, fonts, structure).
 3. Call `mcp__plugin_figma_figma__get_screenshot` for visual reference.
-4. Cross-reference screenshot to MCP data — the screenshot is ground truth for what looks right.
+4. Cross-reference screenshot to MCP data, the screenshot is ground truth for what looks right.
 5. Translate to **vanilla CSS** using existing tokens. Don't introduce arbitrary hex codes.
 6. Use the existing class-naming convention (BEM-ish: `.sidebar-section`, `.digest-page-header`).
 7. Match every measurement (padding, gap, font-size, line-height) to Figma exactly. If there's a token close to the value, use the token; otherwise use the literal pixel value.
 8. Map any Figma color to the closest brand token (use the table in section 3).
 9. Replace any Figma SVG icon paths with the equivalent **lucide-react** component.
-10. Keep all existing component functionality intact — props, behavior, mobile responsive, accessibility.
+10. Keep all existing component functionality intact, props, behavior, mobile responsive, accessibility.
 
 ### Figma-to-token color mapping cheat sheet
 
@@ -369,10 +369,10 @@ If Figma uses Tailwind defaults via dev mode, mentally map:
 - **Local path:** `/Users/charleshonig/Desktop/askscout/`
 - **Two fonts only:** Pridi (display, titles+logo), Work Sans (body)
 - **Eight palette colors** (see section 3)
-- **No Tailwind, no other CSS frameworks** — vanilla CSS + tokens
+- **No Tailwind, no other CSS frameworks**: vanilla CSS + tokens
 - **Lucide icons exclusively** for utility icons
 - **Microsoft Fluent 3D for emoji** via `<Emoji>` component
-- **Dark mode is canonical** — light mode mirrors
+- **Dark mode is canonical**: light mode mirrors
 
 ---
 

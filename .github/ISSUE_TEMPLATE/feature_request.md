@@ -8,7 +8,7 @@ assignees: ""
 
 ## The use case
 
-<!-- What are you trying to do? Describe the problem before the solution — sometimes there's a simpler path than what first comes to mind. -->
+<!-- What are you trying to do? Describe the problem before the solution, sometimes there's a simpler path than what first comes to mind. -->
 
 ## Proposed solution
 

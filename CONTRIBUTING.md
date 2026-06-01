@@ -25,7 +25,7 @@ pnpm lint
 pnpm test
 ```
 
-If any of those fail on a fresh clone, that's a bug — please open an issue.
+If any of those fail on a fresh clone, that's a bug, please open an issue.
 
 ## Repo layout
 
@@ -52,7 +52,7 @@ Cross-package dependencies use `workspace:*`. Build order is core → cli/web.
 
 - Open a PR against `main`. Fill out the PR template
 - CI must pass: `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm format:check`
-- Add tests when you change behavior. Add tests when you fix a bug, even if it's a one-liner — that's how regressions stay fixed
+- Add tests when you change behavior. Add tests when you fix a bug, even if it's a one-liner, that's how regressions stay fixed
 - Update docs for any user-facing change (README, package READMEs, JSDoc on exported APIs)
 - Add a [Changeset](https://github.com/changesets/changesets) entry if you're touching `packages/core` or `packages/cli`:
   ```bash
@@ -62,10 +62,10 @@ Cross-package dependencies use `workspace:*`. Build order is core → cli/web.
 
 ### Style
 
-- TypeScript strict mode is enforced — no `any` unless explicitly justified
+- TypeScript strict mode is enforced, no `any` unless explicitly justified
 - Prefer the existing patterns in the codebase. If you need a new pattern, document why
 - Run `pnpm format` before pushing
-- Follow ESLint warnings — they're tuned, not noise
+- Follow ESLint warnings, they're tuned, not noise
 
 ## Testing
 
@@ -84,7 +84,7 @@ Open a [bug report](https://github.com/charleshonig5/askscout/issues/new?templat
 
 ## Requesting features
 
-Open a [feature request](https://github.com/charleshonig5/askscout/issues/new?template=feature_request.md). Describe the use case before the proposed solution — sometimes there's a simpler path.
+Open a [feature request](https://github.com/charleshonig5/askscout/issues/new?template=feature_request.md). Describe the use case before the proposed solution, sometimes there's a simpler path.
 
 ## Security
 

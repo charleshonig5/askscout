@@ -8,9 +8,9 @@ This file briefs AI agents and contributors on how the codebase is laid out, wha
 
 pnpm monorepo with three packages:
 
-- `packages/core` — shared library (`askscout-core`). Git reading, LLM summarization, output formatting, project state management.
-- `packages/cli` — CLI tool published to npm as `askscout`. Thin wrapper around core.
-- `apps/web` — Next.js web app deployed at askscout.dev. Imports from core but does not publish.
+- `packages/core`: shared library (`askscout-core`). Git reading, LLM summarization, output formatting, project state management.
+- `packages/cli`: CLI tool published to npm as `askscout`. Thin wrapper around core.
+- `apps/web`: Next.js web app deployed at askscout.dev. Imports from core but does not publish.
 
 Cross-package imports use the `workspace:*` protocol. Build order is core → cli/web (cli and web both depend on core's compiled output).
 
@@ -32,7 +32,7 @@ pnpm changeset            # describe a version bump for the next release
 ## Conventions
 
 - All source code lives in `src/` directories
-- TypeScript strict mode everywhere — no `any` unless explicitly justified
+- TypeScript strict mode everywhere, no `any` unless explicitly justified
 - Cross-package dependencies use `workspace:*` protocol
 - Shared devDependencies (eslint, prettier, typescript, vitest, tsup) live at root
 - Runtime dependencies live in each package's own package.json
@@ -48,7 +48,7 @@ pnpm changeset            # describe a version bump for the next release
 4. CLI integration in `packages/cli/`
 5. Web integration in `apps/web/`
 
-This order matters because `cli` and `web` consume core's compiled output — adding a new export upstream and consuming it downstream in the same PR works because pnpm rebuilds in order.
+This order matters because `cli` and `web` consume core's compiled output, adding a new export upstream and consuming it downstream in the same PR works because pnpm rebuilds in order.
 
 ## Key product decisions
 
@@ -62,7 +62,7 @@ This order matters because `cli` and `web` consume core's compiled output — ad
 
 ## Testing
 
-vitest. Run `pnpm test` for the whole monorepo, or `pnpm --filter <package> test` for a single package. Web app has tests in `apps/web/src/lib/__tests__/`. `packages/core` is currently untested — adding coverage there is the highest-priority unfinished item.
+vitest. Run `pnpm test` for the whole monorepo, or `pnpm --filter <package> test` for a single package. Web app has tests in `apps/web/src/lib/__tests__/`. `packages/core` is currently untested, adding coverage there is the highest-priority unfinished item.
 
 ## Where to look first
 

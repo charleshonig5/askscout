@@ -1,7 +1,7 @@
-# Activity Dashboard — Plan
+# Activity Dashboard
 
 A stats / insights page about the user's **usage of askscout** (not their
-coding stats — the digest already covers those). Surfaces patterns the user
+coding stats, the digest already covers those). Surfaces patterns the user
 wouldn't notice on their own and creates engagement pull (streak protection,
 shareable personality).
 
@@ -14,7 +14,7 @@ firm up.
 
 - For solo / small-team vibe coders who use askscout daily-ish.
 - "You, the coder, in relation to Scout." Not "you vs. peers."
-- All stats are **general** (aggregate across repos) by default — the digest
+- All stats are **general** (aggregate across repos) by default, the digest
   itself is where per-repo coding stats live.
 
 ---
@@ -26,7 +26,7 @@ settings gear icon** in the header-right icon group. Same icon-button
 treatment as the existing settings/theme-toggle icons (Lucide stroke icon,
 1px stroke, 20px, sized to match the rest of the row).
 
-Always visible — even for brand-new accounts with zero data. The Insights
+Always visible, even for brand-new accounts with zero data. The Insights
 page itself handles the empty state (see "Empty state" below).
 
 Click → routes to `/insights`.
@@ -55,15 +55,15 @@ no new layout system to invent:
   (emoji 20px + 16px Medium label + 12px Light desc, then a panel
   underneath where applicable). `.settings-divider` between sections.
 
-Reuse classes and primitives as much as possible — this page is a sibling
+Reuse classes and primitives as much as possible, this page is a sibling
 of `/settings`, not a new design language.
 
 ### Sections, top to bottom
 
-1. **Snapshot row** — two top-tier stats
-2. **Activity calendar** — 365-day heatmap, all-repos aggregated
-3. **Per-repo breakdown** — table with repo selector
-4. **Engagement personality** — primary trait + three modifier tags
+1. **Snapshot row**: two top-tier stats
+2. **Activity calendar**: 365-day heatmap, all-repos aggregated
+3. **Per-repo breakdown**: table with repo selector
+4. **Engagement personality**: primary trait + three modifier tags
 
 Each section gets its own emoji + label + desc header (Fluent 3D emoji to
 match the settings-page treatment), then the relevant content as a
@@ -88,7 +88,7 @@ and "Repos Scoutified" as not interesting enough).
 - Display: `73 digests`.
 
 A third stat was considered (Most digests in one day / Active days) and
-deferred — two is fine.
+deferred, two is fine.
 
 ---
 
@@ -98,9 +98,9 @@ GitHub-contributions-style 365-day heatmap, aggregated across **all repos**.
 
 **Cell states:**
 
-- **Empty** — no Scout activity that day
-- **Light shade** — quiet-day check-in only
-- **Full shade** — at least one digest generated that day
+- **Empty**: no Scout activity that day
+- **Light shade**: quiet-day check-in only
+- **Full shade**: at least one digest generated that day
 
 **Hover detail**: date, digest count, active repos that day.
 
@@ -159,7 +159,7 @@ On Fire · Specialist · Builder
 
 ---
 
-### Data signals — the toolkit
+### Data signals: the toolkit
 
 Every archetype's signature is derived from these signals. All come from
 existing data (`digests` rows + their `stats` JSONB blob + `daily_checkins`).
@@ -215,12 +215,12 @@ existing data (`digests` rows + their `stats` JSONB blob + `daily_checkins`).
 
 ---
 
-### Primary archetypes — what the user sees
+### Primary archetypes: what the user sees
 
 21 named identities. Each one has a clear distinguishing signature so two
 users with different patterns get visibly different labels.
 
-The **Definition** column is internal/spec context — what this archetype
+The **Definition** column is internal/spec context, what this archetype
 represents as an identity. The **Subheader** column is the templated line
 shown directly under the archetype name on the page (with `X` and `[repo]`
 filled in from real data).
@@ -251,7 +251,7 @@ filled in from real data).
 
 ---
 
-### Backend categorization — the rules
+### Backend categorization: the rules
 
 This is the actual matching logic. Every threshold is on existing data;
 nothing new to track.
@@ -287,7 +287,7 @@ nothing new to track.
 
 ---
 
-### Selection logic — when multiple archetypes match
+### Selection logic: when multiple archetypes match
 
 A user can match several criteria sets at once. The algorithm picks
 exactly one primary archetype using this order:
@@ -307,12 +307,12 @@ exactly one primary archetype using this order:
    score wins.
 
 4. **Score ties.** When two archetypes tie, fall back to the fixed
-   priority list below — time-of-day archetypes are most identity-forming
+   priority list below, time-of-day archetypes are most identity-forming
    for this audience and outrank the others.
 
 5. **No archetype passes its thresholds.** Fall back to a generic
    `🎲 The Wildcard` label with the subheader "Still figuring
-   out your pattern." This is the documented fallback only — not in the
+   out your pattern." This is the documented fallback only, not in the
    library above.
 
 **Combo priority (most-specific first):**
@@ -333,7 +333,7 @@ Night Owl > Dawn Patrol > Weekend Warrior > The Insomniac > The Sundowner
 ```
 
 Time archetypes outrank style which outrank portfolio. Tie-break only
-fires when scores are within a small epsilon — most users will have a
+fires when scores are within a small epsilon, most users will have a
 clear winner.
 
 ---
@@ -348,7 +348,7 @@ clear winner.
 
 3 digests is the unlock point. Lower than that, the time-of-day pattern is
 effectively random and the archetype would feel arbitrary. With 3+, the
-user gets a real label — early labels may be noisy, but that's part of
+user gets a real label, early labels may be noisy, but that's part of
 the appeal: the personality shifts as patterns clarify, and watching it
 move from "Dawn Patrol" to "Night Owl" as habits solidify _is_ the
 engagement hook.
@@ -388,14 +388,14 @@ back to a fixed priority order).
    more specific.
 3. Otherwise, score each non-combo archetype against the signal vector
    (weighted by how distinctive each axis is). Highest score wins.
-4. Modifier tags evaluated independently — collect everything that fires,
+4. Modifier tags evaluated independently, collect everything that fires,
    pick the top 2–3 by distinctiveness/priority.
 5. Compose the display: emoji + archetype name + descriptive line +
    modifier row.
 
 The descriptive line under the archetype name is templated per archetype so
 it always grounds the label in real data ("You generate most digests
-between 10pm–1am" / "73% of your digests are in askscout" / etc.) — keeps
+between 10pm–1am" / "73% of your digests are in askscout" / etc.), keeps
 the label from feeling like astrology.
 
 ---
@@ -410,7 +410,7 @@ display combinations**. Plenty of variety.
 ### Edge cases (beyond the empty-state table above)
 
 - **Currently inactive 7+ days** → show last-known archetype, muted
-  styling, "Currently dormant — get back in" subtitle in place of the
+  styling, "Currently dormant, get back in" subtitle in place of the
   default descriptive line.
 - **No archetype passes thresholds (rare, mid-data user)** → fall back to
   `🎲 The Wildcard` with "Still figuring out your pattern"
@@ -421,7 +421,7 @@ display combinations**. Plenty of variety.
 ## Empty state
 
 Brand-new accounts with zero digests + zero check-ins still get the full
-Insights page — entry point is always visible, page always renders. Each
+Insights page, entry point is always visible, page always renders. Each
 section degrades to a "zero" state rather than disappearing, so the user
 can see what they're working toward.
 
@@ -430,7 +430,7 @@ can see what they're working toward.
 | Snapshot row           | Best streak shows `0 days` (no repo line). Total digests shows `0`.                                                         |
 | Activity calendar      | Full 365-day grid renders, every cell empty (no activity color). Hover still works ("No activity").                         |
 | Per-repo breakdown     | Table renders with the columns and a single empty row reading "No repos with digests yet."                                  |
-| Engagement personality | Special "Just Getting Started" card — primary trait + subtitle "Generate your first digest to start your profile." No tags. |
+| Engagement personality | Special "Just Getting Started" card, primary trait + subtitle "Generate your first digest to start your profile." No tags. |
 
 Critically: the user **must be able to navigate to and inspect this page
 even on day one**. Discovery before content. Showing zeros (vs. hiding the
@@ -460,29 +460,29 @@ permissions.
 These have been considered and explicitly **rejected** so we don't
 re-litigate them:
 
-- "Days using Scout" / "Repos Scoutified" as snapshot stats — not
+- "Days using Scout" / "Repos Scoutified" as snapshot stats, not
   interesting enough.
-- "Your askscout journey" milestone timeline — doesn't read as useful.
-- Compare to peers / leaderboards — kills the personal vibe.
-- "Most-used modal" / settings recap — boring, mildly creepy.
+- "Your askscout journey" milestone timeline, doesn't read as useful.
+- Compare to peers / leaderboards, kills the personal vibe.
+- "Most-used modal" / settings recap, boring, mildly creepy.
 - Coding stats (lines shipped, language distribution, pace trends, etc.)
-  — those belong in the digest, not on this page.
+ , those belong in the digest, not on this page.
 
 ---
 
 ## Open questions
 
-_(none — all called)_
+_(none, all called)_
 
 ### Resolved
 
-- **Entry-point Lucide icon** — `ChartPie`. Sits next to the settings
+- **Entry-point Lucide icon**: `ChartPie`. Sits next to the settings
   gear, same 20px / 1px-stroke treatment.
-- **Page route + title** — `/insights`, page title "Insights".
-- **Empty state** — entry point always visible; page renders with zeros
+- **Page route + title**: `/insights`: page title "Insights".
+- **Empty state**: entry point always visible; page renders with zeros
   for brand-new accounts (see "Empty state" section).
-- **Personality refresh cadence** — live, recomputed on every visit.
-- **Mobile layout for the per-repo table** — collapse each row to a
+- **Personality refresh cadence**: live, recomputed on every visit.
+- **Mobile layout for the per-repo table**: collapse each row to a
   stacked card. Repo name as the card title, the four stats (Digests /
   Current streak / Best streak / Last active) as labeled rows
   underneath. Reuses the existing `.settings-panel` surface treatment.
@@ -493,8 +493,8 @@ _(none — all called)_
 
 ## Out of scope (for now)
 
-- Year-in-Review / Wrapped seasonal moment — defer until base dashboard ships
+- Year-in-Review / Wrapped seasonal moment, defer until base dashboard ships
   and proves out.
-- Public sharing links ("share my stats") — defer until requested.
-- Comparison views (this month vs last) — could land as a Phase 2 add.
-- Coding-stat versions of any of this — explicitly the digest's job.
+- Public sharing links ("share my stats"), defer until requested.
+- Comparison views (this month vs last), could land as a Phase 2 add.
+- Coding-stat versions of any of this, explicitly the digest's job.

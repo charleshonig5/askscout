@@ -24,7 +24,7 @@ assignees: ""
 
 ## Environment
 
-- askscout version: <!-- e.g. 0.1.0 — find with `askscout --version` or check package.json -->
+- askscout version: <!-- e.g. 0.1.0, find with `askscout --version` or check package.json -->
 - Surface: <!-- CLI / web -->
 - Node version (CLI only): <!-- node --version -->
 - OS: <!-- macOS 14, Ubuntu 22.04, Windows 11, ... -->

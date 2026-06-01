@@ -7,10 +7,10 @@
 [![Node](https://img.shields.io/node/v/askscout.svg)](./package.json)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue.svg)](./tsconfig.base.json)
 
-askscout turns your git history into a digest you can actually read — what shipped, what's still shifting, where you left off, and what you're spending your time on. Two surfaces, one engine:
+askscout turns your git history into a digest you can actually read: what shipped, what's still shifting, where you left off, and what you're spending your time on. Two surfaces, one engine:
 
-- **CLI** — `askscout` on npm. Runs locally, reads your repo, prints to your terminal. Bring your own LLM API key.
-- **Web** — [askscout.dev](https://askscout.dev). GitHub OAuth, hosted API key, persistent history.
+- **CLI**: `askscout` on npm. Runs locally, reads your repo, prints to your terminal. Bring your own LLM API key.
+- **Web**: [askscout.dev](https://askscout.dev). GitHub OAuth, hosted API key, persistent history.
 
 ---
 
@@ -32,7 +32,7 @@ askscout --week      # review the past 7 days
 askscout --dry-run   # show what would be sent without calling the API
 ```
 
-The CLI runs **100% locally** — your code never leaves your machine, except the diffs that go to your chosen LLM provider.
+The CLI runs **100% locally**. Your code never leaves your machine, except the diffs that go to your chosen LLM provider.
 
 ## Quick start (Web)
 
@@ -45,8 +45,8 @@ Visit [askscout.dev](https://askscout.dev), sign in with GitHub, pick a repo. Yo
 ```
 askscout/
 ├─ packages/
-│  ├─ core/      askscout-core — shared library (git reading, LLM summarization, formatting, state)
-│  └─ cli/       askscout — CLI tool published to npm
+│  ├─ core/      askscout-core: shared library (git reading, LLM summarization, formatting, state)
+│  └─ cli/       askscout: CLI tool published to npm
 └─ apps/
    └─ web/      Next.js web app deployed to Vercel
 ```

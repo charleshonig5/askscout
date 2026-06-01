@@ -16,12 +16,12 @@ Email **charleshonigdesign@gmail.com** with:
 - Any suggested mitigation, if you have one
 - Whether you'd like to be credited in the disclosure
 
-You can also use [GitHub's private vulnerability reporting](https://github.com/charleshonig5/askscout/security/advisories/new) if you prefer — same channel reaches the maintainer.
+You can also use [GitHub's private vulnerability reporting](https://github.com/charleshonig5/askscout/security/advisories/new) if you prefer, same channel reaches the maintainer.
 
 ### What to expect
 
 - **Acknowledgement** within 72 hours
-- **Initial triage** within 7 days — confirming whether it's a vulnerability and the severity
+- **Initial triage** within 7 days, confirming whether it's a vulnerability and the severity
 - **Fix timeline** depends on severity:
   - Critical (RCE, credential exposure, data leakage): aim for a patched release within 7 days
   - High (auth bypass, escalation): within 14 days
@@ -37,7 +37,7 @@ Only the latest minor release of `askscout` (CLI) and `askscout-core` is activel
 | `askscout` (CLI) | latest minor | ✅             |
 | `askscout-core`  | latest minor | ✅             |
 
-The web app at askscout.dev is always running the latest deployed version — there's no concept of an "older release" to patch.
+The web app at askscout.dev is always running the latest deployed version, there's no concept of an "older release" to patch.
 
 ## Scope
 
@@ -49,7 +49,7 @@ In scope:
 
 Out of scope:
 
-- Vulnerabilities in third-party dependencies — please report those upstream. We'll bump the affected dependency once a patch is available
+- Vulnerabilities in third-party dependencies, please report those upstream. We'll bump the affected dependency once a patch is available
 - Issues that require physical access to a user's machine
 - Social engineering, phishing, or attacks against the maintainer's accounts
 - Denial-of-service attacks against the web app's hosted infrastructure (report to the relevant cloud provider)

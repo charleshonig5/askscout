@@ -1,6 +1,6 @@
 # askscout-core
 
-> Shared library powering askScout — git reading, LLM digest summarization, output formatting, and project state management.
+> Shared library powering askScout, git reading, LLM digest summarization, output formatting, and project state management.
 
 [![npm version](https://img.shields.io/npm/v/askscout-core.svg)](https://www.npmjs.com/package/askscout-core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/charleshonig5/askscout/blob/main/LICENSE)
@@ -19,32 +19,32 @@ Requires **Node.js >= 22**. ESM and CJS builds are both shipped.
 
 ### Git reading
 
-- `getCommits(projectRoot, since)` — read git history into typed `GitCommit[]`
-- `getDiffs(projectRoot, commits)` — extract per-file diffs as `GitDiff[]`
-- `getRepoName(projectRoot)` — read the repo's owner/name slug
+- `getCommits(projectRoot, since)`: read git history into typed `GitCommit[]`
+- `getDiffs(projectRoot, commits)`: extract per-file diffs as `GitDiff[]`
+- `getRepoName(projectRoot)`: read the repo's owner/name slug
 
 ### LLM summarization
 
-- `summarize(commits, diffs, state, options)` — generate a structured `Digest` from git data
-- `buildSystemPrompt`, `buildUnifiedSystemPrompt`, `buildAIContextSystemPrompt`, `buildStandupSystemPrompt` — the prompts the CLI and web both use
-- `buildUserPrompt`, `formatCommitsForPrompt`, `formatDiffsForPrompt`, `computeStats` — lower-level helpers
+- `summarize(commits, diffs, state, options)`: generate a structured `Digest` from git data
+- `buildSystemPrompt`, `buildUnifiedSystemPrompt`, `buildAIContextSystemPrompt`, `buildStandupSystemPrompt`: the prompts the CLI and web both use
+- `buildUserPrompt`, `formatCommitsForPrompt`, `formatDiffsForPrompt`, `computeStats`: lower-level helpers
 
 ### Formatting
 
-- `formatDigest(digest, options)` — terminal-ready digest output
-- `formatCodebaseHealth(commits, diffs?)` — Most Active Files + Growth / Focus / Churn indicators
-- `formatCodingTimeline(commits)` — single-line session summary
-- `formatPaceCheck({ todayCommits, history })` — pace multiplier vs rolling baseline
-- `formatResume(digest)` — Resume Prompt output
-- `formatStandup(digest)` — Standup output
+- `formatDigest(digest, options)`: terminal-ready digest output
+- `formatCodebaseHealth(commits, diffs?)`: Most Active Files + Growth / Focus / Churn indicators
+- `formatCodingTimeline(commits)`: single-line session summary
+- `formatPaceCheck({ todayCommits, history })`: pace multiplier vs rolling baseline
+- `formatResume(digest)`: Resume Prompt output
+- `formatStandup(digest)`: Standup output
 
 All formatters auto-detect TTY / `NO_COLOR` and fall back to plain bracketed labels when piped or in CI.
 
 ### Project state
 
-- `readState(projectRoot)`, `writeState(projectRoot, state)` — read/write `.askscout/state.json`
-- `appendDigestRun(history, run)` — append a run to the rolling history (capped at `STATE_HISTORY_CAP`)
-- `STATE_HISTORY_CAP` — current cap (10)
+- `readState(projectRoot)`, `writeState(projectRoot, state)`: read/write `.askscout/state.json`
+- `appendDigestRun(history, run)`: append a run to the rolling history (capped at `STATE_HISTORY_CAP`)
+- `STATE_HISTORY_CAP`: current cap (10)
 
 ### Types
 
@@ -102,7 +102,7 @@ These bubble out of `summarize()` as `Error` instances. The message includes the
 | `Anthropic API error (429): …` | Rate limited or out of credit | Wait, top up credits, or switch model |
 | `OpenAI API error (401): …` | Invalid OpenAI key | Re-issue at https://platform.openai.com/api-keys |
 | `OpenAI API error (429): …` | Rate limited or quota exhausted | Check usage at https://platform.openai.com/usage |
-| `(Anthropic\|OpenAI) API returned an unexpected response structure.` | Provider changed response shape | File an issue at https://github.com/charleshonig5/askscout/issues — likely needs a version bump |
+| `(Anthropic\|OpenAI) API returned an unexpected response structure.` | Provider changed response shape | File an issue at https://github.com/charleshonig5/askscout/issues, likely needs a version bump |
 
 ## Stability
 
