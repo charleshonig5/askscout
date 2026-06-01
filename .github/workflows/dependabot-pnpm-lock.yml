@@ -1,0 +1,65 @@
+# Auto-regenerate pnpm-lock.yaml on Dependabot PRs.
+#
+# Dependabot's npm provider updates package.json but leaves pnpm-lock.yaml
+# untouched, which breaks the CI step `pnpm install --frozen-lockfile`.
+# This workflow runs on every Dependabot PR, regenerates the lockfile,
+# and pushes the result back onto the PR branch so the regular CI
+# workflow can succeed.
+#
+# Security note:
+#   - We trigger on `pull_request_target`, which runs in the BASE branch
+#     context (so secrets like GITHUB_TOKEN are available even on PRs
+#     from forks). We then explicitly check out the PR HEAD to operate
+#     on the proposed changes.
+#   - The `if: github.actor == 'dependabot[bot]'` gate ensures we never
+#     run with secrets on an untrusted PR — only Dependabot can trigger
+#     this. (Manually opened "dependabot" PRs from random forks won't
+#     match because the actor would be the human, not the bot.)
+#   - We grant the minimum permissions needed to push the lockfile fix.
+
+name: Dependabot pnpm-lock fix
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+jobs:
+  update-lockfile:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout PR HEAD
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Fetch enough history so we can push a merge commit if needed.
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Regenerate lockfile
+        run: pnpm install --no-frozen-lockfile --lockfile-only
+
+      - name: Commit and push if lockfile changed
+        run: |
+          if git diff --quiet pnpm-lock.yaml; then
+            echo "Lockfile already up to date; nothing to push."
+            exit 0
+          fi
+          git config user.name "dependabot[bot]"
+          git config user.email "49699333+dependabot[bot]@users.noreply.github.com"
+          git add pnpm-lock.yaml
+          git commit -m "build(deps): regenerate pnpm-lock.yaml"
+          git push
