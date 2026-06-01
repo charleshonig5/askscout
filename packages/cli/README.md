@@ -3,6 +3,8 @@
 > The daily digest for vibe coders. Scout reads through your repo and tells you what you built, what changed, and where you left off.
 
 [![npm version](https://img.shields.io/npm/v/askscout.svg)](https://www.npmjs.com/package/askscout)
+[![npm downloads](https://img.shields.io/npm/dw/askscout.svg)](https://www.npmjs.com/package/askscout)
+[![CI](https://github.com/charleshonig5/askscout/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/charleshonig5/askscout/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/charleshonig5/askscout/blob/main/LICENSE)
 
 ## Install
