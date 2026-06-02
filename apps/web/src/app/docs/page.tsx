@@ -17,14 +17,14 @@ const DOCS_LAST_UPDATED_ISO = "2026-05-04";
 const DOCS_LAST_UPDATED_HUMAN = "May 4, 2026";
 
 export const metadata = {
-  title: "Docs · Install, setup, and CLI reference | askScout",
+  title: "Docs - Install, setup, and CLI reference | askScout",
   description:
     "How to install askScout, set up your API key, run the CLI locally, and use the web app. Plus answers to common questions.",
   alternates: {
     canonical: "/docs",
   },
   openGraph: {
-    title: "Docs · Install, setup, and CLI reference | askScout",
+    title: "Docs - Install, setup, and CLI reference | askScout",
     description:
       "How to install askScout, set up your API key, run the CLI locally, and use the web app. Plus answers to common questions.",
     url: "/docs",
@@ -33,7 +33,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Docs · Install, setup, and CLI reference | askScout",
+    title: "Docs - Install, setup, and CLI reference | askScout",
     description:
       "How to install askScout, set up your API key, run the CLI locally, and use the web app. Plus answers to common questions.",
   },

@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   // the base used by `alternates.canonical` on individual pages
   // when they supply a path-only canonical like "/docs".
   metadataBase: new URL("https://askscout.dev"),
-  title: "askScout · Your morning code briefing in 10 seconds",
+  title: "askScout - Your morning code briefing in 10 seconds",
   description:
     "A daily digest of your code in plain language so you can pick up exactly where you left off. Built for developers using Claude Code, Cursor, and Codex.",
   keywords: [
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     "daily standup",
   ],
   openGraph: {
-    title: "askScout · Your morning code briefing in 10 seconds",
+    title: "askScout - Your morning code briefing in 10 seconds",
     description:
       "A daily digest of your code in plain language so you can pick up exactly where you left off. Built for developers using Claude Code, Cursor, and Codex.",
     url: "https://askscout.dev",
@@ -60,13 +60,13 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "askScout · Your morning code briefing in 10 seconds",
+        alt: "askScout - Your morning code briefing in 10 seconds",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "askScout · Your morning code briefing in 10 seconds",
+    title: "askScout - Your morning code briefing in 10 seconds",
     description:
       "A daily digest of your code in plain language so you can pick up exactly where you left off. Built for developers using Claude Code, Cursor, and Codex.",
     images: ["/og-image.png"],
