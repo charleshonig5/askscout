@@ -10,21 +10,21 @@ export const metadata = {
   // Brand suffix dropped — "askScout" already appears in the
   // breadcrumb and OG chrome; the title was 62 chars + 11 with
   // the suffix, which truncated in the SERP snippet.
-  title: "Best Ways to Track What You Shipped as a Developer",
+  title: "4 Best Ways to Track What You Shipped as a Developer in 2026",
   description:
     "An honest comparison of git log, GitHub Insights, dev journals, and automated digests for tracking what you actually built each week.",
   alternates: {
     canonical: "/articles/best-ways-to-track-what-you-shipped",
   },
   openGraph: {
-    title: "Best Ways to Track What You Shipped as a Developer",
+    title: "4 Best Ways to Track What You Shipped as a Developer in 2026",
     description:
       "An honest comparison of git log, GitHub Insights, dev journals, and automated digests for tracking what you actually built each week.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Best Ways to Track What You Shipped as a Developer",
+    title: "4 Best Ways to Track What You Shipped as a Developer in 2026",
     description:
       "An honest comparison of git log, GitHub Insights, dev journals, and automated digests for tracking what you actually built each week.",
   },
