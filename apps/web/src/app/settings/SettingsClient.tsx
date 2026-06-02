@@ -1,0 +1,790 @@
+"use client";
+
+import { Fragment, useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, CircleX, Trash2, ShieldCheck, ShieldX } from "lucide-react";
+import { Emoji } from "@/components/Emoji";
+import { Header } from "@/components/Header";
+import { RepoSelector } from "@/components/RepoSelector";
+import { useToast } from "@/components/Toast";
+import { useBodyScrollLock } from "@/lib/useBodyScrollLock";
+
+/**
+ * Settings page (Figma node 56:4092).
+ *
+ * Structure mirrors the digest page color story but inverted: the page wall
+ * uses --color-bg-secondary and the centered card sits on top in
+ * --color-bg-primary. Each section is a 527px-wide block with an emoji-led
+ * header (label + desc) and a panel underneath. Sections are separated by
+ * full-card dividers. All theming via tokens — no hardcoded hex.
+ *
+ * This pass establishes the shell + section scaffolding. Control internals
+ * (toggle pill geometry, combobox styling, clear-row pills, privacy card
+ * icons) get refined in subsequent passes.
+ */
+
+const SECTION_OPTIONS = [
+  { key: "vibeCheck", label: "Vibe Check", desc: "Casual overview of your day" },
+  { key: "shipped", label: "Shipped", desc: "New features and functionality" },
+  { key: "changed", label: "Changed", desc: "Modifications to existing code" },
+  { key: "unstable", label: "Still Shifting", desc: "Things that keep getting reworked" },
+  { key: "leftOff", label: "Left Off", desc: "Where you stopped working" },
+  {
+    key: "fieldNotes",
+    label: "Field Notes",
+    desc: "An editorial observation when the day's work fits a broader pattern",
+  },
+  {
+    key: "oneTakeaway",
+    label: "Key Takeaways",
+    desc: "Scout's sign-off with a specific observation and a nudge",
+  },
+  {
+    // The umbrella "Statistics" header in the digest sidebar always
+    // shows whenever any quantitative sub-section is visible — that
+    // header is intentionally NOT user-toggleable. This toggle
+    // controls only the lines/commits/files cards underneath. Label
+    // calls them "Commit Stats" so the toggle name doesn't collide
+    // with the umbrella's name.
+    key: "statistics",
+    label: "Commit Stats",
+    desc: "Lines added and removed, commits, and files changed",
+  },
+  {
+    key: "mostActiveFiles",
+    label: "Most Active Files",
+    desc: "The files you touched most in a session",
+  },
+  {
+    key: "codebaseHealth",
+    label: "Codebase Health",
+    desc: "Growth, focus, and churn indicators",
+  },
+  {
+    key: "whenYouCoded",
+    label: "Coding Timeline",
+    desc: "Timeline of your commits across the day",
+  },
+  {
+    key: "paceCheck",
+    label: "Pace Check",
+    desc: "Compare today's output to your rolling average",
+  },
+] as const;
+
+const DEFAULT_SECTIONS: Record<string, boolean> = Object.fromEntries(
+  SECTION_OPTIONS.map((s) => [s.key, true]),
+);
+
+const PRIVACY_READS = [
+  "Commit messages and metadata",
+  "Diff patches (the specific lines you added or removed)",
+  "File names and paths",
+  "Pull request titles, descriptions, and linked issue bodies",
+  "~15 lines of surrounding source code around each changed hunk (up to 8 files per digest)",
+  "Project metadata files (README and a single package manifest like package.json)",
+];
+
+const PRIVACY_NEVER = [
+  "Full source files (only diff patches, never entire files)",
+  "Environment variables, secrets, and API keys",
+  "Lock files (package-lock.json, pnpm-lock.yaml, etc.), node_modules, and build artifacts",
+];
+
+export default function SettingsClient() {
+  const router = useRouter();
+  const { showError } = useToast();
+  const [repos, setRepos] = useState<string[]>([]);
+  /** Subset of `repos` that have at least one saved digest — i.e. things to
+   *  actually clear. Drives the Clear History list so users don't see
+   *  "Clear" buttons next to repos that have nothing to clear. */
+  const [activeRepos, setActiveRepos] = useState<string[]>([]);
+  const [defaultRepo, setDefaultRepo] = useState<string>("");
+  /** Tracks whether the initial /api/repos + /api/settings parallel fetch
+   *  has resolved. Used in two places:
+   *    1. Default Repository combobox: holds the repos[0] fallback until
+   *       settings is in, otherwise the trigger label flashes through
+   *       "Loading..." → repos[0] → real saved default.
+   *    2. Customize + Clear History: render skeletons mirroring the
+   *       real layout until data arrives, so toggles don't briefly
+   *       render at defaults before snapping to saved values, and the
+   *       "No history to clear" empty-state copy doesn't flash before
+   *       the repo list arrives. Single flag because both data sources
+   *       resolve in the same Promise.all — they finish together. */
+  const [pageLoaded, setPageLoaded] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [sectionPrefs, setSectionPrefs] = useState<Record<string, boolean>>(DEFAULT_SECTIONS);
+
+  /** Refresh /api/repos. Pulled out so the Clear button can call it
+   *  after a successful delete to drop the cleared repo from the list. */
+  const refreshRepos = useCallback(async () => {
+    try {
+      const res = await fetch("/api/repos");
+      if (res.ok) {
+        const data = (await res.json()) as { repos: string[]; activeRepos?: string[] };
+        setRepos(data.repos);
+        setActiveRepos(data.activeRepos ?? []);
+      }
+    } catch {
+      /* silent */
+    }
+  }, []);
+
+  useEffect(() => {
+    void (async () => {
+      try {
+        const [reposRes, settingsRes] = await Promise.all([
+          fetch("/api/repos"),
+          fetch("/api/settings"),
+        ]);
+        if (reposRes.ok) {
+          const data = (await reposRes.json()) as {
+            repos: string[];
+            activeRepos?: string[];
+          };
+          setRepos(data.repos);
+          setActiveRepos(data.activeRepos ?? []);
+        }
+        if (settingsRes.ok) {
+          const data = (await settingsRes.json()) as {
+            default_repo: string | null;
+            digest_sections: Record<string, boolean> | null;
+          };
+          if (data.default_repo) setDefaultRepo(data.default_repo);
+          if (data.digest_sections) {
+            setSectionPrefs({ ...DEFAULT_SECTIONS, ...data.digest_sections });
+          }
+        }
+      } catch {
+        /* silent */
+      } finally {
+        // Always flip the loaded flag, even on error / non-OK response.
+        // The combobox would otherwise stay in its loading state forever.
+        setPageLoaded(true);
+      }
+    })();
+  }, []);
+
+  const saveDefaultRepo = useCallback(
+    async (repo: string) => {
+      // Optimistic update — capture the prior value first so we can
+      // roll the combobox back if the save fails. Without this, a
+      // network drop would leave the UI showing a default that didn't
+      // actually persist, and the user would only discover the mismatch
+      // on reload.
+      const previous = defaultRepo;
+      setDefaultRepo(repo);
+      try {
+        const res = await fetch("/api/settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ default_repo: repo }),
+        });
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
+      } catch {
+        setDefaultRepo(previous);
+        showError("Couldn't save default repo", "Check your connection and try again.");
+      }
+    },
+    [defaultRepo, showError],
+  );
+
+  const deleteRepoHistory = useCallback(
+    async (repo: string) => {
+      try {
+        const res = await fetch(
+          `/api/account?action=delete-repo-history&repo=${encodeURIComponent(repo)}`,
+          { method: "DELETE" },
+        );
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
+        setConfirmDelete(null);
+        // Refetch active repos so the cleared repo drops out of the
+        // Clear History list immediately. Without this, a row would
+        // sit there with a "Clear" button that does nothing.
+        void refreshRepos();
+      } catch {
+        showError(`Couldn't clear ${repo}`, "The history is still intact. Please try again.");
+      }
+    },
+    [refreshRepos, showError],
+  );
+
+  /** Wipe all saved digests across every repo. Heavier scope than
+   *  per-row Clear, so it runs through a centered modal confirm
+   *  (the same .modal primitives the Standup / Plan / AI Context
+   *  modals use) rather than the inline confirm pattern. */
+  /** Clear-All flow state. `submitting` disables the Cancel + Confirm
+   *  buttons during the in-flight request (prevents double-clicks).
+   *  `error` surfaces backend failures inline in the modal so the user
+   *  knows the deletion didn't actually go through. */
+  const [clearAllOpen, setClearAllOpen] = useState(false);
+  const [clearAllSubmitting, setClearAllSubmitting] = useState(false);
+  const [clearAllError, setClearAllError] = useState<string | null>(null);
+
+  const openClearAll = useCallback(() => {
+    setClearAllError(null);
+    setClearAllOpen(true);
+  }, []);
+  const cancelClearAll = useCallback(() => {
+    if (clearAllSubmitting) return;
+    setClearAllOpen(false);
+  }, [clearAllSubmitting]);
+
+  const deleteAllHistory = useCallback(async () => {
+    setClearAllSubmitting(true);
+    setClearAllError(null);
+    try {
+      const res = await fetch("/api/account?action=delete-all-history", { method: "DELETE" });
+      if (!res.ok) throw new Error(`Server returned ${res.status}`);
+      setClearAllOpen(false);
+      await refreshRepos();
+    } catch {
+      setClearAllError("Couldn't clear history. Please try again.");
+    } finally {
+      setClearAllSubmitting(false);
+    }
+  }, [refreshRepos]);
+
+  /** Delete-Account flow state — same submitting / error pattern as
+   *  Clear All. Wipes the user's entire footprint in Scout (saved
+   *  digests, settings, check-ins) then signs them out. Required for
+   *  right-to-erasure compliance (GDPR / CCPA) and basic trust:
+   *  revoking the GitHub OAuth grant on github.com only stops new
+   *  reads, it doesn't touch data already stored in Supabase. */
+  const [deleteAccountOpen, setDeleteAccountOpen] = useState(false);
+  const [deleteAccountSubmitting, setDeleteAccountSubmitting] = useState(false);
+  const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
+
+  // Lock body scroll while either confirm modal is open so the
+  // background page can't scroll behind the overlay.
+  useBodyScrollLock(clearAllOpen || deleteAccountOpen);
+
+  const openDeleteAccount = useCallback(() => {
+    setDeleteAccountError(null);
+    setDeleteAccountOpen(true);
+  }, []);
+  const cancelDeleteAccount = useCallback(() => {
+    if (deleteAccountSubmitting) return;
+    setDeleteAccountOpen(false);
+  }, [deleteAccountSubmitting]);
+
+  const deleteAccount = useCallback(async () => {
+    setDeleteAccountSubmitting(true);
+    setDeleteAccountError(null);
+    try {
+      // Phase 1: delete the data. Surface any server error inline so
+      // the user knows the account is still alive and they can retry.
+      const res = await fetch("/api/account?action=delete-account", { method: "DELETE" });
+      if (!res.ok) throw new Error(`Server returned ${res.status}`);
+    } catch {
+      setDeleteAccountError("Couldn't delete your account. Please try again.");
+      setDeleteAccountSubmitting(false);
+      return;
+    }
+    // Phase 2: data is gone. Sign out + redirect to landing. Failures
+    // here are rare (NextAuth client-side); on a soft failure the user
+    // would land in a logged-in-but-no-data state on next render. Hard
+    // navigate as a fallback so they always end up on a clean page.
+    try {
+      // Sign out via a plain HTML form POST to /api/auth/signout — the
+      // ONLY signout path we've found that actually clears the session
+      // cookie reliably in production. See components/SignOutForm.tsx
+      // for the long history; short version: client-side signOut and
+      // a server-action signOut both did soft router navigation that
+      // re-rendered "/" from a stale RSC cache and bounced the user
+      // back to /dashboard. The 302 response from /api/auth/signout
+      // forces a hard browser navigation with the cleared cookie.
+      const csrfRes = await fetch("/api/auth/csrf");
+      const { csrfToken } = (await csrfRes.json()) as { csrfToken: string };
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = "/api/auth/signout";
+      const csrf = document.createElement("input");
+      csrf.type = "hidden";
+      csrf.name = "csrfToken";
+      csrf.value = csrfToken;
+      const cb = document.createElement("input");
+      cb.type = "hidden";
+      cb.name = "callbackUrl";
+      cb.value = "/";
+      form.appendChild(csrf);
+      form.appendChild(cb);
+      document.body.appendChild(form);
+      form.submit();
+    } catch {
+      window.location.href = "/";
+    }
+  }, []);
+
+  const toggleSection = useCallback(
+    async (key: string, enabled: boolean) => {
+      const updated = { ...sectionPrefs, [key]: enabled };
+      setSectionPrefs(updated);
+      try {
+        const res = await fetch("/api/settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ digest_sections: updated }),
+        });
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
+      } catch {
+        // Roll back the optimistic toggle and tell the user why it
+        // snapped back. Without the toast the toggle would just
+        // visibly bounce and the user would think they misclicked.
+        setSectionPrefs((prev) => ({ ...prev, [key]: !enabled }));
+        showError("Couldn't save section preference", "Try again in a moment.");
+      }
+    },
+    [sectionPrefs, showError],
+  );
+
+  const goBack = () => router.push("/dashboard");
+
+  return (
+    <div className="settings-page">
+      {/* Mobile chrome Header (logo + Insights/Settings icons, no
+          hamburger because Settings has no repo/history drawer).
+          Hidden on desktop via the base .header rule. */}
+      <Header showMenu={false} />
+      <div className="settings-card">
+        {/* Header strip — Settings title on the left, Back-to-Digest
+            button on the right, divider underneath. Reuses the
+            .settings-close-btn styles so the affordance keeps the
+            exact same shape and position as the prior Close X — only
+            the label and icon changed (ArrowLeft + "Back to Digest")
+            so users know where they're going to land. */}
+        <div className="settings-header">
+          <div className="settings-header-left">
+            <h1 className="settings-title">Settings</h1>
+          </div>
+          <button
+            type="button"
+            className="settings-close-btn"
+            onClick={goBack}
+            aria-label="Back to Digest"
+          >
+            <ArrowLeft size={20} strokeWidth={1} aria-hidden />
+            <span>Back to Digest</span>
+          </button>
+        </div>
+        <hr className="settings-header-divider" />
+
+        <div className="settings-content">
+          {/* Default Repository */}
+          <section className="settings-section">
+            <header className="settings-section-head">
+              <div className="settings-section-title">
+                <Emoji name="defaultRepo" size={20} />
+                <h2>Default Repository</h2>
+              </div>
+              <p className="settings-section-desc">The repo that loads when you open askScout.</p>
+            </header>
+            <RepoSelector
+              // When no default is saved (new user), fall back to
+              // repos[0] — the most-recently-pushed repo from
+              // /api/repos. The dashboard's own fallback uses the
+              // same value, so the trigger label always reflects
+              // what would actually load. As soon as the user picks
+              // something explicit it saves and locks in.
+              //
+              // The fallback is gated on `pageLoaded` so we never
+              // commit to repos[0] before /api/settings has had a
+              // chance to return a saved default — that's what caused
+              // the trigger to flash through the wrong repo briefly.
+              repos={repos}
+              selected={defaultRepo || (pageLoaded ? repos[0] : "") || ""}
+              isLoading={!pageLoaded}
+              onChange={(repo) => void saveDefaultRepo(repo)}
+              variant="settings"
+              hideActivityBadge
+            />
+          </section>
+
+          <hr className="settings-divider" />
+
+          {/* Customize Digest */}
+          <section className="settings-section">
+            <header className="settings-section-head">
+              <div className="settings-section-title">
+                <Emoji name="customize" size={20} />
+                <h2>Customize Digest</h2>
+              </div>
+              <p className="settings-section-desc">
+                Choose which sections appear in your digest. Changes are saved automatically.
+              </p>
+            </header>
+            {pageLoaded ? (
+              <div className="settings-panel settings-panel--toggles">
+                {SECTION_OPTIONS.map((opt, i) => (
+                  <Fragment key={opt.key}>
+                    <div className="settings-toggle-row">
+                      <div className="settings-toggle-info">
+                        <span className="settings-toggle-label">{opt.label}</span>
+                        <span className="settings-toggle-desc">{opt.desc}</span>
+                      </div>
+                      <label className="settings-switch" aria-label={`Toggle ${opt.label}`}>
+                        <input
+                          type="checkbox"
+                          checked={sectionPrefs[opt.key] !== false}
+                          onChange={(e) => void toggleSection(opt.key, e.target.checked)}
+                        />
+                        <span className="settings-switch-track" aria-hidden />
+                        <span className="settings-switch-thumb" aria-hidden />
+                      </label>
+                    </div>
+                    {i < SECTION_OPTIONS.length - 1 && (
+                      <hr className="settings-row-divider" aria-hidden />
+                    )}
+                  </Fragment>
+                ))}
+              </div>
+            ) : (
+              <CustomizeSkeleton />
+            )}
+          </section>
+
+          <hr className="settings-divider" />
+
+          {/* Clear History — section head uses the --with-action
+              modifier: title + desc stack on the left, danger button
+              vertically centered against the stack on the right. The
+              4px title→desc gap stays untouched (the button is now a
+              sibling of the stack, not part of it). */}
+          <section className="settings-section">
+            <header className="settings-section-head settings-section-head--with-action">
+              <div className="settings-section-text">
+                <div className="settings-section-title">
+                  <Emoji name="clearHistory" size={20} />
+                  <h2>Clear History</h2>
+                </div>
+                <p className="settings-section-desc">Delete past digests. This cannot be undone.</p>
+              </div>
+              {pageLoaded && activeRepos.length > 0 && (
+                <button type="button" className="settings-clear-all-btn" onClick={openClearAll}>
+                  <Trash2 size={16} strokeWidth={1} aria-hidden />
+                  Clear All History
+                </button>
+              )}
+            </header>
+            <div className="settings-panel settings-panel--repos">
+              {!pageLoaded ? (
+                <ClearHistorySkeleton />
+              ) : activeRepos.length === 0 ? (
+                <p className="settings-empty">
+                  No history to clear yet. Repos with saved digests will appear here.
+                </p>
+              ) : (
+                activeRepos.map((repo, i) => {
+                  // Strip "owner/" prefix to match RepoSelector + dashboard
+                  // title. Internally we still use the full slug as the
+                  // row key, in API calls, and for the title-attribute on
+                  // hover so the full path stays discoverable when two
+                  // repos share a name across owners.
+                  const slash = repo.lastIndexOf("/");
+                  const repoLabel = slash === -1 ? repo : repo.slice(slash + 1);
+                  return (
+                    <Fragment key={repo}>
+                      <div className="settings-repo-row">
+                        <span className="settings-repo-name" title={repo}>
+                          {repoLabel}
+                        </span>
+                        {confirmDelete === `repo:${repo}` ? (
+                          <span className="settings-repo-confirm">
+                            <button
+                              type="button"
+                              className="settings-clear-pill settings-clear-pill--confirm"
+                              onClick={() => void deleteRepoHistory(repo)}
+                            >
+                              Confirm
+                            </button>
+                            <button
+                              type="button"
+                              className="settings-clear-pill"
+                              onClick={() => setConfirmDelete(null)}
+                            >
+                              Cancel
+                            </button>
+                          </span>
+                        ) : (
+                          <button
+                            type="button"
+                            className="settings-clear-pill"
+                            onClick={() => setConfirmDelete(`repo:${repo}`)}
+                          >
+                            Clear
+                            <Trash2 size={10} strokeWidth={1} aria-hidden />
+                          </button>
+                        )}
+                      </div>
+                      {i < activeRepos.length - 1 && (
+                        <hr className="settings-row-divider" aria-hidden />
+                      )}
+                    </Fragment>
+                  );
+                })
+              )}
+            </div>
+          </section>
+
+          <hr className="settings-divider" />
+
+          {/* Privacy & Security */}
+          <section className="settings-section">
+            <header className="settings-section-head">
+              <div className="settings-section-title">
+                <Emoji name="privacy" size={20} />
+                <h2>Privacy &amp; Security</h2>
+              </div>
+              <p className="settings-section-desc">
+                Scout is read-only. Here is exactly what we access and what we don&apos;t.
+              </p>
+            </header>
+            <div className="settings-privacy-grid">
+              <div className="settings-privacy-card">
+                <h3 className="settings-privacy-card-title">What Scout reads</h3>
+                <ul className="settings-privacy-list">
+                  {PRIVACY_READS.map((item) => (
+                    <li key={item} className="settings-privacy-item">
+                      <ShieldCheck
+                        size={20}
+                        strokeWidth={1}
+                        aria-hidden
+                        className="settings-privacy-icon settings-privacy-icon--safe"
+                      />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="settings-privacy-card">
+                <h3 className="settings-privacy-card-title">What Scout never touches</h3>
+                <ul className="settings-privacy-list">
+                  {PRIVACY_NEVER.map((item) => (
+                    <li key={item} className="settings-privacy-item">
+                      <ShieldX
+                        size={20}
+                        strokeWidth={1}
+                        aria-hidden
+                        className="settings-privacy-icon settings-privacy-icon--never"
+                      />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <p className="settings-privacy-footer">
+              No raw code is stored. Scout never writes to your repository. Read the full{" "}
+              <a className="settings-privacy-footer-link" href="/privacy">
+                privacy policy
+              </a>
+              .
+            </p>
+          </section>
+
+          <hr className="settings-divider" />
+
+          {/* Danger Zone — section head stays the default column flow
+              (emoji + title + desc stacked). The danger action sits as
+              a sibling BELOW the description, right-aligned. Heavier
+              scope than Clear All warrants a more deliberate
+              affordance away from the title. */}
+          <section className="settings-section">
+            <header className="settings-section-head">
+              <div className="settings-section-title">
+                <Emoji name="dangerZone" size={20} />
+                <h2>Danger Zone</h2>
+              </div>
+              <p className="settings-section-desc">
+                Permanently delete your account and all data. This cannot be undone.
+              </p>
+            </header>
+            <div className="settings-section-action-row">
+              <button type="button" className="settings-clear-all-btn" onClick={openDeleteAccount}>
+                <Trash2 size={16} strokeWidth={1} aria-hidden />
+                Delete Account
+              </button>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      {/* Clear-All confirm — uses the site's modal primitives
+          (.modal-overlay / .modal / .modal-top / .modal-action-btn)
+          so this sits in the same design family as Standup / Plan /
+          AI Context modals and the sidebar sign-out confirm. */}
+      {clearAllOpen && (
+        <>
+          <div className="modal-overlay" onClick={cancelClearAll} aria-hidden />
+          <div
+            className="modal modal--confirm"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="clear-all-title"
+          >
+            <div className="modal-top">
+              <div className="modal-identity">
+                <h2 id="clear-all-title" className="modal-title">
+                  Clear all digest history?
+                </h2>
+                <p className="modal-subtitle">
+                  This deletes every saved digest across all repos. This cannot be undone.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="modal-close-btn"
+                onClick={cancelClearAll}
+                aria-label="Close"
+                disabled={clearAllSubmitting}
+              >
+                <CircleX size={20} strokeWidth={1} aria-hidden />
+              </button>
+            </div>
+            <div className="modal-divider" aria-hidden />
+            {clearAllError && (
+              <p className="modal-error" role="alert">
+                {clearAllError}
+              </p>
+            )}
+            <div className="modal-footer modal-footer--split">
+              <button
+                type="button"
+                className="modal-action-btn"
+                onClick={cancelClearAll}
+                disabled={clearAllSubmitting}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="modal-action-btn modal-action-btn--danger"
+                onClick={() => void deleteAllHistory()}
+                disabled={clearAllSubmitting}
+              >
+                {clearAllSubmitting ? "Clearing…" : "Yes, clear all"}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Delete-Account confirm — same modal primitives as Clear All
+          but with stronger language since the action is heavier
+          scope (wipes data AND signs the user out). */}
+      {deleteAccountOpen && (
+        <>
+          <div className="modal-overlay" onClick={cancelDeleteAccount} aria-hidden />
+          <div
+            className="modal modal--confirm"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-account-title"
+          >
+            <div className="modal-top">
+              <div className="modal-identity">
+                <h2 id="delete-account-title" className="modal-title">
+                  Delete your account?
+                </h2>
+                <p className="modal-subtitle">
+                  This permanently deletes your account, all saved digests, settings, and history.
+                  You&apos;ll need to sign back in with GitHub to use Scout again.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="modal-close-btn"
+                onClick={cancelDeleteAccount}
+                aria-label="Close"
+                disabled={deleteAccountSubmitting}
+              >
+                <CircleX size={20} strokeWidth={1} aria-hidden />
+              </button>
+            </div>
+            <div className="modal-divider" aria-hidden />
+            {deleteAccountError && (
+              <p className="modal-error" role="alert">
+                {deleteAccountError}
+              </p>
+            )}
+            <div className="modal-footer modal-footer--split">
+              <button
+                type="button"
+                className="modal-action-btn"
+                onClick={cancelDeleteAccount}
+                disabled={deleteAccountSubmitting}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="modal-action-btn modal-action-btn--danger"
+                onClick={() => void deleteAccount()}
+                disabled={deleteAccountSubmitting}
+              >
+                {deleteAccountSubmitting ? "Deleting…" : "Yes, delete account"}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Customize Digest skeleton — matches `.settings-panel--toggles` exactly:
+ * one row per SECTION_OPTIONS entry, separated by the same row dividers,
+ * each with two stacked shimmer lines (label + desc) on the left and a
+ * 44×24 shimmer pill (the switch) on the right. Same panel chrome as
+ * the loaded state so the swap doesn't reflow.
+ *
+ * Reuses the .insights-skel primitive from globals.css for the shimmer
+ * itself so the loading vibe matches the insights page (same gradient,
+ * same animation timings).
+ */
+function CustomizeSkeleton() {
+  return (
+    <div className="settings-panel settings-panel--toggles" aria-hidden>
+      {SECTION_OPTIONS.map((opt, i) => (
+        <Fragment key={opt.key}>
+          <div className="settings-skel-toggle-row">
+            <div className="settings-skel-toggle-info">
+              <div className="insights-skel" style={{ height: 14, width: "45%" }} />
+              <div className="insights-skel" style={{ height: 11, width: "75%" }} />
+            </div>
+            <div className="insights-skel settings-skel-switch" />
+          </div>
+          {i < SECTION_OPTIONS.length - 1 && <hr className="settings-row-divider" aria-hidden />}
+        </Fragment>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * Clear History skeleton — three placeholder repo rows in the same
+ * `.settings-panel--repos` chrome. We don't know the user's actual repo
+ * count until /api/repos resolves, so three is a representative
+ * stand-in that covers the common case (most users have 1–5 repos with
+ * saved digests). Each row has a wide name shimmer + a smaller "Clear"
+ * pill shimmer to mirror the loaded layout.
+ */
+function ClearHistorySkeleton() {
+  return (
+    <>
+      {Array.from({ length: 3 }).map((_, i) => (
+        <Fragment key={i}>
+          <div className="settings-skel-repo-row">
+            <div className="insights-skel" style={{ height: 14, width: "55%" }} />
+            <div
+              className="insights-skel"
+              style={{ height: 20, width: 64, borderRadius: "var(--radius-full)" }}
+            />
+          </div>
+          {i < 2 && <hr className="settings-row-divider" aria-hidden />}
+        </Fragment>
+      ))}
+    </>
+  );
+}

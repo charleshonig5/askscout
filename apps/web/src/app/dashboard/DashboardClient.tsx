@@ -1,0 +1,1037 @@
+"use client";
+
+import { useState, useEffect, useCallback, useRef } from "react";
+import { Header } from "@/components/Header";
+import { Sidebar } from "@/components/Sidebar";
+import { DigestView, DigestActions, type DigestViewStats } from "@/components/DigestView";
+import { AIContextModal } from "@/components/AIContextModal";
+import { StandupModal } from "@/components/StandupModal";
+import { PlanModal } from "@/components/PlanModal";
+import { useDigestStream } from "@/lib/use-digest-stream";
+import { parseSections } from "@/lib/parse-sections";
+import { useTapTooltip } from "@/lib/use-tap-tooltip";
+import { Emoji } from "@/components/Emoji";
+import { ArrowLeft, Forward, SquareArrowUpRight } from "lucide-react";
+
+import type { HistoryEntry } from "@/lib/mock-data";
+
+interface HistoryRecord {
+  id: string;
+  content: string;
+  stats: Record<string, unknown> | null;
+  created_at: string;
+}
+
+function formatHistoryDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  const now = new Date();
+  // Compare calendar dates, not hour differences
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const entryDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const diffDays = Math.round((today.getTime() - entryDay.getTime()) / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return "Today";
+  if (diffDays === 1) return "Yesterday";
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+/**
+ * Page-title formatter for any digest the user is viewing.
+ *   today       → "Today's Digest"
+ *   yesterday   → "Yesterday's Digest"
+ *   anything    → "April 12th's Digest" (full month, ordinal day suffix)
+ *
+ * Used by the dashboard header for both history-entry views and the
+ * "view your last digest" path off the quiet-day state, so every past
+ * digest carries a clear, readable title.
+ */
+function formatDigestTitle(dateStr: string): string {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const entryDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const diffDays = Math.round((today.getTime() - entryDay.getTime()) / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return "Today\u2019s Digest";
+  if (diffDays === 1) return "Yesterday\u2019s Digest";
+  const month = date.toLocaleDateString("en-US", { month: "long" });
+  const day = date.getDate();
+  return `${month} ${day}${ordinalSuffix(day)}\u2019s Digest`;
+}
+
+/** Returns the English ordinal suffix for a given day-of-month (1 → "st"). */
+function ordinalSuffix(n: number): string {
+  if (n >= 11 && n <= 13) return "th";
+  switch (n % 10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
+}
+
+export default function DashboardClient() {
+  const [repos, setRepos] = useState<string[]>([]);
+  // Repos with Scout activity (digests or check-ins), sorted most-recent first.
+  // Used by the repo selector to float active repos to the top.
+  const [activeRepos, setActiveRepos] = useState<string[]>([]);
+  const [selectedRepo, setSelectedRepo] = useState("");
+  const [activeHistoryId, setActiveHistoryId] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [historyRecords, setHistoryRecords] = useState<HistoryRecord[]>([]);
+  // Check-in dates (YYYY-MM-DD) recorded for quiet-day visits — used by the
+  // streak computation so rest days don't break a consecutive-day streak.
+  const [checkinDates, setCheckinDates] = useState<string[]>([]);
+
+  const digestStream = useDigestStream();
+  const [aiContextOpen, setAiContextOpen] = useState(false);
+  const [standupOpen, setStandupOpen] = useState(false);
+  const [planOpen, setPlanOpen] = useState(false);
+  const lastRepoRef = useRef("");
+  // Tracks when the current stream first started so the no-commits
+  // transition can hold long enough for the editorial opener to finish.
+  const streamStartRef = useRef<number>(0);
+  const [cachedDigests, setCachedDigests] = useState<
+    Record<string, { content: string; stats: DigestViewStats | null }>
+  >({});
+  const cachedDigestsRef = useRef(cachedDigests);
+  cachedDigestsRef.current = cachedDigests;
+  // Track which repos have already completed their reveal animation in this
+  // session so switching away and back doesn't replay the typing/cascade.
+  const revealedReposRef = useRef<Set<string>>(new Set());
+  const [, forceUpdate] = useState({});
+  const [isCheckingCache, setIsCheckingCache] = useState(false);
+  /** Flips true once the parallel /api/repos + /api/settings fetch has
+   *  resolved. Used (along with the predicate further down) to decide
+   *  whether the dashboard is still bootstrapping vs has settled into
+   *  one of the definite display states (cached digest / streaming /
+   *  quiet day / empty repo / history view). The DigestView's `isLoading`
+   *  prop is gated on this so users returning from /settings or /insights
+   *  see the same skeleton scaffold the streaming flow uses, instead of
+   *  the bare "Select a repo to generate your digest." fallback flashing
+   *  for a beat. */
+  const [reposLoaded, setReposLoaded] = useState(false);
+  const [noNewCommits, setNoNewCommits] = useState<{
+    content: string;
+    stats: Record<string, unknown> | null;
+    /** Raw ISO timestamp of the last digest. Source of truth for title
+        computation via formatDigestTitle(). */
+    date: string;
+    /** Pretty, human-readable date ("Thursday, April 16, 2026"). Used in
+        the quiet-day subtitle and the header displayDate. */
+    dateDisplay: string;
+  } | null>(null);
+  // When true, expand from the Quiet Day state to show yesterday's actual digest
+  const [showLatestFromQuietDay, setShowLatestFromQuietDay] = useState(false);
+  // True when a first-run generation hits "no commits in 90 days" AND there's
+  // no prior history to fall back on. Distinct from `noNewCommits` because the
+  // data model differs — there's no last-digest date to reference, no "View
+  // Last Digest" button, and no streak check-in (zero commits = nothing to
+  // credit). Renders its own quiet-shell variant.
+  const [emptyRepo, setEmptyRepo] = useState(false);
+  // Tracks the most recent repo we've completed a /api/history fetch for.
+  // The no-commits effect uses this to distinguish "history hasn't loaded yet,
+  // wait and re-run" from "history loaded and is genuinely empty, fall through
+  // to the empty-repo branch." Without this gate, an empty-history repo would
+  // hang on the post-opener UI forever.
+  const historyFetchedForRef = useRef<string | null>(null);
+  // STATE-backed mirror of historyFetchedForRef. The ref alone is not enough
+  // to drive UI gates because mutating a ref doesn't trigger a re-render —
+  // we need React to actually re-evaluate the streak badge gate when this
+  // flips. The two stay in lockstep: every place that updates the ref also
+  // updates the state immediately after.
+  const [historyLoadedForRepo, setHistoryLoadedForRepo] = useState<string | null>(null);
+  const [digestSectionPrefs, setDigestSectionPrefs] = useState<Record<string, boolean> | null>(
+    null,
+  );
+
+  // Tap-to-pin support for the streak tooltip on touch devices.
+  const streakTap = useTapTooltip<HTMLSpanElement>();
+
+  // Fetch repos and user settings on mount
+  useEffect(() => {
+    void (async () => {
+      try {
+        const [reposRes, settingsRes] = await Promise.all([
+          fetch("/api/repos"),
+          fetch("/api/settings"),
+        ]);
+
+        let defaultRepoSetting: string | null = null;
+        if (settingsRes.ok) {
+          const settings = (await settingsRes.json()) as {
+            default_repo: string | null;
+            digest_sections: Record<string, boolean> | null;
+          };
+          defaultRepoSetting = settings.default_repo;
+          if (settings.digest_sections) {
+            setDigestSectionPrefs(settings.digest_sections);
+          }
+        }
+
+        if (reposRes.ok) {
+          const data = (await reposRes.json()) as {
+            repos: string[];
+            activeRepos?: string[];
+          };
+          setRepos(data.repos);
+          setActiveRepos(data.activeRepos ?? []);
+          if (data.repos.length > 0 && !selectedRepo) {
+            // Selection priority:
+            //   1. ?repo= URL param (used by deep-links from emails
+            //      and external surfaces) — only honored when the
+            //      requested repo is in the user's accessible list.
+            //   2. Saved default repo from settings.
+            //   3. First repo in the list as a final fallback.
+            // Reading directly from window.location keeps this in
+            // the existing useEffect; using useSearchParams would
+            // require flipping the component to a Suspense boundary.
+            let urlRepo: string | null = null;
+            if (typeof window !== "undefined") {
+              const params = new URLSearchParams(window.location.search);
+              const requested = params.get("repo");
+              if (requested && data.repos.includes(requested)) {
+                urlRepo = requested;
+              }
+            }
+            const preferred =
+              urlRepo ??
+              (defaultRepoSetting && data.repos.includes(defaultRepoSetting)
+                ? defaultRepoSetting
+                : data.repos[0]!);
+            setSelectedRepo(preferred);
+          }
+        }
+      } catch {
+        // Silently fail
+      } finally {
+        // Always flip even on error so the bootstrap-loading gate
+        // doesn't get stuck on a network failure.
+        setReposLoaded(true);
+      }
+    })();
+  }, []);
+
+  // Fetch history when repo changes
+  const fetchHistory = useCallback(async (repo: string) => {
+    try {
+      const res = await fetch(`/api/history?repo=${encodeURIComponent(repo)}`);
+      if (res.ok) {
+        const data = (await res.json()) as {
+          history: HistoryRecord[];
+          checkinDates?: string[];
+        };
+        setHistoryRecords(data.history);
+        historyFetchedForRef.current = repo;
+        setHistoryLoadedForRepo(repo);
+        setCheckinDates(data.checkinDates ?? []);
+        setHistory(
+          data.history.map((h) => {
+            const stats = h.stats as Record<string, number> | null;
+            return {
+              id: h.id,
+              date: formatHistoryDate(h.created_at),
+              vibeCheck: h.content.slice(0, 100),
+              commits: stats?.commits ?? 0,
+              filesChanged: stats?.filesChanged ?? 0,
+              linesAdded: stats?.linesAdded ?? 0,
+              linesRemoved: stats?.linesRemoved ?? 0,
+              createdAt: h.created_at,
+            };
+          }),
+        );
+      }
+    } catch {
+      // History fetch failed silently
+    }
+  }, []);
+
+  // Check Supabase for today's digest, return content or null
+  const checkTodaysDigest = useCallback(
+    async (
+      repoFullName: string,
+      targetMode: string,
+    ): Promise<{ content: string; stats: Record<string, unknown> | null } | null> => {
+      try {
+        const res = await fetch(
+          `/api/digest/today?repo=${encodeURIComponent(repoFullName)}&mode=${targetMode}&tz=${new Date().getTimezoneOffset()}`,
+          { signal: AbortSignal.timeout(5000) },
+        );
+        if (res.ok) {
+          const data = (await res.json()) as {
+            exists: boolean;
+            digest?: { content: string; stats: Record<string, unknown> | null };
+          };
+          if (data.exists && data.digest) {
+            return { content: data.digest.content, stats: data.digest.stats };
+          }
+        }
+      } catch {
+        // Timeout or network error, fall through to generate
+      }
+      return null;
+    },
+    [],
+  );
+
+  // Load cached or generate fresh for a repo+mode
+  const loadOrGenerate = useCallback(
+    async (repoFullName: string, targetMode: string) => {
+      // Check in-memory cache first (instant, no network)
+      const cacheKey = `${repoFullName}:${targetMode}`;
+      if (cachedDigestsRef.current[cacheKey]) {
+        return;
+      }
+
+      setIsCheckingCache(true);
+
+      const cached = await checkTodaysDigest(repoFullName, targetMode);
+
+      // Discard result if repo changed while we were checking
+      if (lastRepoRef.current !== repoFullName) {
+        setIsCheckingCache(false);
+        return;
+      }
+
+      if (cached) {
+        setCachedDigests((prev) => ({
+          ...prev,
+          [cacheKey]: {
+            content: cached.content,
+            stats: cached.stats as DigestViewStats | null,
+          },
+        }));
+        setIsCheckingCache(false);
+        return;
+      }
+
+      setIsCheckingCache(false);
+
+      // Double-check repo hasn't changed before generating
+      if (lastRepoRef.current !== repoFullName) return;
+
+      // Generate fresh
+      const parts = repoFullName.split("/");
+      if (parts.length !== 2) return;
+      const [owner, repo] = parts as [string, string];
+      digestStream.start(owner, repo, targetMode);
+    },
+    [checkTodaysDigest, digestStream],
+  );
+
+  // Force generate (bypasses cache)
+  const forceGenerate = useCallback(
+    (repoFullName: string, targetMode: string) => {
+      const parts = repoFullName.split("/");
+      if (parts.length !== 2) return;
+      const cacheKey = `${repoFullName}:${targetMode}`;
+      setCachedDigests((prev) => {
+        const next = { ...prev };
+        delete next[cacheKey];
+        return next;
+      });
+      const [owner, repo] = parts as [string, string];
+      digestStream.start(owner, repo, targetMode);
+    },
+    [digestStream],
+  );
+
+  // When repo changes: reset everything and load digest
+  useEffect(() => {
+    if (selectedRepo && selectedRepo !== lastRepoRef.current) {
+      lastRepoRef.current = selectedRepo;
+      // Abort all in-flight streams
+      digestStream.reset();
+
+      setViewingHistoryContent(null);
+      setViewingHistoryStats(null);
+      setActiveHistoryId(null);
+      setNoNewCommits(null);
+      setShowLatestFromQuietDay(false);
+      setEmptyRepo(false);
+      // Clear history so the no-commits effect can't use the previous repo's data
+      historyFetchedForRef.current = null;
+      setHistoryLoadedForRepo(null);
+      setHistoryRecords([]);
+      setCheckinDates([]);
+      setHistory([]);
+      void fetchHistory(selectedRepo);
+      void loadOrGenerate(selectedRepo, "digest");
+    }
+  }, [selectedRepo]);
+
+  // When a new stream begins, treat this digest as fresh: remove it from the
+  // revealed set so the animation plays from the start. This handles both
+  // first-time generation and "Try again" regeneration of a previously
+  // revealed repo. Also stamp the stream-start time so the no-commits
+  // transition (below) knows how long the editorial opener has been on
+  // screen and can wait long enough for it to finish before switching.
+  useEffect(() => {
+    if (digestStream.isStreaming) {
+      if (streamStartRef.current === 0) {
+        streamStartRef.current = performance.now();
+      }
+      if (selectedRepo && revealedReposRef.current.has(selectedRepo)) {
+        revealedReposRef.current.delete(selectedRepo);
+        forceUpdate({});
+      }
+    } else {
+      // Stream ended (success or reset) — clear the start stamp so the
+      // next run captures a fresh start time.
+      streamStartRef.current = 0;
+    }
+  }, [digestStream.isStreaming, selectedRepo]);
+
+  // Cache completed streams and refresh history
+  useEffect(() => {
+    if (digestStream.isDone && digestStream.text && selectedRepo) {
+      setCachedDigests((prev) => ({
+        ...prev,
+        [`${selectedRepo}:digest`]: {
+          content: digestStream.text,
+          stats: digestStream.stats,
+        },
+      }));
+      // Delay history refresh: the drip finalizes (isDone) when it hits the
+      // 🔑 marker, but the SSE stream is still running (AI Context + Summary
+      // sections). onComplete saves the digest to Supabase only when the full
+      // stream ends. A short delay ensures the save completes before we query.
+      const historyTimer = setTimeout(() => void fetchHistory(selectedRepo), 3000);
+      // Mark this repo's reveal animation as complete after the full
+      // cascade has played (~3 seconds covers all staggered reveals).
+      const repo = selectedRepo;
+      const revealTimer = setTimeout(() => {
+        revealedReposRef.current.add(repo);
+        forceUpdate({});
+      }, 3000);
+      return () => {
+        clearTimeout(historyTimer);
+        clearTimeout(revealTimer);
+      };
+    }
+  }, [digestStream.isDone]);
+
+  // Handle "no commits" error by showing most recent digest.
+  // Matches both "No commits found..." (first-run) and "No new commits..."
+  // (returning user). The transition is DEFERRED long enough for the
+  // editorial opener ("Scanning the horizon for commits…") to play out
+  // its full sequence — otherwise the user sees the line type for a
+  // beat and then get yanked into the quiet-day view, which feels
+  // broken. Scout should look like it's actually scanning.
+  useEffect(() => {
+    if (!digestStream.error || !/no (new )?commits/i.test(digestStream.error)) {
+      return;
+    }
+
+    // History empty: two sub-cases. If we haven't completed a fetch for this
+    // repo yet, kick one off and let the effect re-run when historyRecords
+    // updates. If we *have* fetched and history is genuinely empty, this is a
+    // brand-new / dormant repo with no prior digest to fall back on — route
+    // to the empty-repo quiet shell instead of waiting forever.
+    if (historyRecords.length === 0) {
+      if (historyFetchedForRef.current !== selectedRepo) {
+        if (selectedRepo) void fetchHistory(selectedRepo);
+        return;
+      }
+      // Confirmed empty repo. Reuse the same opener-aligned delay so the
+      // transition feels identical to the quiet-day path.
+      const OPENER_TYPED_MS = 4100;
+      const elapsed =
+        streamStartRef.current > 0 ? performance.now() - streamStartRef.current : OPENER_TYPED_MS;
+      const delay = Math.max(0, OPENER_TYPED_MS - elapsed);
+      const emptyTimer = setTimeout(() => {
+        setEmptyRepo(true);
+        digestStream.reset();
+      }, delay);
+      return () => clearTimeout(emptyTimer);
+    }
+
+    const latest = historyRecords[0]!;
+    const latestNoCommits = {
+      content: latest.content,
+      stats: latest.stats,
+      date: latest.created_at,
+      dateDisplay: new Date(latest.created_at).toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      }),
+    };
+
+    // Match the success-path opener lifecycle exactly so both flows feel
+    // like the same beat:
+    //   START_DELAY_MS (450) + typing (1320) + DWELL_MS (2000) + fade (350)
+    //   = ~4120ms total
+    // If the error arrives later than that (slow API), transition
+    // immediately.
+    const OPENER_TYPED_MS = 4100;
+    const elapsed =
+      streamStartRef.current > 0 ? performance.now() - streamStartRef.current : OPENER_TYPED_MS;
+    const delay = Math.max(0, OPENER_TYPED_MS - elapsed);
+
+    const timer = setTimeout(() => {
+      setNoNewCommits(latestNoCommits);
+      digestStream.reset();
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [digestStream.error, historyRecords, selectedRepo, fetchHistory]);
+
+  // Record a daily check-in when the user lands on the quiet-day empty state.
+  // Keeps their streak alive on rest days. Best-effort — silent on failure,
+  // and optimistically adds today to the local checkinDates so the streak
+  // number updates in the UI without waiting on a round trip.
+  useEffect(() => {
+    if (!noNewCommits || !selectedRepo) return;
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const dd = String(now.getDate()).padStart(2, "0");
+    const today = `${yyyy}-${mm}-${dd}`;
+
+    // Optimistic local update so the streak pill updates instantly.
+    setCheckinDates((prev) => (prev.includes(today) ? prev : [...prev, today]));
+
+    // Fire the POST with a single silent retry after 2s. The retry catches
+    // transient network blips (WiFi drop, Supabase cold-start). Persistent
+    // failures (missing table, auth expired) will fail twice — that's fine,
+    // those are admin-side issues visible in server logs.
+    const body = JSON.stringify({ repo: selectedRepo, date: today });
+    const attempt = () =>
+      fetch("/api/checkin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body,
+      }).then((res) => {
+        if (!res.ok) throw new Error(`checkin failed: ${res.status}`);
+        return res;
+      });
+
+    let cancelled = false;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
+    attempt().catch(() => {
+      if (cancelled) return;
+      retryTimer = setTimeout(() => {
+        if (cancelled) return;
+        attempt().catch(() => {
+          // Both attempts failed; server-side log captured it, user sees
+          // preserved streak via the optimistic update until reload.
+        });
+      }, 2000);
+    });
+
+    return () => {
+      cancelled = true;
+      if (retryTimer) clearTimeout(retryTimer);
+    };
+  }, [noNewCommits, selectedRepo]);
+
+  const handleRepoChange = useCallback((repo: string) => {
+    setSelectedRepo(repo);
+  }, []);
+
+  // State for viewing historical digests
+  const [viewingHistoryContent, setViewingHistoryContent] = useState<string | null>(null);
+  const [viewingHistoryStats, setViewingHistoryStats] = useState<Record<string, unknown> | null>(
+    null,
+  );
+
+  // Click history entry to view that digest
+  const handleHistorySelect = useCallback(
+    (id: string) => {
+      const record = historyRecords.find((h) => h.id === id);
+      if (!record) return;
+
+      // The DB enforces one digest row per (user, repo, mode, day) via
+      // the unique index on digest_date, so there is exactly one "today"
+      // row to click. Clicking it returns the user to the live view —
+      // which is the correct semantics whether they were viewing a
+      // historical entry or already on today (no-op in that case).
+      const entryDate = new Date(record.created_at).toDateString();
+      const today = new Date().toDateString();
+      if (entryDate === today) {
+        setActiveHistoryId(null);
+        setViewingHistoryContent(null);
+        setViewingHistoryStats(null);
+        // Snap to the top of the live view so the user doesn't land
+        // mid-scroll on whatever section they were reading.
+        if (typeof window !== "undefined") {
+          window.scrollTo({ top: 0, behavior: "instant" });
+        }
+        return;
+      }
+
+      setActiveHistoryId(id);
+      setViewingHistoryContent(record.content);
+      setViewingHistoryStats(record.stats);
+      // Snap the scroll to the top of the newly-selected digest. Without
+      // this the user lands at whatever scroll offset they had in the
+      // previous digest, which reads as "the click didn't do anything"
+      // when the new digest's hero section is offscreen above.
+      if (typeof window !== "undefined") {
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }
+    },
+    [historyRecords],
+  );
+
+  // Unified "Back to today" handler. Used by every back-to-today
+  // button (history view AND quiet-expanded view) so the sidebar
+  // selection, history-content state, and quiet-day expansion flag
+  // all reset together. Avoids the bug where clicking back-to-today
+  // from quiet-expanded only cleared the expansion flag and left
+  // activeHistoryId stuck — making the sidebar keep highlighting an
+  // old digest after returning to the quiet state.
+  const handleBackToToday = useCallback(() => {
+    setActiveHistoryId(null);
+    setViewingHistoryContent(null);
+    setViewingHistoryStats(null);
+    setShowLatestFromQuietDay(false);
+    // Snap to the top of the live view so the user lands at the
+    // digest's hero card, not wherever they were scrolled into the
+    // historical view they just exited.
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, []);
+
+  const isViewingHistory = viewingHistoryContent !== null;
+  const repoName = selectedRepo.split("/").pop() ?? selectedRepo;
+
+  // Find the active history entry for the title
+  const activeHistoryEntry = historyRecords.find((h) => h.id === activeHistoryId);
+
+  // The sidebar's selected state falls back to today's history entry when we're
+  // on the live view. Without this, nothing was selected on today's digest even
+  // though it existed in the history list. Order of precedence:
+  //   1. Explicitly viewing a past digest → that one
+  //   2. Quiet-day + showing last digest → the last entry we're previewing
+  //   3. Live view of today → today's entry (if it's been saved to history)
+  //   4. Otherwise → nothing selected
+  const sidebarActiveId = (() => {
+    if (activeHistoryId) return activeHistoryId;
+    if (noNewCommits && showLatestFromQuietDay && historyRecords.length > 0) {
+      return historyRecords[0]!.id;
+    }
+    if (noNewCommits) return null;
+    const todayKey = new Date().toDateString();
+    const todayEntry = historyRecords.find(
+      (h) => new Date(h.created_at).toDateString() === todayKey,
+    );
+    return todayEntry?.id ?? null;
+  })();
+
+  const todayStr = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  let displayDate = todayStr;
+  let pageTitle = "Today\u2019s Digest";
+
+  // isViewingHistory MUST be checked before noNewCommits \u2014 same
+  // render-priority rule the <DigestView> render at the bottom of
+  // this file follows. On a non-default repo with a quiet day today,
+  // the user can click a sidebar history entry while noNewCommits is
+  // still true. The DigestView body switches to the historic digest,
+  // but before this guard the title/date stayed pinned to the
+  // quiet-day defaults ("Nothing on the Horizon" / today's date) \u2014
+  // header chrome disagreed with body.
+  if (isViewingHistory && activeHistoryEntry) {
+    displayDate = new Date(activeHistoryEntry.created_at).toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+    pageTitle = formatDigestTitle(activeHistoryEntry.created_at);
+  } else if (noNewCommits && showLatestFromQuietDay) {
+    displayDate = noNewCommits.dateDisplay;
+    pageTitle = formatDigestTitle(noNewCommits.date);
+  } else if (noNewCommits) {
+    // Quiet-day state — repo has prior digests but nothing new today.
+    // Page-header title echoes the streaming opener line ("Scanning the
+    // horizon for commits…"). Scout scans, finds nothing.
+    pageTitle = "Nothing on the Horizon";
+  } else if (emptyRepo) {
+    // First-run / dormant repo — no commits in 90d AND no prior digests.
+    pageTitle = "No Activity Yet";
+  }
+  // isViewingHistory branch lives at the TOP of this chain — see the
+  // comment above the first `if`. It used to live here at the bottom
+  // and never fired when both noNewCommits and isViewingHistory were
+  // true on the same repo.
+
+  // Compute per-repo streak AND personal best from history records + check-ins.
+  // A day counts as "active" if a digest was generated OR a check-in recorded.
+  // Personal best is the longest consecutive-days run found anywhere in the
+  // active set (always >= current streak, since current is part of that set).
+  //
+  // First-line short-circuit: if the history we have loaded doesn't match the
+  // currently selected repo, return zero so no stale streak from a previous
+  // repo's data can leak through any consumer (badge, accessibility tree,
+  // future copy, etc.). The render-site gate exists too, but defending here
+  // means there's no path where a non-zero streak number can come from
+  // mismatched data.
+  const { streak, personalBest } = (() => {
+    if (historyLoadedForRepo !== selectedRepo) return { streak: 0, personalBest: 0 };
+    const pad = (n: number) => String(n).padStart(2, "0");
+    const fmtKey = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    const activeDays = new Set<string>();
+    for (const h of historyRecords) {
+      activeDays.add(fmtKey(new Date(h.created_at)));
+    }
+    for (const date of checkinDates) {
+      // checkinDates arrive as YYYY-MM-DD already; they match fmtKey's shape.
+      activeDays.add(date);
+    }
+    if (activeDays.size === 0) return { streak: 0, personalBest: 0 };
+
+    // Current streak: count back from today, skipping today if it has no entry.
+    let current = 0;
+    const now = new Date();
+    for (let i = 0; i < 365; i++) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      const key = fmtKey(d);
+      if (activeDays.has(key)) {
+        current++;
+      } else if (i === 0) {
+        continue;
+      } else {
+        break;
+      }
+    }
+
+    // Personal best: iterate sorted active days, track longest consecutive run.
+    // Sort lexically — YYYY-MM-DD is naturally date-ordered. DST-safe via
+    // Math.round on the day diff (23h → 1, 25h → 1).
+    const sortedDays = [...activeDays].sort();
+    const DAY_MS = 24 * 60 * 60 * 1000;
+    let longest = 1;
+    let run = 1;
+    for (let i = 1; i < sortedDays.length; i++) {
+      const prev = new Date(sortedDays[i - 1] + "T00:00:00");
+      const curr = new Date(sortedDays[i] + "T00:00:00");
+      const diffDays = Math.round((curr.getTime() - prev.getTime()) / DAY_MS);
+      if (diffDays === 1) {
+        run++;
+        if (run > longest) longest = run;
+      } else {
+        run = 1;
+      }
+    }
+
+    // Best should never be less than current (current is part of activeDays
+    // and contiguous by definition). Clamp defensively in case of any drift.
+    return { streak: current, personalBest: Math.max(longest, current) };
+  })();
+
+  // Determine the raw content for the current view (unified text with
+  // section markers). isViewingHistory wins over noNewCommits — see
+  // the title/date if-chain above for why the priority matters.
+  const currentRawContent = isViewingHistory
+    ? (viewingHistoryContent ?? "")
+    : noNewCommits
+      ? noNewCommits.content
+      : digestStream.text || cachedDigests[`${selectedRepo}:digest`]?.content || "";
+
+  // Parse sections from whatever content source is active
+  const currentSections = currentRawContent ? parseSections(currentRawContent) : null;
+
+  // Stats for the currently-displayed digest (streaming, cached, history, or
+  // quiet-day preview). Mirrors the stats prop passed into DigestView so the
+  // header's copy/download/email sees the same numbers the page is rendering.
+  const currentStats = isViewingHistory
+    ? (viewingHistoryStats as DigestViewStats | null)
+    : noNewCommits
+      ? (noNewCommits.stats as DigestViewStats | null)
+      : digestStream.stats ||
+        (cachedDigests[`${selectedRepo}:digest`]?.stats as DigestViewStats | null) ||
+        null;
+
+  // Show Copy/Download/Email in the header only when there's something to act
+  // on: we have content, we're not mid-stream, and we're not sitting on the
+  // quiet-day empty state (which has no digest to copy). The quiet-day
+  // suppression is itself suppressed when isViewingHistory is true — clicking
+  // a sidebar history entry on a quiet-day repo IS something to act on.
+  const showHeaderActions =
+    currentRawContent !== "" &&
+    !digestStream.isStreaming &&
+    !emptyRepo &&
+    (isViewingHistory || !(noNewCommits && !showLatestFromQuietDay));
+
+  // True while the dashboard is still bootstrapping after a remount
+  // (e.g. returning from /settings or /insights) and hasn't resolved
+  // into any of the definite display states yet. Gate is intentionally
+  // strict — once ANY of these resolves, isInitialLoading flips false
+  // and the relevant render branch (history / quiet / streaming / done)
+  // takes over.
+  const hasCachedDigest = cachedDigests[`${selectedRepo}:digest`] != null;
+  const hasResolvedToDefiniteState =
+    digestStream.isStreaming ||
+    digestStream.text !== "" ||
+    hasCachedDigest ||
+    noNewCommits != null ||
+    emptyRepo ||
+    isViewingHistory ||
+    (reposLoaded && repos.length === 0);
+  const isInitialLoading = !hasResolvedToDefiniteState;
+
+  return (
+    <div>
+      <Header isOpen={sidebarOpen} onMenuToggle={() => setSidebarOpen((v) => !v)} />
+
+      <div className="app-layout">
+        <Sidebar
+          entries={history}
+          activeId={sidebarActiveId}
+          onSelect={handleHistorySelect}
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          repos={repos}
+          activeRepos={activeRepos}
+          selectedRepo={selectedRepo}
+          onRepoChange={handleRepoChange}
+        />
+
+        <div className="app-main">
+          <div className="digest-container">
+            <div className="digest-page-header">
+              <div className="digest-page-header-left">
+                {(isViewingHistory || (noNewCommits && showLatestFromQuietDay)) && (
+                  <button
+                    type="button"
+                    className="digest-back-btn"
+                    onClick={handleBackToToday}
+                    aria-label="Back to today"
+                  >
+                    <ArrowLeft size={10} strokeWidth={1} aria-hidden />
+                    Back to Today
+                  </button>
+                )}
+                <h1 className="digest-page-name">
+                  <span className="digest-page-title-text">{pageTitle}</span>
+                  {(() => {
+                    // Gate the streak badge on:
+                    //   1. History loaded for the CURRENT repo (state-backed
+                    //      so React re-renders when it flips)
+                    //   2. Digest is settled — not still streaming or
+                    //      checking cache. Without this, when the user
+                    //      switches repos, the new repo's history fetch
+                    //      completes mid-generation and the badge pops in
+                    //      while the digest is still streaming. If the new
+                    //      repo also has its own streak >= 2, that pop-in
+                    //      reads as if the previous repo's badge "persisted"
+                    //      — even though it's the new repo's legitimate
+                    //      streak. Holding the badge until the digest is
+                    //      done makes its arrival feel intentional.
+                    //
+                    // Combined with the streak-computation short-circuit
+                    // above (returns 0 on history mismatch), there's no
+                    // path where a stale streak from the previous repo
+                    // can render at any frame.
+                    const historyMatchesRepo = historyLoadedForRepo === selectedRepo;
+                    const digestSettled = !digestStream.isStreaming && !isCheckingCache;
+                    const showStreakBadge =
+                      !noNewCommits &&
+                      !emptyRepo &&
+                      !isViewingHistory &&
+                      streak >= 2 &&
+                      historyMatchesRepo &&
+                      digestSettled;
+                    if (!repoName && !showStreakBadge) return null;
+                    return (
+                      <span className="digest-page-pills">
+                        {repoName && selectedRepo && (
+                          <a
+                            href={`https://github.com/${selectedRepo}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="digest-repo-chip"
+                            aria-label={`Open ${selectedRepo} on GitHub`}
+                          >
+                            {repoName}
+                            <Forward size={10} strokeWidth={1} aria-hidden />
+                          </a>
+                        )}
+                        {showStreakBadge && (
+                          <span
+                            ref={streakTap.ref}
+                            className={`digest-streak${streakTap.open ? " tap-open" : ""}`}
+                            onClick={streakTap.toggle}
+                          >
+                            <Emoji name="streak" size={14} /> {streak} Day Streak
+                            <span className="streak-tooltip" role="tooltip">
+                              <span className="streak-tooltip-label">Personal best</span>
+                              <span className="streak-tooltip-value">
+                                {personalBest} {personalBest === 1 ? "day" : "days"}
+                              </span>
+                            </span>
+                          </span>
+                        )}
+                      </span>
+                    );
+                  })()}
+                </h1>
+                <p className="digest-page-date">{displayDate}</p>
+              </div>
+              {showHeaderActions && (
+                <div className="digest-page-header-right">
+                  <DigestActions
+                    text={currentRawContent}
+                    stats={currentStats}
+                    repoName={repoName}
+                    repoFullName={selectedRepo}
+                    // When viewing a history entry, the email API needs
+                    // the exact row id (today's-digest fallback would
+                    // otherwise email the wrong day's content). On the
+                    // live "today" view we leave this null and let the
+                    // server resolve via repo+mode+tz.
+                    digestId={isViewingHistory ? activeHistoryId : null}
+                    visibleSections={digestSectionPrefs ?? undefined}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Render priority — `isViewingHistory` MUST come first so a
+                user clicking a sidebar history entry while in the quiet
+                state gets the historic digest in the main view. With the
+                quiet-state branches first, that click would set state but
+                the quiet UI would keep rendering, so the sidebar would
+                highlight a digest the main view wasn't showing. */}
+            {isViewingHistory ? (
+              <DigestView
+                isStreaming={false}
+                streamingText={currentSections?.digest ?? viewingHistoryContent ?? ""}
+                stats={viewingHistoryStats as DigestViewStats | null}
+                repoName={repoName}
+                repoFullName={selectedRepo}
+                visibleSections={digestSectionPrefs ?? undefined}
+                onResumeWithAI={() => setAiContextOpen(true)}
+                onGenerateStandup={() => setStandupOpen(true)}
+                onGeneratePlan={() => setPlanOpen(true)}
+              />
+            ) : emptyRepo ? (
+              // First-run / dormant repo: no commits in 90d AND no prior
+              // digests to fall back on. Same shell as the quiet-day branch
+              // (emoji + text), but no "View Last Digest" button — there is
+              // no last digest. Distinct copy because we can't reference a
+              // last-digest date that doesn't exist.
+              <div className="quiet-day">
+                <div className="quiet-day-emoji">
+                  <Emoji name="quietDay" size={104} />
+                </div>
+                <div className="quiet-day-text">
+                  <h2 className="quiet-day-title">No Activity in {repoName}</h2>
+                  <p className="quiet-day-subtitle">
+                    Scout checked the last 90 days and didn&apos;t find any commits. Push some
+                    changes or pick a different repo.
+                  </p>
+                </div>
+              </div>
+            ) : noNewCommits && !showLatestFromQuietDay ? (
+              <div className="quiet-day">
+                <div className="quiet-day-emoji">
+                  <Emoji name="quietDay" size={104} />
+                </div>
+                <div className="quiet-day-text">
+                  <h2 className="quiet-day-title">No New Digest Today for {repoName}</h2>
+                  <p className="quiet-day-subtitle">
+                    {repoName} has been quiet since your last digest on {noNewCommits.dateDisplay}.
+                    Nothing new to report.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className="quiet-day-btn"
+                  onClick={() => setShowLatestFromQuietDay(true)}
+                >
+                  <SquareArrowUpRight size={20} strokeWidth={1} aria-hidden />
+                  View Last Digest
+                </button>
+              </div>
+            ) : noNewCommits && showLatestFromQuietDay ? (
+              <DigestView
+                isStreaming={false}
+                streamingText={currentSections?.digest ?? noNewCommits.content}
+                stats={noNewCommits.stats as DigestViewStats | null}
+                repoName={repoName}
+                repoFullName={selectedRepo}
+                visibleSections={digestSectionPrefs ?? undefined}
+                onResumeWithAI={() => setAiContextOpen(true)}
+                onGenerateStandup={() => setStandupOpen(true)}
+                onGeneratePlan={() => setPlanOpen(true)}
+              />
+            ) : (
+              <>
+                {digestStream.error && !/no (new )?commits/i.test(digestStream.error) ? (
+                  // Error UI is suppressed for "no commits" errors specifically —
+                  // those are handled by the deferred quiet-day transition above
+                  // (see the no-commits effect). DigestView stays mounted with
+                  // its opener typing through the wait, then the view switches
+                  // straight to the quiet-day graphic. No interstitial.
+                  <div className="digest-error">
+                    <p>{digestStream.error}</p>
+                    <div className="digest-error-actions">
+                      <button
+                        className="btn btn-secondary"
+                        onClick={() => forceGenerate(selectedRepo, "digest")}
+                      >
+                        Try again
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <DigestView
+                    isStreaming={digestStream.isStreaming}
+                    isLoading={isCheckingCache || isInitialLoading}
+                    animate={
+                      digestStream.isStreaming ||
+                      (digestStream.isDone && !revealedReposRef.current.has(selectedRepo))
+                    }
+                    streamingText={currentSections?.digest ?? ""}
+                    stats={
+                      digestStream.stats || cachedDigests[`${selectedRepo}:digest`]?.stats || null
+                    }
+                    repoName={repoName}
+                    repoFullName={selectedRepo}
+                    visibleSections={digestSectionPrefs ?? undefined}
+                    onResumeWithAI={() => setAiContextOpen(true)}
+                    onGenerateStandup={() => setStandupOpen(true)}
+                    onGeneratePlan={() => setPlanOpen(true)}
+                  />
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <AIContextModal
+        isOpen={aiContextOpen}
+        onClose={() => setAiContextOpen(false)}
+        content={currentSections?.aiContext || null}
+      />
+
+      <StandupModal
+        isOpen={standupOpen}
+        onClose={() => setStandupOpen(false)}
+        content={currentSections?.standup || null}
+      />
+
+      <PlanModal
+        isOpen={planOpen}
+        onClose={() => setPlanOpen(false)}
+        content={currentSections?.plan || null}
+      />
+    </div>
+  );
+}
