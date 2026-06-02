@@ -7,26 +7,29 @@ import { ReadyCTA } from "@/components/ReadyCTA";
 import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
-  // Brand suffix dropped — "askScout" already appears in the headline,
-  // so " | askScout" double-printed it and ate characters in the SERP
-  // snippet without adding signal.
-  title: "Introducing askScout: your vibe coding companion",
+  // Meta title/description deliberately diverge from the on-page H1
+  // and deck. Body keeps the warmer launch-post voice
+  // ("Introducing askScout: your vibe coding companion"); meta leads
+  // with the keyword "daily code digest" because that's what
+  // searchers actually type. Brand suffix dropped — "askScout"
+  // already appears in the title.
+  title: "Meet askScout: the daily code digest for AI-assisted devs",
   description:
-    "askScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex.",
+    "askScout reads your repo and writes a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex.",
   alternates: {
     canonical: "/articles/introducing-askscout",
   },
   openGraph: {
-    title: "Introducing askScout: your vibe coding companion",
+    title: "Meet askScout: the daily code digest for AI-assisted devs",
     description:
-      "askScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex.",
+      "askScout reads your repo and writes a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Introducing askScout: your vibe coding companion",
+    title: "Meet askScout: the daily code digest for AI-assisted devs",
     description:
-      "askScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex.",
+      "askScout reads your repo and writes a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex.",
   },
 };
 
