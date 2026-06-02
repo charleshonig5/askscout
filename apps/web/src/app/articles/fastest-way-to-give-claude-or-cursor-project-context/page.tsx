@@ -8,28 +8,29 @@ import { ReadyCTA } from "@/components/ReadyCTA";
 import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 
 export const metadata = {
-  // SERP-friendly title (~60 chars). Body H1 stays long-form for
-  // in-page voice; metadata title is shorter and keeps the three
-  // brand names visible in Google's snippet without truncating.
+  // Meta title kept short (~55 chars) so it doesn't truncate in
+  // Google's SERP. The on-page H1 is the longer marketing version;
+  // metadata uses one consistent shorter title across meta, OG, and
+  // Twitter so social previews stay aligned with the SERP snippet.
   // Brand suffix dropped — "askScout" already appears in the H1
   // and the breadcrumb chrome.
   title: "Give Claude Code, Cursor, or Codex project context fast",
   description:
-    "How to give Claude Code, Cursor, or Codex a one-shot context block covering tech stack, recent work, current focus, and key files, so the AI is useful from the first message.",
+    "How to give Claude Code, Cursor, or Codex a one-shot context block covering tech stack, recent work, and current focus, so they're useful from message one.",
   alternates: {
     canonical: "/articles/fastest-way-to-give-claude-or-cursor-project-context",
   },
   openGraph: {
-    title: "The fastest way to bring Claude Code, Cursor, or Codex up to speed on your project",
+    title: "Give Claude Code, Cursor, or Codex project context fast",
     description:
-      "How to give Claude Code, Cursor, or Codex a one-shot context block covering tech stack, recent work, current focus, and key files, so the AI is useful from the first message.",
+      "How to give Claude Code, Cursor, or Codex a one-shot context block covering tech stack, recent work, and current focus, so they're useful from message one.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: "The fastest way to bring Claude Code, Cursor, or Codex up to speed on your project",
+    title: "Give Claude Code, Cursor, or Codex project context fast",
     description:
-      "How to give Claude Code, Cursor, or Codex a one-shot context block covering tech stack, recent work, current focus, and key files, so the AI is useful from the first message.",
+      "How to give Claude Code, Cursor, or Codex a one-shot context block covering tech stack, recent work, and current focus, so they're useful from message one.",
   },
 };
 
