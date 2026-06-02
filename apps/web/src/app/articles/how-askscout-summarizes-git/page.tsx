@@ -11,21 +11,21 @@ export const metadata = {
   // headline, so " | askScout" was redundant + ate SERP chars.
   title: "How askScout turns a noisy git log into a 10-second digest",
   description:
-    "A walkthrough of how askScout reads commits and diffs, computes structural signals, and uses a tuned LLM prompt to produce a readable digest.",
+    "A walkthrough of the four steps between your messy git history and a digest you can actually read. From commits and diffs to plain-English output.",
   alternates: {
     canonical: "/articles/how-askscout-summarizes-git",
   },
   openGraph: {
     title: "How askScout turns a noisy git log into a 10-second digest",
     description:
-      "A walkthrough of how askScout reads commits and diffs, computes structural signals, and uses a tuned LLM prompt to produce a readable digest.",
+      "A walkthrough of the four steps between your messy git history and a digest you can actually read. From commits and diffs to plain-English output.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
     title: "How askScout turns a noisy git log into a 10-second digest",
     description:
-      "A walkthrough of how askScout reads commits and diffs, computes structural signals, and uses a tuned LLM prompt to produce a readable digest.",
+      "A walkthrough of the four steps between your messy git history and a digest you can actually read. From commits and diffs to plain-English output.",
   },
 };
 
