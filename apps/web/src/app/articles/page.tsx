@@ -6,8 +6,9 @@ import { ArticlesUtils } from "@/components/ArticlesUtils";
 import { ARTICLES } from "@/lib/articles-data";
 
 export const metadata = {
-  title: "Articles | askScout",
-  description: "Long-form writing from the askScout team.",
+  title: "Articles · Notes on vibe coding, AI tools, and shipping fast | askScout",
+  description:
+    "Essays on vibe coding, AI coding tools, and the workflow problems that come with shipping fast. From the team building askScout.",
   alternates: {
     canonical: "/articles",
     types: {
@@ -15,16 +16,18 @@ export const metadata = {
     },
   },
   openGraph: {
-    title: "Articles | askScout",
-    description: "Long-form writing from the askScout team.",
+    title: "Articles · Notes on vibe coding, AI tools, and shipping fast | askScout",
+    description:
+      "Essays on vibe coding, AI coding tools, and the workflow problems that come with shipping fast. From the team building askScout.",
     url: "/articles",
     siteName: "askScout",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Articles | askScout",
-    description: "Long-form writing from the askScout team.",
+    title: "Articles · Notes on vibe coding, AI tools, and shipping fast | askScout",
+    description:
+      "Essays on vibe coding, AI coding tools, and the workflow problems that come with shipping fast. From the team building askScout.",
   },
 };
 
