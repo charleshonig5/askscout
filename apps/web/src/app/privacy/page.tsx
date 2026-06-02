@@ -13,12 +13,12 @@ const PRIVACY_LAST_UPDATED_HUMAN = "May 4, 2026";
 export const metadata = {
   title: "Privacy | askScout",
   description:
-    "What data askScout collects, where it's stored, who it's shared with, and how to delete it.",
+    "What data askScout collects, where it's stored, who it's shared with, and how to delete it. No tracking. No selling data.",
   alternates: { canonical: "/privacy" },
   openGraph: {
     title: "Privacy | askScout",
     description:
-      "What data askScout collects, where it's stored, who it's shared with, and how to delete it.",
+      "What data askScout collects, where it's stored, who it's shared with, and how to delete it. No tracking. No selling data.",
     url: "/privacy",
     siteName: "askScout",
     type: "article",
@@ -27,7 +27,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Privacy | askScout",
     description:
-      "What data askScout collects, where it's stored, who it's shared with, and how to delete it.",
+      "What data askScout collects, where it's stored, who it's shared with, and how to delete it. No tracking. No selling data.",
   },
 };
 
