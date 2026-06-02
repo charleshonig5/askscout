@@ -22,13 +22,14 @@ export const metadata = {
   openGraph: {
     title: "The fastest way to bring Claude Code, Cursor, or Codex up to speed on your project",
     description:
-      "How to give Claude Code, Cursor, or Codex a one-shot context block so the AI is useful from the first message.",
+      "How to give Claude Code, Cursor, or Codex a one-shot context block covering tech stack, recent work, current focus, and key files, so the AI is useful from the first message.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
     title: "The fastest way to bring Claude Code, Cursor, or Codex up to speed on your project",
-    description: "How to give Claude Code, Cursor, or Codex instant project context.",
+    description:
+      "How to give Claude Code, Cursor, or Codex a one-shot context block covering tech stack, recent work, current focus, and key files, so the AI is useful from the first message.",
   },
 };
 

@@ -18,13 +18,14 @@ export const metadata = {
   openGraph: {
     title: "How askScout turns a noisy git log into a 10-second digest",
     description:
-      "How askScout reads commits and diffs, computes structural signals, and renders a readable digest.",
+      "A walkthrough of how askScout reads commits and diffs, computes structural signals, and uses a tuned LLM prompt to produce a readable digest.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
     title: "How askScout turns a noisy git log into a 10-second digest",
-    description: "A walkthrough of how askScout reads your repo and produces a readable digest.",
+    description:
+      "A walkthrough of how askScout reads commits and diffs, computes structural signals, and uses a tuned LLM prompt to produce a readable digest.",
   },
 };
 

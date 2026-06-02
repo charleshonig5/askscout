@@ -18,13 +18,14 @@ export const metadata = {
   openGraph: {
     title: "Why we made askScout open source",
     description:
-      "Trust matters more than moat for a tool that reads your code. Why askScout is fully MIT.",
+      "Why askScout is MIT licensed: trust matters more than moat for a tool that reads your code. Plus the BYOK story for the CLI.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
     title: "Why we made askScout open source",
-    description: "Trust matters more than moat for a tool that reads your code.",
+    description:
+      "Why askScout is MIT licensed: trust matters more than moat for a tool that reads your code. Plus the BYOK story for the CLI.",
   },
 };
 

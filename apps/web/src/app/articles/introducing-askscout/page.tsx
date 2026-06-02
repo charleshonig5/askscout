@@ -19,13 +19,14 @@ export const metadata = {
   openGraph: {
     title: "Introducing askScout: your vibe coding companion",
     description:
-      "The companion tool for developers using Claude Code, Cursor, and Codex. Reads your repo, writes your digest.",
+      "askScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
     title: "Introducing askScout: your vibe coding companion",
-    description: "askScout reads your repo and writes you a daily digest of what you shipped.",
+    description:
+      "askScout reads your repo and writes you a daily digest of what you shipped. The companion tool for developers using Claude Code, Cursor, and Codex.",
   },
 };
 

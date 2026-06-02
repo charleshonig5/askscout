@@ -19,14 +19,14 @@ export const metadata = {
   openGraph: {
     title: "Best Ways to Track What You Shipped as a Developer",
     description:
-      "An honest comparison of git log, GitHub Insights, dev journals, and automated digests for tracking what you actually built.",
+      "An honest comparison of git log, GitHub Insights, dev journals, and automated digests for tracking what you actually built each week.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
     title: "Best Ways to Track What You Shipped as a Developer",
     description:
-      "An honest comparison of the real options for tracking what you shipped each week.",
+      "An honest comparison of git log, GitHub Insights, dev journals, and automated digests for tracking what you actually built each week.",
   },
 };
 

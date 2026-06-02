@@ -18,12 +18,12 @@ const DOCS_LAST_UPDATED_HUMAN = "May 4, 2026";
 
 export const metadata = {
   title: "Docs | askScout",
-  description: "askScout docs. How to use the web app, the CLI, and answers to common questions.",
+  description: "How to use the askScout web app and CLI, plus answers to common questions.",
   alternates: {
     canonical: "/docs",
   },
   openGraph: {
-    title: "askScout docs",
+    title: "Docs | askScout",
     description: "How to use the askScout web app and CLI, plus answers to common questions.",
     url: "/docs",
     siteName: "askScout",
@@ -31,7 +31,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "askScout docs",
+    title: "Docs | askScout",
     description: "How to use the askScout web app and CLI, plus answers to common questions.",
   },
 };

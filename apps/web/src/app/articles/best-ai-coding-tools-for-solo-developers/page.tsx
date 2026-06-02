@@ -19,14 +19,14 @@ export const metadata = {
   openGraph: {
     title: "Best AI Coding Tools for Solo Developers",
     description:
-      "An honest take on Claude Code, Cursor, Codex, GitHub Copilot, and Aider for solo developers.",
+      "An honest take on Claude Code, Cursor, Codex, GitHub Copilot, and Aider for solo developers. What each one is good at, and the layer they all leave out.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
     title: "Best AI Coding Tools for Solo Developers",
     description:
-      "An honest take on Claude Code, Cursor, Codex, GitHub Copilot, and Aider for solo developers.",
+      "An honest take on Claude Code, Cursor, Codex, GitHub Copilot, and Aider for solo developers. What each one is good at, and the layer they all leave out.",
   },
 };
 

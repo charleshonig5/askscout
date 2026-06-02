@@ -18,14 +18,14 @@ export const metadata = {
   openGraph: {
     title: "The Hidden Cost of Vibe Coding",
     description:
-      "AI coding tools sped us up. They also made it harder to remember what we actually built.",
+      "AI coding tools sped us up. They also made it harder to remember what we actually built. Why I think the next big workflow problem is digesting your own code.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
     title: "The Hidden Cost of Vibe Coding",
     description:
-      "AI coding tools sped us up. They also made it harder to remember what we actually built.",
+      "AI coding tools sped us up. They also made it harder to remember what we actually built. Why I think the next big workflow problem is digesting your own code.",
   },
 };
 
