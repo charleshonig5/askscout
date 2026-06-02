@@ -10,21 +10,21 @@ export const metadata = {
   // Brand suffix dropped — "askScout" already appears in the
   // breadcrumb + OG chrome; the title was 56 chars with suffix,
   // right at the SERP truncation edge.
-  title: "Best AI Coding Tools for Solo Developers",
+  title: "Best AI Coding Tools for Solo Developers in 2026",
   description:
     "An honest take on Claude Code, Cursor, Codex, GitHub Copilot, and Aider for solo developers. What each one is good at, and the layer they all leave out.",
   alternates: {
     canonical: "/articles/best-ai-coding-tools-for-solo-developers",
   },
   openGraph: {
-    title: "Best AI Coding Tools for Solo Developers",
+    title: "Best AI Coding Tools for Solo Developers in 2026",
     description:
       "An honest take on Claude Code, Cursor, Codex, GitHub Copilot, and Aider for solo developers. What each one is good at, and the layer they all leave out.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Best AI Coding Tools for Solo Developers",
+    title: "Best AI Coding Tools for Solo Developers in 2026",
     description:
       "An honest take on Claude Code, Cursor, Codex, GitHub Copilot, and Aider for solo developers. What each one is good at, and the layer they all leave out.",
   },
