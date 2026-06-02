@@ -9,23 +9,23 @@ import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 export const metadata = {
   // Brand suffix dropped — "askScout" already appears in the
   // headline, so the trailing " | askScout" was redundant.
-  title: "Why we made askScout open source",
+  title: "askScout: an Open-Source Alternative to Closed AI Code Tools",
   description:
-    "Why askScout is MIT licensed: trust matters more than moat for a tool that reads your code. Plus the BYOK story for the CLI.",
+    "Why askScout is MIT licensed top to bottom: trust matters more than moat for a tool that reads your code. Run the CLI locally with your own API key.",
   alternates: {
     canonical: "/articles/why-askscout-is-open-source",
   },
   openGraph: {
-    title: "Why we made askScout open source",
+    title: "askScout: an Open-Source Alternative to Closed AI Code Tools",
     description:
-      "Why askScout is MIT licensed: trust matters more than moat for a tool that reads your code. Plus the BYOK story for the CLI.",
+      "Why askScout is MIT licensed top to bottom: trust matters more than moat for a tool that reads your code. Run the CLI locally with your own API key.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Why we made askScout open source",
+    title: "askScout: an Open-Source Alternative to Closed AI Code Tools",
     description:
-      "Why askScout is MIT licensed: trust matters more than moat for a tool that reads your code. Plus the BYOK story for the CLI.",
+      "Why askScout is MIT licensed top to bottom: trust matters more than moat for a tool that reads your code. Run the CLI locally with your own API key.",
   },
 };
 
