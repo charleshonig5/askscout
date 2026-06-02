@@ -9,23 +9,23 @@ import { articleJsonLd, articleBreadcrumbJsonLd } from "@/lib/article-jsonld";
 export const metadata = {
   // Brand suffix dropped — consistent with the rest of the cluster.
   // "askScout" already appears in the breadcrumb chrome + OG meta.
-  title: "The Hidden Cost of Vibe Coding",
+  title: "The Hidden Cost of Vibe Coding for Solo Developers",
   description:
-    "AI coding tools sped us up. They also made it harder to remember what we actually built. Why I think the next big workflow problem is digesting your own code.",
+    "AI coding tools sped us up. They also made it harder to keep track of what we actually built. Why digesting your own code is the next workflow problem.",
   alternates: {
     canonical: "/articles/the-hidden-cost-of-vibe-coding",
   },
   openGraph: {
-    title: "The Hidden Cost of Vibe Coding",
+    title: "The Hidden Cost of Vibe Coding for Solo Developers",
     description:
-      "AI coding tools sped us up. They also made it harder to remember what we actually built. Why I think the next big workflow problem is digesting your own code.",
+      "AI coding tools sped us up. They also made it harder to keep track of what we actually built. Why digesting your own code is the next workflow problem.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: "The Hidden Cost of Vibe Coding",
+    title: "The Hidden Cost of Vibe Coding for Solo Developers",
     description:
-      "AI coding tools sped us up. They also made it harder to remember what we actually built. Why I think the next big workflow problem is digesting your own code.",
+      "AI coding tools sped us up. They also made it harder to keep track of what we actually built. Why digesting your own code is the next workflow problem.",
   },
 };
 
