@@ -8851,18 +8851,22 @@ a:hover {
   font-weight: 400;
 }
 
-/* Inline logo link inside the pull-line. The Logo span renders
-   inline-block by default; this wrapper just adjusts vertical
-   alignment so the wordmark sits on the cap line of the
-   surrounding Pridi text rather than the typographic baseline
-   (which dropped it ~5px low). top:-2px is the magic-number
-   nudge that makes the lockup read as "askScout is your morning..."
-   in one visual unit. */
+/* Inline logo link inside the pull-line. The lockup SVG has 3.6px
+   of internal whitespace BELOW the "askScout" wordmark letters
+   (when rendered at height 20px — the SVG bottom edge sits at row
+   242 of 243 but the wordmark glyph bottoms end at row 198). Without
+   compensation, vertical-align: middle puts the SVG bottom near the
+   text baseline, which means the wordmark letters float 3.6px ABOVE
+   the surrounding text baseline and the lockup reads as "askScout"
+   floating above "is your morning..." instead of inline with it.
+   top: 2px drops the whole lockup so the wordmark letter bottoms
+   land on the surrounding text's baseline — the whole point of the
+   editorial pull-line is one continuous reading line. */
 .home-footer-pullline-logo {
   display: inline-block;
   vertical-align: middle;
   position: relative;
-  top: -2px;
+  top: 2px;
   color: inherit;
   text-decoration: none;
 }
