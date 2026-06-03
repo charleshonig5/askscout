@@ -89,7 +89,13 @@ export function SiteFooter() {
               <ul className="home-footer-col-list">
                 {ARTICLES.slice(0, FOOTER_ARTICLE_COUNT).map((article) => (
                   <li key={article.slug}>
-                    <Link href={`/articles/${article.slug}`}>{article.title}</Link>
+                    {/* title= surfaces the full article title via
+                        browser tooltip on hover, since the link
+                        text itself truncates with an ellipsis at
+                        the column's 280px boundary. */}
+                    <Link href={`/articles/${article.slug}`} title={article.title}>
+                      {article.title}
+                    </Link>
                   </li>
                 ))}
               </ul>

@@ -8775,7 +8775,14 @@ a:hover {
 }
 
 .home-footer-copy {
-  margin: 0;
+  /* 20px margin-top sums with the parent .home-footer-brand's 24px
+     flex gap to give 44px total separation between "All systems
+     operational" and the copyright on desktop. Sets the copyright
+     apart visually as a footer footnote, vs the logo + status pill
+     which read as one live-brand unit. Reset to 0 in the mobile
+     override below (where the brand block uses a uniform 14px
+     rhythm). */
+  margin: 20px 0 0;
   font-family: var(--font-sans);
   font-weight: 300;
   /* 14px aligns the footer with the site's "default chrome" tier
@@ -8902,12 +8909,48 @@ a:hover {
    it matches the article-to-article gap inside the list. The
    parent column's 24px gap still applies between the title and
    this wrapper — that gap is for section-level breathing room,
-   not row-to-row spacing. */
+   not row-to-row spacing.
+
+   max-width caps the Articles column so long article titles get
+   single-line ellipsis truncation at a known boundary instead of
+   stretching the footer past its layout. Other columns (Product,
+   Navigation) keep their natural nowrap sizing because their
+   links are already short. */
 .home-footer-col-articles {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 14px;
+  max-width: 280px;
+  /* width: 100% so children (the <ul> and "Read more" link) can
+     fill the column horizontally — required so the ellipsized
+     links below have a defined width to truncate against. */
+  width: 100%;
+}
+
+/* Article links truncate to a single line with an ellipsis. We
+   never want article titles to wrap onto a 2nd line: the footer's
+   row rhythm depends on every row being one line tall, and a
+   wrapped title would break that visual cadence.
+
+   The display:block + width:100% chain gives text-overflow:
+   ellipsis a defined width to truncate against. The full title is
+   surfaced via the `title` attribute (added on the Link in
+   SiteFooter.tsx) so a hover reveals the truncated text. */
+.home-footer-col-articles .home-footer-col-list {
+  /* flex-children default to align-items: flex-start (set on the
+     <ul>) which sizes them to content. Stretch to fill the
+     wrapper so list items inherit the bounded width. */
+  align-self: stretch;
+}
+.home-footer-col-articles .home-footer-col-list li {
+  width: 100%;
+}
+.home-footer-col-articles .home-footer-col-list a {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* "Read more" CTA below the Articles column. Visual layout mirrors
@@ -9495,6 +9538,12 @@ a:hover {
   /* Logo -> copyright gap 14 (desktop 24). */
   .home-footer-brand {
     gap: 14px;
+  }
+  /* Reset the desktop-only 20px margin on the copyright so the
+     brand block uses a uniform 14px rhythm on mobile (desktop
+     sets status->copyright apart at 44px; mobile keeps it tight). */
+  .home-footer-copy {
+    margin-top: 0;
   }
   /* Stack the three link groups vertically, 34px apart. */
   .home-footer-cols {
