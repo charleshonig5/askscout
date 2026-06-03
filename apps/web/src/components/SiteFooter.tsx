@@ -42,17 +42,6 @@ export function SiteFooter() {
         </div>
         <div className="home-footer-cols">
           <div className="home-footer-col">
-            <p className="home-footer-col-title">Product</p>
-            <ul className="home-footer-col-list">
-              <li>
-                <Link href="/dashboard">Web App</Link>
-              </li>
-              <li>
-                <Link href="/docs">CLI</Link>
-              </li>
-            </ul>
-          </div>
-          <div className="home-footer-col">
             <p className="home-footer-col-title">Navigation</p>
             <ul className="home-footer-col-list">
               <li>
@@ -66,6 +55,17 @@ export function SiteFooter() {
               </li>
               <li>
                 <Link href="/privacy">Privacy</Link>
+              </li>
+            </ul>
+          </div>
+          <div className="home-footer-col">
+            <p className="home-footer-col-title">Product</p>
+            <ul className="home-footer-col-list">
+              <li>
+                <Link href="/dashboard">Web App</Link>
+              </li>
+              <li>
+                <Link href="/docs">CLI</Link>
               </li>
             </ul>
           </div>
