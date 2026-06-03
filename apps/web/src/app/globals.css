@@ -8826,7 +8826,7 @@ a:hover {
   align-items: flex-start;
   gap: 14px;
   flex-shrink: 0;
-  max-width: 329px;
+  max-width: 310px;
 }
 
 /* Editorial pull-line: the askScout wordmark (Logo) flows inline
@@ -8844,7 +8844,7 @@ a:hover {
   font-size: 20px;
   line-height: 31px;
   color: var(--color-text-primary);
-  max-width: 329px;
+  max-width: 310px;
 }
 
 .home-footer-pullline strong {
