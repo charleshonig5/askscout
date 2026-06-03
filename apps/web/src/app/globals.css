@@ -9161,15 +9161,21 @@ a:hover {
     column-gap: 0;
   }
   /* On mobile the columns block becomes a 2-row grid: Navigation
-     and Product sit side-by-side on row 1 (44px gap), Articles
-     spans the full width on row 2. Per Figma 484:130. */
+     and Product sit side-by-side on row 1 with a true 44px gap
+     between their content (NOT 1fr columns, which stretched the
+     cells to half-viewport and left ~118px of dead space between
+     the two labels). The empty 3rd column "." takes the remaining
+     space on row 1 so the grid container still fills the mobile
+     width — which Articles needs to span on row 2. Per Figma
+     484:130. */
   .home-footer-cols {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: auto auto 1fr;
     grid-template-areas:
-      "nav product"
-      "articles articles";
-    gap: 44px;
+      "nav product ."
+      "articles articles articles";
+    column-gap: 44px;
+    row-gap: 44px;
   }
   /* Map the 3 .home-footer-col children (Product, Navigation,
      Articles per JSX order) into the right grid cells. */
