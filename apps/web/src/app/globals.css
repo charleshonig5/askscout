@@ -8795,13 +8795,15 @@ a:hover {
 
 /* ---------- FOOTER ---------- */
 /* ============================================
-   FOOTER — Figma 244:2647
-   Brand block (logo + copyright) on the left, 3
-   nav columns on the right with a 144px gutter
-   between them. Each column has a white heading,
-   24px gap to the sub-list, and 14px between
-   list items. All link text is 12px Work Sans
-   Light in secondary gray (#616161).
+   FOOTER — Figma 484:1271
+   Brand block (editorial pull-line + boxed
+   status pill + GitHub mark + copyright) on the
+   left, 3 nav columns (Product / Navigation /
+   Articles) on the right. Brand and columns are
+   pushed to opposite ends of the 976px frame via
+   justify-content: space-between so the layout
+   stays balanced regardless of how wide the
+   columns block grows.
    ============================================ */
 .home-footer {
   border-top: 1px solid var(--color-border);
@@ -8814,40 +8816,90 @@ a:hover {
   margin: 0 auto;
   display: flex;
   align-items: flex-start;
-  gap: 144px;
+  justify-content: space-between;
+  gap: 64px;
 }
 
 .home-footer-brand {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 24px;
+  gap: 14px;
   flex-shrink: 0;
+  max-width: 329px;
 }
 
-.home-footer-logo {
-  display: inline-flex;
+/* Editorial pull-line: the askScout wordmark (Logo) flows inline
+   with a Pridi 20px tagline ("is your morning code briefing in
+   10 seconds. Crafted with care in Chicago, IL."). The default
+   weight is ExtraLight (200); <strong> tags inside switch to
+   Regular (400) for the two emphasized phrases the design calls
+   out. Line-height 31px matches the 0/31/63 baseline rhythm in
+   Figma 484:1222. max-width caps the column at the same 329px
+   the design uses so the line breaks land where they're meant to. */
+.home-footer-pullline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: 20px;
+  line-height: 31px;
   color: var(--color-text-primary);
+  max-width: 329px;
+}
+
+.home-footer-pullline strong {
+  font-weight: 400;
+}
+
+/* Inline logo link inside the pull-line. The Logo span renders
+   inline-block by default; this wrapper just adjusts vertical
+   alignment so the wordmark sits on the cap line of the
+   surrounding Pridi text rather than the typographic baseline
+   (which dropped it ~5px low). top:-2px is the magic-number
+   nudge that makes the lockup read as "askScout is your morning..."
+   in one visual unit. */
+.home-footer-pullline-logo {
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  top: -2px;
+  color: inherit;
   text-decoration: none;
 }
 
+/* Copyright row: GitHub mark + © text in a single flex line.
+   14px gap matches the Figma 484:1264 spec exactly. The
+   margin-top creates ~30px breathing room from the status pill
+   above (the parent's 14px flex gap plus this 20px overrides
+   gives ~34px total) so the row reads as a separate "credits"
+   block rather than continuous with the live-status pill. */
+.home-footer-copyright-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.home-footer-github {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.home-footer-github:hover {
+  color: var(--color-text-secondary);
+}
+
 .home-footer-copy {
-  /* 20px margin-top sums with the parent .home-footer-brand's 24px
-     flex gap to give 44px total separation between "All systems
-     operational" and the copyright on desktop. Sets the copyright
-     apart visually as a footer footnote, vs the logo + status pill
-     which read as one live-brand unit. Reset to 0 in the mobile
-     override below (where the brand block uses a uniform 14px
-     rhythm). */
-  margin: 20px 0 0;
+  margin: 0;
   font-family: var(--font-sans);
   font-weight: 300;
-  /* 14px aligns the footer with the site's "default chrome" tier
-     (same as <body> default, bento card bodies, dashboard table
-     cells). Larger than the 12px tight-body cards above the
-     footer, smaller than the 16px long-form reading + button-label
-     tier. Same size on desktop + mobile (no responsive override). */
-  font-size: 14px;
+  /* 12px to match the boxed status pill above; the entire copyright
+     block reads as one "ambient brand chrome" tier at this scale,
+     distinct from the 14px column copy on the right. */
+  font-size: 12px;
   line-height: 1.2;
   color: #616161;
   white-space: nowrap;
@@ -8867,7 +8919,7 @@ a:hover {
 .home-footer-status {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   padding: 4px 8px;
   border-radius: 4px;
   box-shadow: inset 0 0 0 1px var(--color-border);
@@ -8879,14 +8931,20 @@ a:hover {
   font-weight: 300;
   font-size: 12px;
   line-height: 1.2;
-  color: var(--color-text-secondary);
+  /* White (primary) text per Figma 484:1252. The pill sits in the
+     brand chrome row, so the label reads as "live" alongside the
+     editorial pull-line rather than as muted-secondary copy. */
+  color: var(--color-text-primary);
   white-space: nowrap;
 }
 
 .home-footer-status-dot {
   display: inline-block;
-  width: 6px;
-  height: 6px;
+  /* 10px per Figma 484:1246 — larger than the 6px dashboard chip
+     dot so the dot reads as a visible signal next to the editorial
+     pull-line at the footer's scale. */
+  width: 10px;
+  height: 10px;
   border-radius: 9999px;
   background: var(--color-success);
   box-shadow: 0 0 6px 0 color-mix(in srgb, var(--color-success) 45%, transparent);
@@ -8905,7 +8963,11 @@ a:hover {
 .home-footer-cols {
   display: flex;
   align-items: flex-start;
-  gap: 104px;
+  /* 84px between columns per Figma 484:784. Tighter than the
+     previous 104px because the editorial pull-line on the left
+     visually occupies more space and the columns need to read as
+     one cohesive nav group. */
+  gap: 84px;
 }
 
 .home-footer-col {
@@ -9595,12 +9657,6 @@ a:hover {
   /* Logo -> copyright gap 14 (desktop 24). */
   .home-footer-brand {
     gap: 14px;
-  }
-  /* Reset the desktop-only 20px margin on the copyright so the
-     brand block uses a uniform 14px rhythm on mobile (desktop
-     sets status->copyright apart at 44px; mobile keeps it tight). */
-  .home-footer-copy {
-    margin-top: 0;
   }
   /* Stack the three link groups vertically, 34px apart. */
   .home-footer-cols {

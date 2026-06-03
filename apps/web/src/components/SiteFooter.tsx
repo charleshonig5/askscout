@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SquareArrowUpRight } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { GitHubMark } from "@/components/GitHubMark";
 import { ARTICLES } from "@/lib/articles-data";
 
 /** How many of the most-recent articles render in the footer column
@@ -10,10 +11,18 @@ import { ARTICLES } from "@/lib/articles-data";
 const FOOTER_ARTICLE_COUNT = 4;
 
 /**
- * Site footer per Figma 244:2647. Two-block layout: the brand
- * (askscout logo + copyright) on the left, and three nav columns
- * (Product / Navigation / Articles) on the right with the same
- * 24px column-internal gap and a 144px brand→nav gutter.
+ * Site footer per Figma 484:1271. Two-block layout: the brand
+ * (editorial pull-line + status pill + GitHub/copyright row) on the
+ * left, and three nav columns (Product / Navigation / Articles) on
+ * the right.
+ *
+ * The pull-line replaces the previous standalone logo: the askScout
+ * wordmark sits inline with a Pridi 20px tagline ("is your morning
+ * code briefing in 10 seconds. Crafted with care in Chicago, IL.")
+ * so the footer reads like a hand-set masthead instead of a generic
+ * SaaS chrome strip. Mixed Pridi weights (Regular for the two
+ * emphasized phrases, ExtraLight for the rest) carry the editorial
+ * voice the marketing brand wants.
  *
  * Used on every public marketing surface (home, articles, docs,
  * privacy) so the chrome stays consistent. Theme toggle lives in
@@ -24,23 +33,56 @@ export function SiteFooter() {
     <footer className="home-footer">
       <div className="home-footer-inner">
         <div className="home-footer-brand">
-          <Link href="/" className="home-footer-logo" aria-label="askScout home">
-            <Logo height={20} />
-          </Link>
-          {/* Status pill sits above the copyright. Reuses the
-              .repo-combobox-item-badge pulse pattern from the web
-              app (6px green dot, soft halo, 2.4s gentle pulse) so
-              the marketing site and the app share one motion
-              language for "live / healthy" signals. Static for
-              now — wired to a real status source if/when we have
-              one. */}
+          {/* Editorial pull-line: the askScout wordmark flows inline
+              with the marketing copy in Pridi 20px. The two <strong>
+              phrases ("code briefing" and "Chicago, IL.") render at
+              Pridi Regular while the rest is ExtraLight, creating
+              the hand-set tone the marketing brand calls for. */}
+          <p className="home-footer-pullline">
+            <Link href="/" className="home-footer-pullline-logo" aria-label="askScout home">
+              <Logo height={20} alt="" />
+            </Link>{" "}
+            is your morning <strong>code briefing</strong> in 10 seconds. Crafted with care in{" "}
+            <strong>Chicago, IL.</strong>
+          </p>
+          {/* Status pill — boxed treatment (bg + 1px border) instead
+              of the previous transparent inline chip so it reads as
+              a surfaced "live signal" element next to the editorial
+              pull-line. Pulse keyframe + green dot unchanged. */}
           <span className="home-footer-status" role="status" aria-label="All systems operational">
             <span className="home-footer-status-dot" aria-hidden />
             All systems operational
           </span>
-          <p className="home-footer-copy">© 2026 askScout</p>
+          {/* Copyright row: GitHub mark links to the open-source
+              repo, copyright text sits to its right. Replaces the
+              standalone © line — the icon adds an open-source signal
+              the old footer was missing and gives the row visual
+              weight that grounds the brand block. */}
+          <div className="home-footer-copyright-row">
+            <a
+              href="https://github.com/charleshonig5/askscout"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="home-footer-github"
+              aria-label="askScout on GitHub"
+            >
+              <GitHubMark size={22} />
+            </a>
+            <p className="home-footer-copy">© 2026 askScout</p>
+          </div>
         </div>
         <div className="home-footer-cols">
+          <div className="home-footer-col">
+            <p className="home-footer-col-title">Product</p>
+            <ul className="home-footer-col-list">
+              <li>
+                <Link href="/dashboard">Web App</Link>
+              </li>
+              <li>
+                <Link href="/docs">CLI</Link>
+              </li>
+            </ul>
+          </div>
           <div className="home-footer-col">
             <p className="home-footer-col-title">Navigation</p>
             <ul className="home-footer-col-list">
@@ -55,17 +97,6 @@ export function SiteFooter() {
               </li>
               <li>
                 <Link href="/privacy">Privacy</Link>
-              </li>
-            </ul>
-          </div>
-          <div className="home-footer-col">
-            <p className="home-footer-col-title">Product</p>
-            <ul className="home-footer-col-list">
-              <li>
-                <Link href="/dashboard">Web App</Link>
-              </li>
-              <li>
-                <Link href="/docs">CLI</Link>
               </li>
             </ul>
           </div>
