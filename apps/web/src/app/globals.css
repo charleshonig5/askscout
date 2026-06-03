@@ -8872,15 +8872,17 @@ a:hover {
 }
 
 /* Copyright row: GitHub mark + © text in a single flex line.
-   14px gap matches the Figma 484:1264 spec exactly. The
-   margin-top creates ~30px breathing room from the status pill
-   above (the parent's 14px flex gap plus this 20px overrides
-   gives ~34px total) so the row reads as a separate "credits"
-   block rather than continuous with the live-status pill. */
+   24px gap so the mark and the © read as two distinct elements
+   rather than visually fused into one glyph cluster — gives the
+   icon room to breathe at its 22px size. The margin-top creates
+   ~30px breathing room from the status pill above (the parent's
+   14px flex gap plus this 20px overrides gives ~34px total) so
+   the row reads as a separate "credits" block rather than
+   continuous with the live-status pill. */
 .home-footer-copyright-row {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 24px;
   margin-top: 20px;
 }
 
