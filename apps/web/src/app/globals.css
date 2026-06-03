@@ -9174,7 +9174,10 @@ a:hover {
     grid-template-areas:
       "nav product ."
       "articles articles articles";
-    column-gap: 44px;
+    /* 64px between Navigation and Product so the two short labels
+       read as two distinct columns instead of a tightly-packed pair.
+       row-gap stays at the section 44px rhythm. */
+    column-gap: 64px;
     row-gap: 44px;
   }
   /* Map the 3 .home-footer-col children (Product, Navigation,
