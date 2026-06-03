@@ -8811,21 +8811,32 @@ a:hover {
   padding: 104px 32px;
 }
 
+/* Outer footer layout — CSS Grid so the same JSX powers two very
+   different shapes:
+     Desktop: brand top-left, cols top-right, copyright bottom-left
+     Mobile:  brand → cols → copyright stacked, full-width
+   On desktop, "cols" only spans row 1 so the brand/copyright stack
+   stays the visual left column without stretching the right side. */
 .home-footer-inner {
   max-width: 976px;
   margin: 0 auto;
-  display: flex;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-areas:
+    "brand cols"
+    "copyright .";
   justify-content: space-between;
-  gap: 64px;
+  align-items: start;
+  row-gap: 34px;
+  column-gap: 64px;
 }
 
 .home-footer-brand {
+  grid-area: brand;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 14px;
-  flex-shrink: 0;
   max-width: 310px;
 }
 
@@ -8874,16 +8885,16 @@ a:hover {
 /* Copyright row: GitHub mark + © text in a single flex line.
    24px gap so the mark and the © read as two distinct elements
    rather than visually fused into one glyph cluster — gives the
-   icon room to breathe at its 22px size. The margin-top creates
-   ~30px breathing room from the status pill above (the parent's
-   14px flex gap plus this 20px overrides gives ~34px total) so
-   the row reads as a separate "credits" block rather than
-   continuous with the live-status pill. */
+   icon room to breathe at its 22px size.
+   Positioned via grid-area on .home-footer-inner: column 1 row 2
+   on desktop (under the brand block), full-width row 3 on mobile.
+   The 34px row-gap on the grid handles desktop spacing from the
+   brand block above; on mobile the 44px row-gap handles it. */
 .home-footer-copyright-row {
+  grid-area: copyright;
   display: flex;
   align-items: center;
   gap: 24px;
-  margin-top: 20px;
 }
 
 .home-footer-github {
@@ -8969,6 +8980,7 @@ a:hover {
 }
 
 .home-footer-cols {
+  grid-area: cols;
   display: flex;
   align-items: flex-start;
   /* 84px between columns per Figma 484:784. Tighter than the
@@ -9135,13 +9147,58 @@ a:hover {
   .home-split {
     grid-template-columns: 1fr;
   }
+  /* Footer mobile layout starts at 880px to give the editorial
+     pull-line + columns block room to breathe in tablet widths
+     before everything collapses. Specifics tightened further at
+     the 768px marketing breakpoint below. */
   .home-footer-inner {
-    flex-direction: column;
-    gap: 48px;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "brand"
+      "cols"
+      "copyright";
+    row-gap: 44px;
+    column-gap: 0;
   }
+  /* On mobile the columns block becomes a 2-row grid: Navigation
+     and Product sit side-by-side on row 1 (44px gap), Articles
+     spans the full width on row 2. Per Figma 484:130. */
   .home-footer-cols {
-    gap: 48px;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "nav product"
+      "articles articles";
+    gap: 44px;
+  }
+  /* Map the 3 .home-footer-col children (Product, Navigation,
+     Articles per JSX order) into the right grid cells. */
+  .home-footer-col:nth-child(1) {
+    grid-area: product;
+  }
+  .home-footer-col:nth-child(2) {
+    grid-area: nav;
+  }
+  .home-footer-col:nth-child(3) {
+    grid-area: articles;
+  }
+  /* Articles column gets the full mobile width — drop the 224px
+     desktop truncation cap so titles can use the room. They still
+     ellipsize if they exceed the natural column width, but in
+     practice most fit on one line at mobile widths. */
+  .home-footer-col-articles {
+    max-width: none;
+  }
+  /* Brand and pull-line drop their 310px desktop caps on mobile
+     so the editorial line block can use the full mobile gutter
+     width — the line breaks ("code" to L2, "with" to L3) still
+     land correctly because the underlying content width is the
+     same as desktop's 310px once mobile padding is accounted for.
+     If a phone gets narrower than the wraps allow, the text just
+     reflows naturally to extra lines. */
+  .home-footer-brand,
+  .home-footer-pullline {
+    max-width: none;
   }
 }
 
@@ -9151,10 +9208,6 @@ a:hover {
   }
   .home-section-title--cta {
     font-size: 36px;
-  }
-  .home-footer-cols {
-    flex-direction: column;
-    gap: 32px;
   }
 }
 
@@ -9647,35 +9700,15 @@ a:hover {
   }
 
   /* ============================================
-     FOOTER — Figma 405:6215 (mobile)
+     FOOTER — Figma 484:130 (mobile)
      ============================================
-     Single column: the brand block (logo + copyright) above the
-     three link groups, which themselves stack vertically. Only
-     spacing/padding shift to the mobile pattern — content and
-     type sizes are unchanged. */
-
-  /* Footer padding to the 54/24 mobile rhythm. The divider line
-     (border-top) and the standard inter-section spacing are
-     preserved — the CTA section above ends with its own 54px
-     bottom padding, the 1px divider sits between, and the
-     footer adds its 54px top padding, matching every other
-     section boundary on the site. */
+     Mobile section padding rhythm only. The 880px breakpoint
+     already swaps .home-footer-inner / .home-footer-cols into
+     the grid layouts described there; this block just tightens
+     the section padding to the 54/24 mobile rhythm so the
+     footer divider matches every other section boundary. */
   .home-footer {
     padding: 54px 24px;
-  }
-  /* 34px between the brand block and the link groups (the inner
-     is already a column from the <=880px query). */
-  .home-footer-inner {
-    gap: 34px;
-  }
-  /* Logo -> copyright gap 14 (desktop 24). */
-  .home-footer-brand {
-    gap: 14px;
-  }
-  /* Stack the three link groups vertically, 34px apart. */
-  .home-footer-cols {
-    flex-direction: column;
-    gap: 34px;
   }
 }
 

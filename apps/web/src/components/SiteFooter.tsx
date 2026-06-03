@@ -53,23 +53,6 @@ export function SiteFooter() {
             <span className="home-footer-status-dot" aria-hidden />
             All systems operational
           </span>
-          {/* Copyright row: GitHub mark links to the open-source
-              repo, copyright text sits to its right. Replaces the
-              standalone © line — the icon adds an open-source signal
-              the old footer was missing and gives the row visual
-              weight that grounds the brand block. */}
-          <div className="home-footer-copyright-row">
-            <a
-              href="https://github.com/charleshonig5/askscout"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="home-footer-github"
-              aria-label="askScout on GitHub"
-            >
-              <GitHubMark size={22} />
-            </a>
-            <p className="home-footer-copy">© 2026 askScout</p>
-          </div>
         </div>
         <div className="home-footer-cols">
           <div className="home-footer-col">
@@ -140,6 +123,24 @@ export function SiteFooter() {
               )}
             </div>
           </div>
+        </div>
+        {/* Copyright row: GitHub mark links to the open-source
+            repo, copyright text sits to its right. Extracted from
+            the brand block (where it lived in the desktop-only
+            v1) so the grid can place it under the brand block on
+            desktop AND at the very bottom of the column stack on
+            mobile without conditional rendering. */}
+        <div className="home-footer-copyright-row">
+          <a
+            href="https://github.com/charleshonig5/askscout"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="home-footer-github"
+            aria-label="askScout on GitHub"
+          >
+            <GitHubMark size={22} />
+          </a>
+          <p className="home-footer-copy">© 2026 askScout</p>
         </div>
       </div>
     </footer>
