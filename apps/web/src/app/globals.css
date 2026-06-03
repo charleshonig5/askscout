@@ -6195,6 +6195,63 @@ a:hover {
    12px body, and a bottom fade that dissolves the
    lower 93px into the section background.
    ============================================ */
+
+/* ============================================
+   TRUST — scroll-triggered reveal motion
+   ============================================
+   Plays once when the section scrolls into view (managed by
+   <TrustMotion>, which mirrors the FeaturesMotion pattern).
+   Phases: "done" (initial + final rest state) | "idle" (from-state
+   for the about-to-play transition) | "playing" (the active reveal).
+
+   Header fades and lifts first; the three cards stagger in after
+   it at 150 / 280 / 410ms. Each element uses a 600ms ease-out-expo
+   curve (cubic-bezier(0.22, 1, 0.36, 1)) — long enough to read as
+   intentional, short enough not to feel laggy. Distance is 16px,
+   enough for a "settles in" feel without being theatrical.
+
+   SSR + reduced-motion users land in "done" and never see the
+   from-state. */
+.home-trust[data-trust-phase="idle"] .home-trust-header,
+.home-trust[data-trust-phase="idle"] .home-trust-card {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.home-trust[data-trust-phase="playing"] .home-trust-header,
+.home-trust[data-trust-phase="playing"] .home-trust-card {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 600ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.home-trust[data-trust-phase="playing"] .home-trust-header {
+  transition-delay: 0ms;
+}
+.home-trust[data-trust-phase="playing"] .home-trust-card:nth-child(1) {
+  transition-delay: 150ms;
+}
+.home-trust[data-trust-phase="playing"] .home-trust-card:nth-child(2) {
+  transition-delay: 280ms;
+}
+.home-trust[data-trust-phase="playing"] .home-trust-card:nth-child(3) {
+  transition-delay: 410ms;
+}
+
+/* Belt-and-suspenders: even though the motion wrapper skips the
+   timeline for reduced-motion users, this rule guarantees the
+   from-state is never painted if the data attribute ever flips
+   for a frame in that environment. */
+@media (prefers-reduced-motion: reduce) {
+  .home-trust .home-trust-header,
+  .home-trust .home-trust-card {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
 .home-trust-inner {
   max-width: 976px;
   margin: 0 auto;

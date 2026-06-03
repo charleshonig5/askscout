@@ -31,6 +31,7 @@ import { Emoji } from "@/components/Emoji";
 import { HeroBgVideo } from "@/components/HeroBgVideo";
 import { HeroCardOpener } from "@/components/HeroCardOpener";
 import { HeroGraphicMotion } from "@/components/HeroGraphicMotion";
+import { TrustMotion } from "@/components/TrustMotion";
 import { Logo } from "@/components/Logo";
 import FAQTabs from "@/components/FAQTabs";
 import { MarketingNav } from "@/components/MarketingNav";
@@ -1362,7 +1363,7 @@ export default function MarketingHome() {
           Each card has a bottom fade that dissolves the lower
           portion into the section background.
           =========================================================== */}
-        <section className="home-section home-trust">
+        <TrustMotion>
           <div className="home-trust-inner">
             <div className="home-trust-header">
               <div className="home-trust-headtext">
@@ -1413,7 +1414,7 @@ export default function MarketingHome() {
               ))}
             </div>
           </div>
-        </section>
+        </TrustMotion>
 
         {/* ===========================================================
           FAQ — accordion built with native <details>/<summary> so
