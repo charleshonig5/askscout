@@ -3647,19 +3647,16 @@ a:hover {
      section's divider. */
   padding: 74px 32px 7px;
   max-width: 1100px;
-  /* 137px gap between hero box and the first section's divider.
-     The hero's bg-fade + the digest card's internal card-fade
-     extend ~40px past the visible content as atmospheric
-     falloff, so a numeric 97px margin reads visually as only
-     ~57px of structural gap — noticeably tighter than the
-     clean 104px below the divider, leaving the rhythm out of
-     balance with every other section-to-divider transition.
-     Bumping margin-bottom to 137px restores the perceived gap
-     to ~104px so above and below the divider feel equal.
-     Below the divider stays at the page-wide standard
-     .home-section { padding-top: 104px } — only the hero side
-     needs the extra structural room to absorb its own fade. */
-  margin: 0 auto 137px;
+  /* 57px gap between hero box and the first section's divider
+     (40px less than the previous 97px). The hero's bg-fade and
+     the digest card's card-fade extend past the visible content
+     as atmospheric falloff, so the 97px declared gap was reading
+     as visually larger than the clean 104px below the divider.
+     Trimming 40px brings the perceived above-divider gap into
+     balance with the below-divider rhythm. Below-divider stays
+     at the page-wide .home-section { padding-top: 104px } — we
+     don't touch that. */
+  margin: 0 auto 57px;
 }
 
 /* Hero background video — Figma 244:2059. 1920x1080 starfield/
