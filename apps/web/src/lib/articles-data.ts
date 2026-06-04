@@ -56,7 +56,7 @@ export const ARTICLES: ArticleListing[] = [
       "A walkthrough of how askScout reads commits and diffs, computes structural signals, and uses a tuned LLM prompt to produce a readable digest.",
     date: "2026-05-07",
     tag: "Company",
-    readTime: 2,
+    readTime: 5,
   },
   {
     slug: "why-askscout-is-open-source",
@@ -83,7 +83,7 @@ export const ARTICLES: ArticleListing[] = [
       "Four real options for remembering what you built, ranked by how much effort each one costs you. Plus the tradeoffs nobody mentions.",
     date: "2026-05-04",
     tag: "Guides",
-    readTime: 3,
+    readTime: 5,
   },
   {
     slug: "best-ai-coding-tools-for-solo-developers",
@@ -92,7 +92,7 @@ export const ARTICLES: ArticleListing[] = [
       "An honest read on Cursor, Claude Code, GitHub Copilot, and Aider. What each one is good at, and the layer they all leave out.",
     date: "2026-05-02",
     tag: "Guides",
-    readTime: 2,
+    readTime: 5,
   },
   {
     slug: "the-hidden-cost-of-vibe-coding",
