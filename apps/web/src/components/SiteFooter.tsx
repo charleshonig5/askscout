@@ -32,27 +32,54 @@ export function SiteFooter() {
   return (
     <footer className="home-footer">
       <div className="home-footer-inner">
-        <div className="home-footer-brand">
-          {/* Editorial pull-line: the askScout wordmark flows inline
+        {/* Left column wrapper holds the brand block + copyright row
+            stacked vertically. On DESKTOP this owns the 34px gap
+            between brand-bottom and copyright per Figma 484:1271,
+            because if we let the outer grid handle it the copyright
+            would float to the bottom of the (taller) right column.
+            On MOBILE the wrapper uses display:contents so brand and
+            copyright become direct flex items of .home-footer-inner,
+            letting copyright sit at the very bottom of the column
+            stack via order: 99. */}
+        <div className="home-footer-left">
+          <div className="home-footer-brand">
+            {/* Editorial pull-line: the askScout wordmark flows inline
               with the marketing copy in Pridi 20px. The two <strong>
               phrases ("code briefing" and "Chicago, IL.") render at
               Pridi Regular while the rest is ExtraLight, creating
               the hand-set tone the marketing brand calls for. */}
-          <p className="home-footer-pullline">
-            <Link href="/" className="home-footer-pullline-logo" aria-label="askScout home">
-              <Logo height={20} alt="" />
-            </Link>{" "}
-            is your morning <strong>code briefing</strong> in 10 seconds. Crafted with care in{" "}
-            <strong>Chicago, IL.</strong>
-          </p>
-          {/* Status pill — boxed treatment (bg + 1px border) instead
+            <p className="home-footer-pullline">
+              <Link href="/" className="home-footer-pullline-logo" aria-label="askScout home">
+                <Logo height={20} alt="" />
+              </Link>{" "}
+              is your morning <strong>code briefing</strong> in 10 seconds. Crafted with care in{" "}
+              <strong>Chicago, IL.</strong>
+            </p>
+            {/* Status pill — boxed treatment (bg + 1px border) instead
               of the previous transparent inline chip so it reads as
               a surfaced "live signal" element next to the editorial
               pull-line. Pulse keyframe + green dot unchanged. */}
-          <span className="home-footer-status" role="status" aria-label="All systems operational">
-            <span className="home-footer-status-dot" aria-hidden />
-            All systems operational
-          </span>
+            <span className="home-footer-status" role="status" aria-label="All systems operational">
+              <span className="home-footer-status-dot" aria-hidden />
+              All systems operational
+            </span>
+          </div>
+          {/* Copyright row sits BELOW brand on desktop; the
+            .home-footer-left wrapper owns the 34px gap. On mobile
+            it gets unwrapped via display:contents and re-ordered to
+            the very bottom of the column stack. */}
+          <div className="home-footer-copyright-row">
+            <a
+              href="https://github.com/charleshonig5/askscout"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="home-footer-github"
+              aria-label="askScout on GitHub"
+            >
+              <GitHubMark size={22} />
+            </a>
+            <p className="home-footer-copy">© 2026 askScout</p>
+          </div>
         </div>
         <div className="home-footer-cols">
           <div className="home-footer-col">
@@ -123,24 +150,6 @@ export function SiteFooter() {
               )}
             </div>
           </div>
-        </div>
-        {/* Copyright row: GitHub mark links to the open-source
-            repo, copyright text sits to its right. Extracted from
-            the brand block (where it lived in the desktop-only
-            v1) so the grid can place it under the brand block on
-            desktop AND at the very bottom of the column stack on
-            mobile without conditional rendering. */}
-        <div className="home-footer-copyright-row">
-          <a
-            href="https://github.com/charleshonig5/askscout"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="home-footer-github"
-            aria-label="askScout on GitHub"
-          >
-            <GitHubMark size={22} />
-          </a>
-          <p className="home-footer-copy">© 2026 askScout</p>
         </div>
       </div>
     </footer>

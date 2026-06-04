@@ -8811,28 +8811,35 @@ a:hover {
   padding: 104px 32px;
 }
 
-/* Outer footer layout — CSS Grid so the same JSX powers two very
-   different shapes:
-     Desktop: brand top-left, cols top-right, copyright bottom-left
-     Mobile:  brand → cols → copyright stacked, full-width
-   On desktop, "cols" only spans row 1 so the brand/copyright stack
-   stays the visual left column without stretching the right side. */
+/* Outer footer layout — flex with space-between so brand-left
+   and cols-right pin to opposite gutters. On desktop the
+   .home-footer-left wrapper (brand + copyright stacked) is the
+   single left flex item; on mobile the wrapper switches to
+   display:contents and copyright is re-ordered to the bottom
+   via .home-footer-copyright-row { order: 99 }. */
 .home-footer-inner {
   max-width: 976px;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: auto auto;
-  grid-template-areas:
-    "brand cols"
-    "copyright .";
+  display: flex;
+  align-items: flex-start;
   justify-content: space-between;
-  align-items: start;
-  row-gap: 34px;
   column-gap: 64px;
 }
 
+/* Left column on desktop: brand block, then a 34px gap (per Figma
+   484:1271), then the GitHub mark + copyright row. The 34px is
+   the distance from the status pill's bottom edge to the
+   copyright row's top in the Figma — measured pull-line at top:0
+   height 95 + 14 gap + ~22 pill = 131, copyright at top:165,
+   delta = 34. */
+.home-footer-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 34px;
+}
+
 .home-footer-brand {
-  grid-area: brand;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -8891,7 +8898,6 @@ a:hover {
    The 34px row-gap on the grid handles desktop spacing from the
    brand block above; on mobile the 44px row-gap handles it. */
 .home-footer-copyright-row {
-  grid-area: copyright;
   display: flex;
   align-items: center;
   gap: 24px;
@@ -8980,7 +8986,6 @@ a:hover {
 }
 
 .home-footer-cols {
-  grid-area: cols;
   display: flex;
   align-items: flex-start;
   /* 84px between columns per Figma 484:784. Tighter than the
@@ -9152,13 +9157,23 @@ a:hover {
      before everything collapses. Specifics tightened further at
      the 768px marketing breakpoint below. */
   .home-footer-inner {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "brand"
-      "cols"
-      "copyright";
+    flex-direction: column;
+    align-items: stretch;
     row-gap: 44px;
     column-gap: 0;
+  }
+  /* Unwrap the desktop "left column" so brand and copyright
+     become direct flex items of .home-footer-inner alongside
+     cols. The wrapper's 34px desktop gap is irrelevant on mobile
+     because the outer column flex now controls spacing (44px). */
+  .home-footer-left {
+    display: contents;
+  }
+  /* Push the copyright row past cols to the very bottom of the
+     mobile stack per Figma 484:130. order: 99 ensures it lands
+     after any number of cols-wrapper children. */
+  .home-footer-copyright-row {
+    order: 99;
   }
   /* On mobile the columns block becomes a 2-row grid: Navigation
      and Product sit side-by-side on row 1 with a true 44px gap
