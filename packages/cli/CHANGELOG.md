@@ -1,5 +1,13 @@
 # askscout
 
+## 0.2.3
+
+### Patch Changes
+
+- First-run UX: API key setup now happens BEFORE the scanning spinner starts so the "Hey, Scout here, paste your key" intro no longer interrupts an in-progress scan. Returning users (with a saved key) skip the prompt entirely and see no change.
+- Generating-digest spinner now shows a time estimate ("usually 10–20 seconds") so users don't think the LLM call has hung at the 15-second mark.
+- Dry-run, non-TTY, and existing-config code paths preserved verbatim.
+
 ## 0.2.2
 
 ### Patch Changes
