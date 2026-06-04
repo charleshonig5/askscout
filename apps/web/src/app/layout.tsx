@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 import { SessionProvider } from "next-auth/react";
 import { Pridi, Work_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { ToastProvider } from "@/components/Toast";
 import "./globals.css";
 
@@ -173,6 +174,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <ToastProvider>
           <SessionProvider>{children}</SessionProvider>
         </ToastProvider>
+        {/* Vercel Web Analytics — pageviews and basic visitor
+            stats, surfaces in the Vercel dashboard under "Analytics".
+            Free tier, no PII collected, no cookies set. Placed at the
+            end of <body> so it never delays first paint. */}
+        <Analytics />
       </body>
     </html>
   );
