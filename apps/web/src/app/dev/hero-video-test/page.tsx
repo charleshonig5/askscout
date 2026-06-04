@@ -1,22 +1,27 @@
+import type React from "react";
 import type { Metadata } from "next";
-import { HeroBgVideo } from "@/components/HeroBgVideo";
+import { HeroSection } from "@/components/HeroSection";
 
 /* Internal compare route for the marketing hero background video.
  *
- * Renders the CURRENT production video and a CANDIDATE replacement
- * stacked at full hero height so they can be scrolled between at
- * true aspect ratio. The main marketing page is untouched — only
- * this route loads the candidate file.
+ * Renders the FULL production hero section twice — once with the
+ * current video, once with a candidate replacement — so the
+ * candidate can be evaluated against the real gradient overlays,
+ * editorial text, and animated digest preview, NOT a stripped-down
+ * mock. The main marketing page is untouched; only this route
+ * loads the candidate file.
  *
  * To use:
  *   1. Drop a candidate video at apps/web/public/hero-starfield-v2.mp4
- *      (same filename, .mp4 extension, ideally <8 MB for fast load)
- *   2. Visit /dev/hero-video-test (or the Vercel preview equivalent)
- *   3. Scroll between the two panels to compare
- *   4. If approved, swap the production file and delete this route
+ *      (same filename, .mp4 extension, ideally < 8 MB)
+ *   2. Visit /dev/hero-video-test
+ *   3. Scroll between the two heros to compare with full treatment
+ *   4. If approved, swap the production file + delete this route
  *
- * If the candidate file doesn't exist yet, the lower panel shows
- * an instructional message instead of a broken video element. */
+ * The GitHub "Continue with GitHub" CTA is rendered disabled here
+ * (ctaDisabled prop) so clicking it in the test environment
+ * doesn't start a real OAuth flow. Everything else — gradients,
+ * text, chips, the animated digest preview — matches production. */
 
 const CURRENT_VIDEO = "/hero-starfield.mp4";
 const CANDIDATE_VIDEO = "/hero-starfield-v2.mp4";
@@ -24,9 +29,6 @@ const CANDIDATE_VIDEO = "/hero-starfield-v2.mp4";
 export const metadata: Metadata = {
   title: "Hero video test | askScout (dev)",
   description: "Internal compare route for the marketing hero background video.",
-  // Belt-and-suspenders: robots.txt already disallows /dev/ but we
-  // also tag the meta so any crawler that ignores robots.txt still
-  // sees a clear directive.
   robots: { index: false, follow: false },
 };
 
@@ -41,84 +43,105 @@ export default function HeroVideoTestPage() {
     >
       <header
         style={{
-          padding: "32px 24px",
+          padding: "20px 24px",
           borderBottom: "1px solid var(--color-border)",
+          position: "sticky",
+          top: 0,
+          zIndex: 100,
+          background: "rgba(7,7,7,0.85)",
+          backdropFilter: "blur(12px)",
         }}
       >
         <h1
           style={{
             fontFamily: "var(--font-display)",
-            fontSize: 28,
+            fontSize: 22,
             fontWeight: 500,
             margin: 0,
-            marginBottom: 8,
+            marginBottom: 4,
           }}
         >
           Hero video compare
         </h1>
-        <p style={{ margin: 0, fontSize: 14, color: "var(--color-text-secondary)" }}>
-          Scroll between the two panels below to compare the current production hero video against a
-          candidate replacement. Drop a candidate at{" "}
-          <code style={{ fontFamily: "var(--font-sans)", color: "var(--color-text-primary)" }}>
-            apps/web/public/hero-starfield-v2.mp4
-          </code>{" "}
-          and it will render in the lower panel.
+        <p style={{ margin: 0, fontSize: 13, color: "var(--color-text-secondary)" }}>
+          Scroll down to compare. CURRENT (green chip) renders the production hero with{" "}
+          <code>/hero-starfield.mp4</code>. CANDIDATE (yellow chip) renders the same hero with{" "}
+          <code>/hero-starfield-v2.mp4</code>.
         </p>
       </header>
 
-      <Panel label="CURRENT" file={CURRENT_VIDEO} />
-      <Panel label="CANDIDATE" file={CANDIDATE_VIDEO} />
+      <PanelWrapper>
+        <LabelChip label="CURRENT" tone="success" file={CURRENT_VIDEO} />
+        <HeroSection videoSrc={CURRENT_VIDEO} ctaDisabled />
+      </PanelWrapper>
+
+      <div
+        style={{
+          padding: "32px 24px",
+          textAlign: "center",
+          background: "var(--color-bg-secondary)",
+          color: "var(--color-text-secondary)",
+          fontSize: 13,
+          borderTop: "1px solid var(--color-border)",
+          borderBottom: "1px solid var(--color-border)",
+        }}
+      >
+        ↓ candidate below ↓
+      </div>
+
+      <PanelWrapper>
+        <LabelChip label="CANDIDATE" tone="warning" file={CANDIDATE_VIDEO} />
+        <HeroSection videoSrc={CANDIDATE_VIDEO} ctaDisabled />
+      </PanelWrapper>
     </main>
   );
 }
 
-function Panel({ label, file }: { label: string; file: string }) {
+function PanelWrapper({ children }: { children: React.ReactNode }) {
+  // Wraps each hero so the absolutely-positioned LabelChip anchors
+  // to the hero's box rather than the page <main>.
+  return <div style={{ position: "relative" }}>{children}</div>;
+}
+
+function LabelChip({
+  label,
+  tone,
+  file,
+}: {
+  label: string;
+  tone: "success" | "warning";
+  file: string;
+}) {
   return (
-    <section
+    <div
       style={{
-        position: "relative",
-        height: "100vh",
-        overflow: "hidden",
-        background: "var(--color-bg-primary)",
+        position: "absolute",
+        top: 16,
+        left: 16,
+        zIndex: 10,
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 8,
+        padding: "6px 10px",
+        borderRadius: 4,
+        background: "rgba(7,7,7,0.75)",
+        backdropFilter: "blur(8px)",
+        border: "1px solid var(--color-border)",
+        fontSize: 11,
+        fontWeight: 500,
+        letterSpacing: 0.5,
+        color: "var(--color-text-primary)",
       }}
     >
-      {/* Same background-video component the marketing hero uses,
-          including the autoplay-resilience + 0.65x playbackRate
-          behavior, so the comparison is true to production. */}
-      <HeroBgVideo src={file} />
-
-      {/* Label chip pinned top-left over the video so each panel
-          is unambiguously identified during scroll. */}
-      <div
+      <span
         style={{
-          position: "absolute",
-          top: 24,
-          left: 24,
-          zIndex: 1,
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 8,
-          padding: "6px 10px",
-          borderRadius: 4,
-          background: "rgba(7,7,7,0.7)",
-          backdropFilter: "blur(8px)",
-          border: "1px solid var(--color-border)",
-          fontSize: 12,
-          fontWeight: 500,
-          letterSpacing: 0.5,
-          color: "var(--color-text-primary)",
+          width: 6,
+          height: 6,
+          borderRadius: "50%",
+          background: tone === "success" ? "var(--color-success)" : "var(--color-warning)",
         }}
-      >
-        <span
-          style={{
-            width: 6,
-            height: 6,
-            borderRadius: "50%",
-            background: label === "CURRENT" ? "var(--color-success)" : "var(--color-warning)",
-          }}
-        />
-        {label} — <code style={{ fontWeight: 400 }}>{file}</code>
-      </div>
-    </section>
+      />
+      {label} — <code style={{ fontWeight: 400 }}>{file}</code>
+    </div>
   );
 }
