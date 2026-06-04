@@ -14,7 +14,15 @@ import { useEffect, useRef } from "react";
  *      scroll-away, and Low Power Mode — and doesn't always resume.
  *      We listen for `pause` / tab-visible and nudge it back.
  */
-export function HeroBgVideo() {
+interface Props {
+  /** Override the video file. Defaults to /hero-starfield.mp4 — the
+   *  production marketing hero. The /dev/hero-video-test route uses
+   *  this prop to compare a candidate replacement without touching
+   *  the live page. */
+  src?: string;
+}
+
+export function HeroBgVideo({ src = "/hero-starfield.mp4" }: Props = {}) {
   const ref = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
@@ -48,7 +56,7 @@ export function HeroBgVideo() {
     <video
       ref={ref}
       className="home-hero-bg"
-      src="/hero-starfield.mp4"
+      src={src}
       autoPlay
       loop
       muted
