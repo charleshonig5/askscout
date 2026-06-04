@@ -5781,18 +5781,27 @@ a:hover {
   border-image: var(--divider-gradient) 1;
 }
 
-/* Visual rebalance for the hero → first-section transition only.
-   .home-hero's bottom 40px or so renders as the hero bg-fade
-   gradient + the digest card's internal card-fade — they read as
-   atmospheric falloff, not structural padding, so the perceived
-   gap above the divider is ~64px even though it's declared as
-   104px (7 padding + 97 margin). Without this rule, the perfectly
-   clean 104px BELOW the divider looks visibly larger than the
-   half-faded 104px above. Reducing only this first transition
-   (via the adjacent sibling selector) brings them into balance
-   without touching any other section-to-section gap on the page. */
-.home-hero + .home-section {
-  padding-top: 64px;
+/* Visual rebalance for the hero → first-section transition,
+   desktop only. .home-hero's bottom 40px or so renders as the
+   hero bg-fade gradient + the digest card's internal card-fade —
+   they read as atmospheric falloff, not structural padding, so
+   the perceived gap above the divider is ~64px even though it's
+   declared as 104px (7 padding + 97 margin). Without this rule,
+   the perfectly clean 104px BELOW the divider looks visibly
+   larger than the half-faded 104px above. Reducing only this
+   first transition (via the adjacent sibling selector) brings
+   them into balance without touching any other section-to-section
+   gap on the page.
+
+   Wrapped in min-width: 881px so it doesn't override the mobile
+   rule .home-section { padding: 54px 24px } that lives inside
+   @media (max-width: 768px). The adjacent-sibling selector has
+   higher specificity (0,2,0 vs 0,1,0) and would otherwise win
+   even on mobile, shifting padding-top from 54px to 64px there. */
+@media (min-width: 881px) {
+  .home-hero + .home-section {
+    padding-top: 64px;
+  }
 }
 
 .home-section--quiet {
