@@ -3647,12 +3647,19 @@ a:hover {
      section's divider. */
   padding: 74px 32px 7px;
   max-width: 1100px;
-  /* 97px gap between hero box and the first section's divider.
-     Combined with .home-hero padding-bottom: 7px (inside the
-     hero) that puts the *visible* gap from graphic-bottom to
-     the divider line at exactly 104px — same rhythm as every
-     other section-to-divider transition on the page. */
-  margin: 0 auto 97px;
+  /* 137px gap between hero box and the first section's divider.
+     The hero's bg-fade + the digest card's internal card-fade
+     extend ~40px past the visible content as atmospheric
+     falloff, so a numeric 97px margin reads visually as only
+     ~57px of structural gap — noticeably tighter than the
+     clean 104px below the divider, leaving the rhythm out of
+     balance with every other section-to-divider transition.
+     Bumping margin-bottom to 137px restores the perceived gap
+     to ~104px so above and below the divider feel equal.
+     Below the divider stays at the page-wide standard
+     .home-section { padding-top: 104px } — only the hero side
+     needs the extra structural room to absorb its own fade. */
+  margin: 0 auto 137px;
 }
 
 /* Hero background video — Figma 244:2059. 1920x1080 starfield/
@@ -5779,29 +5786,6 @@ a:hover {
      fallback covers browsers without border-image support. */
   border-top: 1px solid var(--color-border);
   border-image: var(--divider-gradient) 1;
-}
-
-/* Visual rebalance for the hero → first-section transition,
-   desktop only. .home-hero's bottom 40px or so renders as the
-   hero bg-fade gradient + the digest card's internal card-fade —
-   they read as atmospheric falloff, not structural padding, so
-   the perceived gap above the divider is ~64px even though it's
-   declared as 104px (7 padding + 97 margin). Without this rule,
-   the perfectly clean 104px BELOW the divider looks visibly
-   larger than the half-faded 104px above. Reducing only this
-   first transition (via the adjacent sibling selector) brings
-   them into balance without touching any other section-to-section
-   gap on the page.
-
-   Wrapped in min-width: 881px so it doesn't override the mobile
-   rule .home-section { padding: 54px 24px } that lives inside
-   @media (max-width: 768px). The adjacent-sibling selector has
-   higher specificity (0,2,0 vs 0,1,0) and would otherwise win
-   even on mobile, shifting padding-top from 54px to 64px there. */
-@media (min-width: 881px) {
-  .home-hero + .home-section {
-    padding-top: 64px;
-  }
 }
 
 .home-section--quiet {
