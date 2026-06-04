@@ -15,10 +15,10 @@ import { useEffect, useRef } from "react";
  *      We listen for `pause` / tab-visible and nudge it back.
  */
 interface Props {
-  /** Override the video file. Defaults to /hero-starfield.mp4 — the
-   *  production marketing hero. The /dev/hero-video-test route uses
-   *  this prop to compare a candidate replacement without touching
-   *  the live page. */
+  /** Override the video file. Defaults to /hero-starfield.mp4 —
+   *  the production marketing hero. Exposed as a prop so a future
+   *  /dev/* compare route can render the hero with a candidate
+   *  replacement without touching the live page. */
   src?: string;
 }
 

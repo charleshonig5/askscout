@@ -96,13 +96,14 @@ const HERO_GRAPHIC_DAYS = [
 
 interface Props {
   /** Override the hero background video. Defaults to the production
-   *  /hero-starfield.mp4. The /dev/hero-video-test route uses this
-   *  prop to render the same hero with a candidate replacement video
-   *  alongside the production one. */
+   *  /hero-starfield.mp4. Exposed as a prop so a future /dev/*
+   *  compare route can render the same hero with a candidate
+   *  replacement alongside the production one. */
   videoSrc?: string;
   /** When true, the GitHub sign-in CTA is rendered as a visual-only
-   *  button instead of a real form. Use this in test environments
-   *  where we don't want clicking the CTA to start an OAuth flow. */
+   *  disabled button instead of a real form. Use this in test
+   *  environments where we don't want clicking the CTA to start an
+   *  OAuth flow. */
   ctaDisabled?: boolean;
 }
 
@@ -111,10 +112,10 @@ interface Props {
  * title, trust chips, CTAs, and the animated digest preview card
  * over a silent looping starfield video background.
  *
- * Extracted from MarketingHome.tsx so the /dev/hero-video-test
- * compare route can render two instances side-by-side with
- * different videos — visual comparison happens against the real
- * production hero treatment, not a stripped-down mock.
+ * Extracted from MarketingHome.tsx so future /dev/* compare
+ * routes can render two instances side-by-side with different
+ * videos — visual comparison happens against the real production
+ * hero treatment, not a stripped-down mock.
  *
  * Server component (no "use client") because it embeds a server
  * action in the GitHub sign-in form. The interactive child pieces
