@@ -122,7 +122,30 @@ export async function scan(options: ScanOptions): Promise<void> {
   // 1. Find project root
   const projectRoot = await findProjectRoot();
 
-  // 2. Start spinner. Verb matches the digest intro line ("Scout
+  // 2. First-run setup runs BEFORE the spinner so the "Hey, Scout
+  //    here, paste your key" intro doesn't interrupt an in-progress
+  //    scan. Returning users skip this entirely (loadConfig is a
+  //    sub-ms file read). Dry-run skips too: it never calls the LLM
+  //    so no key is required. Non-TTY environments (CI, piped) get a
+  //    one-line error pointing at --setup instead of hanging on stdin.
+  let config: Awaited<ReturnType<typeof loadConfig>> = null;
+  if (!options.dryRun) {
+    config = await loadConfig();
+    if (!config) {
+      if (!process.stdin.isTTY) {
+        console.error("\u2717 No API key found. Run: askscout --setup");
+        process.exitCode = 1;
+        return;
+      }
+      config = await inlineSetup();
+      if (!config) {
+        process.exitCode = 1;
+        return;
+      }
+    }
+  }
+
+  // 3. Start spinner. Verb matches the digest intro line ("Scout
   // scanned\u2026") to keep the brand voice consistent across the run.
   let spinner = startSpinner("Scout is scanning your commits...");
 
@@ -182,25 +205,21 @@ export async function scan(options: ScanOptions): Promise<void> {
       return;
     }
 
-    // 8. Load config — if missing, run inline setup (first run flows straight to digest)
-    let config = await loadConfig();
+    // 8. Transition the spinner message before the LLM call. Git
+    //    reads above are sub-second; the summarize() call below is
+    //    the slow part (typically 10–20s). Telling the user that
+    //    range prevents the "is it hung?" abandon at second 15.
+    //    Config was loaded up top (step 2) before any spinner ran,
+    //    so first-run setup didn't interrupt this scan.
+    spinner.stop();
+    spinner = startSpinner("Scout is generating your digest (usually 10–20 seconds)...");
+
+    // Defensive: dry-run is the only path that can leave config null
+    // and dry-run returns earlier. This guard makes TypeScript narrow
+    // config to non-null below AND gives any future code that adds a
+    // new path a clear error instead of an undefined-prop crash.
     if (!config) {
-      spinner.stop();
-      if (process.stdin.isTTY) {
-        config = await inlineSetup();
-        if (!config) {
-          process.exitCode = 1;
-          return;
-        }
-        // Resume spinner for the LLM call
-        console.error("   Generating your first digest...\n");
-        spinner = startSpinner("Scout is generating your digest...");
-      } else {
-        // Non-interactive (piped, CI) — can't prompt
-        console.error("\u2717 No API key found. Run: askscout --setup");
-        process.exitCode = 1;
-        return;
-      }
+      throw new Error("internal: reached LLM call without a config");
     }
 
     // 9. Call summarize. Detect the project stack from config files first
