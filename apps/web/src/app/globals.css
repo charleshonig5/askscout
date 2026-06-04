@@ -5781,6 +5781,20 @@ a:hover {
   border-image: var(--divider-gradient) 1;
 }
 
+/* Visual rebalance for the hero → first-section transition only.
+   .home-hero's bottom 40px or so renders as the hero bg-fade
+   gradient + the digest card's internal card-fade — they read as
+   atmospheric falloff, not structural padding, so the perceived
+   gap above the divider is ~64px even though it's declared as
+   104px (7 padding + 97 margin). Without this rule, the perfectly
+   clean 104px BELOW the divider looks visibly larger than the
+   half-faded 104px above. Reducing only this first transition
+   (via the adjacent sibling selector) brings them into balance
+   without touching any other section-to-section gap on the page. */
+.home-hero + .home-section {
+  padding-top: 64px;
+}
+
 .home-section--quiet {
   background: var(--color-bg-secondary);
   /* Keep the bottom border for the inverted-strip treatment;
