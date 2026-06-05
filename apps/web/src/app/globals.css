@@ -14885,3 +14885,111 @@ a:hover {
     line-height: 1.7;
   }
 }
+
+/* ============================================================
+   ADMIN (/admin) — operator dashboard
+   ============================================================
+   Reuses the .settings-page / .settings-card shell so the admin
+   route reads as part of the same product surface as the user's
+   own /settings and /insights pages. Only adds the four small
+   primitives the dashboard needs: metric cards, the top-repos
+   list, an empty-state line, and a small caption footnote. */
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+.admin-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg-secondary);
+}
+
+.admin-metric-label {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.admin-metric-value {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.1;
+  color: var(--color-text-primary);
+  /* Avoid layout shift if numbers grow: tabular-nums keeps digit
+     widths consistent so the metric grid doesn't reflow between
+     refreshes. */
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-metric-sub {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--color-success);
+}
+
+.admin-toprepos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-toprepos-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 14px;
+}
+
+.admin-toprepos-row:last-child {
+  border-bottom: none;
+}
+
+.admin-toprepos-repo {
+  color: var(--color-text-primary);
+}
+
+.admin-toprepos-count {
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-empty {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  font-style: italic;
+}
+
+.admin-footnote {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  text-align: center;
+}

@@ -18,6 +18,7 @@ export default function robots(): MetadataRoute.Robots {
     "/settings/",
     "/insights",
     "/dev/",
+    "/admin",
   ];
 
   /* Explicit allow-list for AI crawlers, sourced from each vendor's
