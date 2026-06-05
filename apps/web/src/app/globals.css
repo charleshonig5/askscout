@@ -3638,14 +3638,15 @@ a:hover {
      `overflow: clip` here would clip ALL four sides, which is
      what produced the hard vertical edges previously. */
   clip-path: inset(0 -100vw 0 -100vw);
-  /* 74px top = nav→text gap; 7px bottom = graphic→hero-bottom
-     gap. The hero's bg-fade is anchored to hero-bottom and
-     needs to overlap the graphic's bottom in order to mask
-     its 1px frame border into bg-primary. Don't bump the
-     bottom; it breaks the fade-over-frame masking. Use
-     margin-bottom to create breathing room before the next
+  /* 84px top = nav→text gap (bumped 10px from the original 74
+     for a touch more breathing room under the marketing nav);
+     7px bottom = graphic→hero-bottom gap. The hero's bg-fade is
+     anchored to hero-bottom and needs to overlap the graphic's
+     bottom in order to mask its 1px frame border into bg-primary.
+     Don't bump the bottom; it breaks the fade-over-frame masking.
+     Use margin-bottom to create breathing room before the next
      section's divider. */
-  padding: 74px 32px 7px;
+  padding: 84px 32px 7px;
   max-width: 1100px;
   /* 57px gap between hero box and the first section's divider
      (40px less than the previous 97px). The hero's bg-fade and
