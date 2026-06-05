@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import Link from "next/link";
-import { ArrowLeft, RefreshCw } from "lucide-react";
+import { ArrowLeft, RefreshCw, Lock } from "lucide-react";
 import { auth } from "@/auth";
 import { supabase } from "@/lib/supabase";
+import { ADMIN_COOKIE_NAME, verifyAdminCookieValue } from "./admin-auth";
+import { unlockAdmin } from "./actions";
 
 /* /admin — single-operator dashboard for the askScout deployment.
  *
@@ -210,15 +213,75 @@ async function getGithubMetrics(): Promise<GithubMetrics | null> {
 
 // -- Page ------------------------------------------------------------
 
-export default async function AdminPage() {
-  // Auth gate — must come BEFORE any data fetch so a non-admin doesn't
-  // even cause Supabase / npm / GitHub network calls. notFound() so
-  // the route 404s identically to any nonexistent path, never leaking
-  // the existence of /admin to non-admins.
+export default async function AdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  // First factor: NextAuth session must be the configured admin user.
+  // Runs BEFORE any data fetch so a non-admin never causes Supabase /
+  // npm / GitHub network calls. notFound() so the route 404s
+  // identically to any nonexistent path, never leaking that /admin
+  // exists to non-admins.
   const session = await auth();
   const adminUserId = process.env.ADMIN_USER_ID;
   if (!session?.user?.id || !adminUserId || session.user.id !== adminUserId) {
     notFound();
+  }
+
+  // Second factor: HMAC-signed unlock cookie. If missing or
+  // expired, render the password form instead of the dashboard.
+  // The cookie itself is browser-session-only (cleared on browser
+  // close) AND has a 24h server-side max age enforced in
+  // verifyAdminCookieValue, so a stolen cookie has a short window.
+  const cookieStore = await cookies();
+  const unlockValue = cookieStore.get(ADMIN_COOKIE_NAME)?.value;
+  const unlocked = verifyAdminCookieValue(unlockValue);
+
+  if (!unlocked) {
+    const params = await searchParams;
+    const error =
+      params.error === "password"
+        ? "Incorrect password."
+        : params.error === "config"
+          ? "Admin signing key is not configured on this deployment."
+          : null;
+    return (
+      <main className="settings-page">
+        <div className="settings-card admin-unlock-card">
+          <div className="admin-unlock-inner">
+            <div className="admin-unlock-icon" aria-hidden>
+              <Lock size={20} strokeWidth={1.5} />
+            </div>
+            <h1 className="admin-unlock-title">Admin</h1>
+            <p className="admin-unlock-desc">
+              Signed in as the admin GitHub account. Enter the operator password to unlock the
+              dashboard for this browser session.
+            </p>
+            <form action={unlockAdmin} className="admin-unlock-form">
+              <input
+                type="password"
+                name="password"
+                autoComplete="current-password"
+                required
+                autoFocus
+                placeholder="Operator password"
+                className="admin-unlock-input"
+                aria-label="Operator password"
+              />
+              {error && (
+                <p className="admin-unlock-error" role="alert">
+                  {error}
+                </p>
+              )}
+              <button type="submit" className="admin-unlock-button">
+                Unlock
+              </button>
+            </form>
+          </div>
+        </div>
+      </main>
+    );
   }
 
   const [web, cli, gh] = await Promise.all([getWebMetrics(), getCliMetrics(), getGithubMetrics()]);

@@ -14993,3 +14993,111 @@ a:hover {
   color: var(--color-text-tertiary);
   text-align: center;
 }
+
+/* ============================================================
+   ADMIN UNLOCK (/admin password gate)
+   ============================================================
+   Reuses .settings-card as the outer surface and adds a compact
+   centered card variant for the unlock form. Visual style matches
+   the in-app empty-state look so the gate reads as part of the
+   product, not a separate auth chrome. */
+
+.admin-unlock-card {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.admin-unlock-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 34px;
+  text-align: center;
+}
+
+.admin-unlock-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  margin-bottom: 6px;
+}
+
+.admin-unlock-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+
+.admin-unlock-desc {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  max-width: 320px;
+}
+
+.admin-unlock-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.admin-unlock-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.admin-unlock-input:focus {
+  border-color: var(--color-border-hover);
+}
+
+.admin-unlock-error {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--color-danger);
+  text-align: left;
+}
+
+.admin-unlock-button {
+  width: 100%;
+  height: 40px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.admin-unlock-button:hover {
+  background: var(--color-accent-hover);
+}
