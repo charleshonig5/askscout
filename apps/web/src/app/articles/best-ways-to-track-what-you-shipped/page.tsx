@@ -10,23 +10,23 @@ export const metadata = {
   // Brand suffix dropped — "askScout" already appears in the
   // breadcrumb and OG chrome; the title was 62 chars + 11 with
   // the suffix, which truncated in the SERP snippet.
-  title: "4 best ways to track what you shipped as a developer in 2026",
+  title: "5 best ways to track what you shipped as a developer in 2026",
   description:
-    "An honest comparison of git log, GitHub Insights, dev journals, and automated digests for tracking what you actually built each week.",
+    "An honest comparison of git log, GitHub Insights, dev journals, automated digests, and accomplishment trackers for tracking what you actually built each week.",
   alternates: {
     canonical: "/articles/best-ways-to-track-what-you-shipped",
   },
   openGraph: {
-    title: "4 best ways to track what you shipped as a developer in 2026",
+    title: "5 best ways to track what you shipped as a developer in 2026",
     description:
-      "An honest comparison of git log, GitHub Insights, dev journals, and automated digests for tracking what you actually built each week.",
+      "An honest comparison of git log, GitHub Insights, dev journals, automated digests, and accomplishment trackers for tracking what you actually built each week.",
     type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: "4 best ways to track what you shipped as a developer in 2026",
+    title: "5 best ways to track what you shipped as a developer in 2026",
     description:
-      "An honest comparison of git log, GitHub Insights, dev journals, and automated digests for tracking what you actually built each week.",
+      "An honest comparison of git log, GitHub Insights, dev journals, automated digests, and accomplishment trackers for tracking what you actually built each week.",
   },
 };
 
@@ -63,7 +63,7 @@ const ARTICLE_SCHEMA = articleJsonLd({
   slug: "best-ways-to-track-what-you-shipped",
   headline: "Best Ways to Track What You Shipped as a Developer",
   description:
-    "An honest comparison of git log, GitHub Insights, dev journals, and automated digests for tracking what you actually built each week.",
+    "An honest comparison of git log, GitHub Insights, dev journals, automated digests, and accomplishment trackers for tracking what you actually built each week.",
 });
 
 const BREADCRUMB_SCHEMA = articleBreadcrumbJsonLd({
@@ -91,17 +91,18 @@ export default function TrackWhatYouShippedPage() {
       <ArticleHero
         slug="best-ways-to-track-what-you-shipped"
         title="Best Ways to Track What You Shipped as a Developer"
-        deck="Four options that actually work, ranked by how much effort each one costs you. Plus the tradeoffs nobody mentions."
+        deck="Five options that actually work, ranked by how much effort each one costs you. Plus the tradeoffs nobody mentions."
       />
 
       <article className="page-body page-body--reading article article--has-hero">
         <p className="public-text article-tldr">
-          <strong>TLDR:</strong> If you want to remember what you shipped, you have four real
+          <strong>TLDR:</strong> If you want to remember what you shipped, you have five real
           options: scroll your git log, lean on GitHub&apos;s Insights tab, write things down
-          manually, or run an automated digest tool. Git log is free but unreadable at scale. GitHub
-          shows shape without substance. Manual journals work if you actually keep them. Automated
-          digests handle the volume but cost a tiny amount per run. Pick by how much friction you
-          tolerate.
+          manually, run an automated digest tool, or use an accomplishment tracker built for review
+          season. Git log is free but unreadable at scale. GitHub shows shape without substance.
+          Manual journals work if you actually keep them. Automated digests handle the daily volume.
+          Accomplishment trackers cover the longer arc. Pick by how much friction you tolerate and
+          which time horizon you care about.
         </p>
 
         <section className="public-section">
@@ -120,8 +121,8 @@ export default function TrackWhatYouShippedPage() {
             .)
           </p>
           <p className="public-text">
-            So how do you keep up? Below are the four options that actually work, in order from
-            zero-cost to most-automated.
+            So how do you keep up? Below are the five options that actually work, the first four in
+            order from zero-cost to most-automated, plus a fifth for a different time horizon.
           </p>
         </section>
 
@@ -231,6 +232,41 @@ export default function TrackWhatYouShippedPage() {
         </section>
 
         <section className="public-section">
+          <h2 className="public-section-title">
+            Option 5: An accomplishment tracker for career reviews
+          </h2>
+          <p className="public-text">
+            <a
+              href="https://bragbook.io/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="home-prose-link"
+            >
+              BragBook
+            </a>{" "}
+            answers a different question than the four above: not &quot;what did I ship this
+            week?&quot; but &quot;what did I ship this quarter that&apos;s worth putting in a
+            self-review?&quot; You log wins as they happen, integrations with GitHub, Jira, Linear,
+            and Asana fill in most entries automatically, and the platform converts them into
+            self-reviews, resume bullets, and social posts when review season comes around.
+          </p>
+          <p className="public-text">
+            What you get is a long-horizon record built for the moments your work gets evaluated.
+            The tools above answer &quot;what did I do yesterday.&quot; This one answers &quot;what
+            did I do this year worth telling someone about.&quot;
+          </p>
+          <p className="public-text">
+            What you give up is daily frequency. You log wins as they happen, not get a summary by
+            9am. The free tier is generous at 25 entries, which covers most people&apos;s first year
+            of meaningful wins. Unlimited access plus AI features runs around $9 a month.
+          </p>
+          <p className="public-text">
+            Use this when your horizon is a promotion cycle, a job search, or a performance review,
+            not your next morning.
+          </p>
+        </section>
+
+        <section className="public-section">
           <h2 className="public-section-title">How to pick</h2>
           <p className="public-text">
             If your week is small and your messages are good, git log is fine. Stop reading.
@@ -249,9 +285,13 @@ export default function TrackWhatYouShippedPage() {
             not going to.
           </p>
           <p className="public-text">
+            If your horizon is a promotion cycle, a job search, or a review, none of the four above
+            do that job well. BragBook is built for the longer arc.
+          </p>
+          <p className="public-text">
             The honest answer is that most developers will end up using two of these together. A
-            digest for the daily readout, plus a journal for the weeks that actually matter. The
-            tools are not in conflict.
+            digest for the daily readout, plus a journal or accomplishment tracker for the moments
+            that actually matter. The tools are not in conflict.
           </p>
         </section>
 
