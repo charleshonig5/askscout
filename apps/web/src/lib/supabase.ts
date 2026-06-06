@@ -106,22 +106,68 @@ export async function saveUserSettings(
 }
 
 /** Delete all digests for a user (all repos). Also clears daily check-ins. */
-export async function deleteAllDigests(userId: string): Promise<void> {
-  if (!supabase) return;
+/** Result type returned by both bulk-delete helpers so callers can
+ *  distinguish a real success from a silent failure. The previous
+ *  void-returning shape made the /api/account endpoint return ok:true
+ *  even when Supabase rejected the delete, which would leave the
+ *  user's history intact while the UI claimed it was cleared. */
+export interface DeleteResult {
+  ok: boolean;
+  error?: string;
+}
+
+export async function deleteAllDigests(userId: string): Promise<DeleteResult> {
+  if (!supabase) return { ok: false, error: "Supabase not configured" };
   const { error } = await supabase.from("digests").delete().eq("user_id", userId);
-  if (error) console.error("[askscout] Failed to delete digests:", error.message);
-  // Streak data lives in check-ins too; clear those so the streak truly resets.
-  await supabase.from("daily_checkins").delete().eq("user_id", userId);
+  if (error) {
+    console.error("[askscout] Failed to delete digests:", error.message);
+    return { ok: false, error: error.message };
+  }
+  // Streak data lives in check-ins too; clear those so the streak
+  // truly resets. We surface their failures too — leaving stale
+  // check-ins around would keep streaks technically alive while
+  // every digest is gone, which is internally inconsistent.
+  const { error: checkinError } = await supabase
+    .from("daily_checkins")
+    .delete()
+    .eq("user_id", userId);
+  if (checkinError) {
+    console.error("[askscout] Failed to delete check-ins:", checkinError.message);
+    return { ok: false, error: checkinError.message };
+  }
+  return { ok: true };
 }
 
 /** Delete digests for a specific repo */
-export async function deleteRepoDigests(userId: string, repo: string): Promise<void> {
-  if (!supabase) return;
+export async function deleteRepoDigests(userId: string, repo: string): Promise<DeleteResult> {
+  if (!supabase) return { ok: false, error: "Supabase not configured" };
   const { error } = await supabase.from("digests").delete().eq("user_id", userId).eq("repo", repo);
-  if (error) console.error("[askscout] Failed to delete repo digests:", error.message);
-  // Also clear the project summary and daily check-ins for this repo
-  await supabase.from("project_summaries").delete().eq("user_id", userId).eq("repo", repo);
-  await supabase.from("daily_checkins").delete().eq("user_id", userId).eq("repo", repo);
+  if (error) {
+    console.error("[askscout] Failed to delete repo digests:", error.message);
+    return { ok: false, error: error.message };
+  }
+  // Also clear the project summary and daily check-ins for this repo.
+  // Surface their failures so the caller can show an honest error
+  // instead of pretending the clear succeeded.
+  const { error: summaryError } = await supabase
+    .from("project_summaries")
+    .delete()
+    .eq("user_id", userId)
+    .eq("repo", repo);
+  if (summaryError) {
+    console.error("[askscout] Failed to delete project summary:", summaryError.message);
+    return { ok: false, error: summaryError.message };
+  }
+  const { error: checkinError } = await supabase
+    .from("daily_checkins")
+    .delete()
+    .eq("user_id", userId)
+    .eq("repo", repo);
+  if (checkinError) {
+    console.error("[askscout] Failed to delete check-ins:", checkinError.message);
+    return { ok: false, error: checkinError.message };
+  }
+  return { ok: true };
 }
 
 /** Delete user account entirely (settings + all digests + summaries + checkins) */

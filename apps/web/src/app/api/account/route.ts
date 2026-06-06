@@ -29,12 +29,26 @@ export async function DELETE(req: Request) {
   const repo = url.searchParams.get("repo");
 
   if (action === "delete-repo-history" && repo) {
-    await deleteRepoDigests(userId, repo);
+    const result = await deleteRepoDigests(userId, repo);
+    if (!result.ok) {
+      // Surface the failure instead of returning a fake-success
+      // 200. Status 500 trips the `!res.ok` branch in the Settings
+      // page's existing error handler ("Couldn't clear ${repo} —
+      // the history is still intact"), which is the honest message
+      // when the delete actually didn't go through.
+      return Response.json(
+        { error: result.error ?? "Failed to clear repo history" },
+        { status: 500 },
+      );
+    }
     return Response.json({ ok: true, message: "Repo history deleted" });
   }
 
   if (action === "delete-all-history") {
-    await deleteAllDigests(userId);
+    const result = await deleteAllDigests(userId);
+    if (!result.ok) {
+      return Response.json({ error: result.error ?? "Failed to clear history" }, { status: 500 });
+    }
     return Response.json({ ok: true, message: "All history deleted" });
   }
 
