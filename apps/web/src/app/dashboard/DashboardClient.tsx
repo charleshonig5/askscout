@@ -151,6 +151,15 @@ export default function DashboardClient() {
   // Tap-to-pin support for the streak tooltip on touch devices.
   const streakTap = useTapTooltip<HTMLSpanElement>();
 
+  // Fire-and-forget visit ping. Lets the admin dashboard count humans
+  // who reached the app, regardless of whether the auto-generate that
+  // follows actually succeeds. NextAuth is JWT-only and writes nothing
+  // to Supabase on sign-in, so without this, browse-only sessions are
+  // invisible to operator metrics. No await — UI doesn't block on it.
+  useEffect(() => {
+    void fetch("/api/visit", { method: "POST" }).catch(() => {});
+  }, []);
+
   // Fetch repos and user settings on mount
   useEffect(() => {
     void (async () => {

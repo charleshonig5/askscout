@@ -47,28 +47,31 @@ const CACHE_SECONDS = 60;
 // -- Supabase queries ------------------------------------------------
 
 interface WebMetrics {
-  /** Distinct user_id values across digests + user_settings + daily_checkins.
-   *  This is the broadest "have done something" definition we can build
-   *  from the schema. It still misses users who signed in but never took
-   *  a tracked action — NextAuth is JWT-only and doesn't write on
-   *  sign-in, so "browse-only" sessions are invisible at this layer.
-   *  For raw page-view / session counts, check Vercel Analytics. */
-  activeUsers: number;
-  /** Subset of activeUsers who have generated at least one digest.
-   *  The gap (activeUsers - digestGenerators) is users who signed in
-   *  and changed a setting or landed on a quiet-day but never generated
-   *  a digest. */
+  /** Distinct user_id values, broadly defined. Unions user_visits
+   *  (fires on every dashboard mount, captures browse-only sessions)
+   *  with digests + user_settings + daily_checkins (for historical
+   *  users who pre-date the user_visits table). This is the most
+   *  honest "humans who reached the app" count available now that
+   *  the visit ping exists. */
+  signedInUsers: number;
+  /** Subset of signedInUsers who have generated at least one digest.
+   *  The gap (signedInUsers - digestGenerators) is users who reached
+   *  the dashboard but bounced before generating — your real funnel
+   *  drop-off number. */
   digestGenerators: number;
+  /** Sum of visit_count across user_visits. Tells you total dashboard
+   *  loads ever, including repeat visits by the same user. Useful for
+   *  spotting whether returning users come back. */
+  totalVisits: number;
   digestsTotal: number;
   digestsToday: number;
   digestsThisWeek: number;
   digestsThisMonth: number;
   emailsSent: number;
   topRepos: { repo: string; digests: number }[];
-  /** Users whose FIRST activity (across all three tables) was within
-   *  the last 7 days. Approximates "new signups this week," with the
-   *  same caveat about browse-only sessions being invisible. */
-  newActiveUsersThisWeek: number;
+  /** Users whose FIRST activity (across all tables) was within the
+   *  last 7 days. Approximates "new signups this week." */
+  newSignedInUsersThisWeek: number;
 }
 
 async function getWebMetrics(): Promise<WebMetrics | null> {
@@ -87,6 +90,7 @@ async function getWebMetrics(): Promise<WebMetrics | null> {
     digestUsersResp,
     settingsUsersResp,
     checkinUsersResp,
+    visitsResp,
     emailedResp,
     topReposResp,
   ] = await Promise.all([
@@ -103,6 +107,12 @@ async function getWebMetrics(): Promise<WebMetrics | null> {
     // the closest "first seen via this table" proxy we have.
     supabase.from("user_settings").select("user_id, updated_at"),
     supabase.from("daily_checkins").select("user_id, checkin_date"),
+    // user_visits — the primary signal. Fires on every dashboard
+    // mount so we get a row for everyone who reached the app, even
+    // browse-only sessions that never generated. Falls through to
+    // an empty result if the migration hasn't been run yet so the
+    // dashboard still renders.
+    supabase.from("user_visits").select("user_id, first_visit_at, visit_count"),
     supabase
       .from("digests")
       .select("*", { count: "exact", head: true })
@@ -110,10 +120,11 @@ async function getWebMetrics(): Promise<WebMetrics | null> {
     supabase.from("digests").select("repo"),
   ]);
 
-  // Build a unified "first seen" map across all three user-attributed
-  // tables. A user's first activity = earliest timestamp from any of
-  // (digest created, settings updated, checkin recorded). This is the
-  // best honest signal of "this person did something."
+  // Build a unified "first seen" map across all four user-attributed
+  // tables (user_visits + the original three). A user's first activity
+  // = earliest timestamp anywhere. user_visits is the broadest signal
+  // because it fires on plain dashboard mount; the other three are
+  // engagement-action specific.
   const userFirstSeen = new Map<string, string>();
   const update = (uid: string | undefined, ts: string | undefined): void => {
     if (!uid || !ts) return;
@@ -122,7 +133,7 @@ async function getWebMetrics(): Promise<WebMetrics | null> {
   };
 
   // Track which users have generated a digest specifically — used for
-  // the "digest generators" subset metric.
+  // the "digest generators" subset metric (the funnel-depth signal).
   const digestUserIds = new Set<string>();
 
   for (const row of digestUsersResp.data ?? []) {
@@ -138,10 +149,16 @@ async function getWebMetrics(): Promise<WebMetrics | null> {
     const r = row as { user_id?: string; checkin_date?: string };
     update(r.user_id, r.checkin_date);
   }
+  let totalVisits = 0;
+  for (const row of visitsResp.data ?? []) {
+    const r = row as { user_id?: string; first_visit_at?: string; visit_count?: number };
+    update(r.user_id, r.first_visit_at);
+    totalVisits += r.visit_count ?? 0;
+  }
 
-  const activeUsers = userFirstSeen.size;
+  const signedInUsers = userFirstSeen.size;
   const digestGenerators = digestUserIds.size;
-  const newActiveUsersThisWeek = Array.from(userFirstSeen.values()).filter(
+  const newSignedInUsersThisWeek = Array.from(userFirstSeen.values()).filter(
     (d) => d >= weekAgo,
   ).length;
 
@@ -158,15 +175,16 @@ async function getWebMetrics(): Promise<WebMetrics | null> {
     .slice(0, 5);
 
   return {
-    activeUsers,
+    signedInUsers,
     digestGenerators,
+    totalVisits,
     digestsTotal: digestsCount.count ?? 0,
     digestsToday: digestsToday.count ?? 0,
     digestsThisWeek: digestsWeek.count ?? 0,
     digestsThisMonth: digestsMonth.count ?? 0,
     emailsSent: emailedResp.count ?? 0,
     topRepos,
-    newActiveUsersThisWeek,
+    newSignedInUsersThisWeek,
   };
 }
 
@@ -303,21 +321,21 @@ export default async function AdminPage() {
         <div className="settings-divider" />
 
         <div className="settings-content">
-          {/* HERO: the two numbers that matter most. Active users
-              + digests this week tell the operator if the product
-              is being used right now. Big Pridi type so the eye
-              lands here first. */}
+          {/* HERO: the two numbers that matter most. Signed-in users
+              + digests this week tell the operator if the product is
+              being used right now. Big Pridi type so the eye lands
+              here first. */}
           {web && (
             <section className="admin-hero">
               <HeroStat
-                label="Active users"
-                value={web.activeUsers.toLocaleString()}
+                label="Signed-in users"
+                value={web.signedInUsers.toLocaleString()}
                 delta={
-                  web.newActiveUsersThisWeek > 0
-                    ? `+${web.newActiveUsersThisWeek} this week`
+                  web.newSignedInUsersThisWeek > 0
+                    ? `+${web.newSignedInUsersThisWeek} this week`
                     : "no new this week"
                 }
-                deltaTone={web.newActiveUsersThisWeek > 0 ? "positive" : "neutral"}
+                deltaTone={web.newSignedInUsersThisWeek > 0 ? "positive" : "neutral"}
               />
               <HeroStat
                 label="Digests this week"
@@ -334,10 +352,10 @@ export default async function AdminPage() {
               <div className="settings-section-text">
                 <h2 className="settings-section-title">Web app</h2>
                 <p className="settings-section-desc">
-                  Active users = distinct user_id values across digests, settings, and check-ins.
-                  Browse-only sessions are invisible here because NextAuth is JWT-only and
-                  doesn&apos;t write on sign-in. For raw page views and sessions, check Vercel
-                  Analytics. Those numbers will always be higher than the count above.
+                  Signed-in users counts everyone who reached the dashboard, captured by a visit
+                  ping on mount. Digest generators is the subset who actually got a digest. The gap
+                  between them is your real funnel drop-off, usually from quiet repos or errors
+                  mid-generate.
                 </p>
               </div>
             </div>
@@ -349,9 +367,18 @@ export default async function AdminPage() {
                   label="Digest generators"
                   value={web.digestGenerators.toLocaleString()}
                   sub={
-                    web.activeUsers > web.digestGenerators
-                      ? `${web.activeUsers - web.digestGenerators} active but never generated`
-                      : "all active users have generated"
+                    web.signedInUsers > web.digestGenerators
+                      ? `${web.signedInUsers - web.digestGenerators} signed in but never generated`
+                      : "every signed-in user generated"
+                  }
+                />
+                <MetricCard
+                  label="Total visits"
+                  value={web.totalVisits.toLocaleString()}
+                  sub={
+                    web.signedInUsers > 0
+                      ? `~${(web.totalVisits / web.signedInUsers).toFixed(1)} per user`
+                      : "no visits yet"
                   }
                 />
                 <MetricCard

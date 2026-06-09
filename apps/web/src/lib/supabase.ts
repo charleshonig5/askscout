@@ -184,6 +184,49 @@ export async function deleteUserAccount(userId: string): Promise<void> {
 // ============================================
 
 /**
+ * Record a dashboard visit. Called fire-and-forget on every mount of
+ * DashboardClient so the admin dashboard can count humans who reached
+ * the app, not just humans who successfully generated a digest. This
+ * closes the visibility gap created by NextAuth's JWT-only strategy:
+ * sign-in alone writes nothing to Supabase, so without this we have
+ * no record of browse-only sessions.
+ *
+ * Two-roundtrip pattern (read existing → update or insert) instead of
+ * upsert because we need to increment a counter, which Postgres upsert
+ * doesn't support natively without a stored function. Race conditions
+ * are rare and the worst case is a missed +1 on the counter.
+ *
+ * Fails closed and silently. If the user_visits table hasn't been
+ * created yet (migration not run), this swallows the error so the
+ * dashboard doesn't break.
+ */
+export async function recordVisit(userId: string): Promise<void> {
+  if (!supabase) return;
+  try {
+    const { data: existing } = await supabase
+      .from("user_visits")
+      .select("visit_count")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    const now = new Date().toISOString();
+    if (existing) {
+      const current = (existing as { visit_count: number }).visit_count ?? 0;
+      await supabase
+        .from("user_visits")
+        .update({ last_visit_at: now, visit_count: current + 1 })
+        .eq("user_id", userId);
+    } else {
+      await supabase
+        .from("user_visits")
+        .insert({ user_id: userId, first_visit_at: now, last_visit_at: now, visit_count: 1 });
+    }
+  } catch (err) {
+    console.error("[askscout] Failed to record visit:", err);
+  }
+}
+
+/**
  * Record a "quiet day check-in" for a user+repo+date. Upserts on conflict so
  * repeated visits in the same day are idempotent. Date is the user's LOCAL
  * calendar date in YYYY-MM-DD form — the client sends it so timezone math
