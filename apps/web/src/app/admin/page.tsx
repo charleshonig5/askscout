@@ -264,17 +264,33 @@ export default async function AdminPage() {
 
   const [web, cli, gh] = await Promise.all([getWebMetrics(), getCliMetrics(), getGithubMetrics()]);
 
+  const refreshedAt = new Date().toLocaleString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  const topRepoMax = web?.topRepos[0]?.digests ?? 1;
+
   return (
     <main className="settings-page">
-      <div className="settings-card">
-        <header className="settings-header">
+      <div className="settings-card admin-card">
+        <header className="settings-header admin-header">
           <Link href="/dashboard" className="settings-header-back">
             <ArrowLeft size={16} strokeWidth={1.5} aria-hidden />
             <span>Back to Dashboard</span>
           </Link>
-          <h1 className="settings-header-title">Admin</h1>
+          <div className="admin-header-title-wrap">
+            <h1 className="settings-header-title">Admin</h1>
+            <span className="admin-header-timestamp" title={`Refreshed ${refreshedAt}`}>
+              Refreshed {refreshedAt}
+            </span>
+          </div>
           <Link
-            href="/admin?refresh=1"
+            href={`/admin?refresh=${Date.now()}`}
             className="settings-header-back"
             aria-label="Refresh"
             title="Refresh data"
@@ -287,7 +303,32 @@ export default async function AdminPage() {
         <div className="settings-divider" />
 
         <div className="settings-content">
-          {/* WEB APP METRICS */}
+          {/* HERO: the two numbers that matter most. Active users
+              + digests this week tell the operator if the product
+              is being used right now. Big Pridi type so the eye
+              lands here first. */}
+          {web && (
+            <section className="admin-hero">
+              <HeroStat
+                label="Active users"
+                value={web.activeUsers.toLocaleString()}
+                delta={
+                  web.newActiveUsersThisWeek > 0
+                    ? `+${web.newActiveUsersThisWeek} this week`
+                    : "no new this week"
+                }
+                deltaTone={web.newActiveUsersThisWeek > 0 ? "positive" : "neutral"}
+              />
+              <HeroStat
+                label="Digests this week"
+                value={web.digestsThisWeek.toLocaleString()}
+                delta={`${web.digestsToday.toLocaleString()} today`}
+                deltaTone={web.digestsToday > 0 ? "positive" : "neutral"}
+              />
+            </section>
+          )}
+
+          {/* WEB APP — secondary metrics */}
           <section className="settings-section">
             <div className="settings-section-head">
               <div className="settings-section-text">
@@ -296,7 +337,7 @@ export default async function AdminPage() {
                   Active users = distinct user_id values across digests, settings, and check-ins.
                   Browse-only sessions are invisible here because NextAuth is JWT-only and
                   doesn&apos;t write on sign-in. For raw page views and sessions, check Vercel
-                  Analytics — those numbers will always be higher than the count below.
+                  Analytics. Those numbers will always be higher than the count above.
                 </p>
               </div>
             </div>
@@ -304,11 +345,6 @@ export default async function AdminPage() {
               <p className="admin-empty">Supabase not configured.</p>
             ) : (
               <div className="admin-grid">
-                <MetricCard
-                  label="Active users"
-                  value={web.activeUsers.toLocaleString()}
-                  sub={`+${web.newActiveUsersThisWeek} this week`}
-                />
                 <MetricCard
                   label="Digest generators"
                   value={web.digestGenerators.toLocaleString()}
@@ -318,19 +354,11 @@ export default async function AdminPage() {
                       : "all active users have generated"
                   }
                 />
-                <MetricCard label="Digests today" value={web.digestsToday.toLocaleString()} />
-                <MetricCard
-                  label="Digests this week"
-                  value={web.digestsThisWeek.toLocaleString()}
-                />
                 <MetricCard
                   label="Digests this month"
                   value={web.digestsThisMonth.toLocaleString()}
                 />
-                <MetricCard
-                  label="Digests (lifetime)"
-                  value={web.digestsTotal.toLocaleString()}
-                />
+                <MetricCard label="Digests (lifetime)" value={web.digestsTotal.toLocaleString()} />
                 <MetricCard
                   label="Emails sent"
                   value={web.emailsSent.toLocaleString()}
@@ -342,7 +370,7 @@ export default async function AdminPage() {
 
           <div className="settings-divider" />
 
-          {/* TOP REPOS */}
+          {/* TOP REPOS — horizontal bars showing relative volume. */}
           <section className="settings-section">
             <div className="settings-section-head">
               <div className="settings-section-text">
@@ -353,11 +381,23 @@ export default async function AdminPage() {
             {!web || web.topRepos.length === 0 ? (
               <p className="admin-empty">No digests yet.</p>
             ) : (
-              <ul className="admin-toprepos">
+              <ul className="admin-bars">
                 {web.topRepos.map((r) => (
-                  <li key={r.repo} className="admin-toprepos-row">
-                    <span className="admin-toprepos-repo">{r.repo}</span>
-                    <span className="admin-toprepos-count">{r.digests}</span>
+                  <li key={r.repo} className="admin-bars-row">
+                    <div className="admin-bars-head">
+                      <span className="admin-bars-label">{r.repo}</span>
+                      <span className="admin-bars-count">{r.digests.toLocaleString()}</span>
+                    </div>
+                    <div
+                      className="admin-bars-track"
+                      role="img"
+                      aria-label={`${r.digests} digests`}
+                    >
+                      <div
+                        className="admin-bars-fill"
+                        style={{ width: `${(r.digests / topRepoMax) * 100}%` }}
+                      />
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -372,9 +412,10 @@ export default async function AdminPage() {
               <div className="settings-section-text">
                 <h2 className="settings-section-title">CLI</h2>
                 <p className="settings-section-desc">
-                  Public stats only. The CLI ships zero telemetry by design — we don&apos;t track
+                  Public stats only. The CLI ships zero telemetry by design. We don&apos;t track
                   active users or digests generated locally, and we never will without explicit
-                  opt-in.
+                  opt-in. Most of these download counts are CI builds and registry mirrors, not real
+                  installs.
                 </p>
               </div>
             </div>
@@ -382,13 +423,13 @@ export default async function AdminPage() {
               <p className="admin-empty">npm API unreachable.</p>
             ) : (
               <div className="admin-grid">
-                <MetricCard label="Downloads (day)" value={cli.downloadsLastDay.toLocaleString()} />
+                <MetricCard label="Downloads today" value={cli.downloadsLastDay.toLocaleString()} />
                 <MetricCard
-                  label="Downloads (week)"
+                  label="Downloads this week"
                   value={cli.downloadsLastWeek.toLocaleString()}
                 />
                 <MetricCard
-                  label="Downloads (month)"
+                  label="Downloads this month"
                   value={cli.downloadsLastMonth.toLocaleString()}
                 />
                 <MetricCard label="Latest version" value={cli.latestVersion} />
@@ -403,7 +444,10 @@ export default async function AdminPage() {
             <div className="settings-section-head">
               <div className="settings-section-text">
                 <h2 className="settings-section-title">GitHub</h2>
-                <p className="settings-section-desc">Repo activity from the public API.</p>
+                <p className="settings-section-desc">
+                  Repo activity from the public API. Stars from real accounts are the most honest
+                  human signal you have. Bots star almost nothing.
+                </p>
               </div>
             </div>
             {gh === null ? (
@@ -422,11 +466,34 @@ export default async function AdminPage() {
 
           <p className="admin-footnote">
             Data cached server-side for {CACHE_SECONDS} seconds. Click Refresh above to force a
-            re-fetch.
+            fresh fetch.
           </p>
         </div>
       </div>
     </main>
+  );
+}
+
+/* The big top-of-page stat. Pridi type, optional positive/negative
+ * delta below the number. Two-up grid on desktop, single column on
+ * mobile. */
+function HeroStat({
+  label,
+  value,
+  delta,
+  deltaTone,
+}: {
+  label: string;
+  value: string;
+  delta: string;
+  deltaTone: "positive" | "negative" | "neutral";
+}) {
+  return (
+    <div className="admin-hero-stat">
+      <p className="admin-hero-label">{label}</p>
+      <p className="admin-hero-value">{value}</p>
+      <p className={`admin-hero-delta admin-hero-delta--${deltaTone}`}>{delta}</p>
+    </div>
   );
 }
 
