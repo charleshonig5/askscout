@@ -47,15 +47,28 @@ const CACHE_SECONDS = 60;
 // -- Supabase queries ------------------------------------------------
 
 interface WebMetrics {
-  users: number; // distinct user_id across user-attributed tables
+  /** Distinct user_id values across digests + user_settings + daily_checkins.
+   *  This is the broadest "have done something" definition we can build
+   *  from the schema. It still misses users who signed in but never took
+   *  a tracked action — NextAuth is JWT-only and doesn't write on
+   *  sign-in, so "browse-only" sessions are invisible at this layer.
+   *  For raw page-view / session counts, check Vercel Analytics. */
+  activeUsers: number;
+  /** Subset of activeUsers who have generated at least one digest.
+   *  The gap (activeUsers - digestGenerators) is users who signed in
+   *  and changed a setting or landed on a quiet-day but never generated
+   *  a digest. */
+  digestGenerators: number;
   digestsTotal: number;
   digestsToday: number;
   digestsThisWeek: number;
   digestsThisMonth: number;
-  emailsSent: number; // digests with last_emailed_at set
+  emailsSent: number;
   topRepos: { repo: string; digests: number }[];
-  newUsersThisWeek: number; // first-ever digest within last 7d
-  configuredUsers: number; // count of user_settings rows
+  /** Users whose FIRST activity (across all three tables) was within
+   *  the last 7 days. Approximates "new signups this week," with the
+   *  same caveat about browse-only sessions being invisible. */
+  newActiveUsersThisWeek: number;
 }
 
 async function getWebMetrics(): Promise<WebMetrics | null> {
@@ -71,10 +84,11 @@ async function getWebMetrics(): Promise<WebMetrics | null> {
     digestsToday,
     digestsWeek,
     digestsMonth,
-    allUsersResp,
+    digestUsersResp,
+    settingsUsersResp,
+    checkinUsersResp,
     emailedResp,
     topReposResp,
-    settingsResp,
   ] = await Promise.all([
     supabase.from("digests").select("*", { count: "exact", head: true }),
     supabase.from("digests").select("*", { count: "exact", head: true }).gte("created_at", dayAgo),
@@ -84,26 +98,52 @@ async function getWebMetrics(): Promise<WebMetrics | null> {
       .select("*", { count: "exact", head: true })
       .gte("created_at", monthAgo),
     supabase.from("digests").select("user_id, created_at"),
+    // user_settings rows only get created when a user actively changes
+    // a setting (toggle a section, pin a default repo). updated_at is
+    // the closest "first seen via this table" proxy we have.
+    supabase.from("user_settings").select("user_id, updated_at"),
+    supabase.from("daily_checkins").select("user_id, checkin_date"),
     supabase
       .from("digests")
       .select("*", { count: "exact", head: true })
       .not("last_emailed_at", "is", null),
     supabase.from("digests").select("repo"),
-    supabase.from("user_settings").select("*", { count: "exact", head: true }),
   ]);
 
-  // Build users + new-users-this-week from the user_id + created_at
-  // rows. Supabase has no native "distinct count" in the JS client.
+  // Build a unified "first seen" map across all three user-attributed
+  // tables. A user's first activity = earliest timestamp from any of
+  // (digest created, settings updated, checkin recorded). This is the
+  // best honest signal of "this person did something."
   const userFirstSeen = new Map<string, string>();
-  for (const row of allUsersResp.data ?? []) {
-    const uid = (row as { user_id?: string }).user_id;
-    const created = (row as { created_at?: string }).created_at;
-    if (!uid || !created) continue;
+  const update = (uid: string | undefined, ts: string | undefined): void => {
+    if (!uid || !ts) return;
     const prev = userFirstSeen.get(uid);
-    if (!prev || created < prev) userFirstSeen.set(uid, created);
+    if (!prev || ts < prev) userFirstSeen.set(uid, ts);
+  };
+
+  // Track which users have generated a digest specifically — used for
+  // the "digest generators" subset metric.
+  const digestUserIds = new Set<string>();
+
+  for (const row of digestUsersResp.data ?? []) {
+    const r = row as { user_id?: string; created_at?: string };
+    update(r.user_id, r.created_at);
+    if (r.user_id) digestUserIds.add(r.user_id);
   }
-  const users = userFirstSeen.size;
-  const newUsersThisWeek = Array.from(userFirstSeen.values()).filter((d) => d >= weekAgo).length;
+  for (const row of settingsUsersResp.data ?? []) {
+    const r = row as { user_id?: string; updated_at?: string };
+    update(r.user_id, r.updated_at);
+  }
+  for (const row of checkinUsersResp.data ?? []) {
+    const r = row as { user_id?: string; checkin_date?: string };
+    update(r.user_id, r.checkin_date);
+  }
+
+  const activeUsers = userFirstSeen.size;
+  const digestGenerators = digestUserIds.size;
+  const newActiveUsersThisWeek = Array.from(userFirstSeen.values()).filter(
+    (d) => d >= weekAgo,
+  ).length;
 
   // Build top repos by digest count (top 5).
   const repoCounts = new Map<string, number>();
@@ -118,15 +158,15 @@ async function getWebMetrics(): Promise<WebMetrics | null> {
     .slice(0, 5);
 
   return {
-    users,
+    activeUsers,
+    digestGenerators,
     digestsTotal: digestsCount.count ?? 0,
     digestsToday: digestsToday.count ?? 0,
     digestsThisWeek: digestsWeek.count ?? 0,
     digestsThisMonth: digestsMonth.count ?? 0,
     emailsSent: emailedResp.count ?? 0,
     topRepos,
-    newUsersThisWeek,
-    configuredUsers: settingsResp.count ?? 0,
+    newActiveUsersThisWeek,
   };
 }
 
@@ -253,9 +293,10 @@ export default async function AdminPage() {
               <div className="settings-section-text">
                 <h2 className="settings-section-title">Web app</h2>
                 <p className="settings-section-desc">
-                  Real numbers from Supabase. Users derive from distinct user_id values across
-                  digests; we don&apos;t use Supabase Auth, so the Authentication tab there will
-                  always be empty.
+                  Active users = distinct user_id values across digests, settings, and check-ins.
+                  Browse-only sessions are invisible here because NextAuth is JWT-only and
+                  doesn&apos;t write on sign-in. For raw page views and sessions, check Vercel
+                  Analytics — those numbers will always be higher than the count below.
                 </p>
               </div>
             </div>
@@ -264,14 +305,18 @@ export default async function AdminPage() {
             ) : (
               <div className="admin-grid">
                 <MetricCard
-                  label="Users"
-                  value={web.users.toLocaleString()}
-                  sub={`+${web.newUsersThisWeek} this week`}
+                  label="Active users"
+                  value={web.activeUsers.toLocaleString()}
+                  sub={`+${web.newActiveUsersThisWeek} this week`}
                 />
                 <MetricCard
-                  label="Digests (lifetime)"
-                  value={web.digestsTotal.toLocaleString()}
-                  sub={`${web.configuredUsers} users have settings`}
+                  label="Digest generators"
+                  value={web.digestGenerators.toLocaleString()}
+                  sub={
+                    web.activeUsers > web.digestGenerators
+                      ? `${web.activeUsers - web.digestGenerators} active but never generated`
+                      : "all active users have generated"
+                  }
                 />
                 <MetricCard label="Digests today" value={web.digestsToday.toLocaleString()} />
                 <MetricCard
@@ -283,9 +328,13 @@ export default async function AdminPage() {
                   value={web.digestsThisMonth.toLocaleString()}
                 />
                 <MetricCard
+                  label="Digests (lifetime)"
+                  value={web.digestsTotal.toLocaleString()}
+                />
+                <MetricCard
                   label="Emails sent"
                   value={web.emailsSent.toLocaleString()}
-                  sub="manual button"
+                  sub="manual send button"
                 />
               </div>
             )}
