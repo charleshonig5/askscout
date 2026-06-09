@@ -203,18 +203,23 @@ export async function deleteUserAccount(userId: string): Promise<void> {
 export async function recordVisit(userId: string): Promise<void> {
   if (!supabase) return;
   try {
-    const { data: existing } = await supabase
+    const { data } = await supabase
       .from("user_visits")
       .select("visit_count")
       .eq("user_id", userId)
       .maybeSingle();
 
+    // Supabase-js returns `data` as `any` without a generated schema,
+    // so we narrow at the call site. The cast IS needed here (lint
+    // accepts it as long as it actually changes the type) — without
+    // it the subsequent property access becomes "unsafe any."
+    const existingVisitCount = (data as { visit_count?: number } | null)?.visit_count;
+
     const now = new Date().toISOString();
-    if (existing) {
-      const current = (existing as { visit_count: number }).visit_count ?? 0;
+    if (typeof existingVisitCount === "number") {
       await supabase
         .from("user_visits")
-        .update({ last_visit_at: now, visit_count: current + 1 })
+        .update({ last_visit_at: now, visit_count: existingVisitCount + 1 })
         .eq("user_id", userId);
     } else {
       await supabase
