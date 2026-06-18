@@ -162,6 +162,50 @@ export default function FastestWayToContextPage() {
         </section>
 
         <section className="public-section">
+          <h2 className="public-section-title">Don&apos;t paste this</h2>
+          <p className="public-text">
+            The most common bad version looks like this:
+          </p>
+          {/* Same <pre> + resource-code-block treatment the "good"
+              example uses below, so the visual weight is equal and
+              the comparison reads side-by-side. */}
+          <pre className="resource-code-block">
+            {`I'm working on my Next.js app. Help me fix the billing
+page, it has some bugs. Here's my file tree so you have
+context:
+
+apps/
+  web/
+    src/
+      app/
+        api/...
+        billing/...
+        dashboard/...
+        settings/...
+        ... (40 more lines)`}
+          </pre>
+          <p className="public-text">Three things go wrong here.</p>
+          <p className="public-text">
+            <strong>Too vague.</strong> &ldquo;Some bugs&rdquo; tells the model nothing actionable.
+            It either asks a clarifying question (slow) or invents a plausible bug to fix (worse).
+          </p>
+          <p className="public-text">
+            <strong>Structure without content.</strong> A file tree is noise. The model can run{" "}
+            <code className="inline-code">ls</code> itself if it needs one. What it can&apos;t do is
+            guess which of those forty files matter right now.
+          </p>
+          <p className="public-text">
+            <strong>No warnings.</strong> The model has no idea what is brittle or in flight, so it
+            will happily refactor code that is already mid-refactor. You spend the next five minutes
+            telling it to put things back.
+          </p>
+          <p className="public-text">
+            The good version below takes the same time to paste and gets you sharper output every
+            session.
+          </p>
+        </section>
+
+        <section className="public-section">
           <h2 className="public-section-title">The manual way</h2>
           <p className="public-text">You can write this block by hand. The format that works:</p>
           {/* <pre> preserves the multi-line structure so the
