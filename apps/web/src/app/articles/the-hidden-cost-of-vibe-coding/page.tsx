@@ -117,10 +117,10 @@ export default function HiddenCostPage() {
         <section className="public-section">
           <h2 className="public-section-title">A new pattern, a new problem</h2>
           <p className="public-text">
-            The way most of us code now is fundamentally different from two years ago. We don&apos;t
-            write line by line. We describe what we want, accept the patches, scan the diffs.
-            Sometimes we don&apos;t even fully scan the diffs. The friction of producing code has
-            basically disappeared.
+            The way most of us code now is different from two years ago. We don&apos;t write line by
+            line. We describe what we want, accept the patches, scan the diffs. Sometimes we
+            don&apos;t even fully scan the diffs. The friction of producing code has basically
+            disappeared.
           </p>
           <p className="public-text">
             What hasn&apos;t disappeared: the cost of remembering what we actually shipped.
@@ -129,6 +129,30 @@ export default function HiddenCostPage() {
             This is what vibe coding looks like in practice. The work feels loose and quick. The
             cost only shows up when you stop typing. That&apos;s when you realize you can&apos;t
             account for half of what you produced.
+          </p>
+        </section>
+
+        <section className="public-section">
+          <h2 className="public-section-title">How vibe coding got its name</h2>
+          <p className="public-text">
+            Andrej Karpathy{" "}
+            <a
+              href="https://x.com/karpathy/status/1886192184808149383"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="home-prose-link"
+            >
+              coined the term in February 2025
+            </a>
+            , describing a new way of working where you &ldquo;give in to the vibes, embrace
+            exponentials, and forget that the code even exists.&rdquo; His framing was about the
+            shift from writing code to steering a model. The cost he didn&apos;t dwell on: when you
+            stop typing, the code stops sticking.
+          </p>
+          <p className="public-text">
+            A year on, the term has settled in. Most developers I know say &ldquo;vibe coding&rdquo;
+            without thinking about where it came from. The shape of work it described is now most
+            software work.
           </p>
         </section>
 
@@ -159,6 +183,35 @@ export default function HiddenCostPage() {
           <p className="public-text">
             <strong>You can&apos;t onboard yourself.</strong> The codebase grew faster than your
             mental model of it. You become a stranger in a project you wrote.
+          </p>
+        </section>
+
+        <section className="public-section">
+          <h2 className="public-section-title">What the research says about typing and recall</h2>
+          <p className="public-text">
+            The &ldquo;I built it but I don&apos;t remember it&rdquo; feeling is not surprising.
+            Psychologists call the underlying effect the{" "}
+            <a
+              href="https://en.wikipedia.org/wiki/Generation_effect"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="home-prose-link"
+            >
+              generation effect
+            </a>
+            : you remember information better when you produce it yourself than when you passively
+            receive it. Forty years of studies, from word lists to math problems to source code,
+            point in the same direction.
+          </p>
+          <p className="public-text">
+            When the AI generates the code and you read and accept it, you&apos;re on the worse
+            side of that effect by design. Reading is not generating. Skimming is even further off.
+            The faster the loop, the less of the work your memory captures.
+          </p>
+          <p className="public-text">
+            This isn&apos;t a reason to type everything by hand. It&apos;s the reason a daily
+            readout matters more than it used to. You cannot rely on memory to fill the gap that
+            used to fill itself.
           </p>
         </section>
 
