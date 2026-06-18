@@ -15151,3 +15151,100 @@ a:hover {
      on refresh — keeps the visual change calm. */
   transition: width 200ms ease-out;
 }
+
+/* ============================================================
+   ARTICLE TABLE — comparison tables in long-form articles
+   ============================================================
+   Used inside .page-body--reading articles where a side-by-side
+   comparison reads more cleanly than five sequential paragraphs.
+   First use: best-ai-coding-tools-for-solo-developers, "At a glance"
+   section. Reuses existing brand tokens, adds nothing new. */
+
+.article-table-wrap {
+  /* Horizontal overflow scrolling on narrow viewports so the table
+     does not blow out its column width on phones. Vertical padding
+     prevents the table's top border from clipping the focus ring
+     when a screen reader user tabs into a cell. */
+  overflow-x: auto;
+  margin: 24px 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg-secondary);
+}
+
+.article-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+}
+
+.article-table-caption {
+  /* Visually hide the caption but keep it in the DOM for screen
+     readers and SEO. The H2 above the table already labels it for
+     sighted users, so a visible caption would be redundant. */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.article-table thead {
+  background: var(--color-bg-tertiary);
+}
+
+.article-table th,
+.article-table td {
+  padding: 12px 14px;
+  vertical-align: top;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.article-table th {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.article-table thead th {
+  /* Slightly smaller + uppercase so the header row reads as
+     "labels" rather than "content," matching the tier we use on
+     the .admin-metric-label cells. */
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-tertiary);
+  border-bottom-color: var(--color-border);
+}
+
+.article-table tbody tr:last-child th,
+.article-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.article-table tbody th[scope="row"] {
+  /* The row label (the tool name) gets the primary color so the
+     eye locks onto it before scanning across the row. The other
+     cells stay secondary. */
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.article-table tbody td {
+  color: var(--color-text-secondary);
+}
+
+.article-table-note {
+  /* Tiny clarifying note below the table. Smaller and tertiary so
+     it reads as footnote, not body. */
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  margin-top: 0;
+}

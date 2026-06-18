@@ -116,6 +116,67 @@ export default function BestAICodingToolsPage() {
         </section>
 
         <section className="public-section">
+          <h2 className="public-section-title">At a glance</h2>
+          <div className="article-table-wrap">
+            <table className="article-table">
+              <caption className="article-table-caption">
+                Five AI coding tools, side by side, for a solo developer in 2026.
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Tool</th>
+                  <th scope="col">Best for</th>
+                  <th scope="col">Where it lives</th>
+                  <th scope="col">Pricing</th>
+                  <th scope="col">Main limit</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">Cursor</th>
+                  <td>Daily inline editing with whole-project awareness</td>
+                  <td>Custom VS Code fork</td>
+                  <td>Free tier, Pro $20 a month</td>
+                  <td>Long agent tasks are clunkier than Claude Code</td>
+                </tr>
+                <tr>
+                  <th scope="row">Claude Code</th>
+                  <td>Multi-file refactors and agent-shaped tasks</td>
+                  <td>Terminal CLI</td>
+                  <td>Pay per-token via your Anthropic key, no flat fee</td>
+                  <td>Not built for keystroke autocomplete</td>
+                </tr>
+                <tr>
+                  <th scope="row">Codex</th>
+                  <td>Same shape as Claude Code, OpenAI backend</td>
+                  <td>Terminal CLI</td>
+                  <td>Pay per-token via your OpenAI key, no flat fee</td>
+                  <td>Newer and smaller community than Claude Code</td>
+                </tr>
+                <tr>
+                  <th scope="row">GitHub Copilot</th>
+                  <td>Light autocomplete inside any editor</td>
+                  <td>Inside VS Code, JetBrains, Neovim, others</td>
+                  <td>Individual $10 a month, Business $19</td>
+                  <td>No agent mode, no full-project context</td>
+                </tr>
+                <tr>
+                  <th scope="row">Aider</th>
+                  <td>Terminal-first with full model choice</td>
+                  <td>Terminal CLI</td>
+                  <td>Free OSS, you pay your model provider directly</td>
+                  <td>Steeper to learn, no editor integration</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p className="public-text article-table-note">
+            Pricing is what each tool charged at the time of writing. Check the vendor page for
+            current numbers if you are about to subscribe.
+          </p>
+        </section>
+
+        <section className="public-section">
           <h2 className="public-section-title">Cursor</h2>
           <p className="public-text">
             <a
