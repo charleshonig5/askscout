@@ -42,7 +42,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           # Full history so changeset can compute version bumps
           # against the previous release tag.
