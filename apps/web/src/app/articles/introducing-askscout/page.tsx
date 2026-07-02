@@ -210,6 +210,10 @@ export default function IntroducingAskScoutPage() {
             >
               MIT license
             </a>
+            , for{" "}
+            <Link href="/articles/why-askscout-is-open-source" className="home-prose-link">
+              reasons I get into here
+            </Link>
             . Use it next to whatever AI coding tool already lives in your day.
           </p>
         </section>

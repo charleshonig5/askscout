@@ -112,9 +112,15 @@ export default function TrackWhatYouShippedPage() {
             it. That is not the world most developers live in anymore.
           </p>
           <p className="public-text">
-            AI coding tools push the daily volume up sharply. The mental ownership doesn&apos;t keep
-            pace. And by Friday you&apos;re looking at your own git history wondering what half of
-            it does. (For the longer argument about why this happens, see{" "}
+            <Link
+              href="/articles/best-ai-coding-tools-for-solo-developers"
+              className="home-prose-link"
+            >
+              AI coding tools
+            </Link>{" "}
+            push the daily volume up sharply. The mental ownership doesn&apos;t keep pace. And by
+            Friday you&apos;re looking at your own git history wondering what half of it does. (For
+            the longer argument about why this happens, see{" "}
             <Link href="/articles/the-hidden-cost-of-vibe-coding" className="home-prose-link">
               The Hidden Cost of Vibe Coding
             </Link>

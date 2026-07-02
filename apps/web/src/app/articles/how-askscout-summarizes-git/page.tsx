@@ -115,6 +115,10 @@ export default function HowAskScoutSummarizesGitPage() {
             The fix isn't a better git command. It's a layer on top of git that does what humans
             used to do at lower volume: read it and summarize it. askScout is that layer. Here's how
             it works. (For the bigger argument behind why this layer matters now,{" "}
+            <Link href="/articles/the-hidden-cost-of-vibe-coding" className="home-prose-link">
+              the hidden cost of vibe coding
+            </Link>{" "}
+            walks through the problem, and{" "}
             <Link href="/articles/introducing-askscout" className="home-prose-link">
               Introducing askScout
             </Link>{" "}
@@ -279,7 +283,12 @@ f6a7b8c fix tests`}
           </pre>
           <p className="public-text">
             Both views describe the same six commits. One is illegible at scale. The other you can
-            read on your phone in a coffee line.
+            read on your phone in a coffee line. (For how this fits next to the other options
+            developers actually use, see{" "}
+            <Link href="/articles/best-ways-to-track-what-you-shipped" className="home-prose-link">
+              the five real ways to track what you shipped
+            </Link>
+            .)
           </p>
         </section>
 

@@ -112,8 +112,16 @@ export default function WhyAskScoutOpenSourcePage() {
           </p>
           <p className="public-text">
             For a code editor or a chat assistant, that is a tradeoff people have decided they can
-            live with. For a tool that reads your repository, it is a harder ask. You are not just
-            trusting the model. You are trusting whatever pipeline gets your diffs to the model.
+            live with. The{" "}
+            <Link
+              href="/articles/best-ai-coding-tools-for-solo-developers"
+              className="home-prose-link"
+            >
+              tools most developers use day to day
+            </Link>{" "}
+            are closed in exactly this way. For a tool that reads your repository, it is a harder
+            ask. You are not just trusting the model. You are trusting whatever pipeline gets your
+            diffs to the model.
           </p>
           <p className="public-text">We didn&apos;t want to ask anyone to take that on faith.</p>
         </section>

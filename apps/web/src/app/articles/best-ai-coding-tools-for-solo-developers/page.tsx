@@ -362,7 +362,15 @@ export default function BestAICodingToolsPage() {
           </p>
           <p className="public-text">
             The pattern that works for most solo developers I know: one of these tools for writing
-            code, askScout for keeping track of what you wrote.
+            code, askScout for keeping track of what you wrote. (If you want the full menu of
+            tracking approaches first, see{" "}
+            <Link
+              href="/articles/best-ways-to-track-what-you-shipped"
+              className="home-prose-link"
+            >
+              the five real ways to track what you shipped
+            </Link>
+            .)
           </p>
         </section>
 

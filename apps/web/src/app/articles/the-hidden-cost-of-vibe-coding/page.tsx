@@ -228,7 +228,15 @@ export default function HiddenCostPage() {
           </p>
           <p className="public-text">
             &ldquo;Just ask the AI to summarize.&rdquo; But the AI doesn&apos;t see your commits.
-            You&apos;d have to paste diffs in by hand every day. Nobody does that.
+            You&apos;d have to paste diffs in by hand every day. Nobody does that. (For why getting
+            context into Claude Code or Cursor is its own slog, see{" "}
+            <Link
+              href="/articles/fastest-way-to-give-claude-or-cursor-project-context"
+              className="home-prose-link"
+            >
+              the fastest way to give Claude Code, Cursor, or Codex project context
+            </Link>
+            .)
           </p>
         </section>
 

@@ -128,7 +128,11 @@ export default function FastestWayToContextPage() {
           <p className="public-text">
             That is wasted typing. The information already exists in your git history and your
             recent sessions of work. The only reason you are re-explaining is that the AI
-            doesn&apos;t know how to read it without your help.
+            doesn&apos;t know how to read it without your help. (This is the same shape of problem{" "}
+            <Link href="/articles/the-hidden-cost-of-vibe-coding" className="home-prose-link">
+              the hidden cost of vibe coding
+            </Link>{" "}
+            walks through from a different angle.)
           </p>
         </section>
 

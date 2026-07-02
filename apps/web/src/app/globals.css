@@ -256,6 +256,17 @@ html {
   text-size-adjust: 100%;
 }
 
+/* Smooth scroll on marketing pages only. Scoped via :has() on the
+   MarketingNav so product routes (dashboard, insights, settings,
+   admin) are untouched — they do not render .home-nav. Only smooths
+   anchor jumps and programmatic scrolls; wheel/trackpad remain
+   native. Gated on prefers-reduced-motion for accessibility. */
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.home-nav) {
+    scroll-behavior: smooth;
+  }
+}
+
 body {
   font-family: var(--font-sans);
   font-size: 14px;
