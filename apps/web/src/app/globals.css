@@ -3671,77 +3671,12 @@ a:hover {
   margin: 0 auto 57px;
 }
 
-/* Hero background video — Figma 244:2059. 1920x1080 starfield/
-   nebula photo asset (Pexels 9686493) sitting behind every hero
-   element with a 3px blur and 40% opacity, so it reads as
-   atmospheric haze rather than a literal video. Centered
-   horizontally and pinned to the hero's top. pointer-events:
-   none so CTAs above stay interactive; aria-hidden in markup. */
-.home-hero-bg {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  /* translate3d (vs plain translateX) + will-change: transform
-     promotes the video to its own GPU compositing layer so the
-     browser doesn't re-rasterize it alongside the rest of the
-     hero on every frame. Smooths playback noticeably. */
-  transform: translate3d(-50%, 0, 0);
-  will-change: transform;
-  width: 1920px;
-  height: 1080px;
-  max-width: none;
-  object-fit: cover;
-  /* Now that .home-hero has overflow: clip, the video can't
-     bleed past the hero bottom — no more starfield-vs-page
-     contrast band to mask. So the opacity goes back up toward
-     the original 0.4 (currently 0.35) for a more visible
-     starfield without re-introducing the band. */
-  opacity: 0.35;
-  filter: blur(3.3px);
-  pointer-events: none;
-  z-index: 0;
-  /* Fade the video itself to transparent before the bg-primary
-     overlay kicks in, so the starfield naturally dissolves into
-     the page instead of getting stamped out by the overlay.
-     Stops mirror .home-hero-bg-fade's 23.695% solid mark — the
-     two layers reach full transparent / full bg-primary at the
-     same vertical position, which is what makes the blend read
-     as one continuous fade. */
-  -webkit-mask-image: linear-gradient(to top, transparent 0%, black 23.695%);
-  mask-image: linear-gradient(to top, transparent 0%, black 23.695%);
-}
-
-/* Darken overlay — bg-primary at 60% sitting directly on top of
-   the video. The raw Pexels clip is too bright at 40% opacity
-   alone; this 60% scrim of bg-primary knocks it down so the
-   starfield reads as atmospheric haze instead of a competing
-   visual layer. pointer-events: none so it doesn't intercept
-   clicks. Sits at z-index 1 alongside content but is rendered
-   FIRST in the DOM so painter order keeps it below the content. */
-.home-hero-bg-darken {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  /* Match the video's viewport-wide bleed (the hero itself is
-     capped at max-width: 1100px so inset: 0 would leave the
-     video's edges undarkened on a 1440 viewport). */
-  width: 100vw;
-  /* 60% bg-primary scrim — knocks the raw Pexels video down
-     to atmospheric haze without smothering it. The band-fix
-     no longer needs this to be heavier; overflow: clip on
-     .home-hero is doing the actual containment. */
-  background: color-mix(in srgb, var(--color-bg-primary) 60%, transparent);
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* Everything inside the hero needs to sit above the bg video +
-   darken overlay. The bottom-fade overlay (next rule) then
-   layers on top of everything to dissolve the graphic's bottom
-   edge into bg-primary. */
-.home-hero > *:not(.home-hero-bg):not(.home-hero-bg-darken):not(.home-hero-bg-fade) {
+/* Hero children stack above the bottom-fade's base layer; the
+   fade itself is excluded so it can sit ABOVE them (z-index 2)
+   and dissolve the graphic's bottom edge into bg-primary.
+   Previously this also excluded .home-hero-bg and
+   .home-hero-bg-darken — both gone with the background video. */
+.home-hero > *:not(.home-hero-bg-fade) {
   position: relative;
   z-index: 1;
 }
@@ -4494,6 +4429,240 @@ a:hover {
   color: var(--color-success);
 }
 
+/* ============================================
+   HERO STARFIELD — glow backdrop + star ring
+   ============================================
+   Replaces the 7 MB /hero-starfield.mp4 that used to sit behind
+   the entire hero (and the .home-hero-bg-darken scrim that
+   knocked it back). Same atmospheric read, built from ~80 1px
+   divs and one interval.
+
+   The ring geometry is the whole trick: .home-hero-stars is
+   inset NEGATIVELY so it bleeds outside the 976x584 graphic,
+   and the four bands only occupy the gutter around it. Stars
+   never overlap the digest surface.
+
+   Markup (see HeroStarfield.tsx):
+     .home-hero-backdrop-wrapper
+       .home-hero-backdrop        <- glow, blurred, behind
+       .home-hero-stars           <- 4 edge bands
+         .home-hero-stars-top / -right / -bottom / -left
+           .home-hero-star * N
+       .home-hero-graphic         <- the digest frame (children)
+   ============================================ */
+
+/* Hugs the 976px graphic rather than the hero's 1100px column —
+   the ring insets below are measured from THIS box, so if the
+   wrapper stretched to the full hero width the side bands would
+   sit ~62px further out than designed. Mobile drops to 100%
+   because the graphic there is a fluid-width <img>. */
+.home-hero-backdrop-wrapper {
+  position: relative;
+  width: 976px;
+  margin: 0 auto;
+  /* Decorative layer — never let a drag-select grab it. */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Glow — a blurred copy of the card's own rectangle.
+ *
+ * This is NOT a radial gradient, and that is the whole point. A
+ * radial-gradient is an ellipse: it is always brightest at the
+ * edge midpoints and weakest at the corners, so no matter how it
+ * is tuned it reads as a ring floating behind the card rather
+ * than as light coming off the card's border. Earlier passes here
+ * used one and it never stopped looking like a halo.
+ *
+ * Instead: a rectangle the exact size and radius of the frame,
+ * filled flat, then blurred. A blurred hard edge falls off
+ * identically along every side and follows the corner radius on
+ * its own, which is precisely "an even glow emanating from the
+ * border".
+ *
+ * Two useful properties fall out of it:
+ *
+ *   1. No hard-cut risk, structurally. A gradient has to fade to
+ *      zero before its box ends or the box edge shows as a line —
+ *      the failure mode that took several passes to kill. A blur
+ *      has no box: the browser expands the filter region to fit
+ *      the spread and the tail reaches zero on its own. There is
+ *      nothing left to cut.
+ *   2. Alpha at the card's edge is exactly half the fill, because
+ *      that is what blurring a step edge does. So the fill below
+ *      is set to double the intended edge brightness, and the two
+ *      stay locked together without a table of stops to maintain.
+ *
+ * The interior stays solid, but it sits behind an opaque frame
+ * (--color-bg-primary) so none of it is ever visible.
+ */
+.home-hero-backdrop {
+  position: absolute;
+  /* Exactly the graphic's rect — the wrapper is sized to the
+     graphic, so inset: 0 mirrors it at every breakpoint. */
+  inset: 0;
+  /* Match .home-hero-frame so the glow rounds where the card
+     rounds instead of showing square corners through it. */
+  border-radius: 6px;
+  /* 10% fill -> ~5% at the border, falling to nothing across the
+     blur. This single value is the glow's entire strength control;
+     halve it to halve the glow. --color-accent is pure #FFFFFF in
+     dark mode, the only mode marketing renders in. */
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  /* Sets how far the light throws. Roughly 2-3x this radius. */
+  filter: blur(44px);
+  /* Own compositing layer so the blur is rasterized once rather
+     than on every scroll frame. */
+  transform: translate(0, 0);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Star ring. Negative inset puts the whole layer outside the
+   graphic; the bands below carve out the gutter. */
+.home-hero-stars {
+  position: absolute;
+  inset: -45px -135px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.home-hero-stars > * {
+  position: absolute;
+}
+
+/* 44px against a 45px inset — the 1px shortfall matters. A star
+   is positioned by `top: X%` and is 1px tall, so one at 100%
+   starts exactly at the band's inner edge; if that edge is flush
+   with the graphic, the star spans the first pixel OF the graphic
+   and gets painted behind it. Holding the band 1px clear
+   guarantees every star lands in the gutter. Same reason the side
+   bands run 84px against their 86px slot. */
+.home-hero-stars-top,
+.home-hero-stars-bottom {
+  height: 44px;
+  left: 0;
+  right: 0;
+}
+.home-hero-stars-top {
+  top: 0;
+}
+.home-hero-stars-bottom {
+  bottom: 0;
+}
+
+/* Side bands are held 50px off the outer edge and 82px in from
+   top/bottom so they don't collide with the horizontal bands at
+   the corners — that overlap is what makes a naive four-band
+   ring clump visibly at the corners. */
+/* 84px, not Raycast's 86px. At 86 the band's inner edge lands
+   1px INSIDE the graphic, so a star at 100%/0% gets painted
+   behind the opaque frame and is simply lost. Trimming 2px off
+   the inner edge keeps the outer bleed identical and puts the
+   whole ring in the gutter where it can actually be seen. */
+.home-hero-stars-left,
+.home-hero-stars-right {
+  width: 84px;
+  top: 82px;
+  bottom: 82px;
+}
+.home-hero-stars-left {
+  left: 50px;
+}
+.home-hero-stars-right {
+  right: 50px;
+}
+
+/* The full ring needs 1246px of width (the 976px graphic plus
+   135px of bleed each side). Below that the side bands start
+   getting sliced by the viewport edge — half a band reads as a
+   broken layout rather than a deliberate one.
+
+   Note this range is already imperfect for reasons that predate
+   the starfield: .home-hero-graphic is a fixed 976px, so from
+   ~1110px down the graphic itself is wider than the viewport and
+   gets clipped by .home's overflow-x: clip. Scaling the graphic
+   is a separate design decision; all this rule does is stop the
+   ring from making that worse. Drop the side bands and pull the
+   horizontal ones in to the graphic's own width so no stars are
+   spent off-screen. */
+@media (max-width: 1245px) {
+  .home-hero-stars {
+    inset: -45px 0;
+  }
+  .home-hero-stars-left,
+  .home-hero-stars-right {
+    display: none;
+  }
+}
+
+/* A star is a 1px white dot. Inline styles carry top / left /
+   opacity (seeded per star in JS); everything else is here. */
+.home-hero-star {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  border-radius: 100%;
+  background: var(--color-accent);
+  /* Only the pop is transitioned here — the halo fade lives on
+     the pseudo-elements below. */
+  transition: transform 250ms ease;
+}
+
+/* The halo pair. Both are always present and both start at
+   opacity 0; the data-state attribute fades one in.
+     ::before = medium — soft outer bloom only
+     ::after  = high   — bright core plus a tighter ring
+   Raycast tints these blue (#3291ff). Scout is monochrome, so
+   they stay white and lean on size instead of hue. */
+.home-hero-star::before,
+.home-hero-star::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: inherit;
+  height: inherit;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+
+.home-hero-star::before {
+  box-shadow: 0 0 2px 1px color-mix(in srgb, var(--color-accent) 25%, transparent);
+}
+
+.home-hero-star::after {
+  background: var(--color-accent);
+  box-shadow:
+    0 0 1px 1px color-mix(in srgb, var(--color-accent) 80%, transparent),
+    0 0 2px 1px color-mix(in srgb, var(--color-accent) 25%, transparent);
+}
+
+.home-hero-star[data-state="medium"]::before,
+.home-hero-star[data-state="high"]::after {
+  opacity: 1;
+}
+
+/* Reduced motion: the JS never starts its interval, so stars sit
+   at their base opacity forever. Drop the transitions too so a
+   mid-flight pop can't be left hanging. */
+@media (prefers-reduced-motion: reduce) {
+  .home-hero-star,
+  .home-hero-star::before,
+  .home-hero-star::after {
+    transition: none;
+  }
+}
+
+/* No light-mode variant, deliberately. Every public surface
+   renders <ForceDarkTheme /> via <MarketingNav />, which pins
+   <html data-theme="dark"> — marketing is dark-only because the
+   light treatment doesn't land on the marketing visual language.
+   A :not([data-theme="dark"]) fallback here would be unreachable
+   code. If marketing ever gains a light mode, this ring needs a
+   real design pass, not an auto-inverted one: white 1px dots on
+   a white page are invisible at any opacity. */
+
 /* ---------- HERO GRAPHIC FRAME ---------- */
 /* Two nested bordered rectangles per Figma 244:2060 / 244:2061
    plus a bottom fade overlay that blends the frame into the
@@ -4521,6 +4690,22 @@ a:hover {
    graphic. */
 .home-hero-graphic-img {
   display: none;
+  /* MUST stay positioned, or the glow washes the card out.
+     .home-hero-backdrop is absolutely positioned, which puts it in
+     the "positioned descendants" paint layer — and that layer
+     paints above every in-flow non-positioned block in the same
+     stacking context no matter what z-index says. A static <img>
+     sits in that lower layer, so the backdrop's solid 10% fill
+     lands on top of the card as a flat white wash. It reads as a
+     spotlight on mobile while desktop looks correct, because the
+     desktop graphic carries position: relative + z-index: 1 of its
+     own and clears the backdrop.
+     This img used to be a direct child of .home-hero and inherited
+     positioning from the `.home-hero > *:not(...)` rule; moving it
+     inside the starfield wrapper took it out of that selector's
+     reach, so it needs its own. */
+  position: relative;
+  z-index: 1;
 }
 
 /* Outer 976x584 — bg-primary fill, 1px border, 6px radius,
@@ -9348,38 +9533,72 @@ a:hover {
     margin-bottom: 47px;
   }
 
-  /* Hero background video — scaled down to mobile. The desktop
-     element is a fixed 1920x1080 that deliberately bleeds past
-     the viewport so the starfield reaches edge-to-edge. On
-     mobile it keeps that same job: a soft, dim, blurred
-     starfield covering the hero and fading to black at the
-     bottom — just at mobile scale.
+  /* Starfield wrapper — desktop pins this to the graphic's fixed
+     976px so the ring insets measure from the right box. On mobile
+     the graphic is a fluid-width <img>, so the wrapper has to go
+     fluid too or it would force a 976px box inside a 402px frame.
+     .home overflow-x: clip would hide the resulting overflow rather
+     than scroll it, which makes the breakage silent — hence the
+     explicit reset. */
+  .home-hero-backdrop-wrapper {
+    width: 100%;
+  }
 
-       - width 120vw: a modest bleed past the viewport (the
-         video is wider than the hero, so it bleeds off the
-         sides — that's intentional).
-       - height 670px: the base 1080px video is taller than the
-         ~624px mobile hero, so its percentage-based bottom mask
-         (the fade region is the video's bottom 23.7%) would land
-         entirely BELOW the hero's clip edge and never show — the
-         video would just hard-cut at the hero bottom. 670px keeps
-         the video ~hero-height + a small overshoot (the same
-         video:hero ratio desktop uses, 1080 vs ~1035), so the
-         mask fade falls inside the hero and the video physically
-         dissolves — a two-layer fade with the bottom overlay,
-         matching desktop.
-       - blur 1px: the desktop 3.3px blur is tuned for a 1920px
-         video. On a ~450px-wide mobile video that same radius
-         is proportionally ~4x stronger and turns the starfield
-         to mush. 1px keeps the soft atmospheric haze at mobile
-         scale (≈ 3.3px x viewport/1920).
-       - opacity stays 0.35 — opacity doesn't scale with size.
-       - the bottom mask is percentage-based, so it scales on
-         its own. */
-  .home-hero-bg {
-    width: 120vw;
-    height: 670px;
-    filter: blur(1px);
+  /* Ring geometry at mobile scale. The desktop gutter (45px above
+     and below, 84px each side, held 50px off the outer edge) is
+     wider than the entire side margin on a 402px frame, so the
+     side bands would sit off-screen and the horizontal bands would
+     bleed past the viewport. Pull the whole ring in: keep a 28px
+     band above and below, and drop the side bands entirely —
+     there is no usable gutter beside a full-bleed mobile graphic. */
+  .home-hero-stars {
+    inset: -28px 0;
+  }
+  /* 27px against the 28px inset, for the same 1px clearance
+     reason as the desktop bands above. */
+  .home-hero-stars-top,
+  .home-hero-stars-bottom {
+    height: 27px;
+  }
+
+  /* Thin the field on mobile. The bands here are 27px tall versus
+     44px on desktop and span a 354px graphic rather than a 976px
+     one, so the same counts pack into roughly a third of the area
+     and read markedly busier. Hiding every 5th star pulls the
+     density back toward how desktop feels.
+
+     The `+ 1` offset is not cosmetic. Plain :nth-child(5n) starts
+     counting at the 5th child, so on bands of 34 and 24 it drops
+     6 and 4 — 10 of 58, a 17% cut. Offsetting to 5n+1 starts at
+     the first child and drops 7 and 5, landing on exactly the 20%
+     intended. Worth checking against the real band sizes rather
+     than assuming "every 5th" means a fifth.
+
+     Done in CSS rather than by passing smaller counts from the
+     component on purpose: the markup then stays identical at
+     every width, so there is no media-query branching in JS and
+     no chance of an SSR/client hydration mismatch on the star
+     list. The twinkle subset picks stars by index, so hidden ones
+     simply take their turns invisibly and the *visible* twinkle
+     rate thins by the same proportion — the field stays as calm
+     relative to its own density. */
+  .home-hero-star:nth-child(5n + 1) {
+    display: none;
+  }
+  .home-hero-stars-left,
+  .home-hero-stars-right {
+    display: none;
+  }
+
+  /* Glow — only the throw distance changes. inset: 0 and the fill
+     carry over from desktop, so the rectangle still mirrors the
+     card exactly; it is just a smaller card. Blur is scaled to
+     the frame rather than copied: the mobile graphic is roughly a
+     third of the desktop width, so a 44px radius here would throw
+     light proportionally ~3x further and turn the glow into flat
+     fog over the whole hero. */
+  .home-hero-backdrop {
+    filter: blur(16px);
   }
 
   /* Bottom-fade overlay — bg-primary gradient dissolving the hero
