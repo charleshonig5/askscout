@@ -4504,11 +4504,11 @@ a:hover {
   /* Match .home-hero-frame so the glow rounds where the card
      rounds instead of showing square corners through it. */
   border-radius: 6px;
-  /* 10% fill -> ~5% at the border, falling to nothing across the
+  /* 8% fill -> ~4% at the border, falling to nothing across the
      blur. This single value is the glow's entire strength control;
      halve it to halve the glow. --color-accent is pure #FFFFFF in
      dark mode, the only mode marketing renders in. */
-  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
   /* Sets how far the light throws. Roughly 2-3x this radius. */
   filter: blur(44px);
   /* Own compositing layer so the blur is rasterized once rather
